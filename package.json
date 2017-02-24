@@ -1,0 +1,68 @@
+{
+  "name": "apollo-upload-server",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": {
+    "name": "Jayden Seric",
+    "email": "me@jaydenseric.com",
+    "url": "http://jaydenseric.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaydenseric/apollo-upload-server.git"
+  },
+  "dependencies": {
+    "formidable": "^1.1.1",
+    "mkdirp": "^0.5.1",
+    "object-path": "^0.11.3"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.1",
+    "babel-preset-env": "^1.1.8",
+    "babel-preset-stage-0": "^6.22.0",
+    "eslint": "^3.16.0",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-plugin-promise": "^3.4.2",
+    "eslint-plugin-standard": "^2.0.1",
+    "rollup": "^0.41.4",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-watch": "^3.2.2"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "prebuild": "npm run lint",
+    "build": "rollup --config",
+    "build:watch": "npm run build -- --watch",
+    "prepublish": "npm run build"
+  },
+  "main": "dist/apollo-upload-server.js",
+  "module": "dist/apollo-upload-server.module.js",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=6.4"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": 6.4
+          },
+          "modules": false,
+          "loose": true
+        }
+      ],
+      "stage-0"
+    ]
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": [
+      "standard"
+    ]
+  }
+}
