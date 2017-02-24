@@ -50,7 +50,7 @@ Also setup [Apollo upload client](https://github.com/jaydenseric/apollo-upload-c
 
 Once setup, you will be able to use [`File`](https://developer.mozilla.org/en/docs/Web/API/File) objects, [`FileList`](https://developer.mozilla.org/en/docs/Web/API/FileList) objects, or `File` arrays within query or mutation input variables. See the [client usage](https://github.com/jaydenseric/apollo-upload-client#usage).
 
-The files upload to a temp directory. The file path and metadata will be avalable under the variable name in the resolver in the shape of the input `File` type in the GraphQL schema.
+The files upload to a temp directory. The file path and metadata will be available under the variable name in the resolver in the shape of the input `File` type in the GraphQL schema.
 
 The resolver variable will hold an array if it is populated as a list (`FileList` or `File` array) on the client – even if the list has only 1 file.
 
