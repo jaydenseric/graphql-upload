@@ -2,23 +2,19 @@ import mkdirp from 'mkdirp'
 import formidable from 'formidable'
 import objectPath from 'object-path'
 
-export function apolloUploadExpress ({
-  // Defaults to the OS temp directory
-  uploadDir
-}) {
+export function processRequest (request, {uploadDir} = {}) {
   // Ensure provided upload directory exists
   if (uploadDir) mkdirp.sync(uploadDir)
 
-  return (request, response, next) => {
-    // Skip if there are no uploads
-    if (!request.is('multipart/form-data')) return next()
+  const form = formidable.IncomingForm({
+    // Defaults to the OS temp directory
+    uploadDir
+  })
 
-    // Parse the multipart request
-    const form = formidable.IncomingForm({
-      uploadDir
-    })
+  // Parse the multipart request
+  return new Promise((resolve, reject) => {
     form.parse(request, (error, fields, files) => {
-      if (error) return next(error)
+      if (error) reject(new Error(error))
 
       // Decode the GraphQL variables
       fields.variables = JSON.parse(fields.variables)
@@ -33,11 +29,30 @@ export function apolloUploadExpress ({
         variables.set(variablesPath, {name, type, size, path})
       })
 
-      // Apollo expects the fields in the request body
-      request.body = fields
+      // Provide fields for new request body
+      resolve(fields)
+    })
+  })
+}
 
-      // Request ready for Apollo middleware
+export function apolloUploadExpress (options) {
+  return (request, response, next) => {
+    // Skip if there are no uploads
+    if (!request.is('multipart/form-data')) return next()
+    // Process the request
+    processRequest(request, options).then(body => {
+      request.body = body
       next()
     })
+  }
+}
+
+export function apolloUploadKoa (options) {
+  return async function (ctx, next) {
+    // Skip if there are no uploads
+    if (!ctx.request.is('multipart/form-data')) return await next()
+    // Process the request
+    ctx.request.body = await processRequest(ctx.req, options)
+    await next()
   }
 }

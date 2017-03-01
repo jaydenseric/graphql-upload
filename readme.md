@@ -4,24 +4,37 @@
 
 Enhances [Apollo](http://apollodata.com) for intuitive file uploads via GraphQL mutations or queries. Use with [Apollo upload client](https://github.com/jaydenseric/apollo-upload-client).
 
+- [Express](http://expressjs.com) and [Koa](http://koajs.com) supported.
 - Node >= 6.4 supported.
 - [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 
 ## Setup
 
-Install with [Yarn](https://yarnpkg.com):
+### Install
+
+With [NPM](https://www.npmjs.com):
+
+```
+npm install apollo-upload-server --save
+```
+
+With [Yarn](https://yarnpkg.com):
 
 ```
 yarn add apollo-upload-server
 ```
 
-Add the server middleware just before [`graphqlExpress`](https://github.com/apollographql/graphql-server):
+### Server middleware
+
+Add the server middleware just before [graphql-server](https://github.com/apollographql/graphql-server).
+
+For [Express](http://expressjs.com):
 
 ```js
 import {apolloUploadExpress} from 'apollo-upload-server'
-```
 
-```js
+// ✂
+
 app.use(
   '/graphql',
   bodyParser.json(),
@@ -29,11 +42,34 @@ app.use(
     // Optional, defaults to OS temp directory
     uploadDir: '/tmp/uploads'
   }),
-  graphqlExpress()
+  graphqlExpress(/* ✂ */)
 )
+
+// ✂
 ```
 
-Add this type to your schema:
+For [Koa](http://koajs.com):
+
+```js
+import {apolloUploadKoa} from 'apollo-upload-server'
+
+// ✂
+
+router.post(
+  '/graphql',
+  apolloUploadKoa({
+    // Optional, defaults to OS temp directory
+    uploadDir: '/tmp/uploads'
+  }),
+  graphqlKoa(/* ✂ */)
+)
+
+// ✂
+```
+
+### Types
+
+Add an input type to your schema. You can name it anything but it must have this shape:
 
 ```graphql
 input File {
@@ -43,6 +79,8 @@ input File {
   path: String!
 }
 ```
+
+### Client
 
 Also setup [Apollo upload client](https://github.com/jaydenseric/apollo-upload-client).
 
