@@ -24,17 +24,17 @@
   "dependencies": {
     "formidable": "^1.1.1",
     "mkdirp": "^0.5.1",
-    "object-path": "^0.11.3"
+    "object-path": "^0.11.4"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",
-    "babel-preset-env": "^1.1.8",
+    "babel-preset-env": "^1.2.2",
     "babel-preset-stage-0": "^6.22.0",
-    "eslint": "^3.16.0",
-    "eslint-config-standard": "^7.0.0",
-    "eslint-plugin-promise": "^3.4.2",
-    "eslint-plugin-standard": "^2.0.1",
-    "rollup": "^0.41.4",
+    "eslint": "^3.18.0",
+    "eslint-config-standard": "^7.1.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^2.1.1",
+    "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-watch": "^3.2.2"
   },
