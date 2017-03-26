@@ -1,7 +1,7 @@
 {
   "name": "apollo-upload-server",
   "version": "1.1.1",
-  "description": "Enhances Apollo for intuitive file uploads via GraphQL mutations.",
+  "description": "Enhances Apollo GraphQL Server for intuitive file uploads via GraphQL mutations.",
   "license": "MIT",
   "author": {
     "name": "Jayden Seric",
