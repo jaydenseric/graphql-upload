@@ -11,35 +11,36 @@ export function processRequest (request, {uploadDir} = {}) {
     uploadDir
   })
 
-  // Parse the multipart request
+  // Parse the multipart form request
   return new Promise((resolve, reject) => {
-    form.parse(request, (error, fields, files) => {
+    form.parse(request, (error, {operations}, files) => {
       if (error) reject(new Error(error))
 
-      // Decode the GraphQL variables
-      fields.variables = JSON.parse(fields.variables)
+      // Decode the GraphQL operation(s). This is an array
+      // if batching is enabled.
+      operations = JSON.parse(operations)
 
-      // File field names contain the original path to
-      // the File object in the GraphQL input variables.
-      // Relevent data for each uploaded file now gets
-      // placed back in the variables.
-      const variables = objectPath(fields.variables)
-      Object.keys(files).forEach(variablesPath => {
-        const {name, type, size, path} = files[variablesPath]
-        variables.set(variablesPath, {name, type, size, path})
-      })
+      // Check if files were uploaded
+      if (Object.keys(files).length) {
+        // File field names contain the original path to
+        // the File object in the GraphQL operation input
+        // variables. Relevent data for each uploaded file
+        // now gets placed back in the variables.
+        const operationsPath = objectPath(operations)
+        Object.keys(files).forEach(variablesPath => {
+          const {name, type, size, path} = files[variablesPath]
+          operationsPath.set(variablesPath, {name, type, size, path})
+        })
+      }
 
-      // Provide fields for new request body
-      resolve(fields)
+      // Provide fields for replacement request body
+      resolve(operations)
     })
   })
 }
 
 export function apolloUploadExpress (options) {
   return (request, response, next) => {
-    // Skip if there are no uploads
-    if (!request.is('multipart/form-data')) return next()
-    // Process the request
     processRequest(request, options).then(body => {
       request.body = body
       next()
@@ -49,9 +50,6 @@ export function apolloUploadExpress (options) {
 
 export function apolloUploadKoa (options) {
   return async function (ctx, next) {
-    // Skip if there are no uploads
-    if (!ctx.request.is('multipart/form-data')) return await next()
-    // Process the request
     ctx.request.body = await processRequest(ctx.req, options)
     await next()
   }
