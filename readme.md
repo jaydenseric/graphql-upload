@@ -73,9 +73,9 @@ Add an input type to your schema. You can name it anything but it must have this
 
 ```graphql
 input File {
-  name: String!,
-  type: String!,
-  size: Int!,
+  name: String!
+  type: String!
+  size: Int!
   path: String!
 }
 ```
