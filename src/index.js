@@ -39,18 +39,23 @@ export function processRequest (request, {uploadDir} = {}) {
   })
 }
 
+export function apolloUploadKoa (options) {
+  return async function (ctx, next) {
+    // Skip if there are no uploads
+    if (ctx.request.is('multipart/form-data')) {
+      ctx.request.body = await processRequest(ctx.req, options)
+    }
+    await next()
+  }
+}
+
 export function apolloUploadExpress (options) {
   return (request, response, next) => {
+    // Skip if there are no uploads
+    if (!request.is('multipart/form-data')) return next()
     processRequest(request, options).then(body => {
       request.body = body
       next()
     })
-  }
-}
-
-export function apolloUploadKoa (options) {
-  return async function (ctx, next) {
-    ctx.request.body = await processRequest(ctx.req, options)
-    await next()
   }
 }
