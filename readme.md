@@ -15,13 +15,7 @@ Enhances [Apollo](http://apollodata.com) for intuitive file uploads via GraphQL 
 With [NPM](https://www.npmjs.com):
 
 ```
-npm install apollo-upload-server --save
-```
-
-With [Yarn](https://yarnpkg.com):
-
-```
-yarn add apollo-upload-server
+npm install apollo-upload-server
 ```
 
 ### Server middleware
