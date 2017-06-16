@@ -6,6 +6,7 @@
 - Added a change log.
 - Dropped Yarn in favor of npm@5. Removed `yarn.lock` and updated install instructions.
 - Set targeted Node version as a string for `babel-preset-env`.
+- New ESLint config. Dropped [Standard Style](https://standardjs.com) and began using [Prettier](https://github.com/prettier/eslint-plugin-prettier).
 
 ## 2.0.1
 

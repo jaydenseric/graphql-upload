@@ -2,7 +2,7 @@ import mkdirp from 'mkdirp'
 import formidable from 'formidable'
 import objectPath from 'object-path'
 
-export function processRequest (request, {uploadDir} = {}) {
+export function processRequest(request, { uploadDir } = {}) {
   // Ensure provided upload directory exists
   if (uploadDir) mkdirp.sync(uploadDir)
 
@@ -13,7 +13,7 @@ export function processRequest (request, {uploadDir} = {}) {
 
   // Parse the multipart form request
   return new Promise((resolve, reject) => {
-    form.parse(request, (error, {operations}, files) => {
+    form.parse(request, (error, { operations }, files) => {
       if (error) reject(new Error(error))
 
       // Decode the GraphQL operation(s). This is an array
@@ -28,8 +28,8 @@ export function processRequest (request, {uploadDir} = {}) {
         // now gets placed back in the variables.
         const operationsPath = objectPath(operations)
         Object.keys(files).forEach(variablesPath => {
-          const {name, type, size, path} = files[variablesPath]
-          operationsPath.set(variablesPath, {name, type, size, path})
+          const { name, type, size, path } = files[variablesPath]
+          operationsPath.set(variablesPath, { name, type, size, path })
         })
       }
 
@@ -39,8 +39,8 @@ export function processRequest (request, {uploadDir} = {}) {
   })
 }
 
-export function apolloUploadKoa (options) {
-  return async function (ctx, next) {
+export function apolloUploadKoa(options) {
+  return async function(ctx, next) {
     // Skip if there are no uploads
     if (ctx.request.is('multipart/form-data')) {
       ctx.request.body = await processRequest(ctx.req, options)
@@ -49,7 +49,7 @@ export function apolloUploadKoa (options) {
   }
 }
 
-export function apolloUploadExpress (options) {
+export function apolloUploadExpress(options) {
   return (request, response, next) => {
     // Skip if there are no uploads
     if (!request.is('multipart/form-data')) return next()

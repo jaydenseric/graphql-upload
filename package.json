@@ -30,13 +30,17 @@
     "babel-eslint": "^7.2.3",
     "babel-preset-env": "^1.5.2",
     "babel-preset-stage-0": "^6.24.1",
+    "eslint": "^4.0.0",
+    "eslint-plugin-import": "^2.3.0",
+    "eslint-plugin-node": "^5.0.0",
+    "eslint-plugin-prettier": "^2.1.2",
+    "prettier": "^1.4.4",
     "rollup": "^0.43.0",
     "rollup-plugin-babel": "^2.7.1",
-    "rollup-watch": "^4.0.0",
-    "standard": "^10.0.2"
+    "rollup-watch": "^4.0.0"
   },
   "scripts": {
-    "lint": "standard",
+    "lint": "eslint .",
     "prebuild": "npm run lint",
     "build": "rollup --config",
     "build:watch": "npm run build -- --watch",
@@ -53,20 +57,51 @@
   },
   "babel": {
     "presets": [
-      ["env", {
-        "targets": {
-          "node": "6.4"
-        },
-        "modules": false,
-        "loose": true
-      }],
+      [
+        "env",
+        {
+          "targets": {
+            "node": "6.4"
+          },
+          "modules": false,
+          "loose": true
+        }
+      ],
       "stage-0"
     ]
   },
-  "standard": {
+  "eslintConfig": {
     "parser": "babel-eslint",
-    "ignore": [
-      "dist/**"
-    ]
+    "parserOptions": {
+      "sourceType": "module",
+      "ecmaVersion": 2017,
+      "ecmaFeatures": {
+        "experimentalObjectRestSpread": true
+      }
+    },
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:import/recommended",
+      "plugin:node/recommended"
+    ],
+    "plugins": [
+      "import",
+      "node",
+      "prettier"
+    ],
+    "rules": {
+      "node/no-unsupported-features": "off",
+      "prettier/prettier": [
+        "error",
+        {
+          "semi": false,
+          "singleQuote": true
+        }
+      ]
+    }
   }
 }
