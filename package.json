@@ -34,6 +34,8 @@
     "eslint-plugin-import": "^2.3.0",
     "eslint-plugin-node": "^5.0.0",
     "eslint-plugin-prettier": "^2.1.2",
+    "husky": "^0.13.4",
+    "lint-staged": "^3.6.1",
     "prettier": "^1.4.4",
     "rollup": "^0.43.0",
     "rollup-plugin-babel": "^2.7.1",
@@ -44,7 +46,8 @@
     "prebuild": "npm run lint",
     "build": "rollup --config",
     "build:watch": "npm run build -- --watch",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "precommit": "lint-staged"
   },
   "main": "dist/apollo-upload-server.js",
   "module": "dist/apollo-upload-server.module.js",
@@ -103,5 +106,8 @@
         }
       ]
     }
+  },
+  "lint-staged": {
+    "**/*.js": ["eslint --fix", "git add"]
   }
 }
