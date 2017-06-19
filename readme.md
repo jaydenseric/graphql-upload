@@ -25,7 +25,7 @@ Add the server middleware just before [graphql-server](https://github.com/apollo
 For [Express](http://expressjs.com):
 
 ```js
-import {apolloUploadExpress} from 'apollo-upload-server'
+import { apolloUploadExpress } from 'apollo-upload-server'
 
 // ✂
 
@@ -45,7 +45,7 @@ app.use(
 For [Koa](http://koajs.com):
 
 ```js
-import {apolloUploadKoa} from 'apollo-upload-server'
+import { apolloUploadKoa } from 'apollo-upload-server'
 
 // ✂
 
@@ -92,14 +92,14 @@ In types:
 
 ```graphql
 type Mutation {
-  updateUserAvatar (userId: String!, avatar: File!): User!
+  updateUserAvatar(userId: String!, avatar: File!): User!
 }
 ```
 
 In resolvers:
 
 ```js
-updateUserAvatar (root, {userId, avatar}) {
+updateUserAvatar(root, { userId, avatar }) {
   // Auth…
   // Update avatar…
   console.log(`New avatar for user ${userId} is ${avatar.size} bytes`)
@@ -115,18 +115,20 @@ In types:
 
 ```graphql
 type Mutation {
-  updateGallery (galleryId: String!, images: [File!]!): Gallery!
+  updateGallery(galleryId: String!, images: [File!]!): Gallery!
 }
 ```
 
 In resolvers:
 
 ```js
-updateGallery (root, {galleryId, images}) {
+updateGallery(root, { galleryId, images }) {
   // Auth…
   // Update gallery…
   console.log(`New images for gallery ${userId}:`)
-  images.forEach((image, index) => console.log(`Image ${index} is ${image.size} bytes`))
+  images.forEach((image, index) =>
+    console.log(`Image ${index} is ${image.size} bytes`)
+  )
   // Return fresh gallery data…
 }
 ```
