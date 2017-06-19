@@ -8,6 +8,7 @@
 - Set targeted Node version as a string for `babel-preset-env`.
 - New ESLint config. Dropped [Standard Style](https://standardjs.com) and began using [Prettier](https://github.com/prettier/eslint-plugin-prettier).
 - Using [lint-staged](https://github.com/okonet/lint-staged) to ensure contributors don't commit lint errors.
+- Removed `build:watch` script. Use `npm run build -- --watch` directly.
 
 ## 2.0.1
 
@@ -42,4 +43,4 @@
 
 ## 1.0.0
 
-Initial release.
+- Initial release.

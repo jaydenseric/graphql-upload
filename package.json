@@ -45,7 +45,6 @@
     "lint": "eslint .",
     "prebuild": "npm run lint",
     "build": "rollup --config",
-    "build:watch": "npm run build -- --watch",
     "prepublish": "npm run build",
     "precommit": "lint-staged"
   },
@@ -108,6 +107,9 @@
     }
   },
   "lint-staged": {
-    "**/*.js": ["eslint --fix", "git add"]
+    "**/*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
