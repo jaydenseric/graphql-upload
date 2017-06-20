@@ -1,6 +1,6 @@
 # apollo-upload-server change log
 
-## next
+## 2.0.2
 
 - Updated dependencies.
 - Added a change log.
