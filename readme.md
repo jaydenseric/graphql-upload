@@ -1,4 +1,4 @@
-# ![apollo-upload-server](https://cdn.rawgit.com/jaydenseric/apollo-upload-server/v2.0.2/apollo-upload-logo.svg)
+# ![apollo-upload-server](https://cdn.rawgit.com/jaydenseric/apollo-upload-server/v2.0.3/apollo-upload-logo.svg)
 
 ![NPM version](https://img.shields.io/npm/v/apollo-upload-server.svg?style=flat-square) ![Github issues](https://img.shields.io/github/issues/jaydenseric/apollo-upload-server.svg?style=flat-square) ![Github stars](https://img.shields.io/github/stars/jaydenseric/apollo-upload-server.svg?style=flat-square)
 
