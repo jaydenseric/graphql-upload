@@ -9,6 +9,7 @@
   - Renamed the `File` input type `Upload` for clarity.
   - Wording and formatting improvements.
   - Covered React Native.
+  - Documented custom middleware.
 
 ## 2.0.2
 

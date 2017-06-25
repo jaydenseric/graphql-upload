@@ -21,7 +21,7 @@ npm install apollo-upload-server
 
 Add the server middleware just before [graphql-server](https://github.com/apollographql/graphql-server).
 
-For [Express](http://expressjs.com):
+#### [Express](http://expressjs.com)
 
 ```js
 import { apolloUploadExpress } from 'apollo-upload-server'
@@ -41,7 +41,7 @@ app.use(
 // ✂
 ```
 
-For [Koa](http://koajs.com):
+#### [Koa](http://koajs.com)
 
 ```js
 import { apolloUploadKoa } from 'apollo-upload-server'
@@ -58,6 +58,14 @@ router.post(
 )
 
 // ✂
+```
+
+#### Custom middleware
+
+If the middleware you need is not available, import the asynchronous function `processRequest` to make your own:
+
+```js
+import { processRequest } from 'apollo-upload-server'
 ```
 
 ### GraphQL schema
