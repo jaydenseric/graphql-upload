@@ -1,5 +1,10 @@
 # apollo-upload-server change log
 
+## next
+
+- Updated dependencies.
+- Removed `package-lock.json`. Lockfiles are [not recommended](https://github.com/sindresorhus/ama/issues/479#issuecomment-310661514) for packages.
+
 ## 2.0.2
 
 - Updated dependencies.
