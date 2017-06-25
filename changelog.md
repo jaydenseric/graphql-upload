@@ -5,6 +5,10 @@
 - Updated dependencies.
 - Removed `package-lock.json`. Lockfiles are [not recommended](https://github.com/sindresorhus/ama/issues/479#issuecomment-310661514) for packages.
 - Moved Babel config out of `package.json` to prevent issues when consumers run Babel over `node_modules`.
+- Readme tweaks and fixes:
+  - Renamed the `File` input type `Upload` for clarity.
+  - Wording and formatting improvements.
+  - Covered React Native.
 
 ## 2.0.2
 

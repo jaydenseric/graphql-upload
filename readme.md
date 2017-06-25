@@ -1,11 +1,10 @@
-# ![Apollo upload server](https://cdn.rawgit.com/jaydenseric/apollo-upload-server/v2.0.2/apollo-upload-logo.svg)
+# ![apollo-upload-server](https://cdn.rawgit.com/jaydenseric/apollo-upload-server/v2.0.2/apollo-upload-logo.svg)
 
 ![NPM version](https://img.shields.io/npm/v/apollo-upload-server.svg?style=flat-square) ![Github issues](https://img.shields.io/github/issues/jaydenseric/apollo-upload-server.svg?style=flat-square) ![Github stars](https://img.shields.io/github/stars/jaydenseric/apollo-upload-server.svg?style=flat-square)
 
-Enhances [Apollo](http://apollodata.com) for intuitive file uploads via GraphQL mutations or queries. Use with [Apollo upload client](https://github.com/jaydenseric/apollo-upload-client).
+Enhances [Apollo](http://apollodata.com) for intuitive file uploads via GraphQL mutations or queries. Use with [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client).
 
-- [Express](http://expressjs.com) and [Koa](http://koajs.com) supported.
-- Node >= 6.4 supported.
+- Node >= 6.4, [Express](http://expressjs.com) and [Koa](http://koajs.com) supported.
 - [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 
 ## Setup
@@ -61,12 +60,12 @@ router.post(
 // ✂
 ```
 
-### Types
+### GraphQL schema
 
-Add an input type to your schema. You can name it anything but it must have this shape:
+Add an input type for uploads to your schema. You can name it anything but it must have this shape:
 
 ```graphql
-input File {
+input Upload {
   name: String!
   type: String!
   size: Int!
@@ -76,15 +75,13 @@ input File {
 
 ### Client
 
-Also setup [Apollo upload client](https://github.com/jaydenseric/apollo-upload-client).
+Also setup [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client).
 
 ## Usage
 
-Once setup, you will be able to use [`File`](https://developer.mozilla.org/en/docs/Web/API/File) objects, [`FileList`](https://developer.mozilla.org/en/docs/Web/API/FileList) objects, or `File` arrays within query or mutation input variables. See the [client usage](https://github.com/jaydenseric/apollo-upload-client#usage).
+Once setup, you will be able to use [`FileList`](https://developer.mozilla.org/en/docs/Web/API/FileList), [`File`](https://developer.mozilla.org/en/docs/Web/API/File) and [`ReactNativeFile`](https://github.com/jaydenseric/apollo-upload-client#react-native) instances anywhere within mutation or query input variables. See the [client usage](https://github.com/jaydenseric/apollo-upload-client#usage).
 
-The files upload to a temp directory. The file path and metadata will be available under the variable name in the resolver in the shape of the input `File` type in the GraphQL schema.
-
-The resolver variable will hold an array if it is populated as a list (`FileList` or `File` array) on the client – even if the list has only 1 file.
+The files upload to a configurable temp directory. `Upload` input type metadata replaces file instances in the arguments received by the resolver.
 
 ### Single file
 
@@ -92,7 +89,7 @@ In types:
 
 ```graphql
 type Mutation {
-  updateUserAvatar(userId: String!, avatar: File!): User!
+  updateUserAvatar(userId: String!, avatar: Upload!): User!
 }
 ```
 
@@ -100,10 +97,10 @@ In resolvers:
 
 ```js
 updateUserAvatar(root, { userId, avatar }) {
-  // Auth…
-  // Update avatar…
+  // ✂ Auth
+  // ✂ Update avatar
   console.log(`New avatar for user ${userId} is ${avatar.size} bytes`)
-  // Return fresh user data…
+  // ✂ Return fresh user data
 }
 ```
 
@@ -115,7 +112,7 @@ In types:
 
 ```graphql
 type Mutation {
-  updateGallery(galleryId: String!, images: [File!]!): Gallery!
+  updateGallery(galleryId: String!, images: [Upload!]!): Gallery!
 }
 ```
 
@@ -123,21 +120,17 @@ In resolvers:
 
 ```js
 updateGallery(root, { galleryId, images }) {
-  // Auth…
-  // Update gallery…
-  console.log(`New images for gallery ${userId}:`)
+  // ✂ Auth
+  // ✂ Update gallery
+  console.log(`New images for gallery ${galleryId}:`)
   images.forEach((image, index) =>
     console.log(`Image ${index} is ${image.size} bytes`)
   )
-  // Return fresh gallery data…
+  // ✂ Return fresh gallery data
 }
 ```
 
 See [client usage for this example](https://github.com/jaydenseric/apollo-upload-client#multiple-files).
-
-## Caveats
-
-- No max upload file size option yet.
 
 ## Inspiration
 
