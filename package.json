@@ -57,21 +57,6 @@
   "engines": {
     "node": ">=6.4"
   },
-  "babel": {
-    "presets": [
-      [
-        "env",
-        {
-          "targets": {
-            "node": "6.4"
-          },
-          "modules": false,
-          "loose": true
-        }
-      ],
-      "stage-0"
-    ]
-  },
   "eslintConfig": {
     "parser": "babel-eslint",
     "parserOptions": {
