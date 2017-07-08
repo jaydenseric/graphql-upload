@@ -16,16 +16,15 @@ export function processRequest(request, { uploadDir } = {}) {
     form.parse(request, (error, { operations }, files) => {
       if (error) reject(new Error(error))
 
-      // Decode the GraphQL operation(s). This is an array
-      // if batching is enabled.
+      // Decode the GraphQL operation(s). This is an array if batching is
+      // enabled.
       operations = JSON.parse(operations)
 
       // Check if files were uploaded
       if (Object.keys(files).length) {
-        // File field names contain the original path to
-        // the File object in the GraphQL operation input
-        // variables. Relevent data for each uploaded file
-        // now gets placed back in the variables.
+        // File field names contain the original path to the File object in the
+        // GraphQL operation input variables. Relevent data for each uploaded
+        // file now gets placed back in the variables.
         const operationsPath = objectPath(operations)
         Object.keys(files).forEach(variablesPath => {
           const { name, type, size, path } = files[variablesPath]
