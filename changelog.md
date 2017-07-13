@@ -1,6 +1,6 @@
 # apollo-upload-server change log
 
-## next
+## 2.0.4
 
 - Updated dependencies.
 - Readme tweaks including a new licence badge.
