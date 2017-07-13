@@ -28,18 +28,18 @@
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
-    "babel-preset-env": "^1.5.2",
+    "babel-preset-env": "^1.6.0",
     "babel-preset-stage-0": "^6.24.1",
-    "eslint": "^4.1.0",
-    "eslint-plugin-import": "^2.6.0",
-    "eslint-plugin-node": "^5.0.0",
+    "eslint": "^4.2.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.0",
     "eslint-plugin-prettier": "^2.1.2",
-    "husky": "^0.14.1",
-    "lint-staged": "^4.0.0",
-    "prettier": "^1.4.4",
-    "rollup": "^0.43.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^4.0.1",
+    "prettier": "^1.5.2",
+    "rollup": "^0.43.1",
     "rollup-plugin-babel": "^2.7.1",
-    "rollup-watch": "^4.0.0"
+    "rollup-watch": "^4.3.1"
   },
   "scripts": {
     "lint": "eslint .",
