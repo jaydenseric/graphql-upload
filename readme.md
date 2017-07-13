@@ -1,17 +1,19 @@
-# ![apollo-upload-server](https://cdn.rawgit.com/jaydenseric/apollo-upload-server/v2.0.3/apollo-upload-logo.svg)
+![Apollo upload logo](https://cdn.rawgit.com/jaydenseric/apollo-upload-server/v2.0.3/apollo-upload-logo.svg)
 
-![NPM version](https://img.shields.io/npm/v/apollo-upload-server.svg?style=flat-square) ![Github issues](https://img.shields.io/github/issues/jaydenseric/apollo-upload-server.svg?style=flat-square) ![Github stars](https://img.shields.io/github/stars/jaydenseric/apollo-upload-server.svg?style=flat-square)
+# apollo-upload-server
+
+![npm version](https://img.shields.io/npm/v/apollo-upload-server.svg?style=flat-square)
+![Licence](https://img.shields.io/npm/l/apollo-upload-server.svg?style=flat-square)
+![Github issues](https://img.shields.io/github/issues/jaydenseric/apollo-upload-server.svg?style=flat-square)
+![Github stars](https://img.shields.io/github/stars/jaydenseric/apollo-upload-server.svg?style=flat-square)
 
 Enhances [Apollo](http://apollodata.com) for intuitive file uploads via GraphQL mutations or queries. Use with [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client).
-
-- Node >= 6.4, [Express](http://expressjs.com) and [Koa](http://koajs.com) supported.
-- [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 
 ## Setup
 
 ### Install
 
-With [NPM](https://www.npmjs.com):
+With [npm](https://www.npmjs.com):
 
 ```
 npm install apollo-upload-server
@@ -139,6 +141,12 @@ updateGallery(root, { galleryId, images }) {
 ```
 
 See [client usage for this example](https://github.com/jaydenseric/apollo-upload-client#multiple-files).
+
+## Support
+
+- Node >= 6.4.
+- [Express](http://expressjs.com).
+- [Koa](http://koajs.com).
 
 ## Inspiration
 

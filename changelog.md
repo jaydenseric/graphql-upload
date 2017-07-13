@@ -3,6 +3,7 @@
 ## next
 
 - Updated dependencies.
+- Readme tweaks including a new licence badge.
 
 ## 2.0.3
 
