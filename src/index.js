@@ -2,13 +2,14 @@ import mkdirp from 'mkdirp'
 import formidable from 'formidable'
 import objectPath from 'object-path'
 
-export function processRequest(request, { uploadDir } = {}) {
+export function processRequest(request, { uploadDir, ...otherOptions } = {}) {
   // Ensure provided upload directory exists
   if (uploadDir) mkdirp.sync(uploadDir)
 
   const form = formidable.IncomingForm({
     // Defaults to the OS temp directory
-    uploadDir
+    uploadDir,
+    ...otherOptions,
   })
 
   // Parse the multipart form request
