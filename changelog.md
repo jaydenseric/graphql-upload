@@ -10,6 +10,11 @@
 * No more sourcemaps.
 * Prettier markdown files.
 * Updated package keywords.
+* Readme improvements:
+  * Relative logo path.
+  * Added links to badges.
+  * Removed the inspiration links; they are less relevant to the evolved
+    codebase.
 
 ## 2.0.4
 

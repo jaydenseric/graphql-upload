@@ -1,11 +1,11 @@
-![Apollo upload logo](https://cdn.rawgit.com/jaydenseric/apollo-upload-server/v2.0.4/apollo-upload-logo.svg)
+![Apollo upload logo](apollo-upload-logo.svg)
 
 # apollo-upload-server
 
-![npm version](https://img.shields.io/npm/v/apollo-upload-server.svg?style=flat-square)
-![Licence](https://img.shields.io/npm/l/apollo-upload-server.svg?style=flat-square)
-![Github issues](https://img.shields.io/github/issues/jaydenseric/apollo-upload-server.svg?style=flat-square)
-![Github stars](https://img.shields.io/github/stars/jaydenseric/apollo-upload-server.svg?style=flat-square)
+[![npm version](https://img.shields.io/npm/v/apollo-upload-server.svg)](https://npm.im/apollo-upload-server)
+![Licence](https://img.shields.io/npm/l/apollo-upload-server.svg)
+[![Github issues](https://img.shields.io/github/issues/jaydenseric/apollo-upload-server.svg)](https://github.com/jaydenseric/apollo-upload-server/issues)
+[![Github stars](https://img.shields.io/github/stars/jaydenseric/apollo-upload-server.svg)](https://github.com/jaydenseric/apollo-upload-server/stargazers)
 
 Enhances [Apollo](http://apollodata.com) for intuitive file uploads via GraphQL
 mutations or queries. Use with
@@ -161,15 +161,3 @@ See
 * Node.js: See `package.json` `engines`.
 * [Koa](http://koajs.com).
 * [Express](http://expressjs.com).
-
-## Inspiration
-
-* [@HriBB](https://github.com/HriBB)’s
-  [graphql-server-express-upload](https://github.com/HriBB/graphql-server-express-upload)
-  and
-  [apollo-upload-network-interface](https://github.com/HriBB/apollo-upload-network-interface)
-  projects.
-* [@danielbuechele](https://github.com/danielbuechele)’s
-  [Medium article](https://medium.com/@danielbuechele/file-uploads-with-graphql-and-apollo-5502bbf3941e).
-* [@jessedvrs](https://github.com/jessedvrs)’s
-  [example code](https://github.com/HriBB/apollo-upload-network-interface/issues/5#issuecomment-280018715).
