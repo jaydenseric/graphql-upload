@@ -11,6 +11,7 @@
 * No more sourcemaps.
 * Prettier markdown files.
 * Updated package keywords.
+* Updated an Apollo documentation link in the change log.
 * Readme improvements:
   * Relative logo path.
   * Added links to badges.
@@ -59,7 +60,7 @@
 ## 2.0.0
 
 * Support `apollo-upload-client` v3 and
-  [query batching](http://dev.apollodata.com/core/network.html#query-batching).
+  [query batching](https://apollographql.com/docs/apollo-server/requests.html#batching).
 * Clearer package description.
 
 ## 1.1.0
