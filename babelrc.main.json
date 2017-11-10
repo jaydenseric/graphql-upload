@@ -1,0 +1,15 @@
+{
+  "extends": "./babelrc.common.json",
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "7.6"
+        },
+        "shippedProposals": true,
+        "loose": true
+      }
+    ]
+  ]
+}

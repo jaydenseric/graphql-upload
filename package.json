@@ -21,44 +21,45 @@
     "upload",
     "express"
   ],
+  "files": [
+    "lib"
+  ],
+  "main": "lib/main/index.js",
+  "module": "lib/module/index.mjs",
+  "engines": {
+    "node": ">=7.6"
+  },
   "dependencies": {
     "formidable": "^1.1.1",
     "mkdirp": "^0.5.1",
     "object-path": "^0.11.4"
   },
   "devDependencies": {
-    "babel-eslint": "^7.2.3",
-    "babel-preset-env": "^1.6.0",
-    "babel-preset-stage-0": "^6.24.1",
-    "eslint": "^4.2.0",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-node": "^5.1.0",
-    "eslint-plugin-prettier": "^2.1.2",
+    "@babel/cli": "^7.0.0-beta.31",
+    "@babel/core": "^7.0.0-beta.31",
+    "@babel/preset-env": "^7.0.0-beta.31",
+    "eslint": "^4.10.0",
+    "eslint-plugin-prettier": "^2.3.1",
     "husky": "^0.14.3",
-    "lint-staged": "^4.0.1",
-    "prettier": "^1.5.2",
-    "rollup": "^0.43.1",
-    "rollup-plugin-babel": "^2.7.1",
-    "rollup-watch": "^4.3.1"
+    "lint-staged": "^4.3.0",
+    "prettier": "^1.8.2"
   },
   "scripts": {
-    "lint": "eslint .",
-    "prebuild": "npm run lint",
-    "build": "rollup --config",
-    "prepublish": "npm run build",
-    "precommit": "lint-staged"
+    "build": "npm run build:main && npm run build:module && prettier --write 'lib/**/*.{js,mjs}'",
+    "build:main": "babel src --out-dir lib/main --config-file ./babelrc.main.json",
+    "build:module": "babel src --out-dir lib/module --config-file ./babelrc.module.json --keep-file-extension",
+    "lint": "eslint . --ext js,mjs",
+    "fix": "npm run lint -- --fix && prettier --write '**/*.md'",
+    "precommit": "lint-staged",
+    "prepublishOnly": "npm run lint && npm run build"
   },
-  "main": "dist/apollo-upload-server.js",
-  "module": "dist/apollo-upload-server.module.js",
-  "files": [
-    "src",
-    "dist"
+  "lint-staged": {
+    "*.js": "eslint"
+  },
+  "eslintIgnore": [
+    "lib"
   ],
-  "engines": {
-    "node": ">=6.4"
-  },
   "eslintConfig": {
-    "parser": "babel-eslint",
     "parserOptions": {
       "sourceType": "module",
       "ecmaVersion": 2017,
@@ -71,30 +72,21 @@
       "node": true
     },
     "extends": [
-      "eslint:recommended",
-      "plugin:import/recommended",
-      "plugin:node/recommended"
+      "eslint:recommended"
     ],
     "plugins": [
-      "import",
-      "node",
       "prettier"
     ],
     "rules": {
-      "node/no-unsupported-features": "off",
-      "prettier/prettier": [
+      "curly": [
         "error",
-        {
-          "semi": false,
-          "singleQuote": true
-        }
-      ]
+        "multi"
+      ],
+      "prettier/prettier": "error"
     }
   },
-  "lint-staged": {
-    "**/*.js": [
-      "eslint --fix",
-      "git add"
-    ]
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
   }
 }
