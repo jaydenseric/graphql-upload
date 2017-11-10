@@ -5,6 +5,7 @@
 * Updated Node.js support from v6.4+ to v7.6+.
 * Using Babel directly, dropping Rollup.
 * New directory structure for compiled files.
+* Module files now have `.mjs` extension.
 * No longer publish the `src` directory.
 * Compiled code is now prettier.
 * No more sourcemaps.
