@@ -16,9 +16,12 @@
   "bugs": "https://github.com/jaydenseric/apollo-upload-server/issues",
   "keywords": [
     "apollo",
+    "server",
     "graphql",
     "file",
     "upload",
+    "multipart",
+    "koa",
     "express"
   ],
   "files": [

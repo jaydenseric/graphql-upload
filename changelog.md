@@ -9,6 +9,7 @@
 * Compiled code is now prettier.
 * No more sourcemaps.
 * Prettier markdown files.
+* Updated package keywords.
 
 ## 2.0.4
 
