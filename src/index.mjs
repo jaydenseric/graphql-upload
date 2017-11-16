@@ -51,9 +51,11 @@ export function apolloUploadExpress(options) {
   return (request, response, next) => {
     // Skip if there are no uploads
     if (!request.is('multipart/form-data')) return next()
-    processRequest(request, options).then(body => {
-      request.body = body
-      next()
-    })
+    processRequest(request, options)
+      .then(body => {
+        request.body = body
+        next()
+      })
+      .catch(next)
   }
 }
