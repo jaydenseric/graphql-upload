@@ -27,9 +27,10 @@ import { apolloUploadKoa } from 'apollo-upload-server'
 
 router.post(
   '/graphql',
+  koaBody(),
   apolloUploadKoa({
     // Defaults to OS temp directory
-    uploadDir: '/tmp/uploads'
+    uploadDir: './uploads'
   }),
   graphqlKoa(/* … */)
 )
@@ -47,7 +48,7 @@ app.use(
   bodyParser.json(),
   apolloUploadExpress({
     // Defaults to OS temp directory
-    uploadDir: '/tmp/uploads'
+    uploadDir: './uploads'
   }),
   graphqlExpress(/* … */)
 )

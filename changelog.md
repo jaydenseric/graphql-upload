@@ -7,8 +7,8 @@
 * New directory structure for compiled files.
 * Module files now have `.mjs` extension.
 * No longer publish the `src` directory.
-* Compiled code is now prettier.
 * No more sourcemaps.
+* Compiled code is now prettier.
 * Prettier markdown files.
 * Updated package keywords.
 * Updated an Apollo documentation link in the change log.
