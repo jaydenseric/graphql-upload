@@ -16,6 +16,7 @@
   * Added links to badges.
   * Removed the inspiration links; they are less relevant to the evolved
     codebase.
+  * Fixed an Apollo link.
 
 ## 2.0.4
 

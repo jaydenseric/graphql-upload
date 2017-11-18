@@ -7,7 +7,7 @@
 [![Github issues](https://img.shields.io/github/issues/jaydenseric/apollo-upload-server.svg)](https://github.com/jaydenseric/apollo-upload-server/issues)
 [![Github stars](https://img.shields.io/github/stars/jaydenseric/apollo-upload-server.svg)](https://github.com/jaydenseric/apollo-upload-server/stargazers)
 
-Enhances [Apollo](http://apollodata.com) for intuitive file uploads via GraphQL
+Enhances [Apollo](https://apollographql.com) for intuitive file uploads via GraphQL
 mutations or queries. Use with
 [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client).
 
