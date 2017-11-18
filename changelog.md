@@ -1,5 +1,9 @@
 # apollo-upload-server changelog
 
+## Next
+
+* Middleware are now arrow functions.
+
 ## 3.0.0
 
 * Updated Node.js support from v6.4+ to v7.6+.
