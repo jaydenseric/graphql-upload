@@ -8,6 +8,7 @@
 * Module files now have `.mjs` extension.
 * No longer publish the `src` directory.
 * No more sourcemaps.
+* Use an arrow function for the Koa middleware, to match the Express middleware.
 * Compiled code is now prettier.
 * Prettier markdown files.
 * Updated package keywords.
