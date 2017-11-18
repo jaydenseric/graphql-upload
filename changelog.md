@@ -13,7 +13,6 @@
 * Updated package keywords.
 * Updated an Apollo documentation link in the change log.
 * Readme improvements:
-  * Relative logo path.
   * Added links to badges.
   * Removed the inspiration links; they are less relevant to the evolved
     codebase.
