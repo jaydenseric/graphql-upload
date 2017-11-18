@@ -17,6 +17,7 @@
   * Removed the inspiration links; they are less relevant to the evolved
     codebase.
   * Fixed an Apollo link.
+  * Replaced example resolver code with a link to the [Apollo upload examples](https://github.com/jaydenseric/apollo-upload-examples).
 
 ## 2.0.4
 

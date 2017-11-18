@@ -105,56 +105,8 @@ instances anywhere within mutation or query input variables. See the
 The files upload to a configurable temp directory. `Upload` input type metadata
 replaces file instances in the arguments received by the resolver.
 
-### Single file
-
-In types:
-
-```graphql
-type Mutation {
-  updateUserAvatar(userId: String!, avatar: Upload!): User!
-}
-```
-
-In resolvers:
-
-```js
-updateUserAvatar(root, { userId, avatar }) {
-  // ✂ Auth
-  // ✂ Update avatar
-  console.log(`New avatar for user ${userId} is ${avatar.size} bytes`)
-  // ✂ Return fresh user data
-}
-```
-
-See
-[client usage for this example](https://github.com/jaydenseric/apollo-upload-client#single-file).
-
-### Multiple files
-
-In types:
-
-```graphql
-type Mutation {
-  updateGallery(galleryId: String!, images: [Upload!]!): Gallery!
-}
-```
-
-In resolvers:
-
-```js
-updateGallery(root, { galleryId, images }) {
-  // ✂ Auth
-  // ✂ Update gallery
-  console.log(`New images for gallery ${galleryId}:`)
-  images.forEach((image, index) =>
-    console.log(`Image ${index} is ${image.size} bytes`)
-  )
-  // ✂ Return fresh gallery data
-}
-```
-
-See
-[client usage for this example](https://github.com/jaydenseric/apollo-upload-client#multiple-files).
+See the
+[example API and client](https://github.com/jaydenseric/apollo-upload-examples)
 
 ## Support
 
