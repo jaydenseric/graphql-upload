@@ -1,4 +1,4 @@
-# apollo-upload-server change log
+# apollo-upload-server changelog
 
 ## Next
 
@@ -13,7 +13,7 @@
 * Compiled code is now prettier.
 * Prettier markdown files.
 * Updated package keywords.
-* Updated an Apollo documentation link in the change log.
+* Updated an Apollo documentation link in the changelog.
 * Readme improvements:
   * Added links to badges.
   * Removed the inspiration links; they are less relevant to the evolved codebase.
@@ -39,7 +39,7 @@
 ## 2.0.2
 
 * Updated dependencies.
-* Added a change log.
+* Added a changelog.
 * Dropped Yarn in favor of npm@5. Removed `yarn.lock` and updated install instructions.
 * Set targeted Node version as a string for `babel-preset-env`.
 * New ESLint config. Dropped [Standard Style](https://standardjs.com) and began using [Prettier](https://github.com/prettier/eslint-plugin-prettier).
