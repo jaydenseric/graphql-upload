@@ -9,6 +9,7 @@
 * No longer publish the `src` directory.
 * No more sourcemaps.
 * Use an arrow function for the Koa middleware, to match the Express middleware.
+* Express middleware now passes on errors instead of blocking, via [#20](https://github.com/jaydenseric/apollo-upload-server/pull/20).
 * Compiled code is now prettier.
 * Prettier markdown files.
 * Updated package keywords.
