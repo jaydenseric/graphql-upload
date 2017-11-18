@@ -1,6 +1,6 @@
 # apollo-upload-server changelog
 
-## Next
+## 3.0.0
 
 * Updated Node.js support from v6.4+ to v7.6+.
 * Using Babel directly, dropping Rollup.
