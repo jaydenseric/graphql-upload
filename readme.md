@@ -13,62 +13,55 @@ mutations or queries. Use with
 
 ## Setup
 
-### Install
-
-With [npm](https://www.npmjs.com):
+Install with [npm](https://www.npmjs.com):
 
 ```
 npm install apollo-upload-server
 ```
 
-### Server middleware
+### Middleware
 
 Add the server middleware just before
 [graphql-server](https://github.com/apollographql/graphql-server).
-
-#### [Express](http://expressjs.com)
-
-```js
-import { apolloUploadExpress } from 'apollo-upload-server'
-
-// ✂
-
-app.use(
-  '/graphql',
-  bodyParser.json(),
-  apolloUploadExpress({
-    // Optional, defaults to OS temp directory
-    uploadDir: '/tmp/uploads'
-  }),
-  graphqlExpress(/* ✂ */)
-)
-
-// ✂
-```
 
 #### [Koa](http://koajs.com)
 
 ```js
 import { apolloUploadKoa } from 'apollo-upload-server'
 
-// ✂
+// …
 
 router.post(
   '/graphql',
   apolloUploadKoa({
-    // Optional, defaults to OS temp directory
+    // Defaults to OS temp directory
     uploadDir: '/tmp/uploads'
   }),
-  graphqlKoa(/* ✂ */)
+  graphqlKoa(/* … */)
 )
+```
 
-// ✂
+#### [Express](http://expressjs.com)
+
+```js
+import { apolloUploadExpress } from 'apollo-upload-server'
+
+// …
+
+app.use(
+  '/graphql',
+  bodyParser.json(),
+  apolloUploadExpress({
+    // Defaults to OS temp directory
+    uploadDir: '/tmp/uploads'
+  }),
+  graphqlExpress(/* … */)
+)
 ```
 
 #### Custom middleware
 
-If the middleware you need is not available, import the asynchronous function
-`processRequest` to make your own:
+If the middleware you need is not available, import the async `processRequest` function to make your own:
 
 ```js
 import { processRequest } from 'apollo-upload-server'
