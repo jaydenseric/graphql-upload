@@ -81,14 +81,12 @@ Also setup [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-c
 
 ## Usage
 
-Once setup, you will be able to use [`FileList`](https://developer.mozilla.org/en/docs/Web/API/FileList), [`File`](https://developer.mozilla.org/en/docs/Web/API/File) and [`ReactNativeFile`](https://github.com/jaydenseric/apollo-upload-client#react-native) instances anywhere within mutation or query input variables. See the [client usage](https://github.com/jaydenseric/apollo-upload-client#usage).
+Once setup, on the client use [`FileList`](https://developer.mozilla.org/en/docs/Web/API/FileList), [`File`](https://developer.mozilla.org/en/docs/Web/API/File) and [`ReactNativeFile`](https://github.com/jaydenseric/apollo-upload-client#react-native) instances anywhere within query or mutation input variables. See the [client usage](https://github.com/jaydenseric/apollo-upload-client#usage).
 
-The files upload to a configurable temp directory. `Upload` input type metadata replaces file instances in the arguments received by the resolver.
+The files upload to a configurable temp directory on the GraphQL server. `Upload` input type metadata replaces file instances in the arguments received by the resolver.
 
 See the [example API and client](https://github.com/jaydenseric/apollo-upload-examples)
 
 ## Support
 
-* Node.js: See `package.json` `engines`.
-* [Koa](http://koajs.com).
-* [Express](http://expressjs.com).
+See `package.json` `engines`.
