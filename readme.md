@@ -4,19 +4,25 @@
 
 [![npm version](https://img.shields.io/npm/v/apollo-upload-server.svg)](https://npm.im/apollo-upload-server) ![Licence](https://img.shields.io/npm/l/apollo-upload-server.svg) [![Github issues](https://img.shields.io/github/issues/jaydenseric/apollo-upload-server.svg)](https://github.com/jaydenseric/apollo-upload-server/issues) [![Github stars](https://img.shields.io/github/stars/jaydenseric/apollo-upload-server.svg)](https://github.com/jaydenseric/apollo-upload-server/stargazers)
 
-Enhances [Apollo](https://apollographql.com) for intuitive file uploads via GraphQL mutations or queries. Use with [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client).
+Enhances [Apollo](https://apollographql.com) for intuitive file uploads via GraphQL queries or mutations. Use with [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client).
 
 ## Setup
 
-Install with [npm](https://www.npmjs.com):
+Install with peer dependencies using [npm](https://www.npmjs.com):
 
 ```
-npm install apollo-upload-server
+npm install apollo-upload-server graphql
 ```
 
 ### Middleware
 
-Add the server middleware just before [graphql-server](https://github.com/apollographql/graphql-server).
+Add the middleware just before [graphql-server](https://github.com/apollographql/graphql-server).
+
+#### Options
+
+* `maxFieldSize` (integer): Max allowed non-file multipart form field size in bytes; enough for your queries (default: 1 MB).
+* `maxFileSize` (integer): Max allowed file size in bytes (default: Infinity).
+* `maxFiles` (integer): Max allowed number of files (default: Infinity).
 
 #### [Koa](http://koajs.com)
 
@@ -28,10 +34,7 @@ import { apolloUploadKoa } from 'apollo-upload-server'
 router.post(
   '/graphql',
   koaBody(),
-  apolloUploadKoa({
-    // Defaults to OS temp directory
-    uploadDir: './uploads'
-  }),
+  apolloUploadKoa(/* Options */),
   graphqlKoa(/* … */)
 )
 ```
@@ -46,33 +49,40 @@ import { apolloUploadExpress } from 'apollo-upload-server'
 app.use(
   '/graphql',
   bodyParser.json(),
-  apolloUploadExpress({
-    // Defaults to OS temp directory
-    uploadDir: './uploads'
-  }),
+  apolloUploadExpress(/* Options */),
   graphqlExpress(/* … */)
 )
 ```
 
 #### Custom middleware
 
-If the middleware you need is not available, import the async `processRequest` function to make your own:
+To make your own middleware import the `processRequest` async function:
 
 ```js
 import { processRequest } from 'apollo-upload-server'
 ```
 
-### GraphQL schema
+### `Upload` scalar
 
-Add an input type for uploads to your schema. You can name it anything but it must have this shape:
+A file upload promise that resolves an object containing:
 
-```graphql
-input Upload {
-  name: String!
-  type: String!
-  size: Int!
-  path: String!
-}
+* `stream`
+* `filename`
+* `mimetype`
+* `encoding`
+
+It must be added to your types and resolvers:
+
+```js
+import { makeExecutableSchema } from 'graphql-tools'
+import { GraphQLUpload } from 'apollo-upload-server'
+
+const schema = makeExecutableSchema({
+  typeDefs: [`scalar Upload`],
+  resolvers: {
+    Upload: GraphQLUpload
+  }
+})
 ```
 
 ### Client
@@ -83,9 +93,9 @@ Also setup [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-c
 
 Once setup, on the client use [`FileList`](https://developer.mozilla.org/en/docs/Web/API/FileList), [`File`](https://developer.mozilla.org/en/docs/Web/API/File) and [`ReactNativeFile`](https://github.com/jaydenseric/apollo-upload-client#react-native) instances anywhere within query or mutation input variables. See the [client usage](https://github.com/jaydenseric/apollo-upload-client#usage).
 
-The files upload to a configurable temp directory on the GraphQL server. `Upload` input type metadata replaces file instances in the arguments received by the resolver.
+Files upload via a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec) and appear as [`Upload` scalars](#upload-scalar) in resolver arguments.
 
-See the [example API and client](https://github.com/jaydenseric/apollo-upload-examples)
+See the [example API and client](https://github.com/jaydenseric/apollo-upload-examples).
 
 ## Support
 

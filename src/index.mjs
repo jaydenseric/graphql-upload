@@ -1,52 +1,79 @@
-import mkdirp from 'mkdirp'
-import formidable from 'formidable'
+import { GraphQLScalarType } from 'graphql'
+import Busboy from 'busboy'
 import objectPath from 'object-path'
 
-export function processRequest(request, { uploadDir } = {}) {
-  // Ensure provided upload directory exists
-  if (uploadDir) mkdirp.sync(uploadDir)
+export const GraphQLUpload = new GraphQLScalarType({
+  name: 'Upload',
+  description:
+    'The `Upload` scalar type represents a file upload promise that resolves ' +
+    'an object containing `stream`, `filename`, `mimetype` and `encoding`.',
+  parseValue: value => value,
+  parseLiteral() {
+    throw new Error('Upload scalar literal unsupported')
+  },
+  serialize() {
+    throw new Error('Upload scalar serialization unsupported')
+  }
+})
 
-  const form = formidable.IncomingForm({
-    // Defaults to the OS temp directory
-    uploadDir
-  })
-
-  // Parse the multipart form request
-  return new Promise((resolve, reject) => {
-    form.parse(request, (error, { operations }, files) => {
-      if (error) reject(new Error(error))
-
-      // Decode the GraphQL operation(s). This is an array if batching is
-      // enabled.
-      operations = JSON.parse(operations)
-
-      // Check if files were uploaded
-      if (Object.keys(files).length) {
-        // File field names contain the original path to the File object in the
-        // GraphQL operation input variables. Relevent data for each uploaded
-        // file now gets placed back in the variables.
-        const operationsPath = objectPath(operations)
-        Object.keys(files).forEach(variablesPath => {
-          const { name, type, size, path } = files[variablesPath]
-          operationsPath.set(variablesPath, { name, type, size, path })
-        })
+export const processRequest = (
+  request,
+  { maxFieldSize, maxFileSize, maxFiles } = {}
+) =>
+  new Promise(resolve => {
+    const busboy = new Busboy({
+      headers: request.headers,
+      limits: {
+        fieldSize: maxFieldSize,
+        fields: 2, // Only operations and map
+        fileSize: maxFileSize,
+        files: maxFiles
       }
-
-      // Provide fields for replacement request body
-      resolve(operations)
     })
+
+    // GraphQL multipart request spec:
+    // https://github.com/jaydenseric/graphql-multipart-request-spec
+
+    let operations
+    let operationsPath
+
+    busboy.on('field', (fieldName, value) => {
+      switch (fieldName) {
+        case 'operations':
+          operations = JSON.parse(value)
+          operationsPath = objectPath(operations)
+          break
+        case 'map': {
+          for (const [mapFieldName, paths] of Object.entries(
+            JSON.parse(value)
+          )) {
+            // Upload scalar
+            const upload = new Promise(resolve =>
+              busboy.on(
+                'file',
+                (fieldName, stream, filename, encoding, mimetype) =>
+                  fieldName === mapFieldName &&
+                  resolve({ stream, filename, mimetype, encoding })
+              )
+            )
+
+            for (const path of paths) operationsPath.set(path, upload)
+          }
+          resolve(operations)
+        }
+      }
+    })
+
+    request.pipe(busboy)
   })
-}
 
 export const apolloUploadKoa = options => async (ctx, next) => {
-  // Skip if there are no uploads
   if (ctx.request.is('multipart/form-data'))
     ctx.request.body = await processRequest(ctx.req, options)
   await next()
 }
 
 export const apolloUploadExpress = options => (request, response, next) => {
-  // Skip if there are no uploads
   if (!request.is('multipart/form-data')) return next()
   processRequest(request, options)
     .then(body => {
