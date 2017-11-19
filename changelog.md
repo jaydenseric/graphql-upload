@@ -2,6 +2,11 @@
 
 ## Next
 
+* New API to support the [GraphQL multipart request spec v2.0.0-alpha.2](https://github.com/jaydenseric/graphql-multipart-request-spec/releases/tag/v2.0.0-alpha.2). Files no longer upload to the filesystem; [readable streams](https://nodejs.org/api/stream.html#stream_readable_streams) are used in resolvers instead.
+* Export a new `Upload` scalar type to use in place of the old `Upload` input type. It represents a file upload promise that resolves an object containing `stream`, `filename`, `mimetype` and `encoding`.
+* Deprecated the `uploadDir` middleware option.
+* Added new `maxFieldSize`, `maxFileSize` and `maxFiles` middleware options.
+* `graphql` is now a peer dependency.
 * Middleware are now arrow functions.
 
 ## 3.0.0
