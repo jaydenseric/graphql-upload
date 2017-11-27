@@ -95,7 +95,9 @@ Once setup, on the client use [`FileList`](https://developer.mozilla.org/en/docs
 
 Files upload via a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec) and appear as [`Upload` scalars](#upload-scalar) in resolver arguments.
 
-See the [example API and client](https://github.com/jaydenseric/apollo-upload-examples).
+## Examples
+
+Find server and client side examples in the the [apollo-upload-examples](https://github.com/jaydenseric/apollo-upload-examples) repository.
 
 ## Support
 
