@@ -40,15 +40,15 @@
     "graphql": "^0.11.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.32",
-    "@babel/core": "^7.0.0-beta.32",
-    "@babel/preset-env": "^7.0.0-beta.32",
-    "eslint": "^4.11.0",
-    "eslint-plugin-prettier": "^2.3.1",
+    "@babel/cli": "^7.0.0-beta.35",
+    "@babel/core": "^7.0.0-beta.35",
+    "@babel/preset-env": "^7.0.0-beta.35",
+    "eslint": "^4.13.1",
+    "eslint-plugin-prettier": "^2.4.0",
     "graphql": "^0.11.7",
     "husky": "^0.14.3",
-    "lint-staged": "^5.0.0",
-    "prettier": "^1.8.2"
+    "lint-staged": "^6.0.0",
+    "prettier": "^1.9.2"
   },
   "scripts": {
     "build": "npm run build:main && npm run build:module && prettier --write 'lib/**/*.{js,mjs}'",
@@ -92,8 +92,8 @@
     }
   },
   "prettier": {
+    "proseWrap": "never",
     "semi": false,
-    "singleQuote": true,
-    "proseWrap": false
+    "singleQuote": true
   }
 }
