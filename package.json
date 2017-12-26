@@ -40,10 +40,10 @@
     "graphql": "^0.11.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.35",
-    "@babel/core": "^7.0.0-beta.35",
-    "@babel/preset-env": "^7.0.0-beta.35",
-    "eslint": "^4.13.1",
+    "@babel/cli": "^7.0.0-beta.36",
+    "@babel/core": "^7.0.0-beta.36",
+    "@babel/preset-env": "^7.0.0-beta.36",
+    "eslint": "^4.14.0",
     "eslint-plugin-prettier": "^2.4.0",
     "graphql": "^0.11.7",
     "husky": "^0.14.3",
