@@ -3,6 +3,7 @@
 ## Next
 
 * Updated dependencies.
+* Smarter Babel config with `.babeljc.js`.
 
 ## 4.0.0-alpha.1
 
