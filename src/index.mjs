@@ -2,7 +2,7 @@ import { GraphQLScalarType } from 'graphql'
 import Busboy from 'busboy'
 import objectPath from 'object-path'
 
-const specUrl = 'https://github.com/jaydenseric/graphql-multipart-request-spec'
+const SPEC_URL = 'https://github.com/jaydenseric/graphql-multipart-request-spec'
 
 export const GraphQLUpload = new GraphQLScalarType({
   name: 'Upload',
@@ -71,7 +71,7 @@ export const processRequest = (
         case 'map': {
           if (!operations) {
             const error = new Error(
-              `Misordered multipart fields; “map” should follow “operations” (${specUrl}).`
+              `Misordered multipart fields; “map” should follow “operations” (${SPEC_URL}).`
             )
             error.status = 400
             error.expose = true
@@ -106,7 +106,7 @@ export const processRequest = (
     parser.on('file', (fieldName, stream, filename, encoding, mimetype) => {
       if (!map) {
         const error = new Error(
-          `Misordered multipart fields; files should follow “map” (${specUrl}).`
+          `Misordered multipart fields; files should follow “map” (${SPEC_URL}).`
         )
         error.status = 400
         error.expose = true
