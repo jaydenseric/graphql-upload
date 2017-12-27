@@ -70,19 +70,25 @@ export const processRequest = (
           operationsPath = objectPath(operations)
           break
         case 'map': {
-          if (!operations)
-            reject(
-              new Error(
-                'Misordered multipart fields; “map” should follow “operations”.'
-              )
+          if (!operations) {
+            const error = new Error(
+              'Misordered multipart fields; “map” should follow “operations”.'
             )
+            error.status = 400
+            error.expose = true
+            reject(error)
+          }
 
           map = JSON.parse(value)
 
           // Check max files is not exceeded, even though the number of files
           // to parse might not match the map provided by the client.
-          if (Object.keys(map).length > maxFiles)
-            reject(new Error(`${maxFiles} max file uploads exceeded.`))
+          if (Object.keys(map).length > maxFiles) {
+            const error = new Error(`${maxFiles} max file uploads exceeded.`)
+            error.status = 413
+            error.expose = true
+            reject(error)
+          }
 
           for (const [fieldName, paths] of Object.entries(map)) {
             map[fieldName] = new Upload()
@@ -99,10 +105,14 @@ export const processRequest = (
     })
 
     parser.on('file', (fieldName, stream, filename, encoding, mimetype) => {
-      if (!map)
-        reject(
-          new Error('Misordered multipart fields; files should follow “map”.')
+      if (!map) {
+        const error = new Error(
+          'Misordered multipart fields; files should follow “map”.'
         )
+        error.status = 400
+        error.expose = true
+        reject(error)
+      }
 
       if (fieldName in map)
         // File is expected.
