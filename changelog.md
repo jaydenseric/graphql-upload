@@ -3,7 +3,7 @@
 ## Next
 
 * Updated dependencies.
-* Smarter Babel config with `.babeljc.js`.
+* Smarter Babel config with `.babelrc.js`.
 * Refactor to use fewer Busboy event listeners.
 * Improved error handling, fixing [#26](https://github.com/jaydenseric/apollo-upload-server/issues/26):
   * [Misordered multipart fields](https://github.com/jaydenseric/graphql-multipart-request-spec) cause `processRequest` to throw a middleware error.
