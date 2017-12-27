@@ -175,5 +175,8 @@ export const apolloUploadExpress = options => (request, response, next) => {
       request.body = body
       next()
     })
-    .catch(next)
+    .catch(error => {
+      if (error.status && error.expose) response.status(error.status)
+      next(error)
+    })
 }
