@@ -16,16 +16,41 @@ export const GraphQLUpload = new GraphQLScalarType({
   }
 })
 
+class Upload {
+  constructor() {
+    this.promise = new Promise((resolve, reject) => {
+      this.reject = reject
+      this.resolve = file => {
+        this.file = file
+
+        file.stream.once('end', () => {
+          this.done = true
+        })
+
+        // Monkey patch busboy to emit an error when a file is too big.
+        file.stream.once('limit', () => {
+          file.stream.emit(
+            'error',
+            new Error('File truncated as it exceeds the size limit.')
+          )
+        })
+
+        resolve(file)
+      }
+    })
+  }
+}
+
 export const processRequest = (
   request,
   { maxFieldSize, maxFileSize, maxFiles } = {}
 ) =>
-  new Promise(resolve => {
-    const busboy = new Busboy({
+  new Promise((resolve, reject) => {
+    const parser = new Busboy({
       headers: request.headers,
       limits: {
         fieldSize: maxFieldSize,
-        fields: 2, // Only operations and map
+        fields: 2, // Only operations and map.
         fileSize: maxFileSize,
         files: maxFiles
       }
@@ -36,35 +61,95 @@ export const processRequest = (
 
     let operations
     let operationsPath
+    let map
 
-    busboy.on('field', (fieldName, value) => {
+    parser.on('field', (fieldName, value) => {
       switch (fieldName) {
         case 'operations':
           operations = JSON.parse(value)
           operationsPath = objectPath(operations)
           break
         case 'map': {
-          for (const [mapFieldName, paths] of Object.entries(
-            JSON.parse(value)
-          )) {
-            // Upload scalar
-            const upload = new Promise(resolve =>
-              busboy.on(
-                'file',
-                (fieldName, stream, filename, encoding, mimetype) =>
-                  fieldName === mapFieldName &&
-                  resolve({ stream, filename, mimetype, encoding })
+          if (!operations)
+            reject(
+              new Error(
+                'Misordered multipart fields; “map” should follow “operations”.'
               )
             )
 
-            for (const path of paths) operationsPath.set(path, upload)
+          map = JSON.parse(value)
+
+          // Check max files is not exceeded, even though the number of files
+          // to parse might not match the map provided by the client.
+          if (Object.keys(map).length > maxFiles)
+            reject(new Error(`${maxFiles} max file uploads exceeded.`))
+
+          for (const [fieldName, paths] of Object.entries(map)) {
+            map[fieldName] = new Upload()
+
+            // Repopulate operations with the promise wherever the file occured
+            // for use by the Upload scalar.
+            for (const path of paths)
+              operationsPath.set(path, map[fieldName].promise)
           }
+
           resolve(operations)
         }
       }
     })
 
-    request.pipe(busboy)
+    parser.on('file', (fieldName, stream, filename, encoding, mimetype) => {
+      if (!map)
+        reject(
+          new Error('Misordered multipart fields; files should follow “map”.')
+        )
+
+      if (fieldName in map)
+        // File is expected.
+        map[fieldName].resolve({
+          stream,
+          filename,
+          mimetype,
+          encoding
+        })
+      else
+        // Discard the unexpected file.
+        stream.resume()
+    })
+
+    parser.once('filesLimit', () => {
+      for (const upload of Object.values(map))
+        if (!upload.file)
+          upload.reject(new Error(`${maxFiles} max file uploads exceeded.`))
+    })
+
+    parser.once('finish', () => {
+      for (const upload of Object.values(map))
+        if (!upload.file)
+          upload.reject(new Error('File missing in the request.'))
+    })
+
+    request.once('aborted', () => {
+      for (const upload of Object.values(map))
+        if (!upload.file)
+          upload.reject(
+            new Error(
+              'Request aborted before the file upload stream could be parsed.'
+            )
+          )
+        else if (!upload.done) {
+          upload.file.stream.truncated = true
+          upload.file.stream.emit(
+            'error',
+            new Error(
+              'Request aborted while the file upload stream was being parsed.'
+            )
+          )
+          upload.file.stream.destroy()
+        }
+    })
+
+    request.pipe(parser)
   })
 
 export const apolloUploadKoa = options => async (ctx, next) => {
