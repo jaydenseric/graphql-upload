@@ -9,7 +9,7 @@
   * [Misordered multipart fields](https://github.com/jaydenseric/graphql-multipart-request-spec) cause `processRequest` to throw a middleware error.
   * The `map` field provided by the client is used to naively check the `maxFiles` option is not exceeded for an immediate middleware error, even though the real number of files to parse might not match in a malformed request.
   * A `scalar Upload` promise rejects with an error if the file was missing from the request.
-  * Already if a file exceeded the `maxFileSize` option the file is truncated, the stream emits a `limit` event and `stream.truncated === true`. Now an `error` event is also emitted with a meaningful message.
+  * Already if a file exceeds the `maxFileSize` option the file is truncated, the stream emits a `limit` event and `stream.truncated === true`. Now an `error` event is also emitted with a meaningful message.
   * Aborting requests from the client causes `scalar Upload` promises to reject with a meaningful error for file upload streams that have not yet been parsed. For streams being parsed an `error` event is emitted and `stream.truncated === true`. It is up to consumers to cleanup aborted streams in their resolvers.
 
 ## 4.0.0-alpha.1
