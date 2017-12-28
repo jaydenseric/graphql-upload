@@ -25,7 +25,8 @@
     "express"
   ],
   "files": [
-    "lib"
+    "lib",
+    "!lib/test.*"
   ],
   "main": "lib",
   "module": "lib/index.mjs",
@@ -52,15 +53,18 @@
     "husky": "^0.14.3",
     "koa": "^2.4.1",
     "lint-staged": "^6.0.0",
-    "prettier": "^1.9.2"
+    "prettier": "^1.9.2",
+    "rimraf": "^2.6.2"
   },
   "scripts": {
-    "build": "npm run build:js && npm run build:mjs && prettier --write 'lib/**/*.{js,mjs}'",
+    "clean": "rimraf lib",
+    "build": "npm run clean && npm run build:js && npm run build:mjs && prettier --write 'lib/**/*.{js,mjs}'",
     "build:js": "babel src --out-dir lib",
     "build:mjs": "MODULE=true babel src --out-dir lib --keep-file-extension",
     "lint": "eslint . --ext js,mjs",
     "fix": "npm run lint -- --fix && prettier --write '**/*.md'",
-    "test": "ava",
+    "pretest": "npm run build",
+    "test": "ava lib/test.js",
     "precommit": "lint-staged",
     "prepublishOnly": "npm run lint && npm run build && npm run test"
   },
