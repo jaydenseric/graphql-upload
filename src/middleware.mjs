@@ -1,7 +1,6 @@
 import Busboy from 'busboy'
 import objectPath from 'object-path'
-
-const SPEC_URL = 'https://github.com/jaydenseric/graphql-multipart-request-spec'
+import { SPEC_URL, UploadError } from './errors'
 
 class Upload {
   constructor() {
@@ -18,7 +17,10 @@ class Upload {
         file.stream.once('limit', () => {
           file.stream.emit(
             'error',
-            new Error('File truncated as it exceeds the size limit.')
+            new UploadError(
+              'MaxFileSize',
+              'File truncated as it exceeds the size limit.'
+            )
           )
         })
 
@@ -47,34 +49,49 @@ export const processRequest = (
     let operationsPath
     let map
 
-    parser.on('field', (fieldName, value) => {
+    function onFilesLimit() {
+      if (map)
+        for (const upload of Object.values(map))
+          if (!upload.file)
+            upload.reject(
+              new UploadError(
+                'MaxFiles',
+                `${maxFiles} max file uploads exceeded.`
+              )
+            )
+    }
+
+    function onField(fieldName, value) {
       switch (fieldName) {
         case 'operations':
           operations = JSON.parse(value)
           operationsPath = objectPath(operations)
           break
         case 'map': {
-          if (!operations) {
-            const error = new Error(
-              `Misordered multipart fields; “map” should follow “operations” (${SPEC_URL}).`
+          if (!operations)
+            return reject(
+              new UploadError(
+                'MapBeforeOperations',
+                `Misordered multipart fields; “map” should follow “operations” (${SPEC_URL}).`,
+                400
+              )
             )
-            error.status = 400
-            error.expose = true
-            reject(error)
-          }
 
-          map = JSON.parse(value)
+          const mapEntries = Object.entries(JSON.parse(value))
 
           // Check max files is not exceeded, even though the number of files
           // to parse might not match the map provided by the client.
-          if (Object.keys(map).length > maxFiles) {
-            const error = new Error(`${maxFiles} max file uploads exceeded.`)
-            error.status = 413
-            error.expose = true
-            reject(error)
-          }
+          if (mapEntries.length > maxFiles)
+            return reject(
+              new UploadError(
+                'MaxFiles',
+                `${maxFiles} max file uploads exceeded.`,
+                413
+              )
+            )
 
-          for (const [fieldName, paths] of Object.entries(map)) {
+          map = {}
+          for (const [fieldName, paths] of mapEntries) {
             map[fieldName] = new Upload()
 
             // Repopulate operations with the promise wherever the file occured
@@ -86,17 +103,17 @@ export const processRequest = (
           resolve(operations)
         }
       }
-    })
+    }
 
-    parser.on('file', (fieldName, stream, filename, encoding, mimetype) => {
-      if (!map) {
-        const error = new Error(
-          `Misordered multipart fields; files should follow “map” (${SPEC_URL}).`
+    function onFile(fieldName, stream, filename, encoding, mimetype) {
+      if (!map)
+        return reject(
+          new UploadError(
+            'FilesBeforeMap',
+            `Misordered multipart fields; files should follow “map” (${SPEC_URL}).`,
+            400
+          )
         )
-        error.status = 400
-        error.expose = true
-        reject(error)
-      }
 
       if (fieldName in map)
         // File is expected.
@@ -109,39 +126,45 @@ export const processRequest = (
       else
         // Discard the unexpected file.
         stream.resume()
-    })
+    }
 
-    parser.once('filesLimit', () => {
-      for (const upload of Object.values(map))
-        if (!upload.file)
-          upload.reject(new Error(`${maxFiles} max file uploads exceeded.`))
-    })
-
-    parser.once('finish', () => {
-      for (const upload of Object.values(map))
-        if (!upload.file)
-          upload.reject(new Error('File missing in the request.'))
-    })
-
-    request.once('aborted', () => {
-      for (const upload of Object.values(map))
-        if (!upload.file)
-          upload.reject(
-            new Error(
-              'Request aborted before the file upload stream could be parsed.'
+    function onFinish() {
+      if (map)
+        for (const upload of Object.values(map))
+          if (!upload.file)
+            upload.reject(
+              new UploadError('FileMissing', 'File missing in the request.')
             )
-          )
-        else if (!upload.done) {
-          upload.file.stream.truncated = true
-          upload.file.stream.emit(
-            'error',
-            new Error(
-              'Request aborted while the file upload stream was being parsed.'
+    }
+
+    function onAborted() {
+      if (map)
+        for (const upload of Object.values(map))
+          if (!upload.file)
+            upload.reject(
+              new UploadError(
+                'AbortedUploadPromise',
+                'Request aborted before the file upload stream could be parsed.'
+              )
             )
-          )
-          upload.file.stream.destroy()
-        }
-    })
+          else if (!upload.done) {
+            upload.file.stream.truncated = true
+            upload.file.stream.emit(
+              'error',
+              new UploadError(
+                'AbortedFileStream',
+                'Request aborted while the file upload stream was being parsed.'
+              )
+            )
+            upload.file.stream.destroy()
+          }
+    }
+
+    parser.once('filesLimit', onFilesLimit)
+    parser.on('field', onField)
+    parser.on('file', onFile)
+    parser.once('finish', onFinish)
+    request.once('aborted', onAborted)
 
     request.pipe(parser)
   })
