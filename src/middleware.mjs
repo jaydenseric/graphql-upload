@@ -1,6 +1,15 @@
 import Busboy from 'busboy'
 import objectPath from 'object-path'
-import { SPEC_URL, UploadError } from './errors'
+import {
+  SPEC_URL,
+  MaxFileSizeUploadError,
+  MaxFilesUploadError,
+  MapBeforeOperationsUploadError,
+  FilesBeforeMapUploadError,
+  FileMissingUploadError,
+  AbortedUploadPromiseUploadError,
+  AbortedFileStreamUploadError
+} from './errors'
 
 class Upload {
   constructor() {
@@ -17,8 +26,7 @@ class Upload {
         file.stream.once('limit', () => {
           file.stream.emit(
             'error',
-            new UploadError(
-              'MaxFileSize',
+            new MaxFileSizeUploadError(
               'File truncated as it exceeds the size limit.'
             )
           )
@@ -54,10 +62,7 @@ export const processRequest = (
         for (const upload of Object.values(map))
           if (!upload.file)
             upload.reject(
-              new UploadError(
-                'MaxFiles',
-                `${maxFiles} max file uploads exceeded.`
-              )
+              new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`)
             )
     }
 
@@ -70,8 +75,7 @@ export const processRequest = (
         case 'map': {
           if (!operations)
             return reject(
-              new UploadError(
-                'MapBeforeOperations',
+              new MapBeforeOperationsUploadError(
                 `Misordered multipart fields; “map” should follow “operations” (${SPEC_URL}).`,
                 400
               )
@@ -83,8 +87,7 @@ export const processRequest = (
           // to parse might not match the map provided by the client.
           if (mapEntries.length > maxFiles)
             return reject(
-              new UploadError(
-                'MaxFiles',
+              new MaxFilesUploadError(
                 `${maxFiles} max file uploads exceeded.`,
                 413
               )
@@ -108,8 +111,7 @@ export const processRequest = (
     function onFile(fieldName, stream, filename, encoding, mimetype) {
       if (!map)
         return reject(
-          new UploadError(
-            'FilesBeforeMap',
+          new FilesBeforeMapUploadError(
             `Misordered multipart fields; files should follow “map” (${SPEC_URL}).`,
             400
           )
@@ -133,7 +135,7 @@ export const processRequest = (
         for (const upload of Object.values(map))
           if (!upload.file)
             upload.reject(
-              new UploadError('FileMissing', 'File missing in the request.')
+              new FileMissingUploadError('File missing in the request.')
             )
     }
 
@@ -142,8 +144,7 @@ export const processRequest = (
         for (const upload of Object.values(map))
           if (!upload.file)
             upload.reject(
-              new UploadError(
-                'AbortedUploadPromise',
+              new AbortedUploadPromiseUploadError(
                 'Request aborted before the file upload stream could be parsed.'
               )
             )
@@ -151,8 +152,7 @@ export const processRequest = (
             upload.file.stream.truncated = true
             upload.file.stream.emit(
               'error',
-              new UploadError(
-                'AbortedFileStream',
+              new AbortedFileStreamUploadError(
                 'Request aborted while the file upload stream was being parsed.'
               )
             )
