@@ -5,6 +5,7 @@
 * Updated dependencies.
 * Smarter Babel config with `.babelrc.js`.
 * Modular project structure that works better for native ESM.
+* Now exporting errors, so consumers can use `instanceof` with them.
 * Refactor to use fewer Busboy event listeners.
 * Improved error handling, fixing [#26](https://github.com/jaydenseric/apollo-upload-server/issues/26):
   * [Misordered multipart fields](https://github.com/jaydenseric/graphql-multipart-request-spec) cause `processRequest` to throw a middleware error.
