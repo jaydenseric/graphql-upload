@@ -10,7 +10,17 @@ module.exports = {
           node: node.substring(2) // Strip `>=`
         },
         shippedProposals: true,
-        modules: process.env.MODULE ? false : 'commonjs'
+        modules: process.env.MODULE ? false : 'commonjs',
+        useBuiltIns: 'usage'
+      }
+    ]
+  ],
+  plugins: [
+    [
+      '@babel/transform-runtime',
+      {
+        polyfill: false,
+        regenerator: false
       }
     ]
   ]

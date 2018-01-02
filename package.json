@@ -31,9 +31,10 @@
   "main": "lib",
   "module": "lib/index.mjs",
   "engines": {
-    "node": ">=7.6"
+    "node": ">=6.10"
   },
   "dependencies": {
+    "@babel/runtime": "^7.0.0-beta.36",
     "busboy": "^0.2.14",
     "object-path": "^0.11.4"
   },
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.36",
     "@babel/core": "^7.0.0-beta.36",
+    "@babel/plugin-transform-runtime": "^7.0.0-beta.36",
     "@babel/preset-env": "^7.0.0-beta.36",
     "ava": "^0.24.0",
     "eslint": "^4.14.0",
