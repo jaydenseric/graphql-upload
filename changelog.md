@@ -4,6 +4,7 @@
 
 * Updated dependencies.
 * Smarter Babel config with `.babelrc.js`.
+* Transpile and polyfill for Node.js v6.10+ (down from v7.6+) to [support AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html), fixing [#33](https://github.com/jaydenseric/apollo-upload-server/issues/33).
 
 ## 4.0.0-alpha.1
 
