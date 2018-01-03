@@ -6,7 +6,7 @@
 * Smarter Babel config with `.babelrc.js`.
 * Transpile and polyfill for Node.js v6.10+ (down from v7.6+) to [support AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html), fixing [#33](https://github.com/jaydenseric/apollo-upload-server/issues/33).
 * Modular project structure that works better for native ESM.
-* Added tests.
+* Added tests and set up Travis to test using the latest stable Node.js version, and the oldest version supported in `package.json` `engines` (v6.10).
 * Refactor to use fewer Busboy event listeners.
 * Improved error handling, fixing [#26](https://github.com/jaydenseric/apollo-upload-server/issues/26):
   * Custom errors are thrown or emitted with meaningful messages that are exported so consumers can use `instanceof` with them.
