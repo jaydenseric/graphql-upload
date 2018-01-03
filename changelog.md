@@ -6,14 +6,16 @@
 * Smarter Babel config with `.babelrc.js`.
 * Transpile and polyfill for Node.js v6.10+ (down from v7.6+) to [support AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html), fixing [#33](https://github.com/jaydenseric/apollo-upload-server/issues/33).
 * Modular project structure that works better for native ESM.
-* Now exporting errors, so consumers can use `instanceof` with them.
+* Added tests.
 * Refactor to use fewer Busboy event listeners.
 * Improved error handling, fixing [#26](https://github.com/jaydenseric/apollo-upload-server/issues/26):
-  * [Misordered multipart fields](https://github.com/jaydenseric/graphql-multipart-request-spec) cause `processRequest` to throw a middleware error.
-  * The `map` field provided by the client is used to naively check the `maxFiles` option is not exceeded for an immediate middleware error, even though the real number of files to parse might not match in a malformed request.
-  * A `scalar Upload` promise rejects with an error if the file was missing from the request.
-  * Already if a file exceeds the `maxFileSize` option the file is truncated, the stream emits a `limit` event and `stream.truncated === true`. Now an `error` event is also emitted with a meaningful message.
-  * Aborting requests from the client causes `scalar Upload` promises to reject with a meaningful error for file upload streams that have not yet been parsed. For streams being parsed an `error` event is emitted and `stream.truncated === true`. It is up to consumers to cleanup aborted streams in their resolvers.
+  * Custom errors are thrown or emitted with meaningful messages that are exported so consumers can use `instanceof` with them.
+  * Where it makes sense, errors cause relevant HTTP status codes to be set in middleware.
+  * [Misordered multipart fields](https://github.com/jaydenseric/graphql-multipart-request-spec) cause `processRequest` to throw `MapBeforeOperationsUploadError` and `FilesBeforeMapUploadError` errors in middleware.
+  * The `map` field provided by the client is used to naively check the `maxFiles` option is not exceeded for a speedy `MaxFilesUploadError` error in middleware. The real number of files parsed is checked too, incase the request is malformed.
+  * If files are missing from the request the `scalar Upload` promises reject with a `FileMissingUploadError` error.
+  * Already if a file exceeds the `maxFileSize` option the file is truncated, the stream emits a `limit` event and `stream.truncated === true`. Now an `error` event is also emitted with a `MaxFileSizeUploadError`.
+  * Aborting requests from the client causes `scalar Upload` promises to reject with a `UploadPromiseDisconnectUploadError` error for file upload streams that have not yet been parsed. For streams being parsed an `error` event is emitted with an `FileStreamDisconnectUploadError` error and `stream.truncated === true`. It is up to consumers to cleanup aborted streams in their resolvers.
 
 ## 4.0.0-alpha.1
 
