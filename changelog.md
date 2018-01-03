@@ -1,6 +1,6 @@
 # apollo-upload-server changelog
 
-## Next
+## 4.0.0-alpha.2
 
 * Updated dependencies.
 * Smarter Babel config with `.babelrc.js`.
