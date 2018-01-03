@@ -59,8 +59,7 @@
     "rimraf": "^2.6.2"
   },
   "scripts": {
-    "clean": "rimraf lib",
-    "build": "npm run clean && npm run build:js && npm run build:mjs && prettier --write 'lib/**/*.{js,mjs}'",
+    "build": "rimraf lib && npm run build:js && npm run build:mjs && prettier --write 'lib/**/*.{js,mjs}'",
     "build:js": "babel src --out-dir lib",
     "build:mjs": "MODULE=true babel src --out-dir lib --keep-file-extension",
     "lint": "eslint . --ext js,mjs",
