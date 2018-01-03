@@ -23,5 +23,5 @@ export class MaxFilesUploadError extends UploadError {}
 export class MapBeforeOperationsUploadError extends UploadError {}
 export class FilesBeforeMapUploadError extends UploadError {}
 export class FileMissingUploadError extends UploadError {}
-export class AbortedUploadPromiseUploadError extends UploadError {}
-export class AbortedFileStreamUploadError extends UploadError {}
+export class UploadPromiseDisconnectUploadError extends UploadError {}
+export class FileStreamDisconnectUploadError extends UploadError {}

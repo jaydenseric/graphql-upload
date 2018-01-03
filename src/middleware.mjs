@@ -7,8 +7,8 @@ import {
   MapBeforeOperationsUploadError,
   FilesBeforeMapUploadError,
   FileMissingUploadError,
-  AbortedUploadPromiseUploadError,
-  AbortedFileStreamUploadError
+  UploadPromiseDisconnectUploadError,
+  FileStreamDisconnectUploadError
 } from './errors'
 
 class Upload {
@@ -144,16 +144,16 @@ export const processRequest = (
         for (const upload of Object.values(map))
           if (!upload.file)
             upload.reject(
-              new AbortedUploadPromiseUploadError(
-                'Request aborted before the file upload stream could be parsed.'
+              new UploadPromiseDisconnectUploadError(
+                'Request disconnected before file upload stream parsing.'
               )
             )
           else if (!upload.done) {
             upload.file.stream.truncated = true
             upload.file.stream.emit(
               'error',
-              new AbortedFileStreamUploadError(
-                'Request aborted while the file upload stream was being parsed.'
+              new FileStreamDisconnectUploadError(
+                'Request disconnected during file upload stream parsing.'
               )
             )
             upload.file.stream.destroy()
