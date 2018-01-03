@@ -23,14 +23,14 @@ class Upload {
         })
 
         // Monkey patch busboy to emit an error when a file is too big.
-        file.stream.once('limit', () => {
+        file.stream.once('limit', () =>
           file.stream.emit(
             'error',
             new MaxFileSizeUploadError(
               'File truncated as it exceeds the size limit.'
             )
           )
-        })
+        )
 
         resolve(file)
       }
@@ -57,16 +57,7 @@ export const processRequest = (
     let operationsPath
     let map
 
-    function onFilesLimit() {
-      if (map)
-        for (const upload of Object.values(map))
-          if (!upload.file)
-            upload.reject(
-              new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`)
-            )
-    }
-
-    function onField(fieldName, value) {
+    parser.on('field', (fieldName, value) => {
       switch (fieldName) {
         case 'operations':
           operations = JSON.parse(value)
@@ -106,9 +97,9 @@ export const processRequest = (
           resolve(operations)
         }
       }
-    }
+    })
 
-    function onFile(fieldName, stream, filename, encoding, mimetype) {
+    parser.on('file', (fieldName, stream, filename, encoding, mimetype) => {
       if (!map)
         return reject(
           new FilesBeforeMapUploadError(
@@ -128,18 +119,27 @@ export const processRequest = (
       else
         // Discard the unexpected file.
         stream.resume()
-    }
+    })
 
-    function onFinish() {
+    parser.once('filesLimit', () => {
+      if (map)
+        for (const upload of Object.values(map))
+          if (!upload.file)
+            upload.reject(
+              new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`)
+            )
+    })
+
+    parser.once('finish', () => {
       if (map)
         for (const upload of Object.values(map))
           if (!upload.file)
             upload.reject(
               new FileMissingUploadError('File missing in the request.')
             )
-    }
+    })
 
-    function onAborted() {
+    request.on('close', () => {
       if (map)
         for (const upload of Object.values(map))
           if (!upload.file)
@@ -156,15 +156,8 @@ export const processRequest = (
                 'Request disconnected during file upload stream parsing.'
               )
             )
-            upload.file.stream.destroy()
           }
-    }
-
-    parser.once('filesLimit', onFilesLimit)
-    parser.on('field', onField)
-    parser.on('file', onFile)
-    parser.once('finish', onFinish)
-    request.once('aborted', onAborted)
+    })
 
     request.pipe(parser)
   })
