@@ -1,5 +1,10 @@
 # apollo-upload-server changelog
 
+## Next
+
+* Updated dependencies.
+* Updated peer dependencies to support `graphql@0.12`, via [#36](https://github.com/jaydenseric/apollo-upload-server/pull/36).
+
 ## 4.0.0-alpha.2
 
 * Updated dependencies.
