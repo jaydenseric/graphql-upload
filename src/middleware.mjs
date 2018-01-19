@@ -84,14 +84,14 @@ export const processRequest = (
               )
             )
 
-          map = {}
+          map = new Map()
           for (const [fieldName, paths] of mapEntries) {
-            map[fieldName] = new Upload()
+            map.set(fieldName, new Upload())
 
             // Repopulate operations with the promise wherever the file occured
             // for use by the Upload scalar.
             for (const path of paths)
-              operationsPath.set(path, map[fieldName].promise)
+              operationsPath.set(path, map.get(fieldName).promise)
           }
 
           resolve(operations)
@@ -108,9 +108,9 @@ export const processRequest = (
           )
         )
 
-      if (fieldName in map)
+      if (map.has(fieldName))
         // File is expected.
-        map[fieldName].resolve({
+        map.get(fieldName).resolve({
           stream,
           filename,
           mimetype,
@@ -123,7 +123,7 @@ export const processRequest = (
 
     parser.once('filesLimit', () => {
       if (map)
-        for (const upload of Object.values(map))
+        for (const upload of map.values())
           if (!upload.file)
             upload.reject(
               new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`)
@@ -132,7 +132,7 @@ export const processRequest = (
 
     parser.once('finish', () => {
       if (map)
-        for (const upload of Object.values(map))
+        for (const upload of map.values())
           if (!upload.file)
             upload.reject(
               new FileMissingUploadError('File missing in the request.')
@@ -141,7 +141,7 @@ export const processRequest = (
 
     request.on('close', () => {
       if (map)
-        for (const upload of Object.values(map))
+        for (const upload of map.values())
           if (!upload.file)
             upload.reject(
               new UploadPromiseDisconnectUploadError(
