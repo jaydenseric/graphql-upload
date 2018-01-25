@@ -1,5 +1,9 @@
 # apollo-upload-server changelog
 
+## 4.0.0-alpha.4
+
+* Updated readme to include Blob type info
+
 ## 4.0.0-alpha.3
 
 * Updated dependencies.
