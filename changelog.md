@@ -3,7 +3,12 @@
 ## Next
 
 * Updated dependencies.
-* Documented [`Blob`](https://developer.mozilla.org/en/docs/Web/API/Blob) types, via [#39](https://github.com/jaydenseric/apollo-upload-server/pull/39).
+* Readme updates:
+  * Documented [`Blob`](https://developer.mozilla.org/en/docs/Web/API/Blob) types, via [#39](https://github.com/jaydenseric/apollo-upload-server/pull/39).
+  * Explained how to use `processRequest` for custom middleware.
+  * Improved usage instructions.
+  * Display oldest supported Node.js version.
+  * Misc. tweaks including a simpler heading structure.
 
 ## 4.0.0-alpha.3
 
