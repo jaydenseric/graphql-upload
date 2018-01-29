@@ -64,10 +64,10 @@
     "build:mjs": "MODULE=true babel src --out-dir lib --keep-file-extension",
     "lint": "eslint . --ext js,mjs",
     "fix": "npm run lint -- --fix && prettier --write '**/*.md'",
-    "pretest": "npm run build",
+    "pretest": "npm run lint && npm run build",
     "test": "ava lib/test.js --serial --verbose",
     "precommit": "lint-staged",
-    "prepublishOnly": "npm run lint && npm run build && npm run test"
+    "prepublishOnly": "npm run test"
   },
   "lint-staged": {
     "*.mjs": "eslint"

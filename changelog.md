@@ -3,6 +3,7 @@
 ## Next
 
 * Updated dependencies.
+* Simplified npm scripts.
 * Readme updates:
   * Documented [`Blob`](https://developer.mozilla.org/en/docs/Web/API/Blob) types, via [#39](https://github.com/jaydenseric/apollo-upload-server/pull/39).
   * Explained how to use `processRequest` for custom middleware.
