@@ -1,6 +1,6 @@
 # apollo-upload-server changelog
 
-## Next
+## 4.0.2
 
 * Temporary solution for importing CommonJS in `.mjs`, fixing reopened [#40](https://github.com/jaydenseric/apollo-upload-server/issues/40).
 
