@@ -91,7 +91,7 @@ Also setup [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-c
 
 ## Usage
 
-Once setup, on the client use [`FileList`](https://developer.mozilla.org/en/docs/Web/API/FileList), [`File`](https://developer.mozilla.org/en/docs/Web/API/File) and [`ReactNativeFile`](https://github.com/jaydenseric/apollo-upload-client#react-native) instances anywhere within query or mutation input variables. See the [client usage](https://github.com/jaydenseric/apollo-upload-client#usage).
+Once setup, on the client use [`FileList`](https://developer.mozilla.org/en/docs/Web/API/FileList), [`File`](https://developer.mozilla.org/en/docs/Web/API/File), [`Blob`](https://developer.mozilla.org/en/docs/Web/API/Blob) and [`ReactNativeFile`](https://github.com/jaydenseric/apollo-upload-client#react-native) instances anywhere within query or mutation input variables. See the [client usage](https://github.com/jaydenseric/apollo-upload-client#usage).
 
 Files upload via a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec) and appear as [`Upload` scalars](#upload-scalar) in resolver arguments.
 
