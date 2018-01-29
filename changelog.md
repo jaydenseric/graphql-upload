@@ -1,5 +1,9 @@
 # apollo-upload-server changelog
 
+## Next
+
+* Temporary solution for importing CommonJS in `.mjs`, fixing reopened [#40](https://github.com/jaydenseric/apollo-upload-server/issues/40).
+
 ## 4.0.1
 
 * Correct imports for vanilla Node.js `--experimental-modules` and `.mjs` support, fixing [#40](https://github.com/jaydenseric/apollo-upload-server/issues/40).

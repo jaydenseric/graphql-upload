@@ -1,4 +1,6 @@
-import * as graphql from 'graphql'
+import graphqlDefault, * as graphqlExports from 'graphql'
+
+const graphql = graphqlDefault || graphqlExports
 
 export const GraphQLUpload = new graphql.GraphQLScalarType({
   name: 'Upload',
