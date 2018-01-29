@@ -1,6 +1,6 @@
 # apollo-upload-server changelog
 
-## Next
+## 4.0.0
 
 * Updated dependencies.
 * Simplified npm scripts.

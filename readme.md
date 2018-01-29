@@ -1,4 +1,4 @@
-![Apollo upload logo](https://cdn.rawgit.com/jaydenseric/apollo-upload-server/v4.0.0-alpha.3/apollo-upload-logo.svg)
+![Apollo upload logo](https://cdn.rawgit.com/jaydenseric/apollo-upload-server/v4.0.0/apollo-upload-logo.svg)
 
 # apollo-upload-server
 
