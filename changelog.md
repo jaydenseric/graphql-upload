@@ -2,6 +2,7 @@
 
 ## Next
 
+* Updated dependencies.
 * Documented [`Blob`](https://developer.mozilla.org/en/docs/Web/API/Blob) types, via [#39](https://github.com/jaydenseric/apollo-upload-server/pull/39).
 
 ## 4.0.0-alpha.3
