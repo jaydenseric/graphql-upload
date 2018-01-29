@@ -1,5 +1,9 @@
 # apollo-upload-server changelog
 
+## Next
+
+* Correct imports for vanilla Node.js `--experimental-modules` and `.mjs` support, fixing [#40](https://github.com/jaydenseric/apollo-upload-server/issues/40).
+
 ## 4.0.0
 
 * Updated dependencies.

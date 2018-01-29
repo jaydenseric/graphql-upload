@@ -1,6 +1,6 @@
-import { GraphQLScalarType } from 'graphql'
+import * as graphql from 'graphql'
 
-export const GraphQLUpload = new GraphQLScalarType({
+export const GraphQLUpload = new graphql.GraphQLScalarType({
   name: 'Upload',
   description:
     'The `Upload` scalar type represents a file upload promise that resolves ' +

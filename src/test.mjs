@@ -1,4 +1,4 @@
-import { createReadStream } from 'fs'
+import fs from 'fs'
 import test from 'ava'
 import Koa from 'koa'
 import getPort from 'get-port'
@@ -52,7 +52,7 @@ test('Single file.', async t => {
   )
 
   body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-  body.append('1', createReadStream(TEST_FILE_PATH))
+  body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
   await got(`http://localhost:${port}`, { body })
 
@@ -88,7 +88,7 @@ test('Deduped files.', async t => {
     JSON.stringify({ '1': ['variables.files.0', 'variables.files.1'] })
   )
 
-  body.append('1', createReadStream(TEST_FILE_PATH))
+  body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
   await got(`http://localhost:${port}`, { body })
 
@@ -119,8 +119,8 @@ test('Extraneous file.', async t => {
   )
 
   body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-  body.append('1', createReadStream(TEST_FILE_PATH))
-  body.append('2', createReadStream(TEST_FILE_PATH))
+  body.append('1', fs.createReadStream(TEST_FILE_PATH))
+  body.append('2', fs.createReadStream(TEST_FILE_PATH))
 
   await got(`http://localhost:${port}`, { body })
 
@@ -194,8 +194,8 @@ test('Exceed max files.', async t => {
     })
   )
 
-  body.append('1', createReadStream(TEST_FILE_PATH))
-  body.append('2', createReadStream(TEST_FILE_PATH))
+  body.append('1', fs.createReadStream(TEST_FILE_PATH))
+  body.append('2', fs.createReadStream(TEST_FILE_PATH))
 
   await got(`http://localhost:${port}`, { body })
 
@@ -238,9 +238,9 @@ test('Exceed max files with extraneous files intersperced.', async t => {
     })
   )
 
-  body.append('1', createReadStream(TEST_FILE_PATH))
-  body.append('extraneous', createReadStream(TEST_FILE_PATH))
-  body.append('2', createReadStream(TEST_FILE_PATH))
+  body.append('1', fs.createReadStream(TEST_FILE_PATH))
+  body.append('extraneous', fs.createReadStream(TEST_FILE_PATH))
+  body.append('2', fs.createReadStream(TEST_FILE_PATH))
 
   await got(`http://localhost:${port}`, { body })
 
@@ -282,7 +282,7 @@ test('Misorder “map” before “operations”.', async t => {
     })
   )
 
-  body.append('1', createReadStream(TEST_FILE_PATH))
+  body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
   await got(`http://localhost:${port}`, { body })
 
@@ -317,7 +317,7 @@ test('Misorder files before “map”.', async t => {
     })
   )
 
-  body.append('1', createReadStream(TEST_FILE_PATH))
+  body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
   body.append(
     'map',
