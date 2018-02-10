@@ -1,7 +1,8 @@
 {
   "name": "apollo-upload-server",
   "version": "4.0.2",
-  "description": "Enhances Apollo GraphQL Server for intuitive file uploads via GraphQL mutations.",
+  "description":
+    "Enhances Apollo GraphQL Server for intuitive file uploads via GraphQL mutations.",
   "license": "MIT",
   "author": {
     "name": "Jayden Seric",
@@ -24,10 +25,7 @@
     "koa",
     "express"
   ],
-  "files": [
-    "lib",
-    "!lib/test.*"
-  ],
+  "files": ["lib"],
   "main": "lib",
   "module": "lib/index.mjs",
   "engines": {
@@ -47,6 +45,7 @@
     "@babel/plugin-transform-runtime": "^7.0.0-beta.39",
     "@babel/preset-env": "^7.0.0-beta.39",
     "ava": "^1.0.0-beta.1",
+    "cross-env": "^5.1.3",
     "eslint": "^4.17.0",
     "eslint-plugin-prettier": "^2.6.0",
     "form-data": "^2.3.1",
@@ -55,27 +54,37 @@
     "husky": "^0.14.3",
     "koa": "^2.4.1",
     "lint-staged": "^6.1.0",
+    "npm-run-all": "^4.1.2",
     "prettier": "^1.10.2",
     "rimraf": "^2.6.2"
   },
   "scripts": {
-    "build": "rimraf lib && npm run build:js && npm run build:mjs && prettier --write 'lib/**/*.{js,mjs}'",
-    "build:js": "babel src --out-dir lib",
-    "build:mjs": "MODULE=true babel src --out-dir lib --keep-file-extension",
-    "lint": "eslint . --ext js,mjs",
-    "fix": "npm run lint -- --fix && prettier --write '**/*.md'",
-    "pretest": "npm run lint && npm run build",
-    "test": "ava lib/test.js --serial --verbose",
+    "clean": "rimraf lib",
+    "prebuild": "npm run clean",
+    "build": "run-p build:*",
+    "build:js": "babel src -d lib",
+    "build:mjs": "cross-env MODULE=true babel src -d lib --keep-file-extension",
+    "postbuild": "prettier lib/**/*.{js,mjs} --write",
+    "prewatch": "npm run build",
+    "watch": "run-p watch:*",
+    "watch:build": "run-p 'build:* -- --skip-initial-build --watch'",
+    "watch:test": "ava --no-cache -vw",
+    "lint": "run-p lint:*",
+    "lint:eslint": "eslint . --ext js,mjs",
+    "lint:prettier": "prettier **/*.{json,md} -l",
+    "fix": "run-p fix:*",
+    "fix:eslint": "eslint . --ext js,mjs --fix",
+    "fix:prettier": "prettier **/*.{json,md} --write",
+    "pretest": "npm run build",
+    "test": "ava --no-cache",
     "precommit": "lint-staged",
-    "prepublishOnly": "npm run test"
+    "prepublishOnly": "run-s lint test"
   },
   "lint-staged": {
-    "*.mjs": "eslint"
+    "*.{js,mjs}": "eslint",
+    "*.{json,md}": "prettier -l"
   },
-  "eslintIgnore": [
-    "!.babelrc.js",
-    "lib"
-  ],
+  "eslintIgnore": ["!.*", "node_modules", "lib"],
   "eslintConfig": {
     "parserOptions": {
       "sourceType": "module",
@@ -88,17 +97,10 @@
       "es6": true,
       "node": true
     },
-    "extends": [
-      "eslint:recommended"
-    ],
-    "plugins": [
-      "prettier"
-    ],
+    "extends": ["eslint:recommended"],
+    "plugins": ["prettier"],
     "rules": {
-      "curly": [
-        "error",
-        "multi"
-      ],
+      "curly": ["error", "multi"],
       "prettier/prettier": "error"
     }
   },

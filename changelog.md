@@ -3,6 +3,7 @@
 ## Next
 
 * Updated dependencies, `graphql` peer dependency range updated for v0.13.0.
+* More robust npm scripts, with the ability to watch builds and tests together.
 * HTTPS `package.json` author URL.
 
 ## 4.0.2
