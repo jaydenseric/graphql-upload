@@ -3,7 +3,7 @@ import fs from 'fs'
 import test from 'ava'
 import Koa from 'koa'
 import getPort from 'get-port'
-import got from 'got'
+import fetch from 'node-fetch'
 import FormData from 'form-data'
 import { apolloUploadKoa } from '../lib'
 
@@ -55,7 +55,7 @@ test('Single file.', async t => {
   body.append('map', JSON.stringify({ '1': ['variables.file'] }))
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
-  await got(`http://localhost:${port}`, { body })
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -91,7 +91,38 @@ test('Deduped files.', async t => {
 
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
-  await got(`http://localhost:${port}`, { body })
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
+
+  server.close()
+})
+
+test('Missing file.', async t => {
+  const port = await getPort()
+  const app = new Koa()
+
+  app.use(apolloUploadKoa()).use(async (ctx, next) => {
+    const error = await t.throws(ctx.request.body.variables.file)
+    t.is(error.name, 'FileMissingUploadError')
+    ctx.status = 204
+    await next()
+  })
+
+  const server = app.listen(port)
+
+  const body = new FormData()
+
+  body.append(
+    'operations',
+    JSON.stringify({
+      variables: {
+        file: null
+      }
+    })
+  )
+
+  body.append('map', JSON.stringify({ '1': ['variables.file'] }))
+
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -123,38 +154,7 @@ test('Extraneous file.', async t => {
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
   body.append('2', fs.createReadStream(TEST_FILE_PATH))
 
-  await got(`http://localhost:${port}`, { body })
-
-  server.close()
-})
-
-test('Missing file.', async t => {
-  const port = await getPort()
-  const app = new Koa()
-
-  app.use(apolloUploadKoa()).use(async (ctx, next) => {
-    const error = await t.throws(ctx.request.body.variables.file)
-    t.is(error.name, 'FileMissingUploadError')
-    ctx.status = 204
-    await next()
-  })
-
-  const server = app.listen(port)
-
-  const body = new FormData()
-
-  body.append(
-    'operations',
-    JSON.stringify({
-      variables: {
-        file: null
-      }
-    })
-  )
-
-  body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-
-  await got(`http://localhost:${port}`, { body })
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -198,7 +198,7 @@ test('Exceed max files.', async t => {
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
   body.append('2', fs.createReadStream(TEST_FILE_PATH))
 
-  await got(`http://localhost:${port}`, { body })
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -243,7 +243,7 @@ test('Exceed max files with extraneous files intersperced.', async t => {
   body.append('extraneous', fs.createReadStream(TEST_FILE_PATH))
   body.append('2', fs.createReadStream(TEST_FILE_PATH))
 
-  await got(`http://localhost:${port}`, { body })
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -285,7 +285,7 @@ test('Misorder “map” before “operations”.', async t => {
 
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
-  await got(`http://localhost:${port}`, { body })
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -327,7 +327,7 @@ test('Misorder files before “map”.', async t => {
     })
   )
 
-  await got(`http://localhost:${port}`, { body })
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
