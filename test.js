@@ -248,6 +248,56 @@ test('Exceed max files with extraneous files intersperced.', async t => {
   server.close()
 })
 
+test('Exceed max file size.', async t => {
+  const port = await getPort()
+  const app = new Koa()
+
+  app.use(apolloUploadKoa({ maxFileSize: 10 })).use(async (ctx, next) => {
+    const { stream } = await ctx.request.body.variables.file
+
+    const streamResult = new Promise((resolve, reject) => {
+      stream.on('end', resolve)
+      stream.on('error', reject)
+    })
+
+    // Resume and discard the stream. Otherwise busboy hangs, there is no
+    // response and the connection eventually resets.
+    stream.resume()
+
+    try {
+      await streamResult
+      t.fail('No upload stream error.')
+    } catch (error) {
+      t.is(error.name, 'MaxFileSizeUploadError')
+    }
+
+    ctx.status = 204
+
+    await next()
+  })
+
+  const server = app.listen(port)
+
+  const body = new FormData()
+
+  body.append(
+    'operations',
+    JSON.stringify({
+      variables: {
+        file: null
+      }
+    })
+  )
+
+  body.append('map', JSON.stringify({ '1': ['variables.file'] }))
+
+  body.append('1', fs.createReadStream(TEST_FILE_PATH))
+
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
+
+  server.close()
+})
+
 test('Misorder “map” before “operations”.', async t => {
   const port = await getPort()
   const app = new Koa()
