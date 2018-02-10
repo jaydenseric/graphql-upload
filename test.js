@@ -5,12 +5,12 @@ import Koa from 'koa'
 import getPort from 'get-port'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
-import { apolloUploadKoa } from '../lib'
+import { apolloUploadKoa } from '.'
 
 // GraphQL multipart request spec:
 // https://github.com/jaydenseric/graphql-multipart-request-spec
 
-const TEST_FILE_PATH = path.resolve(__dirname, '../package.json')
+const TEST_FILE_PATH = path.join(__dirname, 'package.json')
 
 function checkUpload(t, { stream, ...meta }) {
   t.truthy(
