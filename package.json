@@ -34,24 +34,24 @@
     "node": ">=6.10"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0-beta.38",
+    "@babel/runtime": "^7.0.0-beta.39",
     "busboy": "^0.2.14",
     "object-path": "^0.11.4"
   },
   "peerDependencies": {
-    "graphql": "0.11 - 0.12"
+    "graphql": "0.11 - 0.13"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.38",
-    "@babel/core": "^7.0.0-beta.38",
-    "@babel/plugin-transform-runtime": "^7.0.0-beta.38",
-    "@babel/preset-env": "^7.0.0-beta.38",
-    "ava": "^0.25.0",
-    "eslint": "^4.16.0",
-    "eslint-plugin-prettier": "^2.5.0",
+    "@babel/cli": "^7.0.0-beta.39",
+    "@babel/core": "^7.0.0-beta.39",
+    "@babel/plugin-transform-runtime": "^7.0.0-beta.39",
+    "@babel/preset-env": "^7.0.0-beta.39",
+    "ava": "^1.0.0-beta.1",
+    "eslint": "^4.17.0",
+    "eslint-plugin-prettier": "^2.6.0",
     "form-data": "^2.3.1",
     "get-port": "^3.2.0",
-    "graphql": "^0.12.3",
+    "graphql": "^0.13.0",
     "husky": "^0.14.3",
     "koa": "^2.4.1",
     "lint-staged": "^6.1.0",
