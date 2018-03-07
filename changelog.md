@@ -8,6 +8,7 @@
 * Fixed missing dev dependency for fetching in tests.
 * Fixed tests by running them in serial mode. It’s unclear why the default AVA mode began failing.
 * HTTPS `package.json` author URL.
+* New readme logo URL that does’t need to be updated every version.
 
 ## 4.0.2
 
