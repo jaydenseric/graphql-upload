@@ -2,7 +2,8 @@
 
 ## Next
 
-* Updated dependencies, `graphql` peer dependency range updated for v0.13.0.
+* Updated dependencies.
+* `graphql` peer dependency range updated to `^0.13.1` for native ESM support via `.mjs`. It’s a breaking change despite being a semver patch.
 * More robust npm scripts, with the ability to watch builds and tests together.
 * Fixed missing dev dependency for fetching in tests.
 * HTTPS `package.json` author URL.

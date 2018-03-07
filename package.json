@@ -37,7 +37,7 @@
     "object-path": "^0.11.4"
   },
   "peerDependencies": {
-    "graphql": "0.11 - 0.13"
+    "graphql": "^0.13.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.40",
