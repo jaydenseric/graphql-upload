@@ -5,7 +5,7 @@ import Koa from 'koa'
 import getPort from 'get-port'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
-import { apolloUploadKoa } from '.'
+import { apolloUploadKoa, FileMissingUploadError, MaxFilesUploadError } from '.'
 
 // GraphQL multipart request spec:
 // https://github.com/jaydenseric/graphql-multipart-request-spec
@@ -101,8 +101,9 @@ test('Missing file.', async t => {
   const app = new Koa()
 
   app.use(apolloUploadKoa()).use(async (ctx, next) => {
-    const error = await t.throws(ctx.request.body.variables.file)
-    t.is(error.name, 'FileMissingUploadError')
+    await t.throws(ctx.request.body.variables.file, {
+      instanceOf: FileMissingUploadError
+    })
     ctx.status = 204
     await next()
   })
@@ -210,8 +211,9 @@ test('Exceed max files with extraneous files intersperced.', async t => {
   app.use(apolloUploadKoa({ maxFiles: 2 })).use(async (ctx, next) => {
     checkUpload(t, await ctx.request.body.variables.files[0])
 
-    const error = await t.throws(ctx.request.body.variables.files[1])
-    t.is(error.name, 'MaxFilesUploadError')
+    await t.throws(ctx.request.body.variables.files[1], {
+      instanceOf: MaxFilesUploadError
+    })
 
     ctx.status = 204
 
