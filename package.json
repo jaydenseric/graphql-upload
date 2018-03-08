@@ -69,7 +69,7 @@
     "prewatch": "npm run build",
     "watch": "run-p watch:*",
     "watch:build": "run-p 'build:* -- --skip-initial-build --watch'",
-    "watch:test": "ava --no-cache -svw",
+    "watch:test": "ava --no-cache -vw",
     "lint": "run-p lint:*",
     "lint:eslint": "eslint . --ext mjs,js",
     "lint:prettier": "prettier '**/*.{json,md}' -l",
@@ -77,7 +77,7 @@
     "fix:eslint": "eslint . --ext mjs,js --fix",
     "fix:prettier": "prettier '**/*.{json,md}' --write",
     "pretest": "npm run build",
-    "test": "ava --no-cache -s",
+    "test": "ava --no-cache",
     "precommit": "lint-staged",
     "prepublishOnly": "run-s lint test"
   },

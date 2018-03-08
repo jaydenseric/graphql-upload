@@ -6,7 +6,6 @@
 * `graphql` peer dependency range updated to `^0.13.1` for native ESM support via `.mjs`. It’s a breaking change despite being a semver patch.
 * More robust npm scripts, with the ability to watch builds and tests together.
 * Fixed missing dev dependency for fetching in tests.
-* Fixed tests by running them in serial mode. It’s unclear why the default AVA mode began failing.
 * HTTPS `package.json` author URL.
 * New readme logo URL that does’t need to be updated every version.
 
