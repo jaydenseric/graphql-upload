@@ -250,6 +250,7 @@ test('Exceed max files with extraneous files intersperced.', async t => {
   server.close()
 })
 
+// eslint-disable-next-line ava/no-skip-test
 test.failing.skip('Exceed max file size.', async t => {
   const port = await getPort()
   const app = new Koa()
