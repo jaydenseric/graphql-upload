@@ -12,6 +12,22 @@ import { apolloUploadKoa, FileMissingUploadError, MaxFilesUploadError } from '.'
 
 const TEST_FILE_PATH = path.join(__dirname, 'package.json')
 
+async function startServer(middlewares) {
+  const port = await getPort()
+  const app = new Koa()
+
+  middlewares.forEach(middleware => app.use(middleware))
+
+  const server = await new Promise((resolve, reject) => {
+    app.listen(port, function(error) {
+      if (error) reject(error)
+      else resolve(this)
+    })
+  })
+
+  return { port, server }
+}
+
 function checkUpload(t, { stream, ...meta }) {
   t.truthy(
     stream.constructor.name === 'FileStream',
@@ -30,16 +46,14 @@ function checkUpload(t, { stream, ...meta }) {
 }
 
 test('Single file.', async t => {
-  const port = await getPort()
-  const app = new Koa()
-
-  app.use(apolloUploadKoa()).use(async (ctx, next) => {
-    checkUpload(t, await ctx.request.body.variables.file)
-    ctx.status = 204
-    await next()
-  })
-
-  const server = app.listen(port)
+  const { port, server } = await startServer([
+    apolloUploadKoa(),
+    async (ctx, next) => {
+      checkUpload(t, await ctx.request.body.variables.file)
+      ctx.status = 204
+      await next()
+    }
+  ])
 
   const body = new FormData()
 
@@ -61,17 +75,15 @@ test('Single file.', async t => {
 })
 
 test('Deduped files.', async t => {
-  const port = await getPort()
-  const app = new Koa()
-
-  app.use(apolloUploadKoa()).use(async (ctx, next) => {
-    const files = await Promise.all(ctx.request.body.variables.files)
-    files.forEach(file => checkUpload(t, file))
-    ctx.status = 204
-    await next()
-  })
-
-  const server = app.listen(port)
+  const { port, server } = await startServer([
+    apolloUploadKoa(),
+    async (ctx, next) => {
+      const files = await Promise.all(ctx.request.body.variables.files)
+      files.forEach(file => checkUpload(t, file))
+      ctx.status = 204
+      await next()
+    }
+  ])
 
   const body = new FormData()
 
@@ -97,18 +109,16 @@ test('Deduped files.', async t => {
 })
 
 test('Missing file.', async t => {
-  const port = await getPort()
-  const app = new Koa()
-
-  app.use(apolloUploadKoa()).use(async (ctx, next) => {
-    await t.throws(ctx.request.body.variables.file, {
-      instanceOf: FileMissingUploadError
-    })
-    ctx.status = 204
-    await next()
-  })
-
-  const server = app.listen(port)
+  const { port, server } = await startServer([
+    apolloUploadKoa(),
+    async (ctx, next) => {
+      await t.throws(ctx.request.body.variables.file, {
+        instanceOf: FileMissingUploadError
+      })
+      ctx.status = 204
+      await next()
+    }
+  ])
 
   const body = new FormData()
 
@@ -129,16 +139,14 @@ test('Missing file.', async t => {
 })
 
 test('Extraneous file.', async t => {
-  const port = await getPort()
-  const app = new Koa()
-
-  app.use(apolloUploadKoa()).use(async (ctx, next) => {
-    checkUpload(t, await ctx.request.body.variables.file)
-    ctx.status = 204
-    await next()
-  })
-
-  const server = app.listen(port)
+  const { port, server } = await startServer([
+    apolloUploadKoa(),
+    async (ctx, next) => {
+      checkUpload(t, await ctx.request.body.variables.file)
+      ctx.status = 204
+      await next()
+    }
+  ])
 
   const body = new FormData()
 
@@ -161,21 +169,17 @@ test('Extraneous file.', async t => {
 })
 
 test('Exceed max files.', async t => {
-  const port = await getPort()
-  const app = new Koa()
-
-  app
-    .use(async (ctx, next) => {
+  const { port, server } = await startServer([
+    async (ctx, next) => {
       try {
         await next()
       } catch (error) {
         t.is(error.name, 'MaxFilesUploadError')
       }
       ctx.status = 204
-    })
-    .use(apolloUploadKoa({ maxFiles: 1 }))
-
-  const server = app.listen(port)
+    },
+    apolloUploadKoa({ maxFiles: 1 })
+  ])
 
   const body = new FormData()
 
@@ -205,22 +209,20 @@ test('Exceed max files.', async t => {
 })
 
 test('Exceed max files with extraneous files intersperced.', async t => {
-  const port = await getPort()
-  const app = new Koa()
+  const { port, server } = await startServer([
+    apolloUploadKoa({ maxFiles: 2 }),
+    async (ctx, next) => {
+      checkUpload(t, await ctx.request.body.variables.files[0])
 
-  app.use(apolloUploadKoa({ maxFiles: 2 })).use(async (ctx, next) => {
-    checkUpload(t, await ctx.request.body.variables.files[0])
+      await t.throws(ctx.request.body.variables.files[1], {
+        instanceOf: MaxFilesUploadError
+      })
 
-    await t.throws(ctx.request.body.variables.files[1], {
-      instanceOf: MaxFilesUploadError
-    })
+      ctx.status = 204
 
-    ctx.status = 204
-
-    await next()
-  })
-
-  const server = app.listen(port)
+      await next()
+    }
+  ])
 
   const body = new FormData()
 
@@ -252,34 +254,32 @@ test('Exceed max files with extraneous files intersperced.', async t => {
 
 // eslint-disable-next-line ava/no-skip-test
 test.failing.skip('Exceed max file size.', async t => {
-  const port = await getPort()
-  const app = new Koa()
+  const { port, server } = await startServer([
+    apolloUploadKoa({ maxFileSize: 10 }),
+    async (ctx, next) => {
+      const { stream } = await ctx.request.body.variables.file
 
-  app.use(apolloUploadKoa({ maxFileSize: 10 })).use(async (ctx, next) => {
-    const { stream } = await ctx.request.body.variables.file
+      const streamResult = new Promise((resolve, reject) => {
+        stream.on('end', resolve)
+        stream.on('error', reject)
+      })
 
-    const streamResult = new Promise((resolve, reject) => {
-      stream.on('end', resolve)
-      stream.on('error', reject)
-    })
+      // Resume and discard the stream. Otherwise busboy hangs, there is no
+      // response and the connection eventually resets.
+      stream.resume()
 
-    // Resume and discard the stream. Otherwise busboy hangs, there is no
-    // response and the connection eventually resets.
-    stream.resume()
+      try {
+        await streamResult
+        t.fail('No upload stream error.')
+      } catch (error) {
+        t.is(error.name, 'MaxFileSizeUploadError')
+      }
 
-    try {
-      await streamResult
-      t.fail('No upload stream error.')
-    } catch (error) {
-      t.is(error.name, 'MaxFileSizeUploadError')
+      ctx.status = 204
+
+      await next()
     }
-
-    ctx.status = 204
-
-    await next()
-  })
-
-  const server = app.listen(port)
+  ])
 
   const body = new FormData()
 
@@ -302,21 +302,17 @@ test.failing.skip('Exceed max file size.', async t => {
 })
 
 test('Misorder “map” before “operations”.', async t => {
-  const port = await getPort()
-  const app = new Koa()
-
-  app
-    .use(async (ctx, next) => {
+  const { port, server } = await startServer([
+    async (ctx, next) => {
       try {
         await next()
       } catch (error) {
         t.is(error.name, 'MapBeforeOperationsUploadError')
       }
       ctx.status = 204
-    })
-    .use(apolloUploadKoa())
-
-  const server = app.listen(port)
+    },
+    apolloUploadKoa()
+  ])
 
   const body = new FormData()
 
@@ -344,21 +340,17 @@ test('Misorder “map” before “operations”.', async t => {
 })
 
 test('Misorder files before “map”.', async t => {
-  const port = await getPort()
-  const app = new Koa()
-
-  app
-    .use(async (ctx, next) => {
+  const { port, server } = await startServer([
+    async (ctx, next) => {
       try {
         await next()
       } catch (error) {
         t.is(error.name, 'FilesBeforeMapUploadError')
       }
       ctx.status = 204
-    })
-    .use(apolloUploadKoa())
-
-  const server = app.listen(port)
+    },
+    apolloUploadKoa()
+  ])
 
   const body = new FormData()
 
