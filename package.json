@@ -113,7 +113,6 @@
   },
   "ava": {
     "cache": false,
-    "serial": true,
     "verbose": true
   }
 }
