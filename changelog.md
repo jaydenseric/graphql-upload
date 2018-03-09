@@ -1,6 +1,6 @@
 # apollo-upload-server changelog
 
-## Next
+## 5.0.0
 
 * Updated dependencies.
 * `graphql` peer dependency range updated to `^0.13.1` for native ESM support via `.mjs`. It’s a breaking change despite being a semver patch.

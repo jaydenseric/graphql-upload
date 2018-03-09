@@ -1,6 +1,6 @@
 {
   "name": "apollo-upload-server",
-  "version": "4.0.2",
+  "version": "5.0.0",
   "description":
     "Enhances Apollo GraphQL Server for intuitive file uploads via GraphQL mutations.",
   "license": "MIT",
