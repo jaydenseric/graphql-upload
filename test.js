@@ -5,7 +5,14 @@ import Koa from 'koa'
 import getPort from 'get-port'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
-import { apolloUploadKoa, FileMissingUploadError, MaxFilesUploadError } from '.'
+import {
+  apolloUploadKoa,
+  MaxFileSizeUploadError,
+  MaxFilesUploadError,
+  MapBeforeOperationsUploadError,
+  FilesBeforeMapUploadError,
+  FileMissingUploadError
+} from '.'
 
 // GraphQL multipart request spec:
 // https://github.com/jaydenseric/graphql-multipart-request-spec
@@ -171,11 +178,7 @@ test('Extraneous file.', async t => {
 test('Exceed max files.', async t => {
   const { port, server } = await startServer([
     async (ctx, next) => {
-      try {
-        await next()
-      } catch (error) {
-        t.is(error.name, 'MaxFilesUploadError')
-      }
+      await t.throws(next, { instanceOf: MaxFilesUploadError })
       ctx.status = 204
     },
     apolloUploadKoa({ maxFiles: 1 })
@@ -268,12 +271,7 @@ test.failing.skip('Exceed max file size.', async t => {
       // response and the connection eventually resets.
       stream.resume()
 
-      try {
-        await streamResult
-        t.fail('No upload stream error.')
-      } catch (error) {
-        t.is(error.name, 'MaxFileSizeUploadError')
-      }
+      await t.throws(streamResult, { instanceOf: MaxFileSizeUploadError })
 
       ctx.status = 204
 
@@ -304,11 +302,7 @@ test.failing.skip('Exceed max file size.', async t => {
 test('Misorder “map” before “operations”.', async t => {
   const { port, server } = await startServer([
     async (ctx, next) => {
-      try {
-        await next()
-      } catch (error) {
-        t.is(error.name, 'MapBeforeOperationsUploadError')
-      }
+      await t.throws(next, { instanceOf: MapBeforeOperationsUploadError })
       ctx.status = 204
     },
     apolloUploadKoa()
@@ -342,11 +336,7 @@ test('Misorder “map” before “operations”.', async t => {
 test('Misorder files before “map”.', async t => {
   const { port, server } = await startServer([
     async (ctx, next) => {
-      try {
-        await next()
-      } catch (error) {
-        t.is(error.name, 'FilesBeforeMapUploadError')
-      }
+      await t.throws(next, { instanceOf: FilesBeforeMapUploadError })
       ctx.status = 204
     },
     apolloUploadKoa()
