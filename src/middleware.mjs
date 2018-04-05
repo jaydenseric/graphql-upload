@@ -180,3 +180,17 @@ export const apolloUploadExpress = options => (request, response, next) => {
       next(error)
     })
 }
+
+export const apolloUpLoadRestify = (options) => (req, res, next) => {
+  if (req.contentType().toLowerCase() !== 'multipart/form-data') {
+    return next();
+  }
+  processRequest(req, options)
+    .then((body) => {
+      req.body = body;
+      return next();
+    })
+    .catch((error) => {
+      return next(new Error(error))
+    });
+};

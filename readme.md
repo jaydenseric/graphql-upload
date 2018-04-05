@@ -52,6 +52,29 @@ app.use(
 )
 ```
 
+### [Restify](http://restify.com)
+
+```js
+
+import { apolloUpLoadRestify } from 'apollo-upload-server'
+
+// ...
+
+app.use([
+  apolloUpLoadRestify(),
+  plugins.bodyReader(), // required
+  ... other plugins
+]);
+
+// bodyParser have to ignore content type multipart/form-data to avoid conflict
+server.use((req, res, next) => {
+  if (req.contentType().toLowerCase() === 'multipart/form-data') {
+    return next();
+  }
+  return restify.plugins.bodyParser()[1](req, res, next);
+});
+```
+
 ### Custom middleware
 
 Middleware wraps the async function `processRequest` which accepts a Node.js request and an optional [options object](#options) as arguments. It returns a promise that resolves an operations object for a GraphQL server to consume (usually as the request body). Import it to create custom middleware:
