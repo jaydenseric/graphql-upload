@@ -3,6 +3,7 @@
 ## Next
 
 * Removed `get-port` dev dependency.
+* Use `.prettierignore` to leave `package.json` formatting to npm.
 
 ## 5.0.0
 

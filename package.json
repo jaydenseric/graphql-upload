@@ -1,8 +1,7 @@
 {
   "name": "apollo-upload-server",
   "version": "5.0.0",
-  "description":
-    "Enhances Apollo GraphQL Server for intuitive file uploads via GraphQL mutations.",
+  "description": "Enhances Apollo GraphQL Server for intuitive file uploads via GraphQL mutations.",
   "license": "MIT",
   "author": {
     "name": "Jayden Seric",
@@ -25,7 +24,9 @@
     "koa",
     "express"
   ],
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "main": "lib",
   "module": "lib/index.mjs",
   "engines": {
@@ -85,7 +86,11 @@
     "*.{mjs,js}": "eslint",
     "*.{json,md}": "prettier -l"
   },
-  "eslintIgnore": ["!.*", "node_modules", "lib"],
+  "eslintIgnore": [
+    "!.*",
+    "node_modules",
+    "lib"
+  ],
   "eslintConfig": {
     "parserOptions": {
       "sourceType": "module",
@@ -98,17 +103,26 @@
       "es6": true,
       "node": true
     },
-    "extends": ["eslint:recommended", "plugin:ava/recommended"],
-    "plugins": ["ava", "prettier"],
+    "extends": [
+      "eslint:recommended",
+      "plugin:ava/recommended"
+    ],
+    "plugins": [
+      "ava",
+      "prettier"
+    ],
     "rules": {
-      "curly": ["error", "multi"],
+      "curly": [
+        "error",
+        "multi"
+      ],
       "prettier/prettier": "error"
     }
   },
   "prettier": {
     "proseWrap": "never",
-    "semi": false,
-    "singleQuote": true
+    "singleQuote": true,
+    "semi": false
   },
   "ava": {
     "cache": false,
