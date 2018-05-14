@@ -1,5 +1,9 @@
 # apollo-upload-server changelog
 
+## Next
+
+* Removed `get-port` dev dependency.
+
 ## 5.0.0
 
 * Updated dependencies.

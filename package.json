@@ -50,7 +50,6 @@
     "eslint-plugin-ava": "^4.5.1",
     "eslint-plugin-prettier": "^2.6.0",
     "form-data": "^2.3.2",
-    "get-port": "^3.2.0",
     "graphql": "^0.13.1",
     "husky": "^0.14.3",
     "koa": "^2.5.0",

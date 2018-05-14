@@ -2,7 +2,6 @@ import path from 'path'
 import fs from 'fs'
 import test from 'ava'
 import Koa from 'koa'
-import getPort from 'get-port'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
 import {
@@ -20,19 +19,16 @@ import {
 const TEST_FILE_PATH = path.join(__dirname, 'package.json')
 
 async function startServer(middlewares) {
-  const port = await getPort()
   const app = new Koa()
 
   middlewares.forEach(middleware => app.use(middleware))
 
-  const server = await new Promise((resolve, reject) => {
-    app.listen(port, function(error) {
+  return new Promise((resolve, reject) => {
+    app.listen(function(error) {
       if (error) reject(error)
-      else resolve(this)
+      else resolve({ server: this, port: this.address().port })
     })
   })
-
-  return { port, server }
 }
 
 const post = (port, body) =>
@@ -59,7 +55,7 @@ function checkUpload(t, { stream, ...meta }) {
 }
 
 test('Single file.', async t => {
-  const { port, server } = await startServer([
+  const { server, port } = await startServer([
     apolloUploadKoa(),
     async (ctx, next) => {
       checkUpload(t, await ctx.request.body.variables.file)
@@ -88,7 +84,7 @@ test('Single file.', async t => {
 })
 
 test('Deduped files.', async t => {
-  const { port, server } = await startServer([
+  const { server, port } = await startServer([
     apolloUploadKoa(),
     async (ctx, next) => {
       const files = await Promise.all(ctx.request.body.variables.files)
@@ -122,7 +118,7 @@ test('Deduped files.', async t => {
 })
 
 test('Missing file.', async t => {
-  const { port, server } = await startServer([
+  const { server, port } = await startServer([
     apolloUploadKoa(),
     async (ctx, next) => {
       await t.throws(ctx.request.body.variables.file, {
@@ -152,7 +148,7 @@ test('Missing file.', async t => {
 })
 
 test('Extraneous file.', async t => {
-  const { port, server } = await startServer([
+  const { server, port } = await startServer([
     apolloUploadKoa(),
     async (ctx, next) => {
       checkUpload(t, await ctx.request.body.variables.file)
@@ -182,7 +178,7 @@ test('Extraneous file.', async t => {
 })
 
 test('Exceed max files.', async t => {
-  const { port, server } = await startServer([
+  const { server, port } = await startServer([
     async (ctx, next) => {
       await t.throws(next, { instanceOf: MaxFilesUploadError })
       ctx.status = 204
@@ -218,7 +214,7 @@ test('Exceed max files.', async t => {
 })
 
 test('Exceed max files with extraneous files intersperced.', async t => {
-  const { port, server } = await startServer([
+  const { server, port } = await startServer([
     apolloUploadKoa({ maxFiles: 2 }),
     async (ctx, next) => {
       checkUpload(t, await ctx.request.body.variables.files[0])
@@ -263,7 +259,7 @@ test('Exceed max files with extraneous files intersperced.', async t => {
 
 // eslint-disable-next-line ava/no-skip-test
 test.failing.skip('Exceed max file size.', async t => {
-  const { port, server } = await startServer([
+  const { server, port } = await startServer([
     apolloUploadKoa({ maxFileSize: 10 }),
     async (ctx, next) => {
       const { stream } = await ctx.request.body.variables.file
@@ -306,7 +302,7 @@ test.failing.skip('Exceed max file size.', async t => {
 })
 
 test('Misorder “map” before “operations”.', async t => {
-  const { port, server } = await startServer([
+  const { server, port } = await startServer([
     async (ctx, next) => {
       await t.throws(next, { instanceOf: MapBeforeOperationsUploadError })
       ctx.status = 204
@@ -340,7 +336,7 @@ test('Misorder “map” before “operations”.', async t => {
 })
 
 test('Misorder files before “map”.', async t => {
-  const { port, server } = await startServer([
+  const { server, port } = await startServer([
     async (ctx, next) => {
       await t.throws(next, { instanceOf: FilesBeforeMapUploadError })
       ctx.status = 204
