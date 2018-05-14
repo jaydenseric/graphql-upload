@@ -116,9 +116,8 @@ export const processRequest = (
           mimetype,
           encoding
         })
-      else
-        // Discard the unexpected file.
-        stream.resume()
+      // Discard the unexpected file.
+      else stream.resume()
     })
 
     parser.once('filesLimit', () => {
