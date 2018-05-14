@@ -18,23 +18,14 @@ import {
 
 const TEST_FILE_PATH = path.join(__dirname, 'package.json')
 
-async function startServer(middlewares) {
-  const app = new Koa()
-
-  middlewares.forEach(middleware => app.use(middleware))
-
-  return new Promise((resolve, reject) => {
+const startServer = middlewares =>
+  new Promise((resolve, reject) => {
+    const app = new Koa()
+    middlewares.forEach(middleware => app.use(middleware))
     app.listen(function(error) {
       if (error) reject(error)
       else resolve({ server: this, port: this.address().port })
     })
-  })
-}
-
-const post = (port, body) =>
-  fetch(`http://localhost:${port}`, { method: 'POST', body }).catch(error => {
-    // This error began appearing randomly and seems to be a dev dependency bug.
-    if (error.code !== 'EPIPE') throw error
   })
 
 function checkUpload(t, { stream, ...meta }) {
@@ -78,7 +69,7 @@ test('Single file.', async t => {
   body.append('map', JSON.stringify({ '1': ['variables.file'] }))
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
-  await post(port, body)
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -112,7 +103,7 @@ test('Deduped files.', async t => {
 
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
-  await post(port, body)
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -142,7 +133,7 @@ test('Missing file.', async t => {
 
   body.append('map', JSON.stringify({ '1': ['variables.file'] }))
 
-  await post(port, body)
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -172,7 +163,7 @@ test('Extraneous file.', async t => {
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
   body.append('2', fs.createReadStream(TEST_FILE_PATH))
 
-  await post(port, body)
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -208,7 +199,7 @@ test('Exceed max files.', async t => {
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
   body.append('2', fs.createReadStream(TEST_FILE_PATH))
 
-  await post(port, body)
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -252,7 +243,7 @@ test('Exceed max files with extraneous files intersperced.', async t => {
   body.append('extraneous', fs.createReadStream(TEST_FILE_PATH))
   body.append('2', fs.createReadStream(TEST_FILE_PATH))
 
-  await post(port, body)
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -296,7 +287,7 @@ test.failing.skip('Exceed max file size.', async t => {
 
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
-  await post(port, body)
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -330,7 +321,7 @@ test('Misorder “map” before “operations”.', async t => {
 
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
-  await post(port, body)
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })
@@ -364,7 +355,7 @@ test('Misorder files before “map”.', async t => {
     })
   )
 
-  await post(port, body)
+  await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
   server.close()
 })

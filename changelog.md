@@ -4,8 +4,9 @@
 
 * Updated dependencies.
 * Pinned @babel dependencies to match new AVA requirements.
-* Removed `get-port` dev dependency.
 * Use `.prettierignore` to leave `package.json` formatting to npm.
+* Removed `get-port` dev dependency.
+* Refactored tests to remove a redundant workaround.
 
 ## 5.0.0
 
