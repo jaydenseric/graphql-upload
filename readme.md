@@ -87,4 +87,4 @@ Files uploaded via a [GraphQL multipart request](https://github.com/jaydenseric/
 
 ## Support
 
-* Node.js v6.10+, see `package.json` `engines`.
+* Node.js v8.5+.
