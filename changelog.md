@@ -3,6 +3,7 @@
 ## Next
 
 * Updated dependencies.
+* Updated Node.js support from v6.10+ to v8.5+ for native [ESM](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V8.md#8.5.0), [object rest/spread properties](https://node.green/#ES2018-features-object-rest-spread-properties), and [async functions](https://node.green/#ES2017-features-async-functions).
 * Pinned @babel dependencies to match new AVA requirements.
 * Use `.prettierignore` to leave `package.json` formatting to npm.
 * Removed `get-port` dev dependency.
