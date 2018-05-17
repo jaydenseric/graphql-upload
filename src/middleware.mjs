@@ -161,10 +161,13 @@ export const processRequest = (
     request.pipe(parser)
   })
 
-export const apolloUploadKoa = options => async (ctx, next) => {
-  if (ctx.request.is('multipart/form-data'))
-    ctx.request.body = await processRequest(ctx.req, options)
-  await next()
+export const apolloUploadKoa = options => (ctx, next) => {
+  if (!ctx.request.is('multipart/form-data')) return Promise.resolve()
+  return processRequest(ctx.req, options)
+    .then(body => {
+      ctx.request.body = body;
+      return next()
+    })
 }
 
 export const apolloUploadExpress = options => (request, response, next) => {
