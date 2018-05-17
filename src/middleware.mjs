@@ -168,6 +168,7 @@ export const apolloUploadKoa = options => (ctx, next) => {
       ctx.request.body = body;
       return next()
     })
+    .then(() => {})
 }
 
 export const apolloUploadExpress = options => (request, response, next) => {
