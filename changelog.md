@@ -20,6 +20,7 @@
   * Removed linting fix scripts.
   * Linting included in the `test` script. Travis CI will fail PR's with lint errors.
   * Custom watch script.
+  * No longer use `cross-env`; contributors with Windows may setup and use a bash shell.
 * Improved ESLint config:
   * Use the right `sourceType` for `.js` (`script`) and `.mjs` (`module`) files.
   * Only allow ESM syntax in `.mjs` files.
