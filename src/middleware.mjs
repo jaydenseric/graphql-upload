@@ -162,13 +162,10 @@ export const processRequest = (
   })
 
 export const apolloUploadKoa = options => (ctx, next) => {
-  if (!ctx.request.is('multipart/form-data')) return Promise.resolve()
-  return processRequest(ctx.req, options)
-    .then(body => {
-      ctx.request.body = body;
-      return next()
-    })
-    .then(() => {})
+  const promise = ctx.request.is('multipart/form-data')
+    ? processRequest(ctx.req, options).then(body => { ctx.request.body = body })
+    : Promise.resolve()
+  return promise.then(body => next()).then(() => {})
 }
 
 export const apolloUploadExpress = options => (request, response, next) => {
