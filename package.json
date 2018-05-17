@@ -25,7 +25,8 @@
     "express"
   ],
   "files": [
-    "lib"
+    "lib",
+    "!lib/test.*"
   ],
   "main": "lib",
   "module": "lib/index.mjs",
@@ -33,7 +34,6 @@
     "node": ">=8.5"
   },
   "dependencies": {
-    "@babel/runtime": "7.0.0-beta.44",
     "busboy": "^0.2.14",
     "object-path": "^0.11.4"
   },
@@ -41,14 +41,13 @@
     "graphql": "^0.13.1"
   },
   "devDependencies": {
-    "@babel/cli": "7.0.0-beta.44",
-    "@babel/core": "7.0.0-beta.44",
-    "@babel/plugin-transform-runtime": "7.0.0-beta.44",
-    "@babel/preset-env": "7.0.0-beta.44",
-    "ava": "^1.0.0-beta.4",
-    "cross-env": "^5.1.5",
+    "@babel/cli": "^7.0.0-beta.47",
+    "@babel/core": "^7.0.0-beta.47",
+    "@babel/preset-env": "^7.0.0-beta.47",
     "eslint": "^4.19.1",
-    "eslint-plugin-ava": "^4.5.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-prettier": "^2.6.0",
     "form-data": "^2.3.2",
     "graphql": "^0.13.2",
@@ -58,74 +57,99 @@
     "node-fetch": "^2.1.2",
     "npm-run-all": "^4.1.3",
     "prettier": "^1.12.1",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "tap": "^11.1.5",
+    "watch": "^1.0.2"
   },
   "scripts": {
     "clean": "rimraf lib",
-    "prebuild": "npm run clean",
-    "build": "run-p build:*",
+    "build:mjs": "BABEL_ESM=1 babel src -d lib --keep-file-extension",
     "build:js": "babel src -d lib",
-    "build:mjs": "cross-env MODULE=true babel src -d lib --keep-file-extension",
-    "postbuild": "prettier 'lib/**/*.{mjs,js}' --write",
-    "prewatch": "npm run build",
-    "watch": "run-p watch:*",
-    "watch:build": "run-p 'build:* -- --skip-initial-build --watch'",
-    "watch:test": "ava -w",
-    "lint": "run-p lint:*",
+    "build:prettier": "prettier 'lib/**/*.{mjs,js}' --write",
     "lint:eslint": "eslint . --ext mjs,js",
     "lint:prettier": "prettier '**/*.{json,md}' -l",
-    "fix": "run-p fix:*",
-    "fix:eslint": "eslint . --ext mjs,js --fix",
-    "fix:prettier": "prettier '**/*.{json,md}' --write",
-    "pretest": "npm run build",
-    "test": "ava",
-    "precommit": "lint-staged",
-    "prepublishOnly": "run-s lint test"
+    "tap:mjs": "node --experimental-modules --no-warnings lib/test | tap-mocha-reporter spec",
+    "tap:js": "node lib/test | tap-mocha-reporter spec",
+    "watch": "FORCE_COLOR=1 TAP_COLORS=1 watch 'npm-run-all clean -p build:js -s tap:js -c --aggregate-output --silent' src --interval=1",
+    "test": "FORCE_COLOR=1 TAP_COLORS=1 npm-run-all clean -p build:mjs build:js -s build:prettier -p lint:* tap:* -c --aggregate-output",
+    "prepublishOnly": "npm run test",
+    "precommit": "lint-staged"
   },
   "lint-staged": {
     "*.{mjs,js}": "eslint",
     "*.{json,md}": "prettier -l"
   },
   "eslintIgnore": [
-    "!.*",
-    "node_modules",
     "lib"
   ],
   "eslintConfig": {
     "parserOptions": {
-      "sourceType": "module",
-      "ecmaVersion": 2017,
-      "ecmaFeatures": {
-        "experimentalObjectRestSpread": true
-      }
+      "sourceType": "script",
+      "ecmaVersion": 2018
     },
     "env": {
       "es6": true,
       "node": true
     },
+    "plugins": [
+      "import",
+      "node",
+      "prettier"
+    ],
     "extends": [
       "eslint:recommended",
-      "plugin:ava/recommended"
-    ],
-    "plugins": [
-      "ava",
+      "plugin:import/recommended",
+      "plugin:node/recommended",
       "prettier"
     ],
     "rules": {
+      "require-jsdoc": "warn",
+      "valid-jsdoc": [
+        "error",
+        {
+          "requireReturn": false
+        }
+      ],
+      "require-await": "error",
+      "no-return-await": "error",
+      "arrow-body-style": "error",
+      "prefer-arrow-callback": "error",
       "curly": [
         "error",
         "multi"
       ],
+      "prefer-destructuring": "error",
+      "import/first": "error",
+      "import/newline-after-import": "error",
+      "import/no-useless-path-segments": "error",
+      "import/order": "error",
+      "node/no-unsupported-features": "error",
       "prettier/prettier": "error"
-    }
+    },
+    "overrides": [
+      {
+        "files": [
+          "*.mjs"
+        ],
+        "parserOptions": {
+          "sourceType": "module"
+        },
+        "rules": {
+          "node/no-unsupported-features": [
+            "error",
+            {
+              "ignores": [
+                "modules"
+              ]
+            }
+          ]
+        }
+      }
+    ]
   },
   "prettier": {
     "proseWrap": "never",
     "singleQuote": true,
     "semi": false
-  },
-  "ava": {
-    "cache": false,
-    "verbose": true
   }
 }

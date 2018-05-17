@@ -4,10 +4,29 @@
 
 * Updated dependencies.
 * Updated Node.js support from v6.10+ to v8.5+ for native [ESM](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V8.md#8.5.0), [object rest/spread properties](https://node.green/#ES2018-features-object-rest-spread-properties), and [async functions](https://node.green/#ES2017-features-async-functions).
-* Pinned @babel dependencies to match new AVA requirements.
+* Updated Babel config:
+  * Use `babel.config.js` instead of `.babelrc.js`.
+  * Removed `@babel/runtime` dependency and config.
+  * Enabled `shippedProposals` in `@babel/preset-env` config.
+  * Renamed the `ESM` environment variable to `BABEL_ESM` to be more specific.
+* Improved testing:
+  * Using `tap` instead of `ava`.
+  * Tests no longer transpile on the fly, are faster and AVA no longer dictates the Babel version.
+  * Tests run against the actual dist `.mjs` and `.js` files in native ESM (`--experimental-modules`) and CJS environments.
+  * Removed `get-port` dev dependency.
+  * Refactored tests and removed an apparently redundant workaround.
+* Improved `package.json` scripts:
+  * Leveraged `npm-run-all` more for parallelism and reduced noise.
+  * Removed linting fix scripts.
+  * Linting included in the `test` script. Travis CI will fail PR's with lint errors.
+  * Custom watch script.
+* Improved ESLint config:
+  * Use the right `sourceType` for `.js` (`script`) and `.mjs` (`module`) files.
+  * Only allow ESM syntax in `.mjs` files.
+  * Remove redundant `eslint-plugin-ava` dev dependency and config.
+  * Use `eslint-plugin-import` and `eslint-plugin-node` and enable more rules.
+  * Undo overriding ESLint ignoring dotfiles by default as there are none now.
 * Use `.prettierignore` to leave `package.json` formatting to npm.
-* Removed `get-port` dev dependency.
-* Refactored tests to remove a redundant workaround.
 
 ## 5.0.0
 
