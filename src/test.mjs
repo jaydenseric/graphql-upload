@@ -52,6 +52,9 @@ t.test('Single file.', async t => {
   })
 
   const { server, port } = await startServer(app)
+
+  t.tearDown(() => server.close())
+
   const body = new FormData()
 
   body.append(
@@ -67,8 +70,6 @@ t.test('Single file.', async t => {
   body.append(1, fs.createReadStream(TEST_FILE_PATH))
 
   await fetch(`http://localhost:${port}`, { method: 'POST', body })
-
-  server.close()
 })
 
 t.test('Deduped files.', async t => {
@@ -87,6 +88,9 @@ t.test('Deduped files.', async t => {
   })
 
   const { server, port } = await startServer(app)
+
+  t.tearDown(() => server.close())
+
   const body = new FormData()
 
   body.append(
@@ -108,8 +112,6 @@ t.test('Deduped files.', async t => {
   body.append(1, fs.createReadStream(TEST_FILE_PATH))
 
   await fetch(`http://localhost:${port}`, { method: 'POST', body })
-
-  server.close()
 })
 
 t.test('Missing file.', async t => {
@@ -124,6 +126,9 @@ t.test('Missing file.', async t => {
   })
 
   const { server, port } = await startServer(app)
+
+  t.tearDown(() => server.close())
+
   const body = new FormData()
 
   body.append(
@@ -141,8 +146,6 @@ t.test('Missing file.', async t => {
   )
 
   await fetch(`http://localhost:${port}`, { method: 'POST', body })
-
-  server.close()
 })
 
 t.test('Extraneous file.', async t => {
@@ -156,6 +159,9 @@ t.test('Extraneous file.', async t => {
   })
 
   const { server, port } = await startServer(app)
+
+  t.tearDown(() => server.close())
+
   const body = new FormData()
 
   body.append(
@@ -178,8 +184,6 @@ t.test('Extraneous file.', async t => {
   body.append(2, fs.createReadStream(TEST_FILE_PATH))
 
   await fetch(`http://localhost:${port}`, { method: 'POST', body })
-
-  server.close()
 })
 
 t.test('Exceed max files.', async t => {
@@ -192,6 +196,9 @@ t.test('Exceed max files.', async t => {
     .use(apolloUploadKoa({ maxFiles: 1 }))
 
   const { server, port } = await startServer(app)
+
+  t.tearDown(() => server.close())
+
   const body = new FormData()
 
   body.append(
@@ -220,8 +227,6 @@ t.test('Exceed max files.', async t => {
   })
 
   t.equal(status, 413, 'Response status.')
-
-  server.close()
 })
 
 t.test('Exceed max files with extraneous files interspersed.', async t => {
@@ -244,6 +249,9 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
     })
 
   const { server, port } = await startServer(app)
+
+  t.tearDown(() => server.close())
+
   const body = new FormData()
 
   body.append(
@@ -268,8 +276,6 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   body.append('2', fs.createReadStream(TEST_FILE_PATH))
 
   await fetch(`http://localhost:${port}`, { method: 'POST', body })
-
-  server.close()
 })
 
 t.skip('Exceed max file size.', async t => {
@@ -293,6 +299,8 @@ t.skip('Exceed max file size.', async t => {
     })
 
   const { server, port } = await startServer(app)
+  t.tearDown(() => server.close())
+
   const body = new FormData()
 
   body.append(
@@ -308,8 +316,6 @@ t.skip('Exceed max file size.', async t => {
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
   await fetch(`http://localhost:${port}`, { method: 'POST', body })
-
-  server.close()
 })
 
 t.test('Misorder “map” before “operations”.', async t => {
@@ -322,6 +328,9 @@ t.test('Misorder “map” before “operations”.', async t => {
     .use(apolloUploadKoa())
 
   const { server, port } = await startServer(app)
+
+  t.tearDown(() => server.close())
+
   const body = new FormData()
 
   body.append(
@@ -348,8 +357,6 @@ t.test('Misorder “map” before “operations”.', async t => {
   })
 
   t.equal(status, 400, 'Response status.')
-
-  server.close()
 })
 
 t.test('Misorder files before “map”.', async t => {
@@ -362,6 +369,9 @@ t.test('Misorder files before “map”.', async t => {
     .use(apolloUploadKoa())
 
   const { server, port } = await startServer(app)
+
+  t.tearDown(() => server.close())
+
   const body = new FormData()
 
   body.append(
@@ -388,6 +398,4 @@ t.test('Misorder files before “map”.', async t => {
   })
 
   t.equal(status, 400, 'Response status.')
-
-  server.close()
 })
