@@ -25,6 +25,12 @@ const startServer = app =>
     })
   })
 
+const post = (port, body) =>
+  fetch(`http://localhost:${port}`, { method: 'POST', body }).catch(error => {
+    // Swallow intermittent error that effects Node.js < v10.
+    if (error.code !== 'EPIPE') throw error
+  })
+
 const uploadTest = upload => async t => {
   const resolved = await upload
 
@@ -69,7 +75,7 @@ t.test('Single file.', async t => {
   body.append('map', JSON.stringify({ 1: ['variables.file'] }))
   body.append(1, fs.createReadStream(TEST_FILE_PATH))
 
-  await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  await post(port, body)
 })
 
 t.test('Deduped files.', async t => {
@@ -111,7 +117,7 @@ t.test('Deduped files.', async t => {
 
   body.append(1, fs.createReadStream(TEST_FILE_PATH))
 
-  await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  await post(port, body)
 })
 
 t.test('Missing file.', async t => {
@@ -145,7 +151,7 @@ t.test('Missing file.', async t => {
     })
   )
 
-  await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  await post(port, body)
 })
 
 t.test('Extraneous file.', async t => {
@@ -183,7 +189,7 @@ t.test('Extraneous file.', async t => {
   body.append(1, fs.createReadStream(TEST_FILE_PATH))
   body.append(2, fs.createReadStream(TEST_FILE_PATH))
 
-  await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  await post(port, body)
 })
 
 t.test('Exceed max files.', async t => {
@@ -221,10 +227,7 @@ t.test('Exceed max files.', async t => {
   body.append(1, fs.createReadStream(TEST_FILE_PATH))
   body.append(2, fs.createReadStream(TEST_FILE_PATH))
 
-  const { status } = await fetch(`http://localhost:${port}`, {
-    method: 'POST',
-    body
-  })
+  const { status } = await post(port, body)
 
   t.equal(status, 413, 'Response status.')
 })
@@ -275,7 +278,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   body.append('extraneous', fs.createReadStream(TEST_FILE_PATH))
   body.append('2', fs.createReadStream(TEST_FILE_PATH))
 
-  await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  await post(port, body)
 })
 
 t.skip('Exceed max file size.', async t => {
@@ -315,7 +318,7 @@ t.skip('Exceed max file size.', async t => {
   body.append('map', JSON.stringify({ '1': ['variables.file'] }))
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
-  await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  await post(port, body)
 })
 
 t.test('Misorder “map” before “operations”.', async t => {
@@ -351,10 +354,7 @@ t.test('Misorder “map” before “operations”.', async t => {
 
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
-  const { status } = await fetch(`http://localhost:${port}`, {
-    method: 'POST',
-    body
-  })
+  const { status } = await post(port, body)
 
   t.equal(status, 400, 'Response status.')
 })
@@ -392,10 +392,7 @@ t.test('Misorder files before “map”.', async t => {
     })
   )
 
-  const { status } = await fetch(`http://localhost:${port}`, {
-    method: 'POST',
-    body
-  })
+  const { status } = await post(port, body)
 
   t.equal(status, 400, 'Response status.')
 })
