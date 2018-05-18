@@ -88,7 +88,7 @@ export const processRequest = (
           for (const [fieldName, paths] of mapEntries) {
             map.set(fieldName, new Upload())
 
-            // Repopulate operations with the promise wherever the file occured
+            // Repopulate operations with the promise wherever the file occurred
             // for use by the Upload scalar.
             for (const path of paths)
               operationsPath.set(path, map.get(fieldName).promise)
