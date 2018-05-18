@@ -183,11 +183,12 @@ t.test('Extraneous file.', async t => {
 })
 
 t.test('Exceed max files.', async t => {
+  t.plan(2)
+
   const app = new Koa()
-    .use(async (ctx, next) => {
-      await t.rejects(next, MaxFilesUploadError, 'Middleware throws.')
-      ctx.status = 204
-    })
+    .on('error', error =>
+      t.type(error, MaxFilesUploadError, 'Middleware throws.')
+    )
     .use(apolloUploadKoa({ maxFiles: 1 }))
 
   const { server, port } = await startServer(app)
@@ -213,7 +214,12 @@ t.test('Exceed max files.', async t => {
   body.append(1, fs.createReadStream(TEST_FILE_PATH))
   body.append(2, fs.createReadStream(TEST_FILE_PATH))
 
-  await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  const { status } = await fetch(`http://localhost:${port}`, {
+    method: 'POST',
+    body
+  })
+
+  t.equal(status, 413, 'Response status.')
 
   server.close()
 })
@@ -307,15 +313,12 @@ t.skip('Exceed max file size.', async t => {
 })
 
 t.test('Misorder “map” before “operations”.', async t => {
+  t.plan(2)
+
   const app = new Koa()
-    .use(async (ctx, next) => {
-      await t.rejects(
-        next,
-        MapBeforeOperationsUploadError,
-        'Middleware throws.'
-      )
-      ctx.status = 204
-    })
+    .on('error', error =>
+      t.type(error, MapBeforeOperationsUploadError, 'Middleware throws.')
+    )
     .use(apolloUploadKoa())
 
   const { server, port } = await startServer(app)
@@ -339,17 +342,23 @@ t.test('Misorder “map” before “operations”.', async t => {
 
   body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
-  await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  const { status } = await fetch(`http://localhost:${port}`, {
+    method: 'POST',
+    body
+  })
+
+  t.equal(status, 400, 'Response status.')
 
   server.close()
 })
 
 t.test('Misorder files before “map”.', async t => {
+  t.plan(2)
+
   const app = new Koa()
-    .use(async (ctx, next) => {
-      await t.rejects(next, FilesBeforeMapUploadError, 'Middleware throws.')
-      ctx.status = 204
-    })
+    .on('error', error =>
+      t.type(error, FilesBeforeMapUploadError, 'Middleware throws.')
+    )
     .use(apolloUploadKoa())
 
   const { server, port } = await startServer(app)
@@ -373,7 +382,12 @@ t.test('Misorder files before “map”.', async t => {
     })
   )
 
-  await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  const { status } = await fetch(`http://localhost:${port}`, {
+    method: 'POST',
+    body
+  })
+
+  t.equal(status, 400, 'Response status.')
 
   server.close()
 })

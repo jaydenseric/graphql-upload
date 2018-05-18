@@ -14,6 +14,7 @@
   * Tests no longer transpile on the fly, are faster and AVA no longer dictates the Babel version.
   * Tests run against the actual dist `.mjs` and `.js` files in native ESM (`--experimental-modules`) and CJS environments.
   * Removed `get-port` dev dependency.
+  * Test middleware error response status codes.
   * Refactored tests and removed an apparently redundant workaround.
 * Improved `package.json` scripts:
   * Leveraged `npm-run-all` more for parallelism and reduced noise.
