@@ -1,10 +1,12 @@
 import fs from 'fs'
 import t from 'tap'
 import Koa from 'koa'
+import express from 'express'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
 import {
   apolloUploadKoa,
+  apolloUploadExpress,
   MaxFileSizeUploadError,
   MaxFilesUploadError,
   MapBeforeOperationsUploadError,
@@ -193,43 +195,70 @@ t.test('Extraneous file.', async t => {
 })
 
 t.test('Exceed max files.', async t => {
-  t.plan(2)
+  t.jobs = 2
 
-  const app = new Koa()
-    .on('error', error =>
-      t.type(error, MaxFilesUploadError, 'Middleware throws.')
+  const createBody = () => {
+    const body = new FormData()
+
+    body.append(
+      'operations',
+      JSON.stringify({
+        variables: {
+          files: [null, null]
+        }
+      })
     )
-    .use(apolloUploadKoa({ maxFiles: 1 }))
 
-  const { server, port } = await startServer(app)
+    body.append(
+      'map',
+      JSON.stringify({
+        1: ['variables.files.0'],
+        2: ['variables.files.1']
+      })
+    )
 
-  t.tearDown(() => server.close())
+    body.append(1, fs.createReadStream(TEST_FILE_PATH))
+    body.append(2, fs.createReadStream(TEST_FILE_PATH))
 
-  const body = new FormData()
+    return body
+  }
 
-  body.append(
-    'operations',
-    JSON.stringify({
-      variables: {
-        files: [null, null]
-      }
-    })
-  )
+  await t.test('Koa middleware.', async t => {
+    t.plan(2)
 
-  body.append(
-    'map',
-    JSON.stringify({
-      1: ['variables.files.0'],
-      2: ['variables.files.1']
-    })
-  )
+    const app = new Koa()
+      .on('error', error =>
+        t.type(error, MaxFilesUploadError, 'Middleware throws.')
+      )
+      .use(apolloUploadKoa({ maxFiles: 1 }))
 
-  body.append(1, fs.createReadStream(TEST_FILE_PATH))
-  body.append(2, fs.createReadStream(TEST_FILE_PATH))
+    const { server, port } = await startServer(app)
 
-  const { status } = await post(port, body)
+    t.tearDown(() => server.close())
 
-  t.equal(status, 413, 'Response status.')
+    const { status } = await post(port, createBody())
+
+    t.equal(status, 413, 'Response status.')
+  })
+
+  await t.test('Express middleware.', async t => {
+    t.plan(2)
+
+    const app = express()
+      .use(apolloUploadExpress({ maxFiles: 1 }))
+      .use((error, request, response, next) => {
+        t.type(error, MaxFilesUploadError, 'Middleware throws.')
+        next(error)
+      })
+
+    const { server, port } = await startServer(app)
+
+    t.tearDown(() => server.close())
+
+    const { status } = await post(port, createBody())
+
+    t.equal(status, 413, 'Response status.')
+  })
 })
 
 t.test('Exceed max files with extraneous files interspersed.', async t => {
