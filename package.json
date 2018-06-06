@@ -65,7 +65,7 @@
     "build:clean": "rm -r lib; mkdir lib",
     "build:mjs": "BABEL_ESM=1 babel src -d lib --keep-file-extension",
     "build:js": "babel src -d lib",
-    "build:prettier": "prettier 'lib/**/*.{mjs,js}' --write",
+    "build:prettier": "prettier 'src/**/*.{mjs,js}' --write",
     "lint:eslint": "eslint . --ext mjs,js",
     "lint:prettier": "prettier '**/*.{json,md}' -l",
     "tap:mjs": "node --experimental-modules --no-warnings lib/test | tap-mocha-reporter spec",
