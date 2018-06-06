@@ -22,6 +22,9 @@ class Upload {
           this.done = true
         })
 
+        // Attach a listener to prevent the app from crashing.
+        file.stream.on('error', () => null)
+
         // Monkey patch busboy to emit an error when a file is too big.
         file.stream.once('limit', () =>
           file.stream.emit(
