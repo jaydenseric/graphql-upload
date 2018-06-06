@@ -193,8 +193,8 @@ export const apolloUploadKoa = options => async (ctx, next) => {
 export const apolloUploadExpress = options => (request, response, next) => {
   if (!request.is('multipart/form-data')) return next()
   processRequest(request, options)
-    .then(body => {
-      request.body = body
+    .then(({ operations }) => {
+      request.body = operations
       next()
     })
     .catch(error => {
