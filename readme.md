@@ -18,9 +18,9 @@ Add the middleware just before [graphql-server](https://github.com/apollographql
 
 ### Options
 
-* `maxFieldSize` (integer): Max allowed non-file multipart form field size in bytes; enough for your queries (default: 1 MB).
-* `maxFileSize` (integer): Max allowed file size in bytes (default: Infinity).
-* `maxFiles` (integer): Max allowed number of files (default: Infinity).
+- `maxFieldSize` (integer): Max allowed non-file multipart form field size in bytes; enough for your queries (default: 1 MB).
+- `maxFileSize` (integer): Max allowed file size in bytes (default: Infinity).
+- `maxFiles` (integer): Max allowed number of files (default: Infinity).
 
 ### [Koa](http://koajs.com)
 
@@ -64,10 +64,10 @@ import { processRequest } from 'apollo-upload-server'
 
 A file upload promise that resolves an object containing:
 
-* `stream`
-* `filename`
-* `mimetype`
-* `encoding`
+- `stream`
+- `filename`
+- `mimetype`
+- `encoding`
 
 It must be added to your types and resolvers:
 
@@ -87,4 +87,4 @@ Files uploaded via a [GraphQL multipart request](https://github.com/jaydenseric/
 
 ## Support
 
-* Node.js v8.5+.
+- Node.js v8.5+.
