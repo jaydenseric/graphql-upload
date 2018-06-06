@@ -90,8 +90,7 @@ t.test('Single file.', async t => {
     const app = express()
       .use(apolloUploadExpress())
       .use((request, response, next) => {
-        t
-          .test('Upload resolves.', uploadTest(request.body.variables.file))
+        t.test('Upload resolves.', uploadTest(request.body.variables.file))
           .then(() => next())
           .catch(next)
       })
@@ -224,12 +223,11 @@ t.test('Missing file.', async t => {
     const app = express()
       .use(apolloUploadExpress())
       .use((request, response, next) => {
-        t
-          .rejects(
-            request.body.variables.file,
-            FileMissingUploadError,
-            'Upload rejects.'
-          )
+        t.rejects(
+          request.body.variables.file,
+          FileMissingUploadError,
+          'Upload rejects.'
+        )
           .then(() => next())
           .catch(next)
       })
@@ -291,8 +289,7 @@ t.test('Extraneous file.', async t => {
     const app = express()
       .use(apolloUploadExpress())
       .use((request, response, next) => {
-        t
-          .test('Upload resolves.', uploadTest(request.body.variables.file))
+        t.test('Upload resolves.', uploadTest(request.body.variables.file))
           .then(() => next())
           .catch(next)
       })
@@ -508,15 +505,14 @@ t.test('Exceed max file size.', async t => {
       .use(apolloUploadExpress({ maxFileSize: 10 }))
       .use((request, response, next) => {
         uploadTest(request.body.variables.file)(t).then(({ stream }) => {
-          t
-            .rejects(
-              new Promise((resolve, reject) => {
-                stream.on('end', () => resolve())
-                stream.on('error', error => reject(error))
-              }),
-              MaxFileSizeUploadError,
-              'Upload file stream emits error.'
-            )
+          t.rejects(
+            new Promise((resolve, reject) => {
+              stream.on('end', () => resolve())
+              stream.on('error', error => reject(error))
+            }),
+            MaxFileSizeUploadError,
+            'Upload file stream emits error.'
+          )
             .then(() => next())
             .catch(next)
         })
