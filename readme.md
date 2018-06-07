@@ -8,7 +8,7 @@ Enhances [Apollo](https://apollographql.com) for intuitive file uploads via Grap
 
 ## Setup
 
-Install with peer dependencies using [npm](https://www.npmjs.com):
+To install [`apollo-upload-server`](https://npm.im/apollo-upload-server) and [`graphql`](https://npm.im/graphql) from [npm](https://npmjs.com) run:
 
 ```shell
 npm install apollo-upload-server graphql

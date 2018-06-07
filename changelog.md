@@ -30,6 +30,7 @@
   - Use `eslint-plugin-import` and `eslint-plugin-node` and enable more rules.
   - Undo overriding ESLint ignoring dotfiles by default as there are none now.
 - Use `.prettierignore` to leave `package.json` formatting to npm.
+- Improved documentation.
 
 ## 5.0.0
 
