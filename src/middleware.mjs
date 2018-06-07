@@ -141,6 +141,8 @@ export const processRequest = (
             )
     })
 
+    parser.on('error', () => null)
+
     request.on('close', () => {
       if (map)
         for (const upload of map.values())
