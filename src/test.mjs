@@ -142,7 +142,11 @@ t.test('Early response.', async t => {
     const port = await startServer(t, app)
     const promise = testRequest(port, stream).then(
       () => {
-        t.equals(requestHasFinished, true)
+        t.equals(
+          requestHasFinished,
+          true,
+          'The server should not respond before the request has finished'
+        )
       },
       err => {
         throw err
