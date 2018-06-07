@@ -20,9 +20,12 @@
 - Improved `package.json` scripts:
   - Leveraged `npm-run-all` more for parallelism and reduced noise.
   - Removed linting fix scripts.
-  - Linting included in the `test` script. Travis CI will fail PR's with lint errors.
+  - Linting included in the test script. Travis CI will fail PR's with lint errors.
   - Custom watch script.
   - No longer use `cross-env`; contributors with Windows may setup and use a Bash shell.
+  - Improved package clean script:
+    - Removed the `rimraf` dev dependency in favour of native `rm -r`. Leaner and faster; we only support \*nix now for contributing anyway.
+    - Use native `mkdir` to mitigate [babel/babel#8077](https://github.com/babel/babel/issues/8077).
 - Improved ESLint config:
   - Use the right `sourceType` for `.js` (`script`) and `.mjs` (`module`) files.
   - Only allow ESM syntax in `.mjs` files.

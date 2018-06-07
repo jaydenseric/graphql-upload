@@ -33,12 +33,12 @@
   "engines": {
     "node": ">=8.5"
   },
+  "peerDependencies": {
+    "graphql": "^0.13.1"
+  },
   "dependencies": {
     "busboy": "^0.2.14",
     "object-path": "^0.11.4"
-  },
-  "peerDependencies": {
-    "graphql": "^0.13.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.49",
@@ -58,12 +58,11 @@
     "node-fetch": "^2.1.2",
     "npm-run-all": "^4.1.3",
     "prettier": "^1.13.4",
-    "rimraf": "^2.6.2",
     "tap": "^12.0.1",
     "watch": "^1.0.2"
   },
   "scripts": {
-    "clean": "rimraf lib",
+    "build:clean": "rm -r lib; mkdir lib",
     "build:mjs": "BABEL_ESM=1 babel src -d lib --keep-file-extension",
     "build:js": "babel src -d lib",
     "build:prettier": "prettier 'lib/**/*.{mjs,js}' --write",
@@ -71,9 +70,9 @@
     "lint:prettier": "prettier '**/*.{json,md}' -l",
     "tap:mjs": "node --experimental-modules --no-warnings lib/test | tap-mocha-reporter spec",
     "tap:js": "node lib/test | tap-mocha-reporter spec",
-    "watch": "FORCE_COLOR=1 TAP_COLORS=1 watch 'npm-run-all clean -p build:js -s tap:js -c --aggregate-output --silent' src --interval 1",
-    "test": "FORCE_COLOR=1 TAP_COLORS=1 npm-run-all clean -p build:mjs build:js -s build:prettier -p lint:* tap:* -c --aggregate-output",
-    "prepublishOnly": "npm run test",
+    "watch": "watch 'npm test --silent' src --interval 1",
+    "test": "FORCE_COLOR=1 TAP_COLORS=1 npm-run-all build:clean -p build:mjs build:js -s build:prettier -p lint:* tap:* -c --aggregate-output --silent",
+    "prepublishOnly": "npm test",
     "precommit": "lint-staged"
   },
   "lint-staged": {
