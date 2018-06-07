@@ -1,4 +1,5 @@
 import fs from 'fs'
+import { Readable } from 'stream'
 import t from 'tap'
 import Koa from 'koa'
 import express from 'express'
@@ -98,6 +99,62 @@ t.test('Single file.', async t => {
     const port = await startServer(t, app)
 
     await testRequest(port)
+  })
+})
+
+t.test('Early response.', async t => {
+  t.jobs = 1
+
+  const testRequest = async (port, stream) => {
+    const body = new FormData()
+
+    body.append(
+      'operations',
+      JSON.stringify({
+        variables: {
+          file: null
+        }
+      })
+    )
+
+    body.append('map', JSON.stringify({ 1: ['variables.file'] }))
+    body.append(1, stream)
+
+    await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  }
+
+  await t.test('Koa middleware.', async t => {
+    t.plan(1)
+
+    const data = fs.readFileSync(TEST_FILE_PATH)
+
+    var requestHasFinished = false
+    const stream = new Readable()
+    stream.path = TEST_FILE_PATH
+    stream._read = () => {}
+    stream.on('end', () => {
+      requestHasFinished = true
+    })
+
+    const app = new Koa().use(apolloUploadKoa()).use(ctx => {
+      ctx.body = 'EARLY RETURN VALUE'
+    })
+    const port = await startServer(t, app)
+    const promise = testRequest(port, stream).then(
+      () => {
+        t.equals(requestHasFinished, true)
+      },
+      err => {
+        throw err
+      }
+    )
+
+    setTimeout(() => {
+      stream.push(data)
+      stream.push(null)
+    }, 10)
+
+    return promise
   })
 })
 
