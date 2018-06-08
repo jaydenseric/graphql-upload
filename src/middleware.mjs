@@ -22,14 +22,9 @@ class Upload {
           this.done = true
         })
 
-        // Prevent a crash if the stream disconnects before the consumers’ error
-        // listeners can attach.
-        file.stream.on('error', () => {})
-
         // Monkey patch busboy to emit an error when a file is too big.
         file.stream.once('limit', () =>
-          file.stream.emit(
-            'error',
+          file.stream.destroy(
             new MaxFileSizeUploadError(
               'File truncated as it exceeds the size limit.'
             )
@@ -60,6 +55,31 @@ export const processRequest = (
     let operations
     let operationsPath
     let map
+
+    const close = () => {
+      if (map)
+        for (const upload of map.values())
+          if (!upload.file)
+            upload.reject(
+              new UploadPromiseDisconnectUploadError(
+                'Request disconnected before file upload stream parsing.'
+              )
+            )
+          else if (!upload.done) {
+            upload.file.stream.truncated = true
+
+            // Prevent a crash if the stream disconnects before the consumers’
+            // error listeners can attach.
+            if (!upload.file.stream.listenerCount('error'))
+              upload.file.stream.once('error', () => {})
+
+            upload.file.stream.destroy(
+              new FileStreamDisconnectUploadError(
+                'Request disconnected during file upload stream parsing.'
+              )
+            )
+          }
+    }
 
     parser.on('field', (fieldName, value) => {
       switch (fieldName) {
@@ -142,25 +162,9 @@ export const processRequest = (
             )
     })
 
-    request.on('close', () => {
-      if (map)
-        for (const upload of map.values())
-          if (!upload.file)
-            upload.reject(
-              new UploadPromiseDisconnectUploadError(
-                'Request disconnected before file upload stream parsing.'
-              )
-            )
-          else if (!upload.done) {
-            upload.file.stream.truncated = true
-            upload.file.stream.emit(
-              'error',
-              new FileStreamDisconnectUploadError(
-                'Request disconnected during file upload stream parsing.'
-              )
-            )
-          }
-    })
+    parser.on('error', close)
+
+    request.on('close', close)
 
     request.pipe(parser)
   })
