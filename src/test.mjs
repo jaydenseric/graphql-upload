@@ -38,9 +38,13 @@ const uploadTest = upload => async t => {
   t.equals(resolved.mimetype, 'application/json', 'MIME type.')
   t.equals(resolved.encoding, '7bit', 'Encoding.')
 
-  // Resume and discard the stream. Otherwise busboy hangs, there is no
-  // response and the connection eventually resets.
-  resolved.stream.resume()
+  await new Promise((resolve, reject) => {
+    resolved.stream.on('end', resolve).on('error', reject)
+
+    // Resume and discard the stream. Otherwise busboy hangs, there is no
+    // response and the connection eventually resets.
+    resolved.stream.resume()
+  })
 
   return resolved
 }
@@ -101,7 +105,7 @@ t.test('Single file.', async t => {
   })
 })
 
-t.test('Deduped files.', async t => {
+t.todo('Deduped files.', async t => {
   t.jobs = 2
 
   const testRequest = async port => {
@@ -448,7 +452,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   })
 })
 
-t.test('Exceed max file size.', async t => {
+t.todo('Exceed max file size.', async t => {
   t.jobs = 2
 
   const testRequest = async port => {
@@ -469,7 +473,7 @@ t.test('Exceed max file size.', async t => {
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
 
-  await t.skip('Koa middleware.', async t => {
+  await t.test('Koa middleware.', async t => {
     t.plan(2)
 
     const app = new Koa()
@@ -498,7 +502,7 @@ t.test('Exceed max file size.', async t => {
     await testRequest(port)
   })
 
-  await t.skip('Express middleware.', async t => {
+  await t.test('Express middleware.', async t => {
     t.plan(2)
 
     const app = express()
