@@ -135,7 +135,7 @@ t.test('Aborted request.', async t => {
         'operations',
         JSON.stringify({
           variables: {
-            file: null,
+            file1: null,
             file2: null,
             file3: null
           }
