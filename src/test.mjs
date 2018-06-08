@@ -105,7 +105,7 @@ t.test('Single file.', async t => {
   })
 })
 
-t.skip('Deduped files.', async t => {
+t.todo('Deduped files.', async t => {
   t.jobs = 2
 
   const testRequest = async port => {
@@ -452,7 +452,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   })
 })
 
-t.test('Exceed max file size.', async t => {
+t.todo('Exceed max file size.', async t => {
   t.jobs = 2
 
   const testRequest = async port => {
@@ -473,7 +473,7 @@ t.test('Exceed max file size.', async t => {
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
 
-  await t.skip('Koa middleware.', async t => {
+  await t.test('Koa middleware.', async t => {
     t.plan(2)
 
     const app = new Koa()
@@ -502,7 +502,7 @@ t.test('Exceed max file size.', async t => {
     await testRequest(port)
   })
 
-  await t.skip('Express middleware.', async t => {
+  await t.test('Express middleware.', async t => {
     t.plan(2)
 
     const app = express()
