@@ -268,9 +268,14 @@ t.test('Aborted request.', async t => {
             abortedPromiseTest(request.body.variables.file3)
           )
         ])
-          .then(() => next())
-          .catch(next)
-          .finally(resume)
+          .then(() => {
+            resume()
+            next()
+          })
+          .catch(err => {
+            resume()
+            next(err)
+          })
       })
 
     const port = await startServer(t, app)
