@@ -65,7 +65,7 @@ export const processRequest = (
                 'Request disconnected before file upload stream parsing.'
               )
             )
-          else if (!upload.done) {
+          else if (!upload.done && !upload.file.stream.truncated) {
             upload.file.stream.truncated = true
 
             // Prevent a crash if the stream disconnects before the consumers’
