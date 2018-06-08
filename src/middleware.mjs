@@ -22,8 +22,9 @@ class Upload {
           this.done = true
         })
 
-        // Attach a listener to prevent the app from crashing.
-        file.stream.on('error', () => null)
+        // Prevent a crash if the stream disconnects before the consumers’ error
+        // listeners can attach.
+        file.stream.on('error', () => {})
 
         // Monkey patch busboy to emit an error when a file is too big.
         file.stream.once('limit', () =>
