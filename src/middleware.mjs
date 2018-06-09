@@ -118,7 +118,7 @@ export const processRequest = (
               operationsPath.set(path, map.get(fieldName).promise)
           }
 
-          resolve({ operations, map })
+          resolve({ operations, map, parser })
         }
       }
     })
@@ -172,13 +172,16 @@ export const processRequest = (
 export const apolloUploadKoa = options => async (ctx, next) => {
   if (!ctx.request.is('multipart/form-data')) return next()
 
-  // add uploads to the request
-  const { operations, map } = await processRequest(ctx.req, options)
+  // Begin decoding the multipart request.
+  const { operations, map, parser } = await processRequest(ctx.req, options)
+
+  // Add uploads to the request.
   ctx.request.body = operations
 
   try {
     await next()
   } finally {
+    // Ensure that our file streams continue.
     await Promise.all(
       [...map.values()].map(async upload => {
         if (upload.done) return
@@ -191,6 +194,11 @@ export const apolloUploadKoa = options => async (ctx, next) => {
         })
       })
     )
+
+    // Tear down the parser and continue the stream.
+    ctx.req.unpipe(parser)
+    ctx.req.resume()
+    parser.destroy()
   }
 }
 

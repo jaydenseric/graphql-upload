@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { Readable, Transform } from 'stream'
+import { Transform } from 'stream'
 import http from 'http'
 import t from 'tap'
 import Koa from 'koa'
@@ -13,7 +13,9 @@ import {
   MaxFilesUploadError,
   MapBeforeOperationsUploadError,
   FilesBeforeMapUploadError,
-  FileMissingUploadError
+  FileMissingUploadError,
+  UploadPromiseDisconnectUploadError,
+  FileStreamDisconnectUploadError
 } from '.'
 
 // GraphQL multipart request spec:
@@ -108,8 +110,10 @@ t.test('Single file.', async t => {
   })
 })
 
-t.test('Early response.', async t => {
-  const testRequest = async (port, stream) => {
+t.test('Discards unconsumed uploads.', async t => {
+  t.jobs = 2
+
+  const testRequest = async port => {
     const body = new FormData()
 
     body.append(
@@ -122,42 +126,29 @@ t.test('Early response.', async t => {
     )
 
     body.append('map', JSON.stringify({ 1: ['variables.file'] }))
-    body.append(1, stream)
+    body.append(1, fs.createReadStream(TEST_FILE_PATH_JSON))
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(1)
-
-    const data = fs.readFileSync(TEST_FILE_PATH_JSON)
-
-    let requestHasFinished = false
-    const stream = new Readable({
-      read: () => {}
-    })
-    stream.path = TEST_FILE_PATH_JSON
-    stream.on('end', () => {
-      requestHasFinished = true
+    const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+      t.ok(ctx.request.body.variables.file)
+      ctx.status = 204
+      await next()
     })
 
-    const app = new Koa().use(apolloUploadKoa()).use(ctx => {
-      ctx.body = 'EARLY RETURN VALUE'
-    })
     const port = await startServer(t, app)
 
-    process.nextTick(() => {
-      stream.push(data)
-      stream.push(null)
-    })
-
-    await testRequest(port, stream)
-
-    t.equals(
-      requestHasFinished,
-      true,
-      'The server should not respond before the request has finished'
-    )
+    await Promise.race([
+      testRequest(port),
+      new Promise((resolve, reject) =>
+        setTimeout(
+          () => reject(new Error('The request did not complete.')),
+          1000
+        )
+      )
+    ])
   })
 })
 
@@ -168,7 +159,10 @@ t.test('Aborted request.', async t => {
     const resolved = await upload
 
     await new Promise((resolve, reject) => {
-      resolved.stream.on('error', resolve)
+      resolved.stream.on('error', err => {
+        t.type(err, FileStreamDisconnectUploadError)
+        resolve()
+      })
       resolved.stream.on('end', reject)
     })
 
@@ -176,7 +170,7 @@ t.test('Aborted request.', async t => {
   }
 
   const abortedPromiseTest = upload => t => {
-    t.rejects(upload)
+    t.rejects(upload, UploadPromiseDisconnectUploadError)
     return Promise.resolve()
   }
 
