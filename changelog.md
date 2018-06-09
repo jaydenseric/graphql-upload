@@ -17,6 +17,8 @@
   - Test middleware error response status codes.
   - Added Express tests.
   - Refactored tests and removed an apparently redundant workaround.
+  - Test behavior of aborted HTTP requests.
+  - Test that the app can respond if an upload is not handled.
 - Improved `package.json` scripts:
   - Leveraged `npm-run-all` more for parallelism and reduced noise.
   - Removed linting fix scripts.
@@ -33,6 +35,9 @@
   - Use `eslint-plugin-import` and `eslint-plugin-node` and enable more rules.
   - Undo overriding ESLint ignoring dotfiles by default as there are none now.
 - Use `.prettierignore` to leave `package.json` formatting to npm.
+- Add `error` event listeners to file streams to prevent the app from crashing on aborted requests or parser errors.
+- Add UploadBuffer to ensure the app does not hang if an upload is `await`ed out of order, or is never consumed.
+- Add `errorHandler` option to allow customization of new UploadBuffer streams.
 - Improved documentation.
 
 ## 5.0.0
