@@ -24,6 +24,11 @@ import {
 const TEST_FILE_PATH_JSON = 'package.json'
 const TEST_FILE_PATH_SVG = 'apollo-upload-logo.svg'
 
+// The max TCP packet size is 64KB, so this file is guaranteed to arrive
+// in multiple chunks. It is a public domain image retreived from:
+// https://commons.wikimedia.org/wiki/File:Belvedere_Apollo_Pio-Clementino_Inv1015.jpg
+const TEST_FILE_PATH_JPG = 'Belvedere_Apollo_Pio-Clementino_Inv1015.jpg'
+
 const startServer = (t, app) =>
   new Promise((resolve, reject) => {
     app.listen(undefined, 'localhost', function(error) {
@@ -120,35 +125,50 @@ t.test('Discards unconsumed uploads.', async t => {
       'operations',
       JSON.stringify({
         variables: {
-          file: null
+          file1: null,
+          file2: null
         }
       })
     )
 
-    body.append('map', JSON.stringify({ 1: ['variables.file'] }))
-    body.append(1, fs.createReadStream(TEST_FILE_PATH_JSON))
+    body.append(
+      'map',
+      JSON.stringify({
+        1: ['variables.file1'],
+        2: ['variables.file2']
+      })
+    )
+    body.append(1, fs.createReadStream(TEST_FILE_PATH_JPG))
+    body.append(2, fs.createReadStream(TEST_FILE_PATH_JSON))
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
 
   await t.test('Koa middleware.', async t => {
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-      t.ok(ctx.request.body.variables.file)
+      await t.test('Upload 1 does not need to be consumed.', t => {
+        t.ok(ctx.request.body.variables.file1)
+        return Promise.resolve()
+      })
+
+      await t.test(
+        'Upload 2 resolves.',
+        uploadTest(ctx.request.body.variables.file2)
+      )
+
       ctx.status = 204
       await next()
     })
 
     const port = await startServer(t, app)
 
-    await Promise.race([
-      testRequest(port),
-      new Promise((resolve, reject) =>
-        setTimeout(
-          () => reject(new Error('The request did not complete.')),
-          1000
-        )
-      )
-    ])
+    setTimeout(() => {
+      if (!requestIsComplete) throw new Error('The request did not complete.')
+    }, 100)
+
+    let requestIsComplete = false
+    await testRequest(port)
+    requestIsComplete = true
   })
 })
 
