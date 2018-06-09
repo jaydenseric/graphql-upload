@@ -109,8 +109,6 @@ t.test('Single file.', async t => {
 })
 
 t.test('Early response.', async t => {
-  t.jobs = 1
-
   const testRequest = async (port, stream) => {
     const body = new FormData()
 
@@ -134,10 +132,11 @@ t.test('Early response.', async t => {
 
     const data = fs.readFileSync(TEST_FILE_PATH_JSON)
 
-    var requestHasFinished = false
-    const stream = new Readable()
+    let requestHasFinished = false
+    const stream = new Readable({
+      read: () => {}
+    })
     stream.path = TEST_FILE_PATH_JSON
-    stream._read = () => {}
     stream.on('end', () => {
       requestHasFinished = true
     })
@@ -146,25 +145,19 @@ t.test('Early response.', async t => {
       ctx.body = 'EARLY RETURN VALUE'
     })
     const port = await startServer(t, app)
-    const promise = testRequest(port, stream).then(
-      () => {
-        t.equals(
-          requestHasFinished,
-          true,
-          'The server should not respond before the request has finished'
-        )
-      },
-      err => {
-        throw err
-      }
-    )
 
-    setTimeout(() => {
+    process.nextTick(() => {
       stream.push(data)
       stream.push(null)
-    }, 10)
+    })
 
-    return promise
+    await testRequest(port, stream)
+
+    t.equals(
+      requestHasFinished,
+      true,
+      'The server should not respond before the request has finished'
+    )
   })
 })
 

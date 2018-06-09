@@ -177,7 +177,6 @@ export const apolloUploadKoa = options => async (ctx, next) => {
   ctx.request.body = operations
 
   try {
-    ctx.respond = false
     await next()
   } finally {
     await Promise.all(
@@ -192,9 +191,6 @@ export const apolloUploadKoa = options => async (ctx, next) => {
         })
       })
     )
-
-    ctx.respond = true
-    if (ctx.body) ctx.body = ctx.body
   }
 }
 
