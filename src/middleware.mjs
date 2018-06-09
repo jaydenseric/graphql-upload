@@ -1,3 +1,4 @@
+import { Transform } from 'stream'
 import Busboy from 'busboy'
 import objectPath from 'object-path'
 import {
@@ -37,9 +38,17 @@ class Upload {
   }
 }
 
+class UploadBuffer extends Transform {
+  _transform(chunk, encoding, callback) {
+    callback(null, chunk)
+  }
+}
+
+const defaultErrorHandler = () => {}
+
 export const processRequest = (
   request,
-  { maxFieldSize, maxFileSize, maxFiles } = {}
+  { maxFieldSize, maxFileSize, maxFiles, errorHandler } = {}
 ) =>
   new Promise((resolve, reject) => {
     const parser = new Busboy({
@@ -67,12 +76,6 @@ export const processRequest = (
             )
           else if (!upload.done && !upload.file.stream.truncated) {
             upload.file.stream.truncated = true
-
-            // Prevent a crash if the stream disconnects before the consumers’
-            // error listeners can attach.
-            if (!upload.file.stream.listenerCount('error'))
-              upload.file.stream.once('error', () => {})
-
             upload.file.stream.destroy(
               new FileStreamDisconnectUploadError(
                 'Request disconnected during file upload stream parsing.'
@@ -118,12 +121,12 @@ export const processRequest = (
               operationsPath.set(path, map.get(fieldName).promise)
           }
 
-          resolve({ operations, map, parser })
+          resolve(operations)
         }
       }
     })
 
-    parser.on('file', (fieldName, stream, filename, encoding, mimetype) => {
+    parser.on('file', (fieldName, source, filename, encoding, mimetype) => {
       if (!map)
         return reject(
           new FilesBeforeMapUploadError(
@@ -131,6 +134,11 @@ export const processRequest = (
             400
           )
         )
+
+      const stream = new UploadBuffer()
+      stream.on('error', errorHandler || defaultErrorHandler)
+      source.on('error', err => stream.emit('error', err))
+      source.pipe(stream)
 
       if (map.has(fieldName))
         // File is expected.
@@ -171,41 +179,14 @@ export const processRequest = (
 
 export const apolloUploadKoa = options => async (ctx, next) => {
   if (!ctx.request.is('multipart/form-data')) return next()
-
-  // Begin decoding the multipart request.
-  const { operations, map, parser } = await processRequest(ctx.req, options)
-
-  // Add uploads to the request.
-  ctx.request.body = operations
-
-  try {
-    await next()
-  } finally {
-    // Ensure that our file streams continue.
-    await Promise.all(
-      [...map.values()].map(async upload => {
-        if (upload.done) return
-
-        await upload.promise
-        return new Promise(resolve => {
-          upload.file.stream.on('end', resolve)
-          upload.file.stream.on('error', resolve)
-          if (!upload.file.stream.readableFlowing) upload.file.stream.resume()
-        })
-      })
-    )
-
-    // Tear down the parser and continue the stream.
-    ctx.req.unpipe(parser)
-    ctx.req.resume()
-    parser.destroy()
-  }
+  ctx.request.body = await processRequest(ctx.req, options)
+  await next()
 }
 
 export const apolloUploadExpress = options => (request, response, next) => {
   if (!request.is('multipart/form-data')) return next()
   processRequest(request, options)
-    .then(({ operations }) => {
+    .then(operations => {
       request.body = operations
       next()
     })
