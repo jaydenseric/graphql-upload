@@ -115,7 +115,7 @@ t.test('Single file.', async t => {
   })
 })
 
-t.test('Discards unconsumed uploads.', async t => {
+t.test('Handles unconsumed uploads.', async t => {
   t.jobs = 2
 
   const testRequest = async port => {
@@ -145,6 +145,8 @@ t.test('Discards unconsumed uploads.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
+    t.plan(2)
+
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
       await t.test('Upload 1 does not need to be consumed.', t => {
         t.ok(ctx.request.body.variables.file1)
@@ -159,6 +161,37 @@ t.test('Discards unconsumed uploads.', async t => {
       ctx.status = 204
       await next()
     })
+
+    const port = await startServer(t, app)
+
+    setTimeout(() => {
+      if (!requestIsComplete) throw new Error('The request did not complete.')
+    }, 100)
+
+    let requestIsComplete = false
+    await testRequest(port)
+    requestIsComplete = true
+  })
+
+  await t.test('Express middleware.', async t => {
+    t.plan(2)
+
+    const app = express()
+      .use(apolloUploadExpress())
+      .use((request, response, next) => {
+        t.test('Upload 1 does not need to be consumed.', t => {
+          t.ok(request.body.variables.file1)
+          return Promise.resolve()
+        })
+          .then(() =>
+            t.test(
+              'Upload 2 resolves.',
+              uploadTest(request.body.variables.file2)
+            )
+          )
+          .then(() => next())
+          .catch(next)
+      })
 
     const port = await startServer(t, app)
 
