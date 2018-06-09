@@ -43,7 +43,7 @@ const startServer = (t, app) =>
 const uploadTest = upload => async t => {
   const resolved = await upload
 
-  t.type(resolved.stream, 'UploadBuffer', 'Stream.')
+  t.type(resolved.stream, 'UploadStream', 'Stream.')
   t.equals(resolved.filename, 'package.json', 'Filename.')
   t.equals(resolved.mimetype, 'application/json', 'MIME type.')
   t.equals(resolved.encoding, '7bit', 'Encoding.')

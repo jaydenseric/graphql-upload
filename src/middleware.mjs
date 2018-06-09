@@ -38,7 +38,7 @@ class Upload {
   }
 }
 
-class UploadBuffer extends Transform {
+class UploadStream extends Transform {
   _transform(chunk, encoding, callback) {
     callback(null, chunk)
   }
@@ -116,7 +116,7 @@ export const processRequest = (
           )
         )
 
-      const stream = new UploadBuffer()
+      const stream = new UploadStream()
       stream.on('error', errorHandler || defaultErrorHandler)
       source.on('error', err => stream.emit('error', err))
       source.pipe(stream)
