@@ -65,25 +65,6 @@ export const processRequest = (
     let operationsPath
     let map
 
-    const close = () => {
-      if (map)
-        for (const upload of map.values())
-          if (!upload.file)
-            upload.reject(
-              new UploadPromiseDisconnectUploadError(
-                'Request disconnected before file upload stream parsing.'
-              )
-            )
-          else if (!upload.done && !upload.file.stream.truncated) {
-            upload.file.stream.truncated = true
-            upload.file.stream.destroy(
-              new FileStreamDisconnectUploadError(
-                'Request disconnected during file upload stream parsing.'
-              )
-            )
-          }
-    }
-
     parser.on('field', (fieldName, value) => {
       switch (fieldName) {
         case 'operations':
@@ -170,9 +151,34 @@ export const processRequest = (
             )
     })
 
-    parser.on('error', close)
+    parser.on('error', err => {
+      if (map)
+        for (const upload of map.values())
+          if (!upload.file) upload.reject(err)
+          else if (!upload.done && !upload.file.stream.truncated) {
+            upload.file.stream.truncated = true
+            upload.file.stream.destroy(err)
+          }
+    })
 
-    request.on('close', close)
+    request.on('close', () => {
+      if (map)
+        for (const upload of map.values())
+          if (!upload.file)
+            upload.reject(
+              new UploadPromiseDisconnectUploadError(
+                'Request disconnected before file upload stream parsing.'
+              )
+            )
+          else if (!upload.done && !upload.file.stream.truncated) {
+            upload.file.stream.truncated = true
+            upload.file.stream.destroy(
+              new FileStreamDisconnectUploadError(
+                'Request disconnected during file upload stream parsing.'
+              )
+            )
+          }
+    })
 
     request.pipe(parser)
   })
