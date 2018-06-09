@@ -248,6 +248,38 @@ t.test('Aborted request.', async t => {
     await delay
   })
 
+  await t.test('Koa middleware without stream error handler.', async t => {
+    t.plan(2)
+
+    let resume
+    const delay = new Promise(resolve => (resume = resolve))
+    const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+      try {
+        await Promise.all([
+          t.test(
+            'Upload resolves.',
+            uploadTest(ctx.request.body.variables.file1)
+          ),
+
+          t.test(
+            'Unresolved upload promises are rejected.',
+            abortedPromiseTest(ctx.request.body.variables.file3)
+          )
+        ])
+      } finally {
+        resume()
+      }
+
+      ctx.status = 204
+      await next()
+    })
+
+    const port = await startServer(t, app)
+
+    await testRequest(port)
+    await delay
+  })
+
   await t.test('Express middleware.', async t => {
     t.plan(3)
 
@@ -263,6 +295,38 @@ t.test('Aborted request.', async t => {
             'In-progress upload streams are destroyed.',
             abortedStreamTest(request.body.variables.file2)
           ),
+
+          t.test(
+            'Unresolved upload promises are rejected.',
+            abortedPromiseTest(request.body.variables.file3)
+          )
+        ])
+          .then(() => {
+            resume()
+            next()
+          })
+          .catch(err => {
+            resume()
+            next(err)
+          })
+      })
+
+    const port = await startServer(t, app)
+
+    await testRequest(port)
+    await delay
+  })
+
+  await t.test('Express middleware without stream error handler.', async t => {
+    t.plan(2)
+
+    let resume
+    const delay = new Promise(resolve => (resume = resolve))
+    const app = express()
+      .use(apolloUploadExpress())
+      .use((request, response, next) => {
+        Promise.all([
+          t.test('Upload resolves.', uploadTest(request.body.variables.file1)),
 
           t.test(
             'Unresolved upload promises are rejected.',
