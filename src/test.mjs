@@ -42,12 +42,10 @@ const startServer = (t, app) =>
 
 const uploadTest = upload => async t => {
   const resolved = await upload
-
-  t.type(resolved.stream, 'UploadStream', 'Stream.')
+  t.type(resolved.stream, 'Capacitor', 'Stream.')
   t.equals(resolved.filename, 'package.json', 'Filename.')
   t.equals(resolved.mimetype, 'application/json', 'MIME type.')
   t.equals(resolved.encoding, '7bit', 'Encoding.')
-
   await new Promise((resolve, reject) => {
     resolved.stream.on('end', resolve).on('error', reject)
 
@@ -55,7 +53,6 @@ const uploadTest = upload => async t => {
     // response and the connection eventually resets.
     resolved.stream.resume()
   })
-
   return resolved
 }
 
@@ -164,13 +161,14 @@ t.test('Handles unconsumed uploads.', async t => {
 
     const port = await startServer(t, app)
 
-    setTimeout(() => {
-      if (!requestIsComplete) throw new Error('The request did not complete.')
-    }, 100)
-
-    let requestIsComplete = false
-    await testRequest(port)
-    requestIsComplete = true
+    await Promise.race([
+      testRequest(port),
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error('The request did not complete.'))
+        }, 500)
+      })
+    ])
   })
 
   await t.test('Express middleware.', async t => {
@@ -195,18 +193,19 @@ t.test('Handles unconsumed uploads.', async t => {
 
     const port = await startServer(t, app)
 
-    setTimeout(() => {
-      if (!requestIsComplete) throw new Error('The request did not complete.')
-    }, 100)
-
-    let requestIsComplete = false
-    await testRequest(port)
-    requestIsComplete = true
+    await Promise.race([
+      testRequest(port),
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error('The request did not complete.'))
+        }, 500)
+      })
+    ])
   })
 })
 
-t.test('Aborted request.', async t => {
-  t.jobs = 2
+t.skip('Aborted request.', async t => {
+  t.jobs = 1
 
   const abortedStreamTest = upload => async () => {
     const resolved = await upload
@@ -252,7 +251,7 @@ t.test('Aborted request.', async t => {
       )
       body.append(1, fs.createReadStream(TEST_FILE_PATH_JSON))
       body.append(2, fs.createReadStream(TEST_FILE_PATH_SVG))
-      body.append(3, fs.createReadStream(TEST_FILE_PATH_JSON))
+      body.append(3, fs.createReadStream(TEST_FILE_PATH_JPG))
 
       const request = http.request({
         method: 'POST',
@@ -341,9 +340,7 @@ t.test('Aborted request.', async t => {
       ctx.status = 204
       await next()
     })
-
     const port = await startServer(t, app)
-
     await testRequest(port)
     await delay
   })
@@ -752,16 +749,18 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
     const app = new Koa()
       .use(apolloUploadKoa({ maxFiles: 2 }))
       .use(async (ctx, next) => {
-        await t.test(
-          'Upload 1 resolves.',
-          uploadTest(ctx.request.body.variables.files[0])
-        )
+        await Promise.all([
+          t.test(
+            'Upload 1 resolves.',
+            uploadTest(ctx.request.body.variables.files[0])
+          ),
 
-        await t.rejects(
-          ctx.request.body.variables.files[1],
-          MaxFilesUploadError,
-          'Upload 2 rejects.'
-        )
+          t.rejects(
+            ctx.request.body.variables.files[1],
+            MaxFilesUploadError,
+            'Upload 2 rejects.'
+          )
+        ])
 
         ctx.status = 204
         await next()

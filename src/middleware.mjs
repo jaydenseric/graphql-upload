@@ -1,6 +1,6 @@
-import { Transform } from 'stream'
 import Busboy from 'busboy'
 import objectPath from 'object-path'
+import Capacitor from 'fs-capacitor'
 import {
   SPEC_URL,
   MaxFileSizeUploadError,
@@ -12,8 +12,10 @@ import {
   FileStreamDisconnectUploadError
 } from './errors'
 
+const defaultErrorHandler = () => {}
+
 class Upload {
-  constructor() {
+  constructor(errorHandler) {
     this.promise = new Promise((resolve, reject) => {
       this.reject = reject
       this.resolve = file => {
@@ -35,16 +37,13 @@ class Upload {
         resolve(file)
       }
     })
+
+    // Node has deprecated asynchronous handling of promises,
+    // instead opting to crash the app.
+    // https://github.com/nodejs/node/issues/20392
+    this.promise.catch(errorHandler || defaultErrorHandler)
   }
 }
-
-class UploadStream extends Transform {
-  _transform(chunk, encoding, callback) {
-    callback(null, chunk)
-  }
-}
-
-const defaultErrorHandler = () => {}
 
 export const processRequest = (
   request,
@@ -61,9 +60,15 @@ export const processRequest = (
       }
     })
 
+    let resolveFinished
+    const finished = new Promise(resolve => {
+      resolveFinished = resolve
+    })
+
     let operations
     let operationsPath
     let map
+    let currentStream
 
     parser.on('field', (fieldName, value) => {
       switch (fieldName) {
@@ -94,7 +99,7 @@ export const processRequest = (
 
           map = new Map()
           for (const [fieldName, paths] of mapEntries) {
-            map.set(fieldName, new Upload())
+            map.set(fieldName, new Upload(errorHandler))
 
             // Repopulate operations with the promise wherever the file occurred
             // for use by the Upload scalar.
@@ -102,7 +107,7 @@ export const processRequest = (
               operationsPath.set(path, map.get(fieldName).promise)
           }
 
-          resolve(operations)
+          resolve({ body: operations, finished })
         }
       }
     })
@@ -116,30 +121,40 @@ export const processRequest = (
           )
         )
 
-      const stream = new UploadStream()
-      stream.on('error', errorHandler || defaultErrorHandler)
-      source.on('error', err => stream.emit('error', err))
-      source.pipe(stream)
+      currentStream = source
+      source.on('end', () => {
+        if (currentStream === source) currentStream = null
+      })
 
-      if (map.has(fieldName))
-        // File is expected.
+      if (map.has(fieldName)) {
+        const capacitor = new Capacitor()
+        capacitor.on('error', err => {
+          source.unpipe()
+          source.resume()(errorHandler || defaultErrorHandler)(err)
+        })
+
+        source.on('error', err => {
+          if (!capacitor.finished) capacitor.destroy(err)
+        })
+
+        source.pipe(capacitor)
+
         map.get(fieldName).resolve({
-          stream,
+          stream: capacitor,
           filename,
           mimetype,
           encoding
         })
+      }
+
       // Discard the unexpected file.
-      else stream.resume()
+      else source.resume()
     })
 
     parser.once('filesLimit', () => {
-      if (map)
-        for (const upload of map.values())
-          if (!upload.file)
-            upload.reject(
-              new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`)
-            )
+      parser.destroy(
+        new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`)
+      )
     })
 
     parser.once('finish', () => {
@@ -149,16 +164,19 @@ export const processRequest = (
             upload.reject(
               new FileMissingUploadError('File missing in the request.')
             )
+
+      resolveFinished()
     })
 
     parser.on('error', err => {
       if (map)
-        for (const upload of map.values())
-          if (!upload.file) upload.reject(err)
-          else if (!upload.done && !upload.file.stream.truncated) {
-            upload.file.stream.truncated = true
-            upload.file.stream.destroy(err)
-          }
+        for (const upload of map.values()) if (!upload.file) upload.reject(err)
+
+      if (currentStream) currentStream.destroy(err)
+
+      resolveFinished()
+      request.unpipe(parser)
+      request.resume()
     })
 
     request.on('close', () => {
@@ -170,14 +188,13 @@ export const processRequest = (
                 'Request disconnected before file upload stream parsing.'
               )
             )
-          else if (!upload.done && !upload.file.stream.truncated) {
-            upload.file.stream.truncated = true
-            upload.file.stream.destroy(
-              new FileStreamDisconnectUploadError(
-                'Request disconnected during file upload stream parsing.'
-              )
-            )
-          }
+
+      if (!parser._finished)
+        parser.destroy(
+          new FileStreamDisconnectUploadError(
+            'Request disconnected during file upload stream parsing.'
+          )
+        )
     })
 
     request.pipe(parser)
@@ -185,15 +202,26 @@ export const processRequest = (
 
 export const apolloUploadKoa = options => async (ctx, next) => {
   if (!ctx.request.is('multipart/form-data')) return next()
-  ctx.request.body = await processRequest(ctx.req, options)
+  const { body, finished } = await processRequest(ctx.req, options)
+  ctx.request.body = body
   await next()
+  await finished
 }
 
 export const apolloUploadExpress = options => (request, response, next) => {
   if (!request.is('multipart/form-data')) return next()
   processRequest(request, options)
-    .then(body => {
+    .then(({ body, finished }) => {
       request.body = body
+
+      const { send } = response
+      response.send = (...args) => {
+        finished.then(() => {
+          response.send = send
+          response.send(...args)
+        })
+      }
+
       next()
     })
     .catch(error => {

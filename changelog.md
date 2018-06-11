@@ -36,9 +36,10 @@
   - Undo overriding ESLint ignoring dotfiles by default as there are none now.
 - Use `.prettierignore` to leave `package.json` formatting to npm.
 - Add `error` event listeners to file streams to prevent the app from crashing on aborted requests or parser errors.
-- Add UploadStream to ensure the app does not hang if an upload is `await`ed out of order, or is never consumed.
+- Add Capacitor to ensure the app does not hang if an upload is `await`ed out of order, or is never consumed.
 - Add `errorHandler` option to allow customization of new UploadBuffer streams.
 - Improved documentation.
+- **BREAKING** Update `processRequest` to return `Promise<{body: *, finished: Promise<typeof undefined>}>`
 
 ## 5.0.0
 
