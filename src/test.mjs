@@ -292,6 +292,7 @@ t.test('Aborted request.', async t => {
 
             // Abort now.
             if (length < 1) {
+              this._aborted = true
               request.abort()
               return
             }
@@ -299,7 +300,7 @@ t.test('Aborted request.', async t => {
             // Send partial chunk and then abort
             this._aborted = true
             callback(null, chunkString.substr(0, length))
-            process.nextTick(() => request.abort())
+            setImmediate(() => request.abort())
             return
           }
 
