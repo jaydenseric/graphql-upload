@@ -107,7 +107,7 @@ export const processRequest = (
               operationsPath.set(path, map.get(fieldName).promise)
           }
 
-          resolve({ body: operations, finished })
+          resolve({ operations, finished })
         }
       }
     })
@@ -202,8 +202,8 @@ export const processRequest = (
 
 export const apolloUploadKoa = options => async (ctx, next) => {
   if (!ctx.request.is('multipart/form-data')) return next()
-  const { body, finished } = await processRequest(ctx.req, options)
-  ctx.request.body = body
+  const { operations, finished } = await processRequest(ctx.req, options)
+  ctx.request.body = operations
   await next()
   await finished
 }
@@ -211,8 +211,8 @@ export const apolloUploadKoa = options => async (ctx, next) => {
 export const apolloUploadExpress = options => (request, response, next) => {
   if (!request.is('multipart/form-data')) return next()
   processRequest(request, options)
-    .then(({ body, finished }) => {
-      request.body = body
+    .then(({ operations, finished }) => {
+      request.body = operations
 
       const { send } = response
       response.send = (...args) => {

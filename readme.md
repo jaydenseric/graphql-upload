@@ -60,7 +60,7 @@ Middleware wraps the async function `processRequest` which accepts a Node.js req
 ```ts
 type Response = {
   // operations for a GraphQL server to consume (usually as the request body)
-  body: *,
+  operations: *,
 
   // promise which will resolve once the request has been fully consumed
   finished: Promise<typeof undefined>
