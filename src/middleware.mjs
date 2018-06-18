@@ -130,7 +130,9 @@ export const processRequest = (
         const capacitor = new Capacitor()
         capacitor.on('error', err => {
           source.unpipe()
-          source.resume()(errorHandler || defaultErrorHandler)(err)
+          source.resume()
+          const handler = errorHandler || defaultErrorHandler
+          handler(err)
         })
 
         source.on('error', err => {
