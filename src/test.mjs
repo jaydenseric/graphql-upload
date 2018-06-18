@@ -204,7 +204,7 @@ t.test('Handles unconsumed uploads.', async t => {
   })
 })
 
-t.skip('Aborted request.', async t => {
+t.test('Aborted request.', async t => {
   t.jobs = 1
 
   const abortedStreamTest = upload => async () => {
