@@ -75,6 +75,17 @@ export const processRequest = (
     let map
     let currentStream
 
+    let rejection
+    const exit = err => {
+      rejection = err
+      parser.destroy(err)
+    }
+
+    const finish = () => {
+      if (rejection) reject(rejection)
+      callback()
+    }
+
     parser.on('field', (fieldName, value) => {
       switch (fieldName) {
         case 'operations':
@@ -83,7 +94,7 @@ export const processRequest = (
           break
         case 'map': {
           if (!operations)
-            return reject(
+            return exit(
               new MapBeforeOperationsUploadError(
                 `Misordered multipart fields; “map” should follow “operations” (${SPEC_URL}).`,
                 400
@@ -95,7 +106,7 @@ export const processRequest = (
           // Check max files is not exceeded, even though the number of files
           // to parse might not match the map provided by the client.
           if (mapEntries.length > maxFiles)
-            return reject(
+            return exit(
               new MaxFilesUploadError(
                 `${maxFiles} max file uploads exceeded.`,
                 413
@@ -119,7 +130,7 @@ export const processRequest = (
 
     parser.on('file', (fieldName, source, filename, encoding, mimetype) => {
       if (!map)
-        return reject(
+        return exit(
           new FilesBeforeMapUploadError(
             `Misordered multipart fields; files should follow “map” (${SPEC_URL}).`,
             400
@@ -179,7 +190,7 @@ export const processRequest = (
               new FileMissingUploadError('File missing in the request.')
             )
 
-      callback()
+      finish()
     })
 
     parser.on('error', err => {
@@ -188,10 +199,11 @@ export const processRequest = (
 
       if (currentStream) currentStream.destroy(err)
 
-      callback()
       request.unpipe(parser)
       request.resume()
     })
+
+    request.on('end', finish)
 
     request.on('close', () => {
       if (map)
