@@ -379,7 +379,7 @@ t.test('Aborted request.', async t => {
     await delay
   })
 
-  await t.skip('Express middleware.', async t => {
+  await t.test('Express middleware.', async t => {
     t.plan(3)
 
     let resume
