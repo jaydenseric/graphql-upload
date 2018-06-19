@@ -56,7 +56,8 @@ const isEarlyTerminationError = err =>
 
 export const processRequest = (
   request,
-  { maxFieldSize, maxFileSize, maxFiles, errorHandler } = {}
+  { maxFieldSize, maxFileSize, maxFiles, errorHandler } = {},
+  callback = () => {}
 ) =>
   new Promise((resolve, reject) => {
     const parser = new Busboy({
@@ -67,11 +68,6 @@ export const processRequest = (
         fileSize: maxFileSize,
         files: maxFiles
       }
-    })
-
-    let resolveFinished
-    const finished = new Promise(resolve => {
-      resolveFinished = resolve
     })
 
     let operations
@@ -116,7 +112,7 @@ export const processRequest = (
               operationsPath.set(path, map.get(fieldName).promise)
           }
 
-          resolve({ operations, finished })
+          resolve(operations)
         }
       }
     })
@@ -183,7 +179,7 @@ export const processRequest = (
               new FileMissingUploadError('File missing in the request.')
             )
 
-      resolveFinished()
+      callback()
     })
 
     parser.on('error', err => {
@@ -192,7 +188,7 @@ export const processRequest = (
 
       if (currentStream) currentStream.destroy(err)
 
-      resolveFinished()
+      callback()
       request.unpipe(parser)
       request.resume()
     })
@@ -220,17 +216,22 @@ export const processRequest = (
 
 export const apolloUploadKoa = options => async (ctx, next) => {
   if (!ctx.request.is('multipart/form-data')) return next()
-  const { operations, finished } = await processRequest(ctx.req, options)
-  ctx.request.body = operations
+
+  var callback
+  const finished = new Promise(resolve => (callback = resolve))
+  ctx.request.body = await processRequest(ctx.req, options, callback)
   await next()
   await finished
 }
 
 export const apolloUploadExpress = options => (request, response, next) => {
   if (!request.is('multipart/form-data')) return next()
-  processRequest(request, options)
-    .then(({ operations, finished }) => {
-      request.body = operations
+
+  var callback
+  const finished = new Promise(resolve => (callback = resolve))
+  processRequest(request, options, callback)
+    .then(body => {
+      request.body = body
 
       const { send } = response
       response.send = (...args) => {
