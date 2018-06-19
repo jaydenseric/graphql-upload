@@ -45,6 +45,15 @@ class Upload {
   }
 }
 
+// Dicer does not export definite error types, and so we are going to use
+// its message as a mechanism for type detection:
+const isEarlyTerminationError = err =>
+  // https://github.com/mscdex/dicer/blob/3f75d507b7ad1a395f04028c724ee3ad99b78bb4/lib/Dicer.js#L62
+  err.message === 'Unexpected end of multipart data' ||
+  // https://github.com/mscdex/dicer/blob/3f75d507b7ad1a395f04028c724ee3ad99b78bb4/lib/Dicer.js#L65
+  err.message ===
+    'Part terminated early due to unexpected end of multipart data'
+
 export const processRequest = (
   request,
   { maxFieldSize, maxFileSize, maxFiles, errorHandler } = {}
@@ -136,7 +145,14 @@ export const processRequest = (
         })
 
         source.on('error', err => {
-          if (!capacitor.finished) capacitor.destroy(err)
+          if (capacitor.finished || capacitor.destroyed) return
+
+          // A terminated connection may cause the request to emit a 'close' event either before or after
+          // the parser encounters an error, depending on the version of node and the state of stream buffers.
+          if (isEarlyTerminationError(err))
+            err = new FileStreamDisconnectUploadError(err.message)
+
+          capacitor.destroy(err)
         })
 
         source.pipe(capacitor)
