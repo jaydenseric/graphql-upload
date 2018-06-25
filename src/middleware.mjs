@@ -13,6 +13,8 @@ import {
 
 class Upload {
   constructor() {
+    this.onExternalErrorListener = 0
+    this.errorToEmit = []
     this.promise = new Promise((resolve, reject) => {
       this.reject = reject
       this.resolve = file => {
@@ -22,10 +24,17 @@ class Upload {
           this.done = true
         })
 
+        file.stream.on('error', e => {
+          if (this.onExternalErrorListener === 0) this.errorToEmit.push(e)
+        })
+
+        file.stream.on('newListener', (e, listener) => {
+          if (e === 'error') this.errorToEmit.forEach(error => listener(error))
+        })
+
         // Monkey patch busboy to emit an error when a file is too big.
         file.stream.once('limit', () =>
-          file.stream.emit(
-            'error',
+          file.stream.destroy(
             new MaxFileSizeUploadError(
               'File truncated as it exceeds the size limit.'
             )
@@ -149,8 +158,7 @@ export const processRequest = (
             )
           else if (!upload.done) {
             upload.file.stream.truncated = true
-            upload.file.stream.emit(
-              'error',
+            upload.file.stream.destroy(
               new FileStreamDisconnectUploadError(
                 'Request disconnected during file upload stream parsing.'
               )
