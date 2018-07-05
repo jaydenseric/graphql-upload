@@ -1,6 +1,7 @@
 import Busboy from 'busboy'
 import objectPath from 'object-path'
 import Capacitor from 'fs-capacitor'
+import eos from 'end-of-stream'
 import {
   SPEC_URL,
   MaxFileSizeUploadError,
@@ -195,8 +196,6 @@ export const processRequest = (
             upload.reject(
               new FileMissingUploadError('File missing in the request.')
             )
-
-      finish()
     })
 
     parser.on('error', err => {
@@ -208,8 +207,6 @@ export const processRequest = (
 
       if (currentStream) currentStream.destroy(err)
     })
-
-    request.on('end', finish)
 
     request.on('close', () => {
       if (map)
@@ -228,6 +225,8 @@ export const processRequest = (
           )
         )
     })
+
+    eos(parser, finish)
 
     request.pipe(parser)
   })
