@@ -80,8 +80,12 @@ export const processRequest = (
     parser.on('field', (fieldName, value) => {
       switch (fieldName) {
         case 'operations':
-          operations = JSON.parse(value)
-          operationsPath = objectPath(operations)
+          try {
+            operations = JSON.parse(value)
+            operationsPath = objectPath(operations)
+          } catch (err) {
+            exit(err)
+          }
           break
         case 'map': {
           if (!operations)
@@ -185,9 +189,6 @@ export const processRequest = (
     })
 
     parser.once('filesLimit', () => {
-      request.unpipe(parser)
-      request.resume()
-
       exit(new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`))
     })
 
@@ -240,9 +241,12 @@ export const apolloUploadKoa = options => async (ctx, next) => {
 
   var callback
   const finished = new Promise(resolve => (callback = resolve))
-  ctx.request.body = await processRequest(ctx.req, options, callback)
-  await next()
-  await finished
+  try {
+    ctx.request.body = await processRequest(ctx.req, options, callback)
+    await next()
+  } finally {
+    await finished
+  }
 }
 
 export const apolloUploadExpress = options => (request, response, next) => {
@@ -265,7 +269,9 @@ export const apolloUploadExpress = options => (request, response, next) => {
       next()
     })
     .catch(error => {
-      if (error.status && error.expose) response.status(error.status)
-      next(error)
+      finished.then(() => {
+        if (error.status && error.expose) response.status(error.status)
+        next(error)
+      })
     })
 }
