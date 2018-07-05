@@ -185,6 +185,9 @@ export const processRequest = (
     })
 
     parser.once('filesLimit', () => {
+      request.unpipe(parser)
+      request.resume()
+
       exit(new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`))
     })
 
