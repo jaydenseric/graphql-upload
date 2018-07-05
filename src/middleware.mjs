@@ -188,18 +188,21 @@ export const processRequest = (
     })
 
     parser.once('finish', () => {
+      request.unpipe(parser)
+      request.resume()
+
       if (map)
         for (const upload of map.values())
           if (!upload.file)
             upload.reject(
               new FileMissingUploadError('File missing in the request.')
             )
-
-      request.unpipe(parser)
-      request.resume()
     })
 
     parser.on('error', err => {
+      request.unpipe(parser)
+      request.resume()
+
       if (map)
         for (const upload of map.values()) if (!upload.file) upload.reject(err)
 
