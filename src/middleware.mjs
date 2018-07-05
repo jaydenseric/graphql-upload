@@ -25,15 +25,6 @@ class Upload {
           this.done = true
         })
 
-        // Monkey patch busboy to emit an error when a file is too big.
-        file.stream.once('limit', () =>
-          file.stream.destroy(
-            new MaxFileSizeUploadError(
-              'File truncated as it exceeds the size limit.'
-            )
-          )
-        )
-
         resolve(file)
       }
     })
@@ -159,6 +150,15 @@ export const processRequest = (
           handler(err)
         })
 
+        // Monkey patch busboy to emit an error when a file is too big.
+        source.on('limit', () =>
+          source.destroy(
+            new MaxFileSizeUploadError(
+              'File truncated as it exceeds the size limit.'
+            )
+          )
+        )
+
         source.on('error', err => {
           if (capacitor.finished || capacitor.destroyed) return
 
@@ -202,13 +202,13 @@ export const processRequest = (
     })
 
     parser.on('error', err => {
+      request.unpipe(parser)
+      request.resume()
+
       if (map)
         for (const upload of map.values()) if (!upload.file) upload.reject(err)
 
       if (currentStream) currentStream.destroy(err)
-
-      request.unpipe(parser)
-      request.resume()
     })
 
     request.on('end', finish)

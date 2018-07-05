@@ -797,7 +797,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   })
 })
 
-t.todo('Exceed max file size.', async t => {
+t.test('Exceed max file size.', async t => {
   t.jobs = 2
 
   const testRequest = async port => {
@@ -819,20 +819,14 @@ t.todo('Exceed max file size.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(2)
+    t.plan(1)
 
     const app = new Koa()
       .use(apolloUploadKoa({ maxFileSize: 10 }))
       .use(async (ctx, next) => {
         await t.test('Upload resolves.', async t => {
-          const { stream } = await uploadTest(ctx.request.body.variables.file)(
-            t
-          )
           await t.rejects(
-            new Promise((resolve, reject) => {
-              stream.on('end', () => resolve())
-              stream.on('error', error => reject(error))
-            }),
+            uploadTest(ctx.request.body.variables.file)(t),
             MaxFileSizeUploadError,
             'Upload file stream emits error.'
           )
@@ -848,23 +842,20 @@ t.todo('Exceed max file size.', async t => {
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(2)
+    t.plan(1)
 
     const app = express()
       .use(apolloUploadExpress({ maxFileSize: 10 }))
       .use((request, response, next) => {
-        uploadTest(request.body.variables.file)(t).then(({ stream }) => {
-          t.rejects(
-            new Promise((resolve, reject) => {
-              stream.on('end', () => resolve())
-              stream.on('error', error => reject(error))
-            }),
+        t.test('Upload resolves.', async t => {
+          await t.rejects(
+            uploadTest(request.body.variables.file)(t),
             MaxFileSizeUploadError,
             'Upload file stream emits error.'
           )
-            .then(() => next())
-            .catch(next)
         })
+          .then(() => next())
+          .catch(next)
       })
 
     const port = await startServer(t, app)
