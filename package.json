@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "busboy": "^0.2.14",
-    "end-of-stream": "^1.4.1",
     "fs-capacitor": "^0.0.3",
     "object-path": "^0.11.4"
   },
