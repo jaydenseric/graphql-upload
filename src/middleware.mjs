@@ -129,13 +129,16 @@ export const processRequest = (
     })
 
     parser.on('file', (fieldName, source, filename, encoding, mimetype) => {
-      if (!map)
+      if (!map) {
+        source.on('error', errorHandler || defaultErrorHandler)
+        source.resume()
         return exit(
           new FilesBeforeMapUploadError(
             `Misordered multipart fields; files should follow “map” (${SPEC_URL}).`,
             400
           )
         )
+      }
 
       currentStream = source
       source.on('end', () => {
