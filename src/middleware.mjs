@@ -101,7 +101,12 @@ export const processRequest = (
               )
             )
 
-          const mapEntries = Object.entries(JSON.parse(value))
+          let mapEntries
+          try {
+            mapEntries = Object.entries(JSON.parse(value))
+          } catch (err) {
+            return exit(err)
+          }
 
           // Check max files is not exceeded, even though the number of files
           // to parse might not match the map provided by the client.
