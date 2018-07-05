@@ -72,11 +72,6 @@ export const processRequest = (
       parser.destroy(err)
     }
 
-    const finish = () => {
-      if (rejection) reject(rejection)
-      callback()
-    }
-
     parser.on('field', (fieldName, value) => {
       switch (fieldName) {
         case 'operations':
@@ -200,20 +195,21 @@ export const processRequest = (
               new FileMissingUploadError('File missing in the request.')
             )
 
-      finish()
+      request.unpipe(parser)
+      request.resume()
     })
 
     parser.on('error', err => {
-      request.unpipe(parser)
-      request.resume()
-
       if (map)
         for (const upload of map.values()) if (!upload.file) upload.reject(err)
 
       if (currentStream) currentStream.destroy(err)
     })
 
-    request.on('end', finish)
+    request.on('end', () => {
+      if (rejection) reject(rejection)
+      callback()
+    })
 
     request.on('close', () => {
       if (map)
