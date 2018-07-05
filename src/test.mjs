@@ -18,6 +18,14 @@ import {
   FileStreamDisconnectUploadError
 } from '.'
 
+// This addresses an issue with older versions of node, which cause a non-
+// zero exit code if output is truncated. This is something that should be
+// addressed in userland, not the library itself.
+//
+// https://github.com/SheetJS/node-exit-on-epipe
+
+import 'exit-on-epipe'
+
 // GraphQL multipart request spec:
 // https://github.com/jaydenseric/graphql-multipart-request-spec
 
