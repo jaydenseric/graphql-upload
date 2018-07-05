@@ -213,7 +213,6 @@ t.test('Aborted request.', async t => {
     await new Promise((resolve, reject) => {
       resolved.stream.on('error', err => {
         t.type(err, FileStreamDisconnectUploadError)
-        // t.type(err, Error)
         resolve()
       })
       resolved.stream.on('end', reject)
