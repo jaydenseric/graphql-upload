@@ -15,7 +15,7 @@ import {
 const defaultErrorHandler = () => {}
 
 class Upload {
-  constructor(errorHandler) {
+  constructor() {
     this.promise = new Promise((resolve, reject) => {
       this.reject = reject
       this.resolve = file => {
@@ -32,7 +32,7 @@ class Upload {
     // Node has deprecated asynchronous handling of promises,
     // instead opting to crash the app.
     // https://github.com/nodejs/node/issues/20392
-    this.promise.catch(errorHandler || defaultErrorHandler)
+    this.promise.catch(defaultErrorHandler)
   }
 }
 
@@ -47,7 +47,7 @@ const isEarlyTerminationError = err =>
 
 export const processRequest = (
   request,
-  { maxFieldSize, maxFileSize, maxFiles, errorHandler } = {},
+  { maxFieldSize, maxFileSize, maxFiles } = {},
   callback = () => {}
 ) =>
   new Promise((resolve, reject) => {
@@ -110,7 +110,7 @@ export const processRequest = (
 
           map = new Map()
           for (const [fieldName, paths] of mapEntries) {
-            map.set(fieldName, new Upload(errorHandler))
+            map.set(fieldName, new Upload())
 
             // Repopulate operations with the promise wherever the file occurred
             // for use by the Upload scalar.
@@ -125,7 +125,7 @@ export const processRequest = (
 
     parser.on('file', (fieldName, source, filename, encoding, mimetype) => {
       if (!map) {
-        source.on('error', errorHandler || defaultErrorHandler)
+        source.on('error', defaultErrorHandler)
         source.resume()
         return exit(
           new FilesBeforeMapUploadError(
@@ -145,7 +145,7 @@ export const processRequest = (
         capacitor.on('error', err => {
           source.unpipe()
           source.resume()
-          const handler = errorHandler || defaultErrorHandler
+          const handler = defaultErrorHandler
           handler(err)
         })
 

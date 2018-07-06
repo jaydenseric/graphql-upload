@@ -21,7 +21,6 @@ Add the middleware just before [graphql-server](https://github.com/apollographql
 - `maxFieldSize` (integer): Max allowed non-file multipart form field size in bytes; enough for your queries (default: 1 MB).
 - `maxFileSize` (integer): Max allowed file size in bytes (default: Infinity).
 - `maxFiles` (integer): Max allowed number of files (default: Infinity).
-- `errorHandler` (function): This function is attached to the `error` event of each file stream. (default: () => {})).
 
 ### [Koa](http://koajs.com)
 

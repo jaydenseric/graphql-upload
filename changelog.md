@@ -37,7 +37,6 @@
 - Use `.prettierignore` to leave `package.json` formatting to npm.
 - Add `error` event listeners to file streams to prevent the app from crashing on aborted requests or parser errors.
 - Add Capacitor to ensure the app does not hang if an upload is `await`ed out of order, or is never consumed.
-- Add `errorHandler` option to allow customization of new UploadBuffer streams.
 - Improved documentation.
 - Update `processRequest` to accept a third, `callback` which fires once the entire request is consumed
 
