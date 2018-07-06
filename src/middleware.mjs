@@ -151,7 +151,7 @@ export const processRequest = (
 
         // Monkey patch busboy to emit an error when a file is too big.
         source.on('limit', () =>
-          source.destroy(
+          capacitor.destroy(
             new MaxFileSizeUploadError(
               'File truncated as it exceeds the size limit.'
             )

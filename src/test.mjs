@@ -56,6 +56,26 @@ const uploadTest = upload => async t => {
   return resolved
 }
 
+const uploadTestJPEG = upload => async t => {
+  const resolved = await upload
+  t.type(resolved.stream, 'Capacitor', 'Stream.')
+  t.equals(
+    resolved.filename,
+    'Belvedere_Apollo_Pio-Clementino_Inv1015.jpg',
+    'Filename.'
+  )
+  t.equals(resolved.mimetype, 'image/jpeg', 'MIME type.')
+  t.equals(resolved.encoding, '7bit', 'Encoding.')
+  await new Promise((resolve, reject) => {
+    resolved.stream.on('end', resolve).on('error', reject)
+
+    // Resume and discard the stream. Otherwise busboy hangs, there is no
+    // response and the connection eventually resets.
+    resolved.stream.resume()
+  })
+  return resolved
+}
+
 t.test('Single file.', async t => {
   t.jobs = 2
 
@@ -807,13 +827,21 @@ t.test('Exceed max file size.', async t => {
       'operations',
       JSON.stringify({
         variables: {
-          file: null
+          files: [null, null]
         }
       })
     )
 
-    body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-    body.append('1', fs.createReadStream(TEST_FILE_PATH_JSON))
+    body.append(
+      'map',
+      JSON.stringify({
+        1: ['variables.files.0'],
+        2: ['variables.files.1']
+      })
+    )
+
+    body.append(1, fs.createReadStream(TEST_FILE_PATH_JPG))
+    body.append(2, fs.createReadStream(TEST_FILE_PATH_JSON))
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
@@ -822,14 +850,16 @@ t.test('Exceed max file size.', async t => {
     t.plan(1)
 
     const app = new Koa()
-      .use(apolloUploadKoa({ maxFileSize: 10 }))
+      .use(apolloUploadKoa({ maxFileSize: 10000 }))
       .use(async (ctx, next) => {
         await t.test('Upload resolves.', async t => {
           await t.rejects(
-            uploadTest(ctx.request.body.variables.file)(t),
+            uploadTestJPEG(ctx.request.body.variables.files[0])(t),
             MaxFileSizeUploadError,
             'Upload file stream emits error.'
           )
+
+          await uploadTest(ctx.request.body.variables.files[1])(t)
         })
 
         ctx.status = 204
@@ -845,14 +875,16 @@ t.test('Exceed max file size.', async t => {
     t.plan(1)
 
     const app = express()
-      .use(apolloUploadExpress({ maxFileSize: 10 }))
+      .use(apolloUploadExpress({ maxFileSize: 10000 }))
       .use((request, response, next) => {
         t.test('Upload resolves.', async t => {
           await t.rejects(
-            uploadTest(request.body.variables.file)(t),
+            uploadTestJPEG(request.body.variables.files[0])(t),
             MaxFileSizeUploadError,
             'Upload file stream emits error.'
           )
+
+          await uploadTest(request.body.variables.files[1])(t)
         })
           .then(() => next())
           .catch(next)
