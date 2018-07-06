@@ -20,11 +20,6 @@ class Upload {
       this.reject = reject
       this.resolve = file => {
         this.file = file
-
-        file.stream.once('end', () => {
-          this.done = true
-        })
-
         resolve(file)
       }
     })
@@ -140,11 +135,9 @@ export const processRequest = (
 
       if (map.has(fieldName)) {
         const capacitor = new Capacitor()
-        capacitor.on('error', err => {
+        capacitor.on('error', () => {
           source.unpipe()
           source.resume()
-          const handler = defaultErrorHandler
-          handler(err)
         })
 
         // Monkey patch busboy to emit an error when a file is too big.
