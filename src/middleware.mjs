@@ -47,8 +47,7 @@ const isEarlyTerminationError = err =>
 
 export const processRequest = (
   request,
-  { maxFieldSize, maxFileSize, maxFiles } = {},
-  callback = () => {}
+  { maxFieldSize, maxFileSize, maxFiles } = {}
 ) =>
   new Promise((resolve, reject) => {
     const parser = new Busboy({
@@ -66,9 +65,8 @@ export const processRequest = (
     let map
     let currentStream
 
-    let rejection
     const exit = err => {
-      rejection = err
+      reject(err)
       parser.destroy(err)
     }
 
@@ -209,11 +207,6 @@ export const processRequest = (
       if (currentStream) currentStream.destroy(err)
     })
 
-    request.on('end', () => {
-      if (rejection) reject(rejection)
-      callback()
-    })
-
     request.on('close', () => {
       if (map)
         for (const upload of map.values())
@@ -238,10 +231,9 @@ export const processRequest = (
 export const apolloUploadKoa = options => async (ctx, next) => {
   if (!ctx.request.is('multipart/form-data')) return next()
 
-  var callback
-  const finished = new Promise(resolve => (callback = resolve))
+  const finished = new Promise(resolve => ctx.req.on('end', resolve))
   try {
-    ctx.request.body = await processRequest(ctx.req, options, callback)
+    ctx.request.body = await processRequest(ctx.req, options)
     await next()
   } finally {
     await finished
@@ -251,26 +243,22 @@ export const apolloUploadKoa = options => async (ctx, next) => {
 export const apolloUploadExpress = options => (request, response, next) => {
   if (!request.is('multipart/form-data')) return next()
 
-  var callback
-  const finished = new Promise(resolve => (callback = resolve))
-  processRequest(request, options, callback)
+  const finished = new Promise(resolve => request.on('end', resolve))
+  const { send } = response
+  response.send = (...args) => {
+    finished.then(() => {
+      response.send = send
+      response.send(...args)
+    })
+  }
+
+  processRequest(request, options)
     .then(body => {
       request.body = body
-
-      const { send } = response
-      response.send = (...args) => {
-        finished.then(() => {
-          response.send = send
-          response.send(...args)
-        })
-      }
-
       next()
     })
     .catch(error => {
-      finished.then(() => {
-        if (error.status && error.expose) response.status(error.status)
-        next(error)
-      })
+      if (error.status && error.expose) response.status(error.status)
+      next(error)
     })
 }

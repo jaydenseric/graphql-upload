@@ -38,7 +38,6 @@
 - Add `error` event listeners to file streams to prevent the app from crashing on aborted requests or parser errors.
 - Add Capacitor to ensure the app does not hang if an upload is `await`ed out of order, or is never consumed.
 - Improved documentation.
-- Update `processRequest` to accept a third, `callback` which fires once the entire request is consumed
 
 ## 5.0.0
 

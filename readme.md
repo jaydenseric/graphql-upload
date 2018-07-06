@@ -54,7 +54,7 @@ app.use(
 
 ### Custom middleware
 
-Middleware wraps the async function `processRequest` which accepts a Node.js request, an optional [options object](#options), and an optional callback as arguments. It returns a promise that resolves an operations object for a GraphQL server to consume (usually as the request body). Import it to create custom middleware:
+Middleware wraps the async function `processRequest` which accepts a Node.js request and an optional [options object](#options) as arguments. It returns a promise that resolves an operations object for a GraphQL server to consume (usually as the request body). Import it to create custom middleware:
 
 ```js
 import { processRequest } from 'apollo-upload-server'
