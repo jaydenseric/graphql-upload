@@ -22,12 +22,15 @@ import {
 // https://github.com/jaydenseric/graphql-multipart-request-spec
 
 const TEST_FILE_PATH_JSON = 'package.json'
+const TEST_FILE_PATH_JSON_LENGTH = fs.statSync(TEST_FILE_PATH_JSON).size
+
 const TEST_FILE_PATH_SVG = 'apollo-upload-logo.svg'
 
 // The max TCP packet size is 64KB, so this file is guaranteed to arrive
 // in multiple chunks. It is a public domain image retreived from:
 // https://commons.wikimedia.org/wiki/File:Belvedere_Apollo_Pio-Clementino_Inv1015.jpg
 const TEST_FILE_PATH_JPG = 'Belvedere_Apollo_Pio-Clementino_Inv1015.jpg'
+const TEST_FILE_PATH_JPG_LENGTH = fs.statSync(TEST_FILE_PATH_JPG).size
 
 const startServer = (t, app) =>
   new Promise((resolve, reject) => {
@@ -47,11 +50,15 @@ const uploadTest = upload => async t => {
   t.equals(resolved.mimetype, 'application/json', 'MIME type.')
   t.equals(resolved.encoding, '7bit', 'Encoding.')
   await new Promise((resolve, reject) => {
-    resolved.stream.on('end', resolve).on('error', reject)
+    let size = 0
+    resolved.stream
+      .on('end', () => {
+        t.equals(size, TEST_FILE_PATH_JSON_LENGTH, 'Bytes.')
+        resolve()
+      })
+      .on('error', reject)
 
-    // Resume and discard the stream. Otherwise busboy hangs, there is no
-    // response and the connection eventually resets.
-    resolved.stream.resume()
+    resolved.stream.on('data', chunk => (size += chunk.length))
   })
   return resolved
 }
@@ -67,11 +74,15 @@ const uploadTestJPEG = upload => async t => {
   t.equals(resolved.mimetype, 'image/jpeg', 'MIME type.')
   t.equals(resolved.encoding, '7bit', 'Encoding.')
   await new Promise((resolve, reject) => {
-    resolved.stream.on('end', resolve).on('error', reject)
+    let size = 0
+    resolved.stream
+      .on('end', () => {
+        t.equals(size, TEST_FILE_PATH_JPG_LENGTH, 'Bytes.')
+        resolve()
+      })
+      .on('error', reject)
 
-    // Resume and discard the stream. Otherwise busboy hangs, there is no
-    // response and the connection eventually resets.
-    resolved.stream.resume()
+    resolved.stream.on('data', chunk => (size += chunk.length))
   })
   return resolved
 }
@@ -468,7 +479,7 @@ t.test('Aborted request.', async t => {
   })
 })
 
-t.test('Deduped files.', async t => {
+t.todo('Deduped files.', async t => {
   t.jobs = 2
 
   const testRequest = async port => {
