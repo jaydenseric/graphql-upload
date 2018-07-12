@@ -41,6 +41,11 @@
 - Tweaked package `description` and `keywords`.
 - Compact package `repository` field.
 - Improved documentation.
+- Readme badge changes to deal with [shields.io](https://shields.io) unreliability:
+  - Use the official Travis build status badge.
+  - Use [badgen.now.sh](https://badgen.now.sh) for the npm version badge.
+  - Removed the licence badge. The licence can be found in `package.json` and rarely changes.
+  - Removed the Github issues and stars badges. The readme is most viewed on Github anyway.
 - `changelog.md` version entries now have “Major”, “Minor” and “Patch” subheadings.
 
 ## 5.0.0
