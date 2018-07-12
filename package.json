@@ -45,7 +45,9 @@
     "@babel/cli": "^7.0.0-beta.53",
     "@babel/core": "^7.0.0-beta.53",
     "@babel/preset-env": "^7.0.0-beta.53",
+    "babel-eslint": "^8.2.5",
     "eslint": "^5.1.0",
+    "eslint-config-env": "^0.5.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-node": "^6.0.1",
@@ -86,69 +88,12 @@
     "lib"
   ],
   "eslintConfig": {
-    "parserOptions": {
-      "sourceType": "script",
-      "ecmaVersion": 2018
-    },
-    "env": {
-      "es6": true,
-      "node": true
-    },
-    "plugins": [
-      "import",
-      "node",
-      "prettier"
-    ],
     "extends": [
-      "eslint:recommended",
-      "plugin:import/recommended",
-      "plugin:node/recommended",
-      "prettier"
+      "env"
     ],
     "rules": {
-      "require-jsdoc": "warn",
-      "valid-jsdoc": [
-        "error",
-        {
-          "requireReturn": false
-        }
-      ],
-      "require-await": "error",
-      "no-return-await": "error",
-      "arrow-body-style": "error",
-      "prefer-arrow-callback": "error",
-      "curly": [
-        "error",
-        "multi"
-      ],
-      "prefer-destructuring": "error",
-      "import/first": "error",
-      "import/newline-after-import": "error",
-      "import/no-useless-path-segments": "error",
-      "import/order": "error",
-      "node/no-unsupported-features": "error",
-      "prettier/prettier": "error"
-    },
-    "overrides": [
-      {
-        "files": [
-          "*.mjs"
-        ],
-        "parserOptions": {
-          "sourceType": "module"
-        },
-        "rules": {
-          "node/no-unsupported-features": [
-            "error",
-            {
-              "ignores": [
-                "modules"
-              ]
-            }
-          ]
-        }
-      }
-    ]
+      "require-jsdoc": "off"
+    }
   },
   "prettier": {
     "proseWrap": "never",

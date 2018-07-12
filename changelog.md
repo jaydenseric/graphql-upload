@@ -34,10 +34,8 @@
     - Removed the `rimraf` dev dependency in favour of native `rm -r`. Leaner and faster; we only support \*nix now for contributing anyway.
     - Use native `mkdir` to mitigate [babel/babel#8077](https://github.com/babel/babel/issues/8077).
 - Improved ESLint config:
-  - Use the right `sourceType` for `.js` (`script`) and `.mjs` (`module`) files.
-  - Only allow ESM syntax in `.mjs` files.
-  - Removed redundant `eslint-plugin-ava` dev dependency and config.
-  - Use `eslint-plugin-import` and `eslint-plugin-node` and enable more rules.
+  - Simplified ESLint config with [`eslint-config-env`](https://npm.im/eslint-config-env).
+  - Removed redundant [`eslint-plugin-ava`](https://npm.im/eslint-plugin-ava) dev dependency and config.
   - Undo overriding ESLint ignoring dotfiles by default as there are none now.
 - Use `.prettierignore` to leave `package.json` formatting to npm.
 - Improved documentation.
