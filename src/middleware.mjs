@@ -1,5 +1,6 @@
 import Busboy from 'busboy'
 import objectPath from 'object-path'
+import Capacitor from 'fs-capacitor'
 import {
   SPEC_URL,
   MaxFileSizeUploadError,
@@ -11,32 +12,33 @@ import {
   FileStreamDisconnectUploadError
 } from './errors'
 
+const defaultErrorHandler = () => {}
+
 class Upload {
   constructor() {
     this.promise = new Promise((resolve, reject) => {
       this.reject = reject
       this.resolve = file => {
         this.file = file
-
-        file.stream.once('end', () => {
-          this.done = true
-        })
-
-        // Monkey patch busboy to emit an error when a file is too big.
-        file.stream.once('limit', () =>
-          file.stream.emit(
-            'error',
-            new MaxFileSizeUploadError(
-              'File truncated as it exceeds the size limit.'
-            )
-          )
-        )
-
         resolve(file)
       }
     })
+
+    // Node has deprecated asynchronous handling of promises,
+    // instead opting to crash the app.
+    // https://github.com/nodejs/node/issues/20392
+    this.promise.catch(defaultErrorHandler)
   }
 }
+
+// Dicer does not export definite error types, and so we are going to use
+// its message as a mechanism for type detection:
+const isEarlyTerminationError = err =>
+  // https://github.com/mscdex/dicer/blob/3f75d507b7ad1a395f04028c724ee3ad99b78bb4/lib/Dicer.js#L62
+  err.message === 'Unexpected end of multipart data' ||
+  // https://github.com/mscdex/dicer/blob/3f75d507b7ad1a395f04028c724ee3ad99b78bb4/lib/Dicer.js#L65
+  err.message ===
+    'Part terminated early due to unexpected end of multipart data'
 
 export const processRequest = (
   request,
@@ -56,28 +58,43 @@ export const processRequest = (
     let operations
     let operationsPath
     let map
+    let currentStream
+
+    const exit = err => {
+      reject(err)
+      parser.destroy(err)
+    }
 
     parser.on('field', (fieldName, value) => {
       switch (fieldName) {
         case 'operations':
-          operations = JSON.parse(value)
-          operationsPath = objectPath(operations)
+          try {
+            operations = JSON.parse(value)
+            operationsPath = objectPath(operations)
+          } catch (err) {
+            exit(err)
+          }
           break
         case 'map': {
           if (!operations)
-            return reject(
+            return exit(
               new MapBeforeOperationsUploadError(
                 `Misordered multipart fields; “map” should follow “operations” (${SPEC_URL}).`,
                 400
               )
             )
 
-          const mapEntries = Object.entries(JSON.parse(value))
+          let mapEntries
+          try {
+            mapEntries = Object.entries(JSON.parse(value))
+          } catch (err) {
+            return exit(err)
+          }
 
           // Check max files is not exceeded, even though the number of files
           // to parse might not match the map provided by the client.
           if (mapEntries.length > maxFiles)
-            return reject(
+            return exit(
               new MaxFilesUploadError(
                 `${maxFiles} max file uploads exceeded.`,
                 413
@@ -99,43 +116,88 @@ export const processRequest = (
       }
     })
 
-    parser.on('file', (fieldName, stream, filename, encoding, mimetype) => {
-      if (!map)
-        return reject(
+    parser.on('file', (fieldName, source, filename, encoding, mimetype) => {
+      if (!map) {
+        source.on('error', defaultErrorHandler)
+        source.resume()
+        return exit(
           new FilesBeforeMapUploadError(
             `Misordered multipart fields; files should follow “map” (${SPEC_URL}).`,
             400
           )
         )
+      }
 
-      if (map.has(fieldName))
-        // File is expected.
+      currentStream = source
+      source.on('end', () => {
+        if (currentStream === source) currentStream = null
+      })
+
+      if (map.has(fieldName)) {
+        const capacitor = new Capacitor()
+        capacitor.on('error', () => {
+          source.unpipe()
+          source.resume()
+        })
+
+        // Monkey patch busboy to emit an error when a file is too big.
+        source.on('limit', () =>
+          capacitor.destroy(
+            new MaxFileSizeUploadError(
+              'File truncated as it exceeds the size limit.'
+            )
+          )
+        )
+
+        source.on('error', err => {
+          if (capacitor.finished || capacitor.destroyed) return
+
+          // A terminated connection may cause the request to emit a 'close' event either before or after
+          // the parser encounters an error, depending on the version of node and the state of stream buffers.
+          if (isEarlyTerminationError(err))
+            err = new FileStreamDisconnectUploadError(err.message)
+
+          capacitor.destroy(err)
+        })
+
+        source.pipe(capacitor)
+
         map.get(fieldName).resolve({
-          stream,
+          stream: capacitor,
           filename,
           mimetype,
           encoding
         })
+      }
+
       // Discard the unexpected file.
-      else stream.resume()
+      else source.resume()
     })
 
     parser.once('filesLimit', () => {
-      if (map)
-        for (const upload of map.values())
-          if (!upload.file)
-            upload.reject(
-              new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`)
-            )
+      exit(new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`))
     })
 
     parser.once('finish', () => {
+      request.unpipe(parser)
+      request.resume()
+
       if (map)
         for (const upload of map.values())
           if (!upload.file)
             upload.reject(
               new FileMissingUploadError('File missing in the request.')
             )
+    })
+
+    parser.on('error', err => {
+      request.unpipe(parser)
+      request.resume()
+
+      if (map)
+        for (const upload of map.values()) if (!upload.file) upload.reject(err)
+
+      if (currentStream) currentStream.destroy(err)
     })
 
     request.on('close', () => {
@@ -147,28 +209,42 @@ export const processRequest = (
                 'Request disconnected before file upload stream parsing.'
               )
             )
-          else if (!upload.done) {
-            upload.file.stream.truncated = true
-            upload.file.stream.emit(
-              'error',
-              new FileStreamDisconnectUploadError(
-                'Request disconnected during file upload stream parsing.'
-              )
-            )
-          }
+
+      if (!parser._finished)
+        parser.destroy(
+          new FileStreamDisconnectUploadError(
+            'Request disconnected during file upload stream parsing.'
+          )
+        )
     })
 
     request.pipe(parser)
   })
 
 export const apolloUploadKoa = options => async (ctx, next) => {
-  if (ctx.request.is('multipart/form-data'))
+  if (!ctx.request.is('multipart/form-data')) return next()
+
+  const finished = new Promise(resolve => ctx.req.on('end', resolve))
+  try {
     ctx.request.body = await processRequest(ctx.req, options)
-  await next()
+    await next()
+  } finally {
+    await finished
+  }
 }
 
 export const apolloUploadExpress = options => (request, response, next) => {
   if (!request.is('multipart/form-data')) return next()
+
+  const finished = new Promise(resolve => request.on('end', resolve))
+  const { send } = response
+  response.send = (...args) => {
+    finished.then(() => {
+      response.send = send
+      response.send(...args)
+    })
+  }
+
   processRequest(request, options)
     .then(body => {
       request.body = body

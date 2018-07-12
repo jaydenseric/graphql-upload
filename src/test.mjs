@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { Transform } from 'stream'
+import stream from 'stream'
 import http from 'http'
 import t from 'tap'
 import Koa from 'koa'
@@ -22,16 +22,19 @@ import {
 // https://github.com/jaydenseric/graphql-multipart-request-spec
 
 const TEST_FILE_PATH_JSON = 'package.json'
+const TEST_FILE_PATH_JSON_LENGTH = fs.statSync(TEST_FILE_PATH_JSON).size
+
 const TEST_FILE_PATH_SVG = 'apollo-upload-logo.svg'
 
 // The max TCP packet size is 64KB, so this file is guaranteed to arrive
 // in multiple chunks. It is a public domain image retreived from:
 // https://commons.wikimedia.org/wiki/File:Belvedere_Apollo_Pio-Clementino_Inv1015.jpg
 const TEST_FILE_PATH_JPG = 'Belvedere_Apollo_Pio-Clementino_Inv1015.jpg'
+const TEST_FILE_PATH_JPG_LENGTH = fs.statSync(TEST_FILE_PATH_JPG).size
 
 const startServer = (t, app) =>
   new Promise((resolve, reject) => {
-    app.listen(function(error) {
+    app.listen(undefined, 'localhost', function(error) {
       if (error) reject(error)
       else {
         t.tearDown(() => this.close())
@@ -42,20 +45,45 @@ const startServer = (t, app) =>
 
 const uploadTest = upload => async t => {
   const resolved = await upload
-
-  t.type(resolved.stream, 'FileStream', 'Stream.')
+  t.type(resolved.stream, 'Capacitor', 'Stream.')
   t.equals(resolved.filename, 'package.json', 'Filename.')
   t.equals(resolved.mimetype, 'application/json', 'MIME type.')
   t.equals(resolved.encoding, '7bit', 'Encoding.')
-
   await new Promise((resolve, reject) => {
-    resolved.stream.on('end', resolve).on('error', reject)
+    let size = 0
+    resolved.stream
+      .on('end', () => {
+        t.equals(size, TEST_FILE_PATH_JSON_LENGTH, 'Bytes.')
+        resolve()
+      })
+      .on('error', reject)
 
-    // Resume and discard the stream. Otherwise busboy hangs, there is no
-    // response and the connection eventually resets.
-    resolved.stream.resume()
+    resolved.stream.on('data', chunk => (size += chunk.length))
   })
+  return resolved
+}
 
+const uploadTestJPEG = upload => async t => {
+  const resolved = await upload
+  t.type(resolved.stream, 'Capacitor', 'Stream.')
+  t.equals(
+    resolved.filename,
+    'Belvedere_Apollo_Pio-Clementino_Inv1015.jpg',
+    'Filename.'
+  )
+  t.equals(resolved.mimetype, 'image/jpeg', 'MIME type.')
+  t.equals(resolved.encoding, '7bit', 'Encoding.')
+  await new Promise((resolve, reject) => {
+    let size = 0
+    resolved.stream
+      .on('end', () => {
+        t.equals(size, TEST_FILE_PATH_JPG_LENGTH, 'Bytes.')
+        resolve()
+      })
+      .on('error', reject)
+
+    resolved.stream.on('data', chunk => (size += chunk.length))
+  })
   return resolved
 }
 
@@ -112,6 +140,98 @@ t.test('Single file.', async t => {
     const port = await startServer(t, app)
 
     await testRequest(port)
+  })
+})
+
+t.test('Handles unconsumed uploads.', async t => {
+  t.jobs = 2
+
+  const testRequest = async port => {
+    const body = new FormData()
+
+    body.append(
+      'operations',
+      JSON.stringify({
+        variables: {
+          file1: null,
+          file2: null
+        }
+      })
+    )
+
+    body.append(
+      'map',
+      JSON.stringify({
+        1: ['variables.file1'],
+        2: ['variables.file2']
+      })
+    )
+    body.append(1, fs.createReadStream(TEST_FILE_PATH_JPG))
+    body.append(2, fs.createReadStream(TEST_FILE_PATH_JSON))
+
+    await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  }
+
+  await t.test('Koa middleware.', async t => {
+    t.plan(2)
+
+    const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+      await t.test('Upload 1 does not need to be consumed.', t => {
+        t.ok(ctx.request.body.variables.file1)
+        return Promise.resolve()
+      })
+
+      await t.test(
+        'Upload 2 resolves.',
+        uploadTest(ctx.request.body.variables.file2)
+      )
+
+      ctx.status = 204
+      await next()
+    })
+
+    const port = await startServer(t, app)
+
+    await Promise.race([
+      testRequest(port),
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error('The request did not complete.'))
+        }, 500)
+      })
+    ])
+  })
+
+  await t.test('Express middleware.', async t => {
+    t.plan(2)
+
+    const app = express()
+      .use(apolloUploadExpress())
+      .use((request, response, next) => {
+        t.test('Upload 1 does not need to be consumed.', t => {
+          t.ok(request.body.variables.file1)
+          return Promise.resolve()
+        })
+          .then(() =>
+            t.test(
+              'Upload 2 resolves.',
+              uploadTest(request.body.variables.file2)
+            )
+          )
+          .then(() => next())
+          .catch(next)
+      })
+
+    const port = await startServer(t, app)
+
+    await Promise.race([
+      testRequest(port),
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error('The request did not complete.'))
+        }, 500)
+      })
+    ])
   })
 })
 
@@ -181,7 +301,7 @@ t.test('Aborted request.', async t => {
       request.on('close', resolve)
 
       let data = ''
-      const transform = new Transform({
+      const transform = new stream.Transform({
         transform(chunk, encoding, callback) {
           if (this._aborted) return
 
@@ -203,6 +323,7 @@ t.test('Aborted request.', async t => {
 
             // Abort now.
             if (length < 1) {
+              this._aborted = true
               request.abort()
               return
             }
@@ -210,7 +331,7 @@ t.test('Aborted request.', async t => {
             // Send partial chunk and then abort
             this._aborted = true
             callback(null, chunkString.substr(0, length))
-            process.nextTick(() => request.abort())
+            setImmediate(() => request.abort())
             return
           }
 
@@ -660,16 +781,18 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
     const app = new Koa()
       .use(apolloUploadKoa({ maxFiles: 2 }))
       .use(async (ctx, next) => {
-        await t.test(
-          'Upload 1 resolves.',
-          uploadTest(ctx.request.body.variables.files[0])
-        )
+        await Promise.all([
+          t.test(
+            'Upload 1 resolves.',
+            uploadTest(ctx.request.body.variables.files[0])
+          ),
 
-        await t.rejects(
-          ctx.request.body.variables.files[1],
-          MaxFilesUploadError,
-          'Upload 2 rejects.'
-        )
+          t.rejects(
+            ctx.request.body.variables.files[1],
+            MaxFilesUploadError,
+            'Upload 2 rejects.'
+          )
+        ])
 
         ctx.status = 204
         await next()
@@ -705,7 +828,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   })
 })
 
-t.todo('Exceed max file size.', async t => {
+t.test('Exceed max file size.', async t => {
   t.jobs = 2
 
   const testRequest = async port => {
@@ -715,35 +838,39 @@ t.todo('Exceed max file size.', async t => {
       'operations',
       JSON.stringify({
         variables: {
-          file: null
+          files: [null, null]
         }
       })
     )
 
-    body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-    body.append('1', fs.createReadStream(TEST_FILE_PATH_JSON))
+    body.append(
+      'map',
+      JSON.stringify({
+        1: ['variables.files.0'],
+        2: ['variables.files.1']
+      })
+    )
+
+    body.append(1, fs.createReadStream(TEST_FILE_PATH_JPG))
+    body.append(2, fs.createReadStream(TEST_FILE_PATH_JSON))
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(2)
+    t.plan(1)
 
     const app = new Koa()
-      .use(apolloUploadKoa({ maxFileSize: 10 }))
+      .use(apolloUploadKoa({ maxFileSize: 10000 }))
       .use(async (ctx, next) => {
         await t.test('Upload resolves.', async t => {
-          const { stream } = await uploadTest(ctx.request.body.variables.file)(
-            t
-          )
           await t.rejects(
-            new Promise((resolve, reject) => {
-              stream.on('end', () => resolve())
-              stream.on('error', error => reject(error))
-            }),
+            uploadTestJPEG(ctx.request.body.variables.files[0])(t),
             MaxFileSizeUploadError,
             'Upload file stream emits error.'
           )
+
+          await uploadTest(ctx.request.body.variables.files[1])(t)
         })
 
         ctx.status = 204
@@ -756,23 +883,22 @@ t.todo('Exceed max file size.', async t => {
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(2)
+    t.plan(1)
 
     const app = express()
-      .use(apolloUploadExpress({ maxFileSize: 10 }))
+      .use(apolloUploadExpress({ maxFileSize: 10000 }))
       .use((request, response, next) => {
-        uploadTest(request.body.variables.file)(t).then(({ stream }) => {
-          t.rejects(
-            new Promise((resolve, reject) => {
-              stream.on('end', () => resolve())
-              stream.on('error', error => reject(error))
-            }),
+        t.test('Upload resolves.', async t => {
+          await t.rejects(
+            uploadTestJPEG(request.body.variables.files[0])(t),
             MaxFileSizeUploadError,
             'Upload file stream emits error.'
           )
-            .then(() => next())
-            .catch(next)
+
+          await uploadTest(request.body.variables.files[1])(t)
         })
+          .then(() => next())
+          .catch(next)
       })
 
     const port = await startServer(t, app)
