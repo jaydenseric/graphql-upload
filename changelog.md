@@ -38,6 +38,7 @@
   - Removed redundant [`eslint-plugin-ava`](https://npm.im/eslint-plugin-ava) dev dependency and config.
   - Undo overriding ESLint ignoring dotfiles by default as there are none now.
 - Use `.prettierignore` to leave `package.json` formatting to npm.
+- Compact package `repository` field.
 - Improved documentation.
 - `changelog.md` version entries now have “Major”, “Minor” and “Patch” subheadings.
 
