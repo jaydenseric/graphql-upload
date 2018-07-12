@@ -287,7 +287,7 @@ t.test('Aborted request.', async t => {
       const request = http.request({
         method: 'POST',
         host: 'localhost',
-        port: port,
+        port,
         headers: body.getHeaders()
       })
 
