@@ -1,7 +1,7 @@
 {
   "name": "apollo-upload-server",
   "version": "5.0.0",
-  "description": "Enhances Apollo GraphQL Server for intuitive file uploads via GraphQL mutations.",
+  "description": "Enhances GraphQL servers for intuitive file uploads via GraphQL mutations.",
   "license": "MIT",
   "author": {
     "name": "Jayden Seric",
@@ -19,7 +19,9 @@
     "upload",
     "multipart",
     "koa",
-    "express"
+    "express",
+    "esm",
+    "mjs"
   ],
   "files": [
     "lib",
