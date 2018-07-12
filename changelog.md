@@ -2,30 +2,35 @@
 
 ## Next
 
-- Updated dependencies.
+### Major
+
 - Updated Node.js support from v6.10+ to v8.5+ for native [ESM](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V8.md#8.5.0), [object rest/spread properties](https://node.green/#ES2018-features-object-rest-spread-properties), and [async functions](https://node.green/#ES2017-features-async-functions).
-- Updated Babel config:
-  - Use `babel.config.js` instead of `.babelrc.js`.
-  - Removed `@babel/runtime` dependency and config.
-  - Enabled `shippedProposals` in `@babel/preset-env` config.
-  - Renamed the `ESM` environment variable to `BABEL_ESM` to be more specific.
+- Removed the [`@babel/runtime`](https://npm.im/@babel/runtime) dependency and config.
+
+### Patch
+
+- Updated dependencies.
+- Fixed [#45](https://github.com/jaydenseric/apollo-upload-server/issues/45), [#77](https://github.com/jaydenseric/apollo-upload-server/issues/77) and [#83](https://github.com/jaydenseric/apollo-upload-server/issues/83) via [#81](https://github.com/jaydenseric/apollo-upload-server/pull/81):
+  - Add `error` event listeners to file streams to prevent a server crash on aborted requests or parser errors.
+  - Use [`fs-capacitor`](https://npm.im/fs-capacitor) to ensure the server doesn’t hang if an upload `await` is out of order, or is never consumed.
+- Use `babel.config.js` instead of `.babelrc.js`.
+- Enabled `shippedProposals` in [`@babel/preset-env`](https://npm.im/@babel/preset-env) config.
 - Improved testing:
-  - Using `tap` instead of `ava`.
-  - Tests no longer transpile on the fly, are faster and AVA no longer dictates the Babel version.
+  - Use [`tap`](https://npm.im/tap) instead of [`ava`](https://npm.im/ava). Tests no longer transpile on the fly, are faster and AVA no longer dictates the Babel version.
   - Tests run against the actual dist `.mjs` and `.js` files in native ESM (`--experimental-modules`) and CJS environments.
   - Removed `get-port` dev dependency.
-  - Test middleware error response status codes.
   - Added Express tests.
-  - Refactored tests and removed an apparently redundant workaround.
+  - Test middleware error response status codes.
   - Test behavior of aborted HTTP requests.
   - Test that the app can respond if an upload is not handled.
 - Improved `package.json` scripts:
   - Leveraged `npm-run-all` more for parallelism and reduced noise.
   - Removed linting fix scripts.
-  - Linting included in the test script. Travis CI will fail PR's with lint errors.
+  - Linting included in the test script; Travis CI will fail PR's with lint errors.
   - Custom watch script.
   - No longer use `cross-env`; contributors with Windows may setup and use a Bash shell.
-  - Improved package clean script:
+  - Renamed the `ESM` environment variable to `BABEL_ESM` to be more specific.
+  - Improved clean script:
     - Removed the `rimraf` dev dependency in favour of native `rm -r`. Leaner and faster; we only support \*nix now for contributing anyway.
     - Use native `mkdir` to mitigate [babel/babel#8077](https://github.com/babel/babel/issues/8077).
 - Improved ESLint config:
@@ -35,29 +40,39 @@
   - Use `eslint-plugin-import` and `eslint-plugin-node` and enable more rules.
   - Undo overriding ESLint ignoring dotfiles by default as there are none now.
 - Use `.prettierignore` to leave `package.json` formatting to npm.
-- Add `error` event listeners to file streams to prevent the app from crashing on aborted requests or parser errors.
-- Add Capacitor to ensure the app does not hang if an upload is `await`ed out of order, or is never consumed.
 - Improved documentation.
+- `changelog.md` version entries now have “Major”, “Minor” and “Patch” subheadings.
 
 ## 5.0.0
 
+### Major
+
+- [`graphql`](https://npm.im/graphql) peer dependency range updated to `^0.13.1` for native ESM support via `.mjs`. It’s a breaking change despite being a semver patch.
+
+### Patch
+
 - Updated dependencies.
-- `graphql` peer dependency range updated to `^0.13.1` for native ESM support via `.mjs`. It’s a breaking change despite being a semver patch.
 - More robust npm scripts, with the ability to watch builds and tests together.
 - Fixed missing dev dependency for fetching in tests.
-- Using [`eslint-plugin-ava`](https://github.com/avajs/eslint-plugin-ava).
+- Use [`eslint-plugin-ava`](https://github.com/avajs/eslint-plugin-ava).
 - HTTPS `package.json` author URL.
 - New readme logo URL that does’t need to be updated every version.
 
 ## 4.0.2
 
+### Patch
+
 - Temporary solution for importing CommonJS in `.mjs`, fixing reopened [#40](https://github.com/jaydenseric/apollo-upload-server/issues/40).
 
 ## 4.0.1
 
+### Patch
+
 - Correct imports for vanilla Node.js `--experimental-modules` and `.mjs` support, fixing [#40](https://github.com/jaydenseric/apollo-upload-server/issues/40).
 
 ## 4.0.0
+
+### Patch
 
 - Updated dependencies.
 - Simplified npm scripts.
@@ -70,19 +85,23 @@
 
 ## 4.0.0-alpha.3
 
-- Updated dependencies.
+### Minor
+
 - Updated peer dependencies to support `graphql@0.12`, via [#36](https://github.com/jaydenseric/apollo-upload-server/pull/36).
+
+### Patch
+
+- Updated dependencies.
 
 ## 4.0.0-alpha.2
 
-- Updated dependencies.
-- Smarter Babel config with `.babelrc.js`.
+### Minor
+
 - Transpile and polyfill for Node.js v6.10+ (down from v7.6+) to [support AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html), fixing [#33](https://github.com/jaydenseric/apollo-upload-server/issues/33).
 - Modular project structure that works better for native ESM.
 - Added tests.
 - Set up Travis to test using the latest stable Node.js version and the oldest supported in `package.json` `engines` (v6.10).
 - Added a Travis readme badge.
-- Refactor to use fewer Busboy event listeners.
 - Improved error handling, fixing [#26](https://github.com/jaydenseric/apollo-upload-server/issues/26):
   - Custom errors are thrown or emitted with meaningful messages that are exported so consumers can use `instanceof` with them.
   - Where it makes sense, errors cause relevant HTTP status codes to be set in middleware.
@@ -92,25 +111,44 @@
   - Already if a file exceeds the `maxFileSize` option the file is truncated, the stream emits a `limit` event and `stream.truncated === true`. Now an `error` event is also emitted with a `MaxFileSizeUploadError`.
   - Aborting requests from the client causes `scalar Upload` promises to reject with a `UploadPromiseDisconnectUploadError` error for file upload streams that have not yet been parsed. For streams being parsed an `error` event is emitted with an `FileStreamDisconnectUploadError` error and `stream.truncated === true`. It is up to consumers to cleanup aborted streams in their resolvers.
 
+### Patch
+
+- Updated dependencies.
+- Smarter Babel config with `.babelrc.js`.
+- Refactor to use fewer Busboy event listeners.
+
 ## 4.0.0-alpha.1
+
+### Major
 
 - New API to support the [GraphQL multipart request spec v2.0.0-alpha.2](https://github.com/jaydenseric/graphql-multipart-request-spec/releases/tag/v2.0.0-alpha.2). Files no longer upload to the filesystem; [readable streams](https://nodejs.org/api/stream.html#stream_readable_streams) are used in resolvers instead. Fixes [#13](https://github.com/jaydenseric/apollo-upload-server/issues/13) via [#22](https://github.com/jaydenseric/apollo-upload-server/pull/22).
 - Export a new `Upload` scalar type to use in place of the old `Upload` input type. It represents a file upload promise that resolves an object containing `stream`, `filename`, `mimetype` and `encoding`.
 - Deprecated the `uploadDir` middleware option.
-- Added new `maxFieldSize`, `maxFileSize` and `maxFiles` middleware options.
 - `graphql` is now a peer dependency.
+
+### Minor
+
+- Added new `maxFieldSize`, `maxFileSize` and `maxFiles` middleware options.
+
+### Patch
+
 - Middleware are now arrow functions.
 
 ## 3.0.0
 
+### Major
+
 - Updated Node.js support from v6.4+ to v7.6+.
+- Express middleware now passes on errors instead of blocking, via [#20](https://github.com/jaydenseric/apollo-upload-server/pull/20).
+
+### Patch
+
 - Using Babel directly, dropping Rollup.
 - New directory structure for compiled files.
 - Module files now have `.mjs` extension.
 - No longer publish the `src` directory.
 - No more sourcemaps.
 - Use an arrow function for the Koa middleware, to match the Express middleware.
-- Express middleware now passes on errors instead of blocking, via [#20](https://github.com/jaydenseric/apollo-upload-server/pull/20).
 - Compiled code is now prettier.
 - Prettier markdown files.
 - Updated package keywords.
@@ -123,10 +161,14 @@
 
 ## 2.0.4
 
+### Patch
+
 - Updated dependencies.
 - Readme tweaks including a new licence badge.
 
 ## 2.0.3
+
+### Patch
 
 - Updated dependencies.
 - Removed `package-lock.json`. Lockfiles are [not recommended](https://github.com/sindresorhus/ama/issues/479#issuecomment-310661514) for packages.
@@ -139,6 +181,8 @@
 
 ## 2.0.2
 
+### Patch
+
 - Updated dependencies.
 - Added a changelog.
 - Dropped Yarn in favor of npm@5. Removed `yarn.lock` and updated install instructions.
@@ -149,25 +193,40 @@
 
 ## 2.0.1
 
+### Patch
+
 - Updated dependencies.
 - Support regular requests from clients other than apollo-upload-client again, fixing [#4](https://github.com/jaydenseric/apollo-upload-server/issues/4).
 - Removed incorrect commas from example GraphQL input type.
 
 ## 2.0.0
 
+### Major
+
 - Support `apollo-upload-client` v3 and [query batching](https://apollographql.com/docs/apollo-server/requests.html#batching).
+
+### Patch
+
 - Clearer package description.
+- Use [Standard Style](https://standardjs.com) instead of ESLint directly.
 
 ## 1.1.0
 
-- Updated dependencies.
+### Minor
+
 - Exporting a new helper function for processing requests. It can be used to create custom middleware, or middleware for unsupported routers.
 - Exporting new Koa middleware.
 - Upload directory is ensured on every request now. While slightly less efficient, it prevents major errors when if it is deleted while the server is running.
+
+### Patch
+
+- Updated dependencies.
 - Documented npm install as well as Yarn.
 - Typo fix in the readme.
 
 ## 1.0.2
+
+### Patch
 
 - Fixed broken Github deep links in the readme.
 - Readme rewording.
@@ -175,9 +234,11 @@
 
 ## 1.0.1
 
+### Patch
+
 - Added missing metadata to `package.json`.
 - Added a link to apollographql/graphql-server in the readme.
 
 ## 1.0.0
 
-- Initial release.
+Initial release.
