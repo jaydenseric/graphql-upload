@@ -12,8 +12,6 @@ import {
   FileStreamDisconnectUploadError
 } from './errors'
 
-const defaultErrorHandler = () => {}
-
 class Upload {
   constructor() {
     this.promise = new Promise((resolve, reject) => {
@@ -24,21 +22,11 @@ class Upload {
       }
     })
 
-    // Node has deprecated asynchronous handling of promises,
-    // instead opting to crash the app.
+    // Prevent errors crashing Node.js, see:
     // https://github.com/nodejs/node/issues/20392
-    this.promise.catch(defaultErrorHandler)
+    this.promise.catch(() => {})
   }
 }
-
-// Dicer does not export definite error types, and so we are going to use
-// its message as a mechanism for type detection:
-const isEarlyTerminationError = err =>
-  // https://github.com/mscdex/dicer/blob/3f75d507b7ad1a395f04028c724ee3ad99b78bb4/lib/Dicer.js#L62
-  err.message === 'Unexpected end of multipart data' ||
-  // https://github.com/mscdex/dicer/blob/3f75d507b7ad1a395f04028c724ee3ad99b78bb4/lib/Dicer.js#L65
-  err.message ===
-    'Part terminated early due to unexpected end of multipart data'
 
 export const processRequest = (
   request,
@@ -60,9 +48,9 @@ export const processRequest = (
     let map
     let currentStream
 
-    const exit = err => {
-      reject(err)
-      parser.destroy(err)
+    const exit = error => {
+      reject(error)
+      parser.destroy(error)
     }
 
     parser.on('field', (fieldName, value) => {
@@ -71,8 +59,8 @@ export const processRequest = (
           try {
             operations = JSON.parse(value)
             operationsPath = objectPath(operations)
-          } catch (err) {
-            exit(err)
+          } catch (error) {
+            exit(error)
           }
           break
         case 'map': {
@@ -87,12 +75,12 @@ export const processRequest = (
           let mapEntries
           try {
             mapEntries = Object.entries(JSON.parse(value))
-          } catch (err) {
-            return exit(err)
+          } catch (error) {
+            return exit(error)
           }
 
-          // Check max files is not exceeded, even though the number of files
-          // to parse might not match the map provided by the client.
+          // Check max files is not exceeded, even though the number of files to
+          // parse might not match the map provided by the client.
           if (mapEntries.length > maxFiles)
             return exit(
               new MaxFilesUploadError(
@@ -116,10 +104,13 @@ export const processRequest = (
       }
     })
 
-    parser.on('file', (fieldName, source, filename, encoding, mimetype) => {
+    parser.on('file', (fieldName, stream, filename, encoding, mimetype) => {
       if (!map) {
-        source.on('error', defaultErrorHandler)
-        source.resume()
+        // Prevent an unhandled error from crashing the process.
+        stream.on('error', () => {})
+
+        stream.resume()
+
         return exit(
           new FilesBeforeMapUploadError(
             `Misordered multipart fields; files should follow “map” (${SPEC_URL}).`,
@@ -128,20 +119,21 @@ export const processRequest = (
         )
       }
 
-      currentStream = source
-      source.on('end', () => {
-        if (currentStream === source) currentStream = null
+      currentStream = stream
+
+      stream.on('end', () => {
+        if (currentStream === stream) currentStream = null
       })
 
       if (map.has(fieldName)) {
         const capacitor = new Capacitor()
+
         capacitor.on('error', () => {
-          source.unpipe()
-          source.resume()
+          stream.unpipe()
+          stream.resume()
         })
 
-        // Monkey patch busboy to emit an error when a file is too big.
-        source.on('limit', () =>
+        stream.on('limit', () =>
           capacitor.destroy(
             new MaxFileSizeUploadError(
               'File truncated as it exceeds the size limit.'
@@ -149,18 +141,27 @@ export const processRequest = (
           )
         )
 
-        source.on('error', err => {
+        stream.on('error', error => {
           if (capacitor.finished || capacitor.destroyed) return
 
-          // A terminated connection may cause the request to emit a 'close' event either before or after
-          // the parser encounters an error, depending on the version of node and the state of stream buffers.
-          if (isEarlyTerminationError(err))
-            err = new FileStreamDisconnectUploadError(err.message)
+          // A terminated connection may cause the request to emit a 'close'
+          // event either before or after the parser encounters an error,
+          // depending on the Node.js version and the state of stream buffers.
 
-          capacitor.destroy(err)
+          if (
+            error.message ===
+              // https://github.com/mscdex/dicer/blob/v0.2.5/lib/Dicer.js#L62
+              'Unexpected end of multipart data' ||
+            error.message ===
+              // https://github.com/mscdex/dicer/blob/v0.2.5/lib/Dicer.js#L65
+              'Part terminated early due to unexpected end of multipart data'
+          )
+            error = new FileStreamDisconnectUploadError(error.message)
+
+          capacitor.destroy(error)
         })
 
-        source.pipe(capacitor)
+        stream.pipe(capacitor)
 
         map.get(fieldName).resolve({
           stream: capacitor,
@@ -169,9 +170,8 @@ export const processRequest = (
           encoding
         })
       }
-
       // Discard the unexpected file.
-      else source.resume()
+      else stream.resume()
     })
 
     parser.once('filesLimit', () => {
@@ -190,14 +190,15 @@ export const processRequest = (
             )
     })
 
-    parser.on('error', err => {
+    parser.on('error', error => {
       request.unpipe(parser)
       request.resume()
 
       if (map)
-        for (const upload of map.values()) if (!upload.file) upload.reject(err)
+        for (const upload of map.values())
+          if (!upload.file) upload.reject(error)
 
-      if (currentStream) currentStream.destroy(err)
+      if (currentStream) currentStream.destroy(error)
     })
 
     request.on('close', () => {
@@ -225,6 +226,7 @@ export const apolloUploadKoa = options => async (ctx, next) => {
   if (!ctx.request.is('multipart/form-data')) return next()
 
   const finished = new Promise(resolve => ctx.req.on('end', resolve))
+
   try {
     ctx.request.body = await processRequest(ctx.req, options)
     await next()
@@ -238,6 +240,7 @@ export const apolloUploadExpress = options => (request, response, next) => {
 
   const finished = new Promise(resolve => request.on('end', resolve))
   const { send } = response
+
   response.send = (...args) => {
     finished.then(() => {
       response.send = send
