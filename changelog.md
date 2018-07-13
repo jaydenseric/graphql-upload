@@ -7,6 +7,10 @@
 - Updated Node.js support from v6.10+ to v8.5+ for native [ESM](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V8.md#8.5.0), [object rest/spread properties](https://node.green/#ES2018-features-object-rest-spread-properties), and [async functions](https://node.green/#ES2017-features-async-functions).
 - Removed the [`@babel/runtime`](https://npm.im/@babel/runtime) dependency and config.
 
+### Minor
+
+- Refactored package scripts to use `prepare` to support installation via Git (e.g. `npm install jaydenseric/apollo-upload-server`).
+
 ### Patch
 
 - Updated dependencies.
@@ -25,12 +29,12 @@
   - Test that the app can respond if an upload is not handled.
 - Improved `package.json` scripts:
   - Leveraged `npm-run-all` more for parallelism and reduced noise.
+  - Removed the clean script `rimraf` dev dependency in favour of native `rm -rf`. Leaner and faster; we only support \*nix now for contributing anyway.
+  - No longer use `cross-env`; contributors with Windows may setup and use a Bash shell.
+  - Renamed the `ESM` environment variable to `BABEL_ESM` to be more specific.
   - Removed linting fix scripts.
   - Linting included in the test script; Travis CI will fail PR's with lint errors.
   - Custom watch script.
-  - No longer use `cross-env`; contributors with Windows may setup and use a Bash shell.
-  - Renamed the `ESM` environment variable to `BABEL_ESM` to be more specific.
-  - Removed the clean script `rimraf` dev dependency in favour of native `rm -rf`. Leaner and faster; we only support \*nix now for contributing anyway.
 - Improved ESLint config:
   - Simplified ESLint config with [`eslint-config-env`](https://npm.im/eslint-config-env).
   - Removed redundant [`eslint-plugin-ava`](https://npm.im/eslint-plugin-ava) dev dependency and config.
