@@ -21,16 +21,9 @@ import {
 // GraphQL multipart request spec:
 // https://github.com/jaydenseric/graphql-multipart-request-spec
 
-const TEST_FILE_PATH_JSON = 'package.json'
-const TEST_FILE_PATH_JSON_LENGTH = fs.statSync(TEST_FILE_PATH_JSON).size
-
-const TEST_FILE_PATH_SVG = 'apollo-upload-logo.svg'
-
-// The max TCP packet size is 64KB, so this file is guaranteed to arrive
-// in multiple chunks. It is a public domain image retreived from:
-// https://commons.wikimedia.org/wiki/File:Belvedere_Apollo_Pio-Clementino_Inv1015.jpg
-const TEST_FILE_PATH_JPG = 'Belvedere_Apollo_Pio-Clementino_Inv1015.jpg'
-const TEST_FILE_PATH_JPG_LENGTH = fs.statSync(TEST_FILE_PATH_JPG).size
+// Will arrive in multiple chunks as the TCP max packet size is 64KB.
+const TEST_FILE_PATH = 'test-file.txt'
+const TEST_FILE_SIZE = fs.statSync(TEST_FILE_PATH).size
 
 const startServer = (t, app) =>
   new Promise((resolve, reject) => {
@@ -44,47 +37,23 @@ const startServer = (t, app) =>
   })
 
 const uploadTest = upload => async t => {
-  const resolved = await upload
-  t.type(resolved.stream, 'Capacitor', 'Stream.')
-  t.equals(resolved.filename, 'package.json', 'Filename.')
-  t.equals(resolved.mimetype, 'application/json', 'MIME type.')
-  t.equals(resolved.encoding, '7bit', 'Encoding.')
-  await new Promise((resolve, reject) => {
+  const { stream, filename, mimetype, encoding } = await upload
+
+  t.type(stream, 'Capacitor', 'Stream.')
+  t.equals(filename, 'test-file.txt', 'Filename.')
+  t.equals(mimetype, 'text/plain', 'MIME type.')
+  t.equals(encoding, '7bit', 'Encoding.')
+
+  return new Promise((resolve, reject) => {
     let size = 0
-    resolved.stream
+    stream
+      .on('error', reject)
+      .on('data', chunk => (size += chunk.length))
       .on('end', () => {
-        t.equals(size, TEST_FILE_PATH_JSON_LENGTH, 'Bytes.')
+        t.equals(size, TEST_FILE_SIZE, 'Bytes.')
         resolve()
       })
-      .on('error', reject)
-
-    resolved.stream.on('data', chunk => (size += chunk.length))
   })
-  return resolved
-}
-
-const uploadTestJPEG = upload => async t => {
-  const resolved = await upload
-  t.type(resolved.stream, 'Capacitor', 'Stream.')
-  t.equals(
-    resolved.filename,
-    'Belvedere_Apollo_Pio-Clementino_Inv1015.jpg',
-    'Filename.'
-  )
-  t.equals(resolved.mimetype, 'image/jpeg', 'MIME type.')
-  t.equals(resolved.encoding, '7bit', 'Encoding.')
-  await new Promise((resolve, reject) => {
-    let size = 0
-    resolved.stream
-      .on('end', () => {
-        t.equals(size, TEST_FILE_PATH_JPG_LENGTH, 'Bytes.')
-        resolve()
-      })
-      .on('error', reject)
-
-    resolved.stream.on('data', chunk => (size += chunk.length))
-  })
-  return resolved
 }
 
 t.test('Single file.', async t => {
@@ -103,7 +72,7 @@ t.test('Single file.', async t => {
     )
 
     body.append('map', JSON.stringify({ 1: ['variables.file'] }))
-    body.append(1, fs.createReadStream(TEST_FILE_PATH_JSON))
+    body.append(1, fs.createReadStream(TEST_FILE_PATH))
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
@@ -166,8 +135,8 @@ t.test('Handles unconsumed uploads.', async t => {
         2: ['variables.file2']
       })
     )
-    body.append(1, fs.createReadStream(TEST_FILE_PATH_JPG))
-    body.append(2, fs.createReadStream(TEST_FILE_PATH_JSON))
+    body.append(1, fs.createReadStream(TEST_FILE_PATH))
+    body.append(2, fs.createReadStream(TEST_FILE_PATH))
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
@@ -236,25 +205,26 @@ t.test('Handles unconsumed uploads.', async t => {
 })
 
 t.test('Aborted request.', async t => {
-  t.jobs = 1
+  t.jobs = 2
 
-  const abortedStreamTest = upload => async () => {
-    const resolved = await upload
-
-    await new Promise((resolve, reject) => {
-      resolved.stream.on('error', err => {
-        t.type(err, FileStreamDisconnectUploadError)
-        resolve()
-      })
-      resolved.stream.on('end', reject)
+  const abortedStreamTest = upload => async t => {
+    const { stream } = await upload
+    return new Promise((resolve, reject) => {
+      stream
+        .on('error', error => {
+          t.type(error, FileStreamDisconnectUploadError)
+          resolve()
+        })
+        .on('end', reject)
     })
-
-    return resolved
   }
 
-  const abortedPromiseTest = upload => t => {
-    t.rejects(upload, UploadPromiseDisconnectUploadError)
-    return Promise.resolve()
+  const abortedPromiseTest = upload => async t => {
+    await t.rejects(
+      upload,
+      UploadPromiseDisconnectUploadError,
+      'Rejection error.'
+    )
   }
 
   const testRequest = port =>
@@ -280,9 +250,10 @@ t.test('Aborted request.', async t => {
           3: ['variables.file3']
         })
       )
-      body.append(1, fs.createReadStream(TEST_FILE_PATH_JSON))
-      body.append(2, fs.createReadStream(TEST_FILE_PATH_SVG))
-      body.append(3, fs.createReadStream(TEST_FILE_PATH_JPG))
+
+      body.append(1, fs.createReadStream(TEST_FILE_PATH))
+      body.append(2, fs.createReadStream(TEST_FILE_PATH))
+      body.append(3, fs.createReadStream(TEST_FILE_PATH))
 
       const request = http.request({
         method: 'POST',
@@ -291,13 +262,12 @@ t.test('Aborted request.', async t => {
         headers: body.getHeaders()
       })
 
-      // This is expected, since we're aborting the connection
-      request.on('error', err => {
-        if (err.code !== 'ECONNRESET') reject(err)
+      request.on('error', error => {
+        // Error expected when the connection is aborted.
+        if (error.code !== 'ECONNRESET') reject(error)
       })
 
-      // Note that this may emit before the downstream middleware has
-      // been processed.
+      // This may emit before downstream middleware has been processed.
       request.on('close', resolve)
 
       let data = ''
@@ -307,28 +277,27 @@ t.test('Aborted request.', async t => {
 
           const chunkString = chunk.toString('utf8')
 
-          // Concatenate the data
+          // Concatenate the data.
           data += chunkString
 
-          // When we encounter the final contents of the SVG, we will
-          // abort the request. This ensures that we are testing:
-          // 1. successful upload
-          // 2. FileStreamDisconnectUploadError
-          // 3. UploadPromiseDisconnectUploadError
-          if (data.includes('</svg>')) {
-            // How much of this chunk do we want to pipe to the request
-            // before aborting?
+          // Abort the request when the final contents of file 2 are
+          // encountered, testing:
+          //   1. File 1 - upload success.
+          //   2. File 2 - FileStreamDisconnectUploadError.
+          //   3. File 3 - UploadPromiseDisconnectUploadError.
+          if ((data.match(/end/g) || []).length === 2) {
+            // Pipe how much of this chunk to the request before aborting?
             const length =
-              chunkString.length - (data.length - data.indexOf('</svg>'))
+              chunkString.length - (data.length - data.lastIndexOf('end'))
 
-            // Abort now.
             if (length < 1) {
+              // Abort now.
               this._aborted = true
               request.abort()
               return
             }
 
-            // Send partial chunk and then abort
+            // Send partial chunk and then abort.
             this._aborted = true
             callback(null, chunkString.substr(0, length))
             setImmediate(() => request.abort())
@@ -343,139 +312,141 @@ t.test('Aborted request.', async t => {
     })
 
   await t.test('Koa middleware.', async t => {
-    t.plan(3)
+    await t.test('Handled stream error.', async t => {
+      let resume
+      const delay = new Promise(resolve => (resume = resolve))
+      const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+        try {
+          await Promise.all([
+            t.test(
+              'Upload resolves.',
+              uploadTest(ctx.request.body.variables.file1)
+            ),
 
-    let resume
-    const delay = new Promise(resolve => (resume = resolve))
-    const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-      try {
-        await Promise.all([
-          t.test(
-            'Upload resolves.',
-            uploadTest(ctx.request.body.variables.file1)
-          ),
+            t.test(
+              'In-progress upload streams are destroyed.',
+              abortedStreamTest(ctx.request.body.variables.file2)
+            ),
 
-          t.test(
-            'In-progress upload streams are destroyed.',
-            abortedStreamTest(ctx.request.body.variables.file2)
-          ),
+            t.test(
+              'Unresolved upload promises are rejected.',
+              abortedPromiseTest(ctx.request.body.variables.file3)
+            )
+          ])
+        } finally {
+          resume()
+        }
 
-          t.test(
-            'Unresolved upload promises are rejected.',
-            abortedPromiseTest(ctx.request.body.variables.file3)
-          )
-        ])
-      } finally {
-        resume()
-      }
-
-      ctx.status = 204
-      await next()
-    })
-    const port = await startServer(t, app)
-    await testRequest(port)
-    await delay
-  })
-
-  await t.test('Koa middleware without stream error handler.', async t => {
-    t.plan(2)
-
-    let resume
-    const delay = new Promise(resolve => (resume = resolve))
-    const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-      try {
-        await Promise.all([
-          t.test(
-            'Upload resolves.',
-            uploadTest(ctx.request.body.variables.file1)
-          ),
-
-          t.test(
-            'Unresolved upload promises are rejected.',
-            abortedPromiseTest(ctx.request.body.variables.file3)
-          )
-        ])
-      } finally {
-        resume()
-      }
-
-      ctx.status = 204
-      await next()
+        ctx.status = 204
+        await next()
+      })
+      const port = await startServer(t, app)
+      await testRequest(port)
+      await delay
     })
 
-    const port = await startServer(t, app)
+    await t.test('Unhandled stream error.', async t => {
+      let resume
+      const delay = new Promise(resolve => (resume = resolve))
+      const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+        try {
+          await Promise.all([
+            t.test(
+              'Upload resolves.',
+              uploadTest(ctx.request.body.variables.file1)
+            ),
 
-    await testRequest(port)
-    await delay
+            t.test(
+              'Unresolved upload promises are rejected.',
+              abortedPromiseTest(ctx.request.body.variables.file3)
+            )
+          ])
+        } finally {
+          resume()
+        }
+
+        ctx.status = 204
+        await next()
+      })
+
+      const port = await startServer(t, app)
+
+      await testRequest(port)
+      await delay
+    })
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(3)
+    await t.test('Handled stream error.', async t => {
+      let resume
+      const delay = new Promise(resolve => (resume = resolve))
+      const app = express()
+        .use(apolloUploadExpress())
+        .use((request, response, next) => {
+          Promise.all([
+            t.test(
+              'Upload resolves.',
+              uploadTest(request.body.variables.file1)
+            ),
 
-    let resume
-    const delay = new Promise(resolve => (resume = resolve))
-    const app = express()
-      .use(apolloUploadExpress())
-      .use((request, response, next) => {
-        Promise.all([
-          t.test('Upload resolves.', uploadTest(request.body.variables.file1)),
+            t.test(
+              'In-progress upload streams are destroyed.',
+              abortedStreamTest(request.body.variables.file2)
+            ),
 
-          t.test(
-            'In-progress upload streams are destroyed.',
-            abortedStreamTest(request.body.variables.file2)
-          ),
+            t.test(
+              'Unresolved upload promises are rejected.',
+              abortedPromiseTest(request.body.variables.file3)
+            )
+          ])
+            .then(() => {
+              resume()
+              next()
+            })
+            .catch(error => {
+              resume()
+              next(error)
+            })
+        })
 
-          t.test(
-            'Unresolved upload promises are rejected.',
-            abortedPromiseTest(request.body.variables.file3)
-          )
-        ])
-          .then(() => {
-            resume()
-            next()
-          })
-          .catch(err => {
-            resume()
-            next(err)
-          })
-      })
+      const port = await startServer(t, app)
 
-    const port = await startServer(t, app)
+      await testRequest(port)
+      await delay
+    })
 
-    await testRequest(port)
-    await delay
-  })
+    await t.test('Unhandled stream error.', async t => {
+      let resume
+      const delay = new Promise(resolve => (resume = resolve))
+      const app = express()
+        .use(apolloUploadExpress())
+        .use((request, response, next) => {
+          Promise.all([
+            t.test(
+              'Upload resolves.',
+              uploadTest(request.body.variables.file1)
+            ),
 
-  await t.test('Express middleware without stream error handler.', async t => {
-    t.plan(2)
+            t.test(
+              'Unresolved upload promises are rejected.',
+              abortedPromiseTest(request.body.variables.file3)
+            )
+          ])
+            .then(() => {
+              resume()
+              next()
+            })
+            .catch(error => {
+              resume()
+              next(error)
+            })
+        })
 
-    let resume
-    const delay = new Promise(resolve => (resume = resolve))
-    const app = express()
-      .use(apolloUploadExpress())
-      .use((request, response, next) => {
-        Promise.all([
-          t.test('Upload resolves.', uploadTest(request.body.variables.file1)),
+      const port = await startServer(t, app)
 
-          t.test(
-            'Unresolved upload promises are rejected.',
-            abortedPromiseTest(request.body.variables.file3)
-          )
-        ])
-          .then(() => {
-            resume()
-            next()
-          })
-          .catch(err => {
-            resume()
-            next(err)
-          })
-      })
-
-    const port = await startServer(t, app)
-
-    await testRequest(port)
-    await delay
+      await testRequest(port)
+      await delay
+    })
   })
 })
 
@@ -501,7 +472,7 @@ t.todo('Deduped files.', async t => {
       })
     )
 
-    body.append(1, fs.createReadStream(TEST_FILE_PATH_JSON))
+    body.append(1, fs.createReadStream(TEST_FILE_PATH))
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
@@ -638,8 +609,8 @@ t.test('Extraneous file.', async t => {
       })
     )
 
-    body.append(1, fs.createReadStream(TEST_FILE_PATH_JSON))
-    body.append(2, fs.createReadStream(TEST_FILE_PATH_JSON))
+    body.append(1, fs.createReadStream(TEST_FILE_PATH))
+    body.append(2, fs.createReadStream(TEST_FILE_PATH))
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
@@ -701,8 +672,8 @@ t.test('Exceed max files.', async t => {
       })
     )
 
-    body.append(1, fs.createReadStream(TEST_FILE_PATH_JSON))
-    body.append(2, fs.createReadStream(TEST_FILE_PATH_JSON))
+    body.append(1, fs.createReadStream(TEST_FILE_PATH))
+    body.append(2, fs.createReadStream(TEST_FILE_PATH))
 
     const { status } = await fetch(`http://localhost:${port}`, {
       method: 'POST',
@@ -768,9 +739,9 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
       })
     )
 
-    body.append('1', fs.createReadStream(TEST_FILE_PATH_JSON))
-    body.append('extraneous', fs.createReadStream(TEST_FILE_PATH_JSON))
-    body.append('2', fs.createReadStream(TEST_FILE_PATH_JSON))
+    body.append('1', fs.createReadStream(TEST_FILE_PATH))
+    body.append('extraneous', fs.createReadStream(TEST_FILE_PATH))
+    body.append('2', fs.createReadStream(TEST_FILE_PATH))
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
@@ -851,8 +822,8 @@ t.test('Exceed max file size.', async t => {
       })
     )
 
-    body.append(1, fs.createReadStream(TEST_FILE_PATH_JPG))
-    body.append(2, fs.createReadStream(TEST_FILE_PATH_JSON))
+    body.append(1, fs.createReadStream(TEST_FILE_PATH))
+    body.append(2, fs.createReadStream(TEST_FILE_PATH))
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
@@ -865,7 +836,7 @@ t.test('Exceed max file size.', async t => {
       .use(async (ctx, next) => {
         await t.test('Upload resolves.', async t => {
           await t.rejects(
-            uploadTestJPEG(ctx.request.body.variables.files[0])(t),
+            uploadTest(ctx.request.body.variables.files[0])(t),
             MaxFileSizeUploadError,
             'Upload file stream emits error.'
           )
@@ -890,7 +861,7 @@ t.test('Exceed max file size.', async t => {
       .use((request, response, next) => {
         t.test('Upload resolves.', async t => {
           await t.rejects(
-            uploadTestJPEG(request.body.variables.files[0])(t),
+            uploadTest(request.body.variables.files[0])(t),
             MaxFileSizeUploadError,
             'Upload file stream emits error.'
           )
@@ -929,7 +900,7 @@ t.test('Misorder “map” before “operations”.', async t => {
       })
     )
 
-    body.append('1', fs.createReadStream(TEST_FILE_PATH_JSON))
+    body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
     const { status } = await fetch(`http://localhost:${port}`, {
       method: 'POST',
@@ -987,7 +958,7 @@ t.test('Misorder files before “map”.', async t => {
       })
     )
 
-    body.append('1', fs.createReadStream(TEST_FILE_PATH_JSON))
+    body.append('1', fs.createReadStream(TEST_FILE_PATH))
 
     body.append(
       'map',
