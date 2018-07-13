@@ -64,7 +64,7 @@
     "watch": "^1.0.2"
   },
   "scripts": {
-    "build:clean": "rm -r lib; mkdir lib",
+    "build:clean": "rm -rf lib",
     "build:mjs": "BABEL_ESM=1 babel src -d lib --keep-file-extension",
     "build:js": "babel src -d lib",
     "build:prettier": "prettier 'lib/**/*.{mjs,js}' --write",

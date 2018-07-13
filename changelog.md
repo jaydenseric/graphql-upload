@@ -30,9 +30,7 @@
   - Custom watch script.
   - No longer use `cross-env`; contributors with Windows may setup and use a Bash shell.
   - Renamed the `ESM` environment variable to `BABEL_ESM` to be more specific.
-  - Improved clean script:
-    - Removed the `rimraf` dev dependency in favour of native `rm -r`. Leaner and faster; we only support \*nix now for contributing anyway.
-    - Use native `mkdir` to mitigate [babel/babel#8077](https://github.com/babel/babel/issues/8077).
+  - Removed the clean script `rimraf` dev dependency in favour of native `rm -rf`. Leaner and faster; we only support \*nix now for contributing anyway.
 - Improved ESLint config:
   - Simplified ESLint config with [`eslint-config-env`](https://npm.im/eslint-config-env).
   - Removed redundant [`eslint-plugin-ava`](https://npm.im/eslint-plugin-ava) dev dependency and config.
