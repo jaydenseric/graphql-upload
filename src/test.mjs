@@ -47,6 +47,19 @@ const startServer = (t, app) =>
       })
   })
 
+const streamToString = stream =>
+  new Promise((resolve, reject) => {
+    let data = ''
+    stream
+      .on('error', reject)
+      .on('data', chunk => {
+        data += chunk
+      })
+      .on('end', () => {
+        resolve(data)
+      })
+  })
+
 const uploadTest = (upload, filePath = TEST_FILE_PATH) => async t => {
   const { stream, filename, mimetype, encoding } = await upload
 
@@ -55,7 +68,7 @@ const uploadTest = (upload, filePath = TEST_FILE_PATH) => async t => {
   t.equals(mimetype, 'text/plain', 'MIME type.')
   t.equals(encoding, '7bit', 'Encoding.')
 
-  return new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     let size = 0
     stream
       .on('error', reject)
@@ -83,9 +96,19 @@ t.test('Single file.', async t => {
     )
 
     body.append('map', JSON.stringify({ 1: ['variables.file'] }))
-    body.append(1, fs.createReadStream(TEST_FILE_PATH))
+    body.append(1, 'a', { filename: 'a.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  }
+
+  const uploadTest = upload => async t => {
+    const { stream, filename, mimetype, encoding } = await upload
+
+    t.type(stream, 'Capacitor', 'Stream type.')
+    t.equals(await streamToString(stream), 'a', 'File contents.')
+    t.equals(filename, 'a.txt', 'File name.')
+    t.equals(mimetype, 'text/plain', 'MIME type.')
+    t.equals(encoding, '7bit', 'Encoding.')
   }
 
   await t.test('Koa middleware.', async t => {
@@ -146,10 +169,20 @@ t.test('Handles unconsumed uploads.', async t => {
         2: ['variables.fileB']
       })
     )
-    body.append(1, fs.createReadStream(TEST_FILE_PATH))
-    body.append(2, fs.createReadStream(TEST_FILE_PATH))
+    body.append(1, 'a', { filename: 'a.txt' })
+    body.append(2, 'b', { filename: 'b.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  }
+
+  const testUploadB = upload => async t => {
+    const { stream, filename, mimetype, encoding } = await upload
+
+    t.type(stream, 'Capacitor', 'Stream type.')
+    t.equals(await streamToString(stream), 'b', 'File contents.')
+    t.equals(filename, 'b.txt', 'File name.')
+    t.equals(mimetype, 'text/plain', 'MIME type.')
+    t.equals(encoding, '7bit', 'Encoding.')
   }
 
   await t.test('Koa middleware.', async t => {
@@ -163,7 +196,7 @@ t.test('Handles unconsumed uploads.', async t => {
 
       await t.test(
         'Upload B resolves.',
-        uploadTest(ctx.request.body.variables.fileB)
+        testUploadB(ctx.request.body.variables.fileB)
       )
 
       ctx.status = 204
@@ -195,7 +228,7 @@ t.test('Handles unconsumed uploads.', async t => {
           .then(() =>
             t.test(
               'Upload B resolves.',
-              uploadTest(request.body.variables.fileB)
+              testUploadB(request.body.variables.fileB)
             )
           )
           .then(() => next())
