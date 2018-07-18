@@ -27,13 +27,23 @@ const TEST_FILE_SIZE = fs.statSync(TEST_FILE_PATH).size
 
 const startServer = (t, app) =>
   new Promise((resolve, reject) => {
-    app.listen(undefined, 'localhost', function(error) {
+    const server = app.listen(undefined, 'localhost', function(error) {
       if (error) reject(error)
       else {
         t.tearDown(() => this.close())
         resolve(this.address().port)
       }
     })
+
+    // In node <= v8, any error passed to `socket.destroy(error)` is
+    // written to stderr, which gives a false appearance of errors in
+    // these tests. We're simply going to swallow these and reimplement
+    // the default behavior:
+    // https://github.com/nodejs/node/blob/241aa14d980e1d2bd6c20754b7058dda120c4673/lib/_http_server.js#L470
+    if (parseInt(process.versions.node) <= 8)
+      server.on('clientError', (error, socket) => {
+        socket.destroy()
+      })
   })
 
 const uploadTest = upload => async t => {
