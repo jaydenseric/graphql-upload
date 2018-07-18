@@ -251,26 +251,6 @@ t.test('Handles unconsumed uploads.', async t => {
 t.test('Aborted request.', async t => {
   t.jobs = 2
 
-  const abortedStreamTest = upload => async t => {
-    const { stream } = await upload
-    return new Promise((resolve, reject) => {
-      stream
-        .on('error', error => {
-          t.type(error, FileStreamDisconnectUploadError)
-          resolve()
-        })
-        .on('end', reject)
-    })
-  }
-
-  const abortedPromiseTest = upload => async t => {
-    await t.rejects(
-      upload,
-      UploadPromiseDisconnectUploadError,
-      'Rejection error.'
-    )
-  }
-
   const sendRequest = port =>
     new Promise((resolve, reject) => {
       const body = new FormData()
@@ -296,8 +276,13 @@ t.test('Aborted request.', async t => {
       )
 
       body.append(1, fs.createReadStream(TEST_FILE_PATH))
-      body.append(2, fs.createReadStream(TEST_FILE_PATH))
-      body.append(3, fs.createReadStream(TEST_FILE_PATH))
+      body.append(
+        2,
+        // Will arrive in multiple chunks as the TCP max packet size is 64KB.
+        `${'b'.repeat(100000)}end`,
+        { filename: 'b.txt' }
+      )
+      body.append(3, 'c', { filename: 'c.txt' })
 
       const request = http.request({
         method: 'POST',
@@ -321,28 +306,22 @@ t.test('Aborted request.', async t => {
 
           const chunkString = chunk.toString('utf8')
 
-          // Concatenate the data.
           data += chunkString
 
-          // Abort the request when the final contents of file 2 are
-          // encountered, testing:
-          //   1. File 1 - upload success.
-          //   2. File 2 - FileStreamDisconnectUploadError.
-          //   3. File 3 - UploadPromiseDisconnectUploadError.
           if ((data.match(/end/g) || []).length === 2) {
+            this._aborted = true
+
             // Pipe how much of this chunk to the request before aborting?
             const length =
               chunkString.length - (data.length - data.lastIndexOf('end'))
 
             if (length < 1) {
               // Abort now.
-              this._aborted = true
               request.abort()
               return
             }
 
             // Send partial chunk and then abort.
-            this._aborted = true
             callback(null, chunkString.substr(0, length))
             setImmediate(() => request.abort())
             return
@@ -355,27 +334,36 @@ t.test('Aborted request.', async t => {
       body.pipe(transform).pipe(request)
     })
 
-  await t.test('Koa middleware.', async t => {
-    await t.test('Handled stream error.', async t => {
+  const uploadBTest = upload => async t => {
+    const { stream } = await upload
+    return new Promise((resolve, reject) => {
+      stream
+        .on('error', error => {
+          t.type(error, FileStreamDisconnectUploadError, 'Stream error.')
+          resolve()
+        })
+        .on('end', reject)
+    })
+  }
+
+  const uploadCTest = upload => async t => {
+    await t.rejects(
+      upload,
+      UploadPromiseDisconnectUploadError,
+      'Rejection error.'
+    )
+  }
+
+  await t.test('Stream error handled.', async t => {
+    await t.test('Koa middleware.', async t => {
       let resume
       const delay = new Promise(resolve => (resume = resolve))
       const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
         try {
           await Promise.all([
-            t.test(
-              'Upload resolves.',
-              uploadTest(ctx.request.body.variables.fileA)
-            ),
-
-            t.test(
-              'In-progress upload streams are destroyed.',
-              abortedStreamTest(ctx.request.body.variables.fileB)
-            ),
-
-            t.test(
-              'Unresolved upload promises are rejected.',
-              abortedPromiseTest(ctx.request.body.variables.fileC)
-            )
+            t.test('Upload A.', uploadTest(ctx.request.body.variables.fileA)),
+            t.test('Upload B.', uploadBTest(ctx.request.body.variables.fileB)),
+            t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
           ])
         } finally {
           resume()
@@ -389,59 +377,16 @@ t.test('Aborted request.', async t => {
       await delay
     })
 
-    await t.test('Unhandled stream error.', async t => {
-      let resume
-      const delay = new Promise(resolve => (resume = resolve))
-      const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-        try {
-          await Promise.all([
-            t.test(
-              'Upload resolves.',
-              uploadTest(ctx.request.body.variables.fileA)
-            ),
-
-            t.test(
-              'Unresolved upload promises are rejected.',
-              abortedPromiseTest(ctx.request.body.variables.fileC)
-            )
-          ])
-        } finally {
-          resume()
-        }
-
-        ctx.status = 204
-        await next()
-      })
-
-      const port = await startServer(t, app)
-
-      await sendRequest(port)
-      await delay
-    })
-  })
-
-  await t.test('Express middleware.', async t => {
-    await t.test('Handled stream error.', async t => {
+    await t.test('Express middleware.', async t => {
       let resume
       const delay = new Promise(resolve => (resume = resolve))
       const app = express()
         .use(apolloUploadExpress())
         .use((request, response, next) => {
           Promise.all([
-            t.test(
-              'Upload resolves.',
-              uploadTest(request.body.variables.fileA)
-            ),
-
-            t.test(
-              'In-progress upload streams are destroyed.',
-              abortedStreamTest(request.body.variables.fileB)
-            ),
-
-            t.test(
-              'Unresolved upload promises are rejected.',
-              abortedPromiseTest(request.body.variables.fileC)
-            )
+            t.test('Upload A.', uploadTest(request.body.variables.fileA)),
+            t.test('Upload B.', uploadBTest(request.body.variables.fileB)),
+            t.test('Upload C.', uploadCTest(request.body.variables.fileC))
           ])
             .then(() => {
               resume()
@@ -458,23 +403,41 @@ t.test('Aborted request.', async t => {
       await sendRequest(port)
       await delay
     })
+  })
 
-    await t.test('Unhandled stream error.', async t => {
+  await t.test('Stream error unhandled.', async t => {
+    await t.test('Koa middleware.', async t => {
+      let resume
+      const delay = new Promise(resolve => (resume = resolve))
+      const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+        try {
+          await Promise.all([
+            t.test('Upload A.', uploadTest(ctx.request.body.variables.fileA)),
+            t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
+          ])
+        } finally {
+          resume()
+        }
+
+        ctx.status = 204
+        await next()
+      })
+
+      const port = await startServer(t, app)
+
+      await sendRequest(port)
+      await delay
+    })
+
+    await t.test('Express middleware.', async t => {
       let resume
       const delay = new Promise(resolve => (resume = resolve))
       const app = express()
         .use(apolloUploadExpress())
         .use((request, response, next) => {
           Promise.all([
-            t.test(
-              'Upload resolves.',
-              uploadTest(request.body.variables.fileA)
-            ),
-
-            t.test(
-              'Unresolved upload promises are rejected.',
-              abortedPromiseTest(request.body.variables.fileC)
-            )
+            t.test('Upload A.', uploadTest(request.body.variables.fileA)),
+            t.test('Upload C.', uploadCTest(request.body.variables.fileC))
           ])
             .then(() => {
               resume()
