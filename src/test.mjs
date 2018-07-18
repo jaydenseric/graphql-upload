@@ -24,7 +24,6 @@ import {
 
 // Will arrive in multiple chunks as the TCP max packet size is 64KB.
 const TEST_FILE_PATH = 'test-file.txt'
-const TEST_FILE_SMALL_PATH = 'test-file-small.txt'
 
 const startServer = (t, app) =>
   new Promise((resolve, reject) => {
@@ -828,29 +827,50 @@ t.test('Exceed max file size.', async t => {
       })
     )
 
-    body.append(1, fs.createReadStream(TEST_FILE_PATH))
-    body.append(2, fs.createReadStream(TEST_FILE_SMALL_PATH))
+    body.append(1, 'aa', { filename: 'a.txt' })
+    body.append(2, 'b', { filename: 'b.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  }
+
+  const uploadATest = upload => async t => {
+    const { stream } = await upload
+    await new Promise((resolve, reject) => {
+      stream
+        .on('error', error => {
+          t.type(error, MaxFileSizeUploadError)
+          resolve()
+        })
+        .on('end', reject)
+    })
+  }
+
+  const uploadBTest = upload => async t => {
+    const { stream, filename, mimetype, encoding } = await upload
+
+    t.type(stream, 'Capacitor', 'Stream type.')
+    t.equals(await streamToString(stream), 'b', 'File contents.')
+    t.equals(filename, 'b.txt', 'File name.')
+    t.equals(mimetype, 'text/plain', 'MIME type.')
+    t.equals(encoding, '7bit', 'Encoding.')
   }
 
   await t.test('Koa middleware.', async t => {
     t.plan(1)
 
     const app = new Koa()
-      .use(apolloUploadKoa({ maxFileSize: 10000 }))
+      .use(apolloUploadKoa({ maxFileSize: 1 }))
       .use(async (ctx, next) => {
         await t.test('Upload resolves.', async t => {
-          await t.rejects(
-            uploadTest(ctx.request.body.variables.files[0])(t),
-            MaxFileSizeUploadError,
-            'Upload file stream emits error.'
+          await t.test(
+            'Upload A.',
+            uploadATest(ctx.request.body.variables.files[0])
           )
 
-          await uploadTest(
-            ctx.request.body.variables.files[1],
-            TEST_FILE_SMALL_PATH
-          )(t)
+          await t.test(
+            'Upload B.',
+            uploadBTest(ctx.request.body.variables.files[1])
+          )
         })
 
         ctx.status = 204
@@ -866,19 +886,18 @@ t.test('Exceed max file size.', async t => {
     t.plan(1)
 
     const app = express()
-      .use(apolloUploadExpress({ maxFileSize: 10000 }))
+      .use(apolloUploadExpress({ maxFileSize: 1 }))
       .use((request, response, next) => {
         t.test('Upload resolves.', async t => {
-          await t.rejects(
-            uploadTest(request.body.variables.files[0])(t),
-            MaxFileSizeUploadError,
-            'Upload file stream emits error.'
+          await t.test(
+            'Upload A.',
+            uploadATest(request.body.variables.files[0])
           )
 
-          await uploadTest(
-            request.body.variables.files[1],
-            TEST_FILE_SMALL_PATH
-          )(t)
+          await t.test(
+            'Upload B.',
+            uploadBTest(request.body.variables.files[1])
+          )
         })
           .then(() => next())
           .catch(next)
@@ -912,7 +931,7 @@ t.test('Misorder “map” before “operations”.', async t => {
       })
     )
 
-    body.append('1', fs.createReadStream(TEST_FILE_PATH))
+    body.append('1', 'a', { filename: 'a.txt' })
 
     const { status } = await fetch(`http://localhost:${port}`, {
       method: 'POST',
@@ -970,7 +989,7 @@ t.test('Misorder files before “map”.', async t => {
       })
     )
 
-    body.append('1', fs.createReadStream(TEST_FILE_PATH))
+    body.append('1', 'a', { filename: 'a.txt' })
 
     body.append(
       'map',
