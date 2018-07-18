@@ -133,8 +133,8 @@ t.test('Handles unconsumed uploads.', async t => {
       'operations',
       JSON.stringify({
         variables: {
-          file1: null,
-          file2: null
+          fileA: null,
+          fileB: null
         }
       })
     )
@@ -142,8 +142,8 @@ t.test('Handles unconsumed uploads.', async t => {
     body.append(
       'map',
       JSON.stringify({
-        1: ['variables.file1'],
-        2: ['variables.file2']
+        1: ['variables.fileA'],
+        2: ['variables.fileB']
       })
     )
     body.append(1, fs.createReadStream(TEST_FILE_PATH))
@@ -156,14 +156,14 @@ t.test('Handles unconsumed uploads.', async t => {
     t.plan(2)
 
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-      await t.test('Upload 1 does not need to be consumed.', t => {
-        t.ok(ctx.request.body.variables.file1)
+      await t.test('Upload A does not need to be consumed.', t => {
+        t.ok(ctx.request.body.variables.fileA)
         return Promise.resolve()
       })
 
       await t.test(
-        'Upload 2 resolves.',
-        uploadTest(ctx.request.body.variables.file2)
+        'Upload B resolves.',
+        uploadTest(ctx.request.body.variables.fileB)
       )
 
       ctx.status = 204
@@ -188,14 +188,14 @@ t.test('Handles unconsumed uploads.', async t => {
     const app = express()
       .use(apolloUploadExpress())
       .use((request, response, next) => {
-        t.test('Upload 1 does not need to be consumed.', t => {
-          t.ok(request.body.variables.file1)
+        t.test('Upload A does not need to be consumed.', t => {
+          t.ok(request.body.variables.fileA)
           return Promise.resolve()
         })
           .then(() =>
             t.test(
-              'Upload 2 resolves.',
-              uploadTest(request.body.variables.file2)
+              'Upload B resolves.',
+              uploadTest(request.body.variables.fileB)
             )
           )
           .then(() => next())
@@ -246,9 +246,9 @@ t.test('Aborted request.', async t => {
         'operations',
         JSON.stringify({
           variables: {
-            file1: null,
-            file2: null,
-            file3: null
+            fileA: null,
+            fileB: null,
+            fileC: null
           }
         })
       )
@@ -256,9 +256,9 @@ t.test('Aborted request.', async t => {
       body.append(
         'map',
         JSON.stringify({
-          1: ['variables.file1'],
-          2: ['variables.file2'],
-          3: ['variables.file3']
+          1: ['variables.fileA'],
+          2: ['variables.fileB'],
+          3: ['variables.fileC']
         })
       )
 
@@ -331,17 +331,17 @@ t.test('Aborted request.', async t => {
           await Promise.all([
             t.test(
               'Upload resolves.',
-              uploadTest(ctx.request.body.variables.file1)
+              uploadTest(ctx.request.body.variables.fileA)
             ),
 
             t.test(
               'In-progress upload streams are destroyed.',
-              abortedStreamTest(ctx.request.body.variables.file2)
+              abortedStreamTest(ctx.request.body.variables.fileB)
             ),
 
             t.test(
               'Unresolved upload promises are rejected.',
-              abortedPromiseTest(ctx.request.body.variables.file3)
+              abortedPromiseTest(ctx.request.body.variables.fileC)
             )
           ])
         } finally {
@@ -364,12 +364,12 @@ t.test('Aborted request.', async t => {
           await Promise.all([
             t.test(
               'Upload resolves.',
-              uploadTest(ctx.request.body.variables.file1)
+              uploadTest(ctx.request.body.variables.fileA)
             ),
 
             t.test(
               'Unresolved upload promises are rejected.',
-              abortedPromiseTest(ctx.request.body.variables.file3)
+              abortedPromiseTest(ctx.request.body.variables.fileC)
             )
           ])
         } finally {
@@ -397,17 +397,17 @@ t.test('Aborted request.', async t => {
           Promise.all([
             t.test(
               'Upload resolves.',
-              uploadTest(request.body.variables.file1)
+              uploadTest(request.body.variables.fileA)
             ),
 
             t.test(
               'In-progress upload streams are destroyed.',
-              abortedStreamTest(request.body.variables.file2)
+              abortedStreamTest(request.body.variables.fileB)
             ),
 
             t.test(
               'Unresolved upload promises are rejected.',
-              abortedPromiseTest(request.body.variables.file3)
+              abortedPromiseTest(request.body.variables.fileC)
             )
           ])
             .then(() => {
@@ -435,12 +435,12 @@ t.test('Aborted request.', async t => {
           Promise.all([
             t.test(
               'Upload resolves.',
-              uploadTest(request.body.variables.file1)
+              uploadTest(request.body.variables.fileA)
             ),
 
             t.test(
               'Unresolved upload promises are rejected.',
-              abortedPromiseTest(request.body.variables.file3)
+              abortedPromiseTest(request.body.variables.fileC)
             )
           ])
             .then(() => {
@@ -494,11 +494,11 @@ t.todo('Deduped files.', async t => {
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
       await Promise.all([
         t.test(
-          'Upload 1 resolves.',
+          'Upload A resolves.',
           uploadTest(ctx.request.body.variables.files[0])
         ),
         t.test(
-          'Upload 2 resolves.',
+          'Upload B resolves.',
           uploadTest(ctx.request.body.variables.files[1])
         )
       ])
@@ -520,11 +520,11 @@ t.todo('Deduped files.', async t => {
       .use((request, response, next) => {
         Promise.all([
           t.test(
-            'Upload 1 resolves.',
+            'Upload A resolves.',
             uploadTest(request.body.variables.files[0])
           ),
           t.test(
-            'Upload 2 resolves.',
+            'Upload B resolves.',
             uploadTest(request.body.variables.files[1])
           )
         ]).then(() => next())
@@ -765,14 +765,14 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
       .use(async (ctx, next) => {
         await Promise.all([
           t.test(
-            'Upload 1 resolves.',
+            'Upload A resolves.',
             uploadTest(ctx.request.body.variables.files[0])
           ),
 
           t.rejects(
             ctx.request.body.variables.files[1],
             MaxFilesUploadError,
-            'Upload 2 rejects.'
+            'Upload B rejects.'
           )
         ])
 
@@ -793,13 +793,13 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
       .use((request, response, next) => {
         Promise.all([
           t.test(
-            'Upload 1 resolves.',
+            'Upload A resolves.',
             uploadTest(request.body.variables.files[0])
           ),
           t.rejects(
             request.body.variables.files[1],
             MaxFilesUploadError,
-            'Upload 2 rejects.'
+            'Upload B rejects.'
           )
         ]).then(() => next())
       })
