@@ -1,5 +1,6 @@
 import fs from 'fs'
 import stream from 'stream'
+import path from 'path'
 import http from 'http'
 import t from 'tap'
 import Koa from 'koa'
@@ -23,7 +24,7 @@ import {
 
 // Will arrive in multiple chunks as the TCP max packet size is 64KB.
 const TEST_FILE_PATH = 'test-file.txt'
-const TEST_FILE_SIZE = fs.statSync(TEST_FILE_PATH).size
+const TEST_FILE_SMALL_PATH = 'test-file-small.txt'
 
 const startServer = (t, app) =>
   new Promise((resolve, reject) => {
@@ -46,11 +47,11 @@ const startServer = (t, app) =>
       })
   })
 
-const uploadTest = upload => async t => {
+const uploadTest = (upload, filePath = TEST_FILE_PATH) => async t => {
   const { stream, filename, mimetype, encoding } = await upload
 
   t.type(stream, 'Capacitor', 'Stream.')
-  t.equals(filename, 'test-file.txt', 'Filename.')
+  t.equals(filename, path.basename(filePath), 'Filename.')
   t.equals(mimetype, 'text/plain', 'MIME type.')
   t.equals(encoding, '7bit', 'Encoding.')
 
@@ -60,7 +61,7 @@ const uploadTest = upload => async t => {
       .on('error', reject)
       .on('data', chunk => (size += chunk.length))
       .on('end', () => {
-        t.equals(size, TEST_FILE_SIZE, 'Bytes.')
+        t.equals(size, fs.statSync(filePath).size, 'Bytes.')
         resolve()
       })
   })
@@ -833,7 +834,7 @@ t.test('Exceed max file size.', async t => {
     )
 
     body.append(1, fs.createReadStream(TEST_FILE_PATH))
-    body.append(2, fs.createReadStream(TEST_FILE_PATH))
+    body.append(2, fs.createReadStream(TEST_FILE_SMALL_PATH))
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
@@ -851,7 +852,10 @@ t.test('Exceed max file size.', async t => {
             'Upload file stream emits error.'
           )
 
-          await uploadTest(ctx.request.body.variables.files[1])(t)
+          await uploadTest(
+            ctx.request.body.variables.files[1],
+            TEST_FILE_SMALL_PATH
+          )(t)
         })
 
         ctx.status = 204
@@ -876,7 +880,10 @@ t.test('Exceed max file size.', async t => {
             'Upload file stream emits error.'
           )
 
-          await uploadTest(request.body.variables.files[1])(t)
+          await uploadTest(
+            request.body.variables.files[1],
+            TEST_FILE_SMALL_PATH
+          )(t)
         })
           .then(() => next())
           .catch(next)
