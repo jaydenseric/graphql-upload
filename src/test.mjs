@@ -322,108 +322,112 @@ t.test('Aborted request.', async t => {
   }
 
   await t.test('Stream error handled.', async t => {
-    await t.test('Koa middleware.', async t => {
-      let resume
-      const delay = new Promise(resolve => (resume = resolve))
-      const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-        try {
-          await Promise.all([
-            t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
-            t.test('Upload B.', uploadBTest(ctx.request.body.variables.fileB)),
-            t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
-          ])
-        } finally {
-          resume()
-        }
-
-        ctx.status = 204
-        await next()
-      })
-
-      const port = await startServer(t, app)
-
-      await sendRequest(port)
-
-      await delay
-    })
-
-    await t.test('Express middleware.', async t => {
-      let resume
-      const delay = new Promise(resolve => (resume = resolve))
-      const app = express()
-        .use(apolloUploadExpress())
-        .use((request, response, next) => {
-          Promise.all([
-            t.test('Upload A.', uploadATest(request.body.variables.fileA)),
-            t.test('Upload B.', uploadBTest(request.body.variables.fileB)),
-            t.test('Upload C.', uploadCTest(request.body.variables.fileC))
-          ])
-            .then(() => {
-              resume()
-              next()
+    await t.test(
+      'Koa middleware.',
+      t =>
+        new Promise(async resolve => {
+          const app = new Koa()
+            .use(apolloUploadKoa())
+            .use(async (ctx, next) => {
+              await Promise.all([
+                t.test(
+                  'Upload A.',
+                  uploadATest(ctx.request.body.variables.fileA)
+                ),
+                t.test(
+                  'Upload B.',
+                  uploadBTest(ctx.request.body.variables.fileB)
+                ),
+                t.test(
+                  'Upload C.',
+                  uploadCTest(ctx.request.body.variables.fileC)
+                )
+              ])
+              ctx.status = 204
+              await next()
+              resolve()
             })
-            .catch(error => {
-              resume()
-              next(error)
-            })
+
+          const port = await startServer(t, app)
+
+          await sendRequest(port)
         })
+    )
 
-      const port = await startServer(t, app)
+    await t.test(
+      'Express middleware.',
+      t =>
+        new Promise(async resolve => {
+          const app = express()
+            .use(apolloUploadExpress())
+            .use((request, response, next) => {
+              Promise.all([
+                t.test('Upload A.', uploadATest(request.body.variables.fileA)),
+                t.test('Upload B.', uploadBTest(request.body.variables.fileB)),
+                t.test('Upload C.', uploadCTest(request.body.variables.fileC))
+              ]).then(() => {
+                next()
+                resolve()
+              })
+            })
 
-      await sendRequest(port)
-      await delay
-    })
+          const port = await startServer(t, app)
+
+          await sendRequest(port)
+        })
+    )
   })
 
   await t.test('Stream error unhandled.', async t => {
-    await t.test('Koa middleware.', async t => {
-      let resume
-      const delay = new Promise(resolve => (resume = resolve))
-      const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-        try {
-          await Promise.all([
-            t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
-            t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
-          ])
-        } finally {
-          resume()
-        }
-
-        ctx.status = 204
-        await next()
-      })
-
-      const port = await startServer(t, app)
-
-      await sendRequest(port)
-      await delay
-    })
-
-    await t.test('Express middleware.', async t => {
-      let resume
-      const delay = new Promise(resolve => (resume = resolve))
-      const app = express()
-        .use(apolloUploadExpress())
-        .use((request, response, next) => {
-          Promise.all([
-            t.test('Upload A.', uploadATest(request.body.variables.fileA)),
-            t.test('Upload C.', uploadCTest(request.body.variables.fileC))
-          ])
-            .then(() => {
-              resume()
-              next()
+    await t.test(
+      'Koa middleware.',
+      t =>
+        new Promise(async resolve => {
+          const app = new Koa()
+            .use(apolloUploadKoa())
+            .use(async (ctx, next) => {
+              await Promise.all([
+                t.test(
+                  'Upload A.',
+                  uploadATest(ctx.request.body.variables.fileA)
+                ),
+                t.test(
+                  'Upload C.',
+                  uploadCTest(ctx.request.body.variables.fileC)
+                )
+              ])
+              ctx.status = 204
+              await next()
+              resolve()
             })
-            .catch(error => {
-              resume()
-              next(error)
-            })
+
+          const port = await startServer(t, app)
+
+          await sendRequest(port)
         })
+    )
 
-      const port = await startServer(t, app)
+    await t.test(
+      'Express middleware.',
+      t =>
+        new Promise(async resolve => {
+          const app = express()
+            .use(apolloUploadExpress())
+            .use((request, response, next) => {
+              Promise.all([
+                t.test('Upload A.', uploadATest(request.body.variables.fileA)),
+                t.test('Upload C.', uploadCTest(request.body.variables.fileC))
+              ]).then(() => {
+                next()
+                resolve()
+              })
+            })
 
-      await sendRequest(port)
-      await delay
-    })
+          const port = await startServer(t, app)
+
+          await sendRequest(port)
+        })
+    )
   })
 })
 
@@ -855,34 +859,27 @@ t.test('Exceed max file size.', async t => {
     await sendRequest(port)
   })
 
-  await t.test('Express middleware.', async t => {
-    t.plan(2)
+  await t.test(
+    'Express middleware.',
+    t =>
+      new Promise(async resolve => {
+        const app = express()
+          .use(apolloUploadExpress({ maxFileSize: 1 }))
+          .use((request, response, next) => {
+            Promise.all([
+              t.test('Upload A.', uploadATest(request.body.variables.files[0])),
+              t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
+            ]).then(() => {
+              resolve()
+              next()
+            })
+          })
 
-    let resume
-    const delay = new Promise(resolve => (resume = resolve))
-    const app = express()
-      .use(apolloUploadExpress({ maxFileSize: 1 }))
-      .use((request, response, next) => {
-        Promise.all([
-          t.test('Upload A.', uploadATest(request.body.variables.files[0])),
-          t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
-        ])
-          .then(() => {
-            resume()
-            next()
-          })
-          .catch(error => {
-            resume()
-            next(error)
-          })
+        const port = await startServer(t, app)
+
+        await sendRequest(port)
       })
-
-    const port = await startServer(t, app)
-
-    await sendRequest(port)
-
-    await delay
-  })
+  )
 })
 
 t.test('Misorder ‘map’ before ‘operations’.', async t => {
