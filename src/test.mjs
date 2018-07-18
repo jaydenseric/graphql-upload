@@ -70,7 +70,7 @@ const uploadTest = (upload, filePath = TEST_FILE_PATH) => async t => {
 t.test('Single file.', async t => {
   t.jobs = 2
 
-  const testRequest = async port => {
+  const sendRequest = async port => {
     const body = new FormData()
 
     body.append(
@@ -103,7 +103,7 @@ t.test('Single file.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(port)
+    await sendRequest(port)
   })
 
   await t.test('Express middleware.', async t => {
@@ -119,14 +119,14 @@ t.test('Single file.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(port)
+    await sendRequest(port)
   })
 })
 
 t.test('Handles unconsumed uploads.', async t => {
   t.jobs = 2
 
-  const testRequest = async port => {
+  const sendRequest = async port => {
     const body = new FormData()
 
     body.append(
@@ -173,7 +173,7 @@ t.test('Handles unconsumed uploads.', async t => {
     const port = await startServer(t, app)
 
     await Promise.race([
-      testRequest(port),
+      sendRequest(port),
       new Promise((resolve, reject) => {
         setTimeout(() => {
           reject(new Error('The request did not complete.'))
@@ -205,7 +205,7 @@ t.test('Handles unconsumed uploads.', async t => {
     const port = await startServer(t, app)
 
     await Promise.race([
-      testRequest(port),
+      sendRequest(port),
       new Promise((resolve, reject) => {
         setTimeout(() => {
           reject(new Error('The request did not complete.'))
@@ -238,7 +238,7 @@ t.test('Aborted request.', async t => {
     )
   }
 
-  const testRequest = port =>
+  const sendRequest = port =>
     new Promise((resolve, reject) => {
       const body = new FormData()
 
@@ -352,7 +352,7 @@ t.test('Aborted request.', async t => {
         await next()
       })
       const port = await startServer(t, app)
-      await testRequest(port)
+      await sendRequest(port)
       await delay
     })
 
@@ -382,7 +382,7 @@ t.test('Aborted request.', async t => {
 
       const port = await startServer(t, app)
 
-      await testRequest(port)
+      await sendRequest(port)
       await delay
     })
   })
@@ -422,7 +422,7 @@ t.test('Aborted request.', async t => {
 
       const port = await startServer(t, app)
 
-      await testRequest(port)
+      await sendRequest(port)
       await delay
     })
 
@@ -455,7 +455,7 @@ t.test('Aborted request.', async t => {
 
       const port = await startServer(t, app)
 
-      await testRequest(port)
+      await sendRequest(port)
       await delay
     })
   })
@@ -464,7 +464,7 @@ t.test('Aborted request.', async t => {
 t.todo('Deduped files.', async t => {
   t.jobs = 2
 
-  const testRequest = async port => {
+  const sendRequest = async port => {
     const body = new FormData()
 
     body.append(
@@ -509,7 +509,7 @@ t.todo('Deduped files.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(port)
+    await sendRequest(port)
   })
 
   await t.test('Express middleware.', async t => {
@@ -532,14 +532,14 @@ t.todo('Deduped files.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(port)
+    await sendRequest(port)
   })
 })
 
 t.test('Missing file.', async t => {
   t.jobs = 2
 
-  const testRequest = async port => {
+  const sendRequest = async port => {
     const body = new FormData()
 
     body.append(
@@ -574,7 +574,7 @@ t.test('Missing file.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(port)
+    await sendRequest(port)
   })
 
   await t.test('Express middleware.', async t => {
@@ -594,14 +594,14 @@ t.test('Missing file.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(port)
+    await sendRequest(port)
   })
 })
 
 t.test('Extraneous file.', async t => {
   t.jobs = 2
 
-  const testRequest = async port => {
+  const sendRequest = async port => {
     const body = new FormData()
 
     body.append(
@@ -640,7 +640,7 @@ t.test('Extraneous file.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(port)
+    await sendRequest(port)
   })
 
   await t.test('Express middleware.', async t => {
@@ -656,14 +656,14 @@ t.test('Extraneous file.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(port)
+    await sendRequest(port)
   })
 })
 
 t.test('Exceed max files.', async t => {
   t.jobs = 2
 
-  const testRequest = async (t, port) => {
+  const sendRequest = async (t, port) => {
     const body = new FormData()
 
     body.append(
@@ -705,7 +705,7 @@ t.test('Exceed max files.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(t, port)
+    await sendRequest(t, port)
   })
 
   await t.test('Express middleware.', async t => {
@@ -723,14 +723,14 @@ t.test('Exceed max files.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(t, port)
+    await sendRequest(t, port)
   })
 })
 
 t.test('Exceed max files with extraneous files interspersed.', async t => {
   t.jobs = 2
 
-  const testRequest = async port => {
+  const sendRequest = async port => {
     const body = new FormData()
 
     body.append(
@@ -782,7 +782,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(port)
+    await sendRequest(port)
   })
 
   await t.test('Express middleware.', async t => {
@@ -806,14 +806,14 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(port)
+    await sendRequest(port)
   })
 })
 
 t.test('Exceed max file size.', async t => {
   t.jobs = 2
 
-  const testRequest = async port => {
+  const sendRequest = async port => {
     const body = new FormData()
 
     body.append(
@@ -864,7 +864,7 @@ t.test('Exceed max file size.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(port)
+    await sendRequest(port)
   })
 
   await t.test('Express middleware.', async t => {
@@ -891,14 +891,14 @@ t.test('Exceed max file size.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(port)
+    await sendRequest(port)
   })
 })
 
 t.test('Misorder “map” before “operations”.', async t => {
   t.jobs = 2
 
-  const testRequest = async (t, port) => {
+  const sendRequest = async (t, port) => {
     const body = new FormData()
 
     body.append(
@@ -938,7 +938,7 @@ t.test('Misorder “map” before “operations”.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(t, port)
+    await sendRequest(t, port)
   })
 
   await t.test('Express middleware.', async t => {
@@ -956,14 +956,14 @@ t.test('Misorder “map” before “operations”.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(t, port)
+    await sendRequest(t, port)
   })
 })
 
 t.test('Misorder files before “map”.', async t => {
   t.jobs = 2
 
-  const testRequest = async (t, port) => {
+  const sendRequest = async (t, port) => {
     const body = new FormData()
 
     body.append(
@@ -1003,7 +1003,7 @@ t.test('Misorder files before “map”.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(t, port)
+    await sendRequest(t, port)
   })
 
   await t.test('Express middleware.', async t => {
@@ -1021,6 +1021,6 @@ t.test('Misorder files before “map”.', async t => {
 
     const port = await startServer(t, app)
 
-    await testRequest(t, port)
+    await sendRequest(t, port)
   })
 })
