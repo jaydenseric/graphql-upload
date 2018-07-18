@@ -194,10 +194,7 @@ t.test('Handles unconsumed uploads.', async t => {
         return Promise.resolve()
       })
 
-      await t.test(
-        'Upload B resolves.',
-        testUploadB(ctx.request.body.variables.fileB)
-      )
+      await t.test('Upload B.', testUploadB(ctx.request.body.variables.fileB))
 
       ctx.status = 204
       await next()
@@ -226,10 +223,7 @@ t.test('Handles unconsumed uploads.', async t => {
           return Promise.resolve()
         })
           .then(() =>
-            t.test(
-              'Upload B resolves.',
-              testUploadB(request.body.variables.fileB)
-            )
+            t.test('Upload B.', testUploadB(request.body.variables.fileB))
           )
           .then(() => next())
           .catch(next)
@@ -479,9 +473,19 @@ t.todo('Deduped files.', async t => {
       })
     )
 
-    body.append(1, fs.createReadStream(TEST_FILE_PATH))
+    body.append(1, 'a', { filename: 'a.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  }
+
+  const uploadTest = upload => async t => {
+    const { stream, filename, mimetype, encoding } = await upload
+
+    t.type(stream, 'Capacitor', 'Stream type.')
+    t.equals(await streamToString(stream), 'a', 'File contents.')
+    t.equals(filename, 'a.txt', 'File name.')
+    t.equals(mimetype, 'text/plain', 'MIME type.')
+    t.equals(encoding, '7bit', 'Encoding.')
   }
 
   await t.test('Koa middleware.', async t => {
@@ -489,14 +493,8 @@ t.todo('Deduped files.', async t => {
 
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
       await Promise.all([
-        t.test(
-          'Upload A resolves.',
-          uploadTest(ctx.request.body.variables.files[0])
-        ),
-        t.test(
-          'Upload B resolves.',
-          uploadTest(ctx.request.body.variables.files[1])
-        )
+        t.test('Upload A.', uploadTest(ctx.request.body.variables.files[0])),
+        t.test('Upload B.', uploadTest(ctx.request.body.variables.files[1]))
       ])
 
       ctx.status = 204
@@ -515,14 +513,8 @@ t.todo('Deduped files.', async t => {
       .use(apolloUploadExpress())
       .use((request, response, next) => {
         Promise.all([
-          t.test(
-            'Upload A resolves.',
-            uploadTest(request.body.variables.files[0])
-          ),
-          t.test(
-            'Upload B resolves.',
-            uploadTest(request.body.variables.files[1])
-          )
+          t.test('Upload A.', uploadTest(request.body.variables.files[0])),
+          t.test('Upload B.', uploadTest(request.body.variables.files[1]))
         ]).then(() => next())
       })
 
@@ -562,7 +554,7 @@ t.test('Missing file.', async t => {
       await t.rejects(
         ctx.request.body.variables.file,
         FileMissingUploadError,
-        'Upload rejects.'
+        'Rejection error.'
       )
       ctx.status = 204
       await next()
@@ -582,7 +574,7 @@ t.test('Missing file.', async t => {
         t.rejects(
           request.body.variables.file,
           FileMissingUploadError,
-          'Upload rejects.'
+          'Rejection error.'
         )
           .then(() => next())
           .catch(next)
@@ -616,20 +608,27 @@ t.test('Extraneous file.', async t => {
       })
     )
 
-    body.append(1, fs.createReadStream(TEST_FILE_PATH))
-    body.append(2, fs.createReadStream(TEST_FILE_PATH))
+    body.append(1, 'a', { filename: 'a.txt' })
+    body.append(2, 'b', { filename: 'b.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  }
+
+  const uploadTest = upload => async t => {
+    const { stream, filename, mimetype, encoding } = await upload
+
+    t.type(stream, 'Capacitor', 'Stream type.')
+    t.equals(await streamToString(stream), 'a', 'File contents.')
+    t.equals(filename, 'a.txt', 'File name.')
+    t.equals(mimetype, 'text/plain', 'MIME type.')
+    t.equals(encoding, '7bit', 'Encoding.')
   }
 
   await t.test('Koa middleware.', async t => {
     t.plan(1)
 
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-      await t.test(
-        'Upload resolves.',
-        uploadTest(ctx.request.body.variables.file)
-      )
+      await t.test('Upload.', uploadTest(ctx.request.body.variables.file))
       ctx.status = 204
       await next()
     })
@@ -679,8 +678,8 @@ t.test('Exceed max files.', async t => {
       })
     )
 
-    body.append(1, fs.createReadStream(TEST_FILE_PATH))
-    body.append(2, fs.createReadStream(TEST_FILE_PATH))
+    body.append(1, 'a', { filename: 'a.txt' })
+    body.append(2, 'b', { filename: 'b.txt' })
 
     const { status } = await fetch(`http://localhost:${port}`, {
       method: 'POST',
