@@ -74,7 +74,7 @@ t.test('Single file.', async t => {
     )
 
     body.append('map', JSON.stringify({ 1: ['variables.file'] }))
-    body.append(1, 'a', { filename: 'a.txt' })
+    body.append('1', 'a', { filename: 'a.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
@@ -144,8 +144,8 @@ t.test('Handles unconsumed uploads.', async t => {
         2: ['variables.fileB']
       })
     )
-    body.append(1, 'a', { filename: 'a.txt' })
-    body.append(2, 'b', { filename: 'b.txt' })
+    body.append('1', 'a', { filename: 'a.txt' })
+    body.append('2', 'b', { filename: 'b.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
@@ -233,14 +233,14 @@ t.test('Aborted request.', async t => {
         })
       )
 
-      body.append(1, fs.createReadStream(TEST_FILE_PATH))
+      body.append('1', fs.createReadStream(TEST_FILE_PATH))
       body.append(
-        2,
+        '2',
         // Will arrive in multiple chunks as the TCP max packet size is 64KB.
         `${'b'.repeat(100000)}end`,
         { filename: 'b.txt' }
       )
-      body.append(3, 'c', { filename: 'c.txt' })
+      body.append('3', 'c', { filename: 'c.txt' })
 
       const request = http.request({
         method: 'POST',
@@ -453,7 +453,7 @@ t.todo('Deduped files.', async t => {
       })
     )
 
-    body.append(1, 'a', { filename: 'a.txt' })
+    body.append('1', 'a', { filename: 'a.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
@@ -588,8 +588,8 @@ t.test('Extraneous file.', async t => {
       })
     )
 
-    body.append(1, 'a', { filename: 'a.txt' })
-    body.append(2, 'b', { filename: 'b.txt' })
+    body.append('1', 'a', { filename: 'a.txt' })
+    body.append('2', 'b', { filename: 'b.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
@@ -658,8 +658,8 @@ t.test('Exceed max files.', async t => {
       })
     )
 
-    body.append(1, 'a', { filename: 'a.txt' })
-    body.append(2, 'b', { filename: 'b.txt' })
+    body.append('1', 'a', { filename: 'a.txt' })
+    body.append('2', 'b', { filename: 'b.txt' })
 
     const { status } = await fetch(`http://localhost:${port}`, {
       method: 'POST',
@@ -806,8 +806,8 @@ t.test('Exceed max file size.', async t => {
       })
     )
 
-    body.append(1, 'aa', { filename: 'a.txt' })
-    body.append(2, 'b', { filename: 'b.txt' })
+    body.append('1', 'aa', { filename: 'a.txt' })
+    body.append('2', 'b', { filename: 'b.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
