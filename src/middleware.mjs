@@ -67,7 +67,7 @@ export const processRequest = (
           if (!operations)
             return exit(
               new MapBeforeOperationsUploadError(
-                `Misordered multipart fields; “map” should follow “operations” (${SPEC_URL}).`,
+                `Misordered multipart fields; ‘map’ should follow ‘operations’ (${SPEC_URL}).`,
                 400
               )
             )
@@ -113,7 +113,7 @@ export const processRequest = (
 
         return exit(
           new FilesBeforeMapUploadError(
-            `Misordered multipart fields; files should follow “map” (${SPEC_URL}).`,
+            `Misordered multipart fields; files should follow ‘map’ (${SPEC_URL}).`,
             400
           )
         )
