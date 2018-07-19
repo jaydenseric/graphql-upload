@@ -67,7 +67,7 @@ export const processRequest = (
           if (!operations)
             return exit(
               new MapBeforeOperationsUploadError(
-                `Misordered multipart fields; “map” should follow “operations” (${SPEC_URL}).`,
+                `Misordered multipart fields; ‘map’ should follow ‘operations’ (${SPEC_URL}).`,
                 400
               )
             )
@@ -113,7 +113,7 @@ export const processRequest = (
 
         return exit(
           new FilesBeforeMapUploadError(
-            `Misordered multipart fields; files should follow “map” (${SPEC_URL}).`,
+            `Misordered multipart fields; files should follow ‘map’ (${SPEC_URL}).`,
             400
           )
         )
@@ -136,7 +136,8 @@ export const processRequest = (
         stream.on('limit', () =>
           capacitor.destroy(
             new MaxFileSizeUploadError(
-              'File truncated as it exceeds the size limit.'
+              'File truncated as it exceeds the size limit.',
+              413
             )
           )
         )
@@ -175,7 +176,9 @@ export const processRequest = (
     })
 
     parser.once('filesLimit', () => {
-      exit(new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`))
+      exit(
+        new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`, 413)
+      )
     })
 
     parser.once('finish', () => {
@@ -186,7 +189,7 @@ export const processRequest = (
         for (const upload of map.values())
           if (!upload.file)
             upload.reject(
-              new FileMissingUploadError('File missing in the request.')
+              new FileMissingUploadError('File missing in the request.', 400)
             )
     })
 
