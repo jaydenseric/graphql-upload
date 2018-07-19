@@ -248,7 +248,7 @@ t.test('Aborted request.', async t => {
         })
       )
 
-      body.append('1', fs.createReadStream(TEST_FILE_PATH))
+      body.append('1', 'a', { filename: 'a.txt' })
       body.append(
         '2',
         // Will arrive in multiple chunks as the TCP max packet size is 64KB.
@@ -281,7 +281,7 @@ t.test('Aborted request.', async t => {
 
           data += chunkString
 
-          if ((data.match(/end/g) || []).length === 2) {
+          if ((data.match(/end/g) || []).length === 1) {
             this._aborted = true
 
             // Pipe how much of this chunk to the request before aborting?
@@ -314,7 +314,7 @@ t.test('Aborted request.', async t => {
     t.deepEquals(
       meta,
       {
-        filename: 'test-file.txt',
+        filename: 'a.txt',
         mimetype: 'text/plain',
         encoding: '7bit'
       },
