@@ -757,7 +757,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
 
     body.append('1', fs.createReadStream(TEST_FILE_PATH))
     body.append('extraneous', fs.createReadStream(TEST_FILE_PATH))
-    body.append('2', fs.createReadStream(TEST_FILE_PATH))
+    body.append('2', 'c', { filename: 'c.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
