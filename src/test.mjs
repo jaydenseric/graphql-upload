@@ -80,13 +80,19 @@ t.test('Single file.', async t => {
   }
 
   const uploadTest = upload => async t => {
-    const { stream, filename, mimetype, encoding } = await upload
+    const { stream, ...meta } = await upload
 
     t.type(stream, 'Capacitor', 'Stream type.')
-    t.equals(await streamToString(stream), 'a', 'File contents.')
-    t.equals(filename, 'a.txt', 'File name.')
-    t.equals(mimetype, 'text/plain', 'MIME type.')
-    t.equals(encoding, '7bit', 'Encoding.')
+    t.equals(await streamToString(stream), 'a', 'Contents.')
+    t.deepEquals(
+      meta,
+      {
+        filename: 'a.txt',
+        mimetype: 'text/plain',
+        encoding: '7bit'
+      },
+      'Metadata.'
+    )
   }
 
   await t.test('Koa middleware.', async t => {
@@ -151,13 +157,19 @@ t.test('Handles unconsumed uploads.', async t => {
   }
 
   const uploadBTest = upload => async t => {
-    const { stream, filename, mimetype, encoding } = await upload
+    const { stream, ...meta } = await upload
 
     t.type(stream, 'Capacitor', 'Stream type.')
-    t.equals(await streamToString(stream), 'b', 'File contents.')
-    t.equals(filename, 'b.txt', 'File name.')
-    t.equals(mimetype, 'text/plain', 'MIME type.')
-    t.equals(encoding, '7bit', 'Encoding.')
+    t.equals(await streamToString(stream), 'b', 'Contents.')
+    t.deepEquals(
+      meta,
+      {
+        filename: 'b.txt',
+        mimetype: 'text/plain',
+        encoding: '7bit'
+      },
+      'Metadata.'
+    )
   }
 
   await t.test('Koa middleware.', async t => {
@@ -293,12 +305,18 @@ t.test('Aborted request.', async t => {
     })
 
   const uploadATest = upload => async t => {
-    const { stream, filename, mimetype, encoding } = await upload
+    const { stream, ...meta } = await upload
 
     t.type(stream, 'Capacitor', 'Stream type.')
-    t.equals(filename, 'test-file.txt', 'File name.')
-    t.equals(mimetype, 'text/plain', 'MIME type.')
-    t.equals(encoding, '7bit', 'Encoding.')
+    t.deepEquals(
+      meta,
+      {
+        filename: 'test-file.txt',
+        mimetype: 'text/plain',
+        encoding: '7bit'
+      },
+      'Metadata.'
+    )
   }
 
   const uploadBTest = upload => async t => {
@@ -459,13 +477,19 @@ t.todo('Deduped files.', async t => {
   }
 
   const uploadTest = upload => async t => {
-    const { stream, filename, mimetype, encoding } = await upload
+    const { stream, ...meta } = await upload
 
     t.type(stream, 'Capacitor', 'Stream type.')
-    t.equals(await streamToString(stream), 'a', 'File contents.')
-    t.equals(filename, 'a.txt', 'File name.')
-    t.equals(mimetype, 'text/plain', 'MIME type.')
-    t.equals(encoding, '7bit', 'Encoding.')
+    t.equals(await streamToString(stream), 'a', 'Contents.')
+    t.deepEquals(
+      meta,
+      {
+        filename: 'a.txt',
+        mimetype: 'text/plain',
+        encoding: '7bit'
+      },
+      'Metadata.'
+    )
   }
 
   await t.test('Koa middleware.', async t => {
@@ -595,13 +619,19 @@ t.test('Extraneous file.', async t => {
   }
 
   const uploadTest = upload => async t => {
-    const { stream, filename, mimetype, encoding } = await upload
+    const { stream, ...meta } = await upload
 
     t.type(stream, 'Capacitor', 'Stream type.')
-    t.equals(await streamToString(stream), 'a', 'File contents.')
-    t.equals(filename, 'a.txt', 'File name.')
-    t.equals(mimetype, 'text/plain', 'MIME type.')
-    t.equals(encoding, '7bit', 'Encoding.')
+    t.equals(await streamToString(stream), 'a', 'Contents.')
+    t.deepEquals(
+      meta,
+      {
+        filename: 'a.txt',
+        mimetype: 'text/plain',
+        encoding: '7bit'
+      },
+      'Metadata.'
+    )
   }
 
   await t.test('Koa middleware.', async t => {
@@ -733,12 +763,18 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   }
 
   const uploadATest = upload => async t => {
-    const { stream, filename, mimetype, encoding } = await upload
+    const { stream, ...meta } = await upload
 
     t.type(stream, 'Capacitor', 'Stream type.')
-    t.equals(filename, 'test-file.txt', 'File name.')
-    t.equals(mimetype, 'text/plain', 'MIME type.')
-    t.equals(encoding, '7bit', 'Encoding.')
+    t.deepEquals(
+      meta,
+      {
+        filename: 'test-file.txt',
+        mimetype: 'text/plain',
+        encoding: '7bit'
+      },
+      'Metadata.'
+    )
   }
 
   const uploadBTest = upload => async t => {
@@ -825,13 +861,19 @@ t.test('Exceed max file size.', async t => {
   }
 
   const uploadBTest = upload => async t => {
-    const { stream, filename, mimetype, encoding } = await upload
+    const { stream, ...meta } = await upload
 
     t.type(stream, 'Capacitor', 'Stream type.')
-    t.equals(await streamToString(stream), 'b', 'File contents.')
-    t.equals(filename, 'b.txt', 'File name.')
-    t.equals(mimetype, 'text/plain', 'MIME type.')
-    t.equals(encoding, '7bit', 'Encoding.')
+    t.equals(await streamToString(stream), 'b', 'Contents.')
+    t.deepEquals(
+      meta,
+      {
+        filename: 'b.txt',
+        mimetype: 'text/plain',
+        encoding: '7bit'
+      },
+      'Metadata.'
+    )
   }
 
   await t.test('Koa middleware.', async t => {
