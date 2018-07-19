@@ -932,7 +932,7 @@ t.test('Misorder ‘map’ before ‘operations’.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(apolloUploadExpress({ maxFiles: 1 }))
+      .use(apolloUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
 
@@ -997,7 +997,7 @@ t.test('Misorder files before ‘map’.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(apolloUploadExpress({ maxFiles: 1 }))
+      .use(apolloUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
 
