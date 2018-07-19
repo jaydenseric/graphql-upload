@@ -1,4 +1,3 @@
-import fs from 'fs'
 import stream from 'stream'
 import http from 'http'
 import t from 'tap'
@@ -23,9 +22,6 @@ process.setMaxListeners(20)
 
 // GraphQL multipart request spec:
 // https://github.com/jaydenseric/graphql-multipart-request-spec
-
-// Will arrive in multiple chunks as the TCP max packet size is 64KB.
-const TEST_FILE_PATH = 'test-file.txt'
 
 const startServer = (t, app) =>
   new Promise((resolve, reject) => {
@@ -758,8 +754,8 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
       })
     )
 
-    body.append('1', fs.createReadStream(TEST_FILE_PATH))
-    body.append('extraneous', fs.createReadStream(TEST_FILE_PATH))
+    body.append('1', 'a', { filename: 'a.txt' })
+    body.append('extraneous', 'b', { filename: 'b.txt' })
     body.append('2', 'c', { filename: 'c.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
@@ -767,12 +763,11 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
 
   const uploadATest = upload => async t => {
     const { stream, ...meta } = await upload
-
     t.type(stream, 'Capacitor', 'Stream type.')
     t.deepEquals(
       meta,
       {
-        filename: 'test-file.txt',
+        filename: 'a.txt',
         mimetype: 'text/plain',
         encoding: '7bit'
       },
