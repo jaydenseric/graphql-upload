@@ -52,9 +52,7 @@ const streamToString = stream =>
       .on('data', chunk => {
         data += chunk
       })
-      .on('end', () => {
-        resolve(data)
-      })
+      .on('end', () => resolve(data))
   })
 
 t.test('Single file.', async t => {
@@ -234,7 +232,7 @@ t.test('Aborted request.', async t => {
       body.append(
         '2',
         // Will arrive in multiple chunks as the TCP max packet size is 64KB.
-        `${'0'.repeat(70000)}1${'0'.repeat(70000)}`,
+        `${'1'.repeat(70000)}⛔${'2'.repeat(10)}`,
         { filename: 'b.txt' }
       )
       body.append('3', 'c', { filename: 'c.txt' })
@@ -259,18 +257,17 @@ t.test('Aborted request.', async t => {
           if (this._aborted) return
 
           const chunkString = chunk.toString('utf8')
-          const chunkAbortIndex = chunkString.indexOf('1')
+          const chunkAbortIndex = chunkString.indexOf('⛔')
 
-          // Check if the chunk has the abort marker character ‘1’ in it.
+          // Check if the chunk has the abort marker character ‘⛔’ in it.
           if (chunkAbortIndex !== -1) {
             this._aborted = true
 
-            if (chunkAbortIndex === 0) request.abort()
-            else {
-              // Send partial chunk and then abort.
+            if (chunkAbortIndex !== 0)
+              // Send partial chunk before abort.
               callback(null, chunkString.substr(0, chunkAbortIndex))
-              setImmediate(() => request.abort())
-            }
+
+            setTimeout(() => request.abort(), 50)
 
             return
           }
@@ -286,6 +283,7 @@ t.test('Aborted request.', async t => {
     const { stream, ...meta } = await upload
 
     t.type(stream, 'Capacitor', 'Stream type.')
+    t.equals(await streamToString(stream), 'a', 'Contents.')
     t.deepEquals(
       meta,
       {
@@ -300,13 +298,17 @@ t.test('Aborted request.', async t => {
   const uploadBTest = upload => async t => {
     const { stream } = await upload
 
-    await new Promise((resolve, reject) => {
+    await new Promise(resolve => {
       stream
         .on('error', error => {
           t.type(error, FileStreamDisconnectUploadError, 'Stream error.')
           resolve()
         })
-        .on('end', reject)
+        .on('end', () => {
+          t.fail('File shouldn’t fully upload.')
+          resolve()
+        })
+        .resume()
     })
   }
 
@@ -330,14 +332,15 @@ t.test('Aborted request.', async t => {
           t.test('Upload B.', uploadBTest(ctx.request.body.variables.fileB)),
           t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
         ])
-        testsDone()
         ctx.status = 204
         await next()
+        testsDone()
       })
 
       const port = await startServer(t, app)
 
       await sendRequest(port)
+
       await pendingTests
     })
 
