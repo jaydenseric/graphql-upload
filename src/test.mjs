@@ -183,14 +183,7 @@ t.test('Handles unconsumed uploads.', async t => {
 
     const port = await startServer(t, app)
 
-    await Promise.race([
-      sendRequest(port),
-      new Promise((resolve, reject) => {
-        setTimeout(() => {
-          reject(new Error('The request did not complete.'))
-        }, 500)
-      })
-    ])
+    await sendRequest(port)
   })
 
   await t.test('Express middleware.', async t => {
@@ -206,14 +199,7 @@ t.test('Handles unconsumed uploads.', async t => {
 
     const port = await startServer(t, app)
 
-    await Promise.race([
-      sendRequest(port),
-      new Promise((resolve, reject) => {
-        setTimeout(() => {
-          reject(new Error('The request did not complete.'))
-        }, 500)
-      })
-    ])
+    await sendRequest(port)
   })
 })
 
