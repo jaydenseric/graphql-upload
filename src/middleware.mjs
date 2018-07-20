@@ -172,7 +172,10 @@ export const processRequest = (
         })
       }
       // Discard the unexpected file.
-      else stream.resume()
+      else {
+        stream.on('error', () => {})
+        stream.resume()
+      }
     })
 
     parser.once('filesLimit', () => {
