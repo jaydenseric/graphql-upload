@@ -248,7 +248,7 @@ t.test('Aborted request.', async t => {
       body.append(
         '2',
         // Will arrive in multiple chunks as the TCP max packet size is 64KB.
-        `${'b'.repeat(100000)}end`,
+        `${'0'.repeat(70000)}1${'0'.repeat(70000)}`,
         { filename: 'b.txt' }
       )
       body.append('3', 'c', { filename: 'c.txt' })
@@ -268,31 +268,27 @@ t.test('Aborted request.', async t => {
       // This may emit before downstream middleware has been processed.
       request.on('close', resolve)
 
-      let data = ''
       const transform = new stream.Transform({
         transform(chunk, encoding, callback) {
+          // throw new Error('chunk')
           if (this._aborted) return
 
           const chunkString = chunk.toString('utf8')
+          const chunkAbortIndex = chunkString.indexOf('1')
 
-          data += chunkString
-
-          if ((data.match(/end/g) || []).length === 1) {
+          // Check if the chunk has the abort marker character ‘1’ in it.
+          if (chunkAbortIndex !== -1) {
             this._aborted = true
 
-            // Pipe how much of this chunk to the request before aborting?
-            const length =
-              chunkString.length - (data.length - data.lastIndexOf('end'))
-
-            if (length < 1) {
+            if (chunkAbortIndex === 0)
               // Abort now.
               request.abort()
-              return
+            else {
+              // Send partial chunk and then abort.
+              callback(null, chunkString.substr(0, chunkAbortIndex))
+              setImmediate(() => request.abort())
             }
 
-            // Send partial chunk and then abort.
-            callback(null, chunkString.substr(0, length))
-            setImmediate(() => request.abort())
             return
           }
 
@@ -339,112 +335,69 @@ t.test('Aborted request.', async t => {
   }
 
   await t.test('Stream error handled.', async t => {
-    await t.test(
-      'Koa middleware.',
-      t =>
-        new Promise(async resolve => {
-          const app = new Koa()
-            .use(apolloUploadKoa())
-            .use(async (ctx, next) => {
-              await Promise.all([
-                t.test(
-                  'Upload A.',
-                  uploadATest(ctx.request.body.variables.fileA)
-                ),
-                t.test(
-                  'Upload B.',
-                  uploadBTest(ctx.request.body.variables.fileB)
-                ),
-                t.test(
-                  'Upload C.',
-                  uploadCTest(ctx.request.body.variables.fileC)
-                )
-              ])
-              ctx.status = 204
-              await next()
-              resolve()
-            })
+    await t.test('Koa middleware.', async t => {
+      const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+        await Promise.all([
+          t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
+          t.test('Upload B.', uploadBTest(ctx.request.body.variables.fileB)),
+          t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
+        ])
+        ctx.status = 204
+        await next()
+      })
 
-          const port = await startServer(t, app)
+      const port = await startServer(t, app)
 
-          await sendRequest(port)
+      await sendRequest(port)
+    })
+
+    await t.test('Express middleware.', async t => {
+      const app = express()
+        .use(apolloUploadExpress())
+        .use((request, response, next) => {
+          Promise.all([
+            t.test('Upload A.', uploadATest(request.body.variables.fileA)),
+            t.test('Upload B.', uploadBTest(request.body.variables.fileB)),
+            t.test('Upload C.', uploadCTest(request.body.variables.fileC))
+          ]).then(() => next())
         })
-    )
 
-    await t.test(
-      'Express middleware.',
-      t =>
-        new Promise(async resolve => {
-          const app = express()
-            .use(apolloUploadExpress())
-            .use((request, response, next) => {
-              Promise.all([
-                t.test('Upload A.', uploadATest(request.body.variables.fileA)),
-                t.test('Upload B.', uploadBTest(request.body.variables.fileB)),
-                t.test('Upload C.', uploadCTest(request.body.variables.fileC))
-              ]).then(() => {
-                next()
-                resolve()
-              })
-            })
+      const port = await startServer(t, app)
 
-          const port = await startServer(t, app)
-
-          await sendRequest(port)
-        })
-    )
+      await sendRequest(port)
+    })
   })
 
   await t.test('Stream error unhandled.', async t => {
-    await t.test(
-      'Koa middleware.',
-      t =>
-        new Promise(async resolve => {
-          const app = new Koa()
-            .use(apolloUploadKoa())
-            .use(async (ctx, next) => {
-              await Promise.all([
-                t.test(
-                  'Upload A.',
-                  uploadATest(ctx.request.body.variables.fileA)
-                ),
-                t.test(
-                  'Upload C.',
-                  uploadCTest(ctx.request.body.variables.fileC)
-                )
-              ])
-              ctx.status = 204
-              await next()
-              resolve()
-            })
+    await t.test('Koa middleware.', async t => {
+      const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+        await Promise.all([
+          t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
+          t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
+        ])
+        ctx.status = 204
+        await next()
+      })
 
-          const port = await startServer(t, app)
+      const port = await startServer(t, app)
 
-          await sendRequest(port)
+      await sendRequest(port)
+    })
+
+    await t.test('Express middleware.', async t => {
+      const app = express()
+        .use(apolloUploadExpress())
+        .use((request, response, next) => {
+          Promise.all([
+            t.test('Upload A.', uploadATest(request.body.variables.fileA)),
+            t.test('Upload C.', uploadCTest(request.body.variables.fileC))
+          ]).then(() => next())
         })
-    )
 
-    await t.test(
-      'Express middleware.',
-      t =>
-        new Promise(async resolve => {
-          const app = express()
-            .use(apolloUploadExpress())
-            .use((request, response, next) => {
-              Promise.all([
-                t.test('Upload A.', uploadATest(request.body.variables.fileA)),
-                t.test('Upload C.', uploadCTest(request.body.variables.fileC))
-              ]).then(() => {
-                next()
-                resolve()
-              })
-            })
+      const port = await startServer(t, app)
 
-          const port = await startServer(t, app)
-
-          await sendRequest(port)
-        })
-    )
+      await sendRequest(port)
+    })
   })
 })
 
