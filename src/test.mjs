@@ -302,7 +302,8 @@ t.test('Aborted request.', async t => {
 
   const uploadBTest = upload => async t => {
     const { stream } = await upload
-    return new Promise((resolve, reject) => {
+
+    await new Promise((resolve, reject) => {
       stream
         .on('error', error => {
           t.type(error, FileStreamDisconnectUploadError, 'Stream error.')
@@ -322,6 +323,8 @@ t.test('Aborted request.', async t => {
 
   await t.test('Stream error handled.', async t => {
     await t.test('Koa middleware.', async t => {
+      t.plan(3)
+
       const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
         await Promise.all([
           t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
@@ -338,6 +341,8 @@ t.test('Aborted request.', async t => {
     })
 
     await t.test('Express middleware.', async t => {
+      t.plan(3)
+
       const app = express()
         .use(apolloUploadExpress())
         .use((request, response, next) => {
@@ -356,6 +361,8 @@ t.test('Aborted request.', async t => {
 
   await t.test('Stream error unhandled.', async t => {
     await t.test('Koa middleware.', async t => {
+      t.plan(2)
+
       const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
         await Promise.all([
           t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
@@ -371,6 +378,8 @@ t.test('Aborted request.', async t => {
     })
 
     await t.test('Express middleware.', async t => {
+      t.plan(2)
+
       const app = express()
         .use(apolloUploadExpress())
         .use((request, response, next) => {
@@ -702,6 +711,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
 
   const uploadATest = upload => async t => {
     const { stream, ...meta } = await upload
+
     t.type(stream, 'Capacitor', 'Stream type.')
     t.deepEquals(
       meta,
@@ -787,6 +797,7 @@ t.test('Exceed max file size.', async t => {
 
   const uploadATest = upload => async t => {
     const { stream } = await upload
+
     await new Promise((resolve, reject) => {
       stream
         .on('error', error => {
@@ -839,6 +850,8 @@ t.test('Exceed max file size.', async t => {
   })
 
   await t.test('Express middleware.', async t => {
+    t.plan(2)
+
     const app = express()
       .use(apolloUploadExpress({ maxFileSize: 1 }))
       .use((request, response, next) => {
