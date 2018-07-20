@@ -204,7 +204,7 @@ t.test('Handles unconsumed uploads.', async t => {
 t.test('Aborted request.', async t => {
   t.jobs = 2
 
-  const sendRequest = port =>
+  const sendRequest = (port, requestHasBeenReceived) =>
     new Promise((resolve, reject) => {
       const body = new FormData()
 
@@ -267,7 +267,10 @@ t.test('Aborted request.', async t => {
               // Send partial chunk before abort.
               callback(null, chunkString.substr(0, chunkAbortIndex))
 
-            process.nextTick(() => request.abort())
+            setImmediate(async () => {
+              await requestHasBeenReceived
+              request.abort()
+            })
 
             return
           }
@@ -324,29 +327,43 @@ t.test('Aborted request.', async t => {
     await t.test('Koa middleware.', async t => {
       t.plan(3)
 
-      let testsDoneCallback
-      const pendingTests = new Promise(resolve => (testsDoneCallback = resolve))
-      const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-        await Promise.all([
-          t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
-          t.test('Upload B.', uploadBTest(ctx.request.body.variables.fileB)),
-          t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
-        ])
-        ctx.status = 204
-        await next()
-        testsDoneCallback()
-      })
+      let requestHasBeenReceived
+      const requestHasBeenReceivedPromise = new Promise(
+        resolve => (requestHasBeenReceived = resolve)
+      )
+
+      const app = new Koa()
+        .use(async (ctx, next) => {
+          requestHasBeenReceived()
+          await next()
+        })
+        .use(apolloUploadKoa())
+        .use(async (ctx, next) => {
+          await Promise.all([
+            t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
+            t.test('Upload B.', uploadBTest(ctx.request.body.variables.fileB)),
+            t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
+          ])
+          ctx.status = 204
+          await next()
+        })
       const port = await startServer(t, app)
-      await sendRequest(port)
-      await pendingTests
+      await sendRequest(port, requestHasBeenReceivedPromise)
     })
 
     await t.test('Express middleware.', async t => {
       t.plan(3)
 
-      let testsDoneCallback
-      const pendingTests = new Promise(resolve => (testsDoneCallback = resolve))
+      let requestHasBeenReceived
+      const requestHasBeenReceivedPromise = new Promise(
+        resolve => (requestHasBeenReceived = resolve)
+      )
+
       const app = express()
+        .use((request, response, next) => {
+          requestHasBeenReceived()
+          next()
+        })
         .use(apolloUploadExpress())
         .use((request, response, next) => {
           Promise.all([
@@ -355,12 +372,10 @@ t.test('Aborted request.', async t => {
             t.test('Upload C.', uploadCTest(request.body.variables.fileC))
           ]).then(() => {
             next()
-            testsDoneCallback()
           })
         })
       const port = await startServer(t, app)
-      await sendRequest(port)
-      await pendingTests
+      await sendRequest(port, requestHasBeenReceivedPromise)
     })
   })
 
@@ -368,28 +383,42 @@ t.test('Aborted request.', async t => {
     await t.test('Koa middleware.', async t => {
       t.plan(2)
 
-      let testsDoneCallback
-      const pendingTests = new Promise(resolve => (testsDoneCallback = resolve))
-      const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-        await Promise.all([
-          t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
-          t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
-        ])
-        ctx.status = 204
-        await next()
-        testsDoneCallback()
-      })
+      let requestHasBeenReceived
+      const requestHasBeenReceivedPromise = new Promise(
+        resolve => (requestHasBeenReceived = resolve)
+      )
+
+      const app = new Koa()
+        .use(async (ctx, next) => {
+          requestHasBeenReceived()
+          await next()
+        })
+        .use(apolloUploadKoa())
+        .use(async (ctx, next) => {
+          await Promise.all([
+            t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
+            t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
+          ])
+          ctx.status = 204
+          await next()
+        })
       const port = await startServer(t, app)
-      await sendRequest(port)
-      await pendingTests
+      await sendRequest(port, requestHasBeenReceivedPromise)
     })
 
     await t.test('Express middleware.', async t => {
       t.plan(2)
 
-      let testsDoneCallback
-      const pendingTests = new Promise(resolve => (testsDoneCallback = resolve))
+      let requestHasBeenReceived
+      const requestHasBeenReceivedPromise = new Promise(
+        resolve => (requestHasBeenReceived = resolve)
+      )
+
       const app = express()
+        .use((request, response, next) => {
+          requestHasBeenReceived()
+          next()
+        })
         .use(apolloUploadExpress())
         .use((request, response, next) => {
           Promise.all([
@@ -397,12 +426,10 @@ t.test('Aborted request.', async t => {
             t.test('Upload C.', uploadCTest(request.body.variables.fileC))
           ]).then(() => {
             next()
-            testsDoneCallback()
           })
         })
       const port = await startServer(t, app)
-      await sendRequest(port)
-      await pendingTests
+      await sendRequest(port, requestHasBeenReceivedPromise)
     })
   })
 })
