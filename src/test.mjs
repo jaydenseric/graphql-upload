@@ -249,7 +249,7 @@ t.test('Aborted request.', async t => {
         if (error.code !== 'ECONNRESET') reject(error)
       })
 
-      // This may emit before downstream middleware has been processed.
+      // This may happen before all middleware has run.
       request.on('close', resolve)
 
       const transform = new stream.Transform({
@@ -267,7 +267,7 @@ t.test('Aborted request.', async t => {
               // Send partial chunk before abort.
               callback(null, chunkString.substr(0, chunkAbortIndex))
 
-            setTimeout(() => request.abort(), 50)
+            process.nextTick(() => request.abort())
 
             return
           }
