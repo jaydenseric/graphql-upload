@@ -852,27 +852,20 @@ t.test('Exceed max file size.', async t => {
     await sendRequest(port)
   })
 
-  await t.test(
-    'Express middleware.',
-    t =>
-      new Promise(async resolve => {
-        const app = express()
-          .use(apolloUploadExpress({ maxFileSize: 1 }))
-          .use((request, response, next) => {
-            Promise.all([
-              t.test('Upload A.', uploadATest(request.body.variables.files[0])),
-              t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
-            ]).then(() => {
-              resolve()
-              next()
-            })
-          })
-
-        const port = await startServer(t, app)
-
-        await sendRequest(port)
+  await t.test('Express middleware.', async t => {
+    const app = express()
+      .use(apolloUploadExpress({ maxFileSize: 1 }))
+      .use((request, response, next) => {
+        Promise.all([
+          t.test('Upload A.', uploadATest(request.body.variables.files[0])),
+          t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
+        ]).then(() => next())
       })
-  )
+
+    const port = await startServer(t, app)
+
+    await sendRequest(port)
+  })
 })
 
 t.test('Misorder ‘map’ before ‘operations’.', async t => {
