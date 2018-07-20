@@ -27,7 +27,7 @@
   - Test middleware error response status codes.
   - Test behavior of aborted HTTP requests.
   - Test that the app can respond if an upload is not handled.
-  - Test files to upload are created in context, rather than using arbitrary project files.
+  - Test files to upload are created in context, rather than using arbitrary project files, via [#89](https://github.com/jaydenseric/apollo-upload-server/pull/89).
 - Improved `package.json` scripts:
   - Leveraged `npm-run-all` more for parallelism and reduced noise.
   - Removed the clean script `rimraf` dev dependency in favour of native `rm -rf`. Leaner and faster; we only support \*nix now for contributing anyway.
