@@ -256,7 +256,6 @@ t.test('Aborted request.', async t => {
 
       const transform = new stream.Transform({
         transform(chunk, encoding, callback) {
-          // throw new Error('chunk')
           if (this._aborted) return
 
           const chunkString = chunk.toString('utf8')
@@ -266,9 +265,7 @@ t.test('Aborted request.', async t => {
           if (chunkAbortIndex !== -1) {
             this._aborted = true
 
-            if (chunkAbortIndex === 0)
-              // Abort now.
-              request.abort()
+            if (chunkAbortIndex === 0) request.abort()
             else {
               // Send partial chunk and then abort.
               callback(null, chunkString.substr(0, chunkAbortIndex))
