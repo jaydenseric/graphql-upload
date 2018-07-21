@@ -67,7 +67,7 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 - Fixed missing dev dependency for fetching in tests.
 - Use [`eslint-plugin-ava`](https://github.com/avajs/eslint-plugin-ava).
 - HTTPS `package.json` author URL.
-- New readme logo URL that does’t need to be updated every version.
+- New readme logo URL that doesn’t need to be updated every version.
 
 ## 4.0.2
 
@@ -175,7 +175,7 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 ### Patch
 
 - Updated dependencies.
-- Readme tweaks including a new licence badge.
+- Readme tweaks including a new license badge.
 
 ## 2.0.3
 
