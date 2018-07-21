@@ -2,10 +2,15 @@
 
 ## Next
 
+Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci) for his help solving tricky bugs and edge-cases!
+
 ### Major
 
-- Updated Node.js support from v6.10+ to v8.5+ for native [ESM](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V8.md#8.5.0), [object rest/spread properties](https://node.green/#ES2018-features-object-rest-spread-properties), and [async functions](https://node.green/#ES2017-features-async-functions).
+- Updated Node.js support from v6.10+ to v8.5+ for [native ESM](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V8.md#8.5.0), [object rest/spread properties](https://node.green/#ES2018-features-object-rest-spread-properties), and [async functions](https://node.green/#ES2017-features-async-functions).
 - Removed the [`@babel/runtime`](https://npm.im/@babel/runtime) dependency and config.
+- Fixed [#45](https://github.com/jaydenseric/apollo-upload-server/issues/45), [#77](https://github.com/jaydenseric/apollo-upload-server/issues/77) and [#83](https://github.com/jaydenseric/apollo-upload-server/issues/83) via [#81](https://github.com/jaydenseric/apollo-upload-server/pull/81):
+  - Add `error` event listeners to file streams to prevent server crashes on aborted requests or parser errors.
+  - Use [`fs-capacitor`](https://npm.im/fs-capacitor) to ensure the server doesn’t hang if an upload `await` is out of order, or is never consumed.
 
 ### Minor
 
@@ -14,9 +19,6 @@
 ### Patch
 
 - Updated dependencies.
-- Fixed [#45](https://github.com/jaydenseric/apollo-upload-server/issues/45), [#77](https://github.com/jaydenseric/apollo-upload-server/issues/77) and [#83](https://github.com/jaydenseric/apollo-upload-server/issues/83) via [#81](https://github.com/jaydenseric/apollo-upload-server/pull/81):
-  - Add `error` event listeners to file streams to prevent a server crash on aborted requests or parser errors.
-  - Use [`fs-capacitor`](https://npm.im/fs-capacitor) to ensure the server doesn’t hang if an upload `await` is out of order, or is never consumed.
 - Use single instead of double typographic quotes in error messages.
 - Use `babel.config.js` instead of `.babelrc.js`.
 - Enabled `shippedProposals` in [`@babel/preset-env`](https://npm.im/@babel/preset-env) config.
