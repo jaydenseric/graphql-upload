@@ -1,6 +1,6 @@
 # apollo-upload-server changelog
 
-## Next
+## 6.0.0-alpha.1
 
 Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci) for his help solving tricky bugs and edge-cases!
 
