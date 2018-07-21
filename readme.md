@@ -14,17 +14,17 @@ The following environments are known to be compatible, or feature this package b
 
 - Node.js v8.5+
   - CJS
-  - Native ESM with `--experimental-modules`
-- [Koa](https://koajs.com):
+  - Native ESM with [`--experimental-modules`](https://nodejs.org/api/esm.html#esm_enabling)
+- [Koa](https://koajs.com)
   - [`apollo-server-koa`](https://npm.im/apollo-server-koa) (built in)
   - [`graphql-api-koa`](https://npm.im/graphql-api-koa)
-- [Express](https://expressjs.com):
+- [Express](https://expressjs.com)
   - [`apollo-server`](https://npm.im/apollo-server) (built in)
   - [`apollo-server-express`](https://npm.im/apollo-server-express) (built in)
   - [`express-graphql`](https://npm.im/express-graphql)
-- [hapi](https://hapijs.com):
+- [hapi](https://hapijs.com)
   - [`apollo-server-hapi`](https://npm.im/apollo-server-hapi) (built in)
-- [Micro](https://github.com/zeit/micro):
+- [Micro](https://github.com/zeit/micro)
   - [`apollo-server-micro`](https://npm.im/apollo-server-micro) (built in)
 
 See also alternative [GraphQL multipart request spec server implementations](https://github.com/jaydenseric/graphql-multipart-request-spec#server).
