@@ -33,15 +33,12 @@ const startServer = (t, app) =>
       }
     })
 
-    // In node <= v8, any error passed to `socket.destroy(error)` is
-    // written to stderr, which gives a false appearance of errors in
-    // these tests. We're simply going to swallow these and reimplement
-    // the default behavior:
-    // https://github.com/nodejs/node/blob/241aa14d980e1d2bd6c20754b7058dda120c4673/lib/_http_server.js#L470
+    // Node.js < v9 writes errors passed to `socket.destroy(error)` to stderr:
+    // https://github.com/nodejs/node/blob/v8.11.3/lib/_http_server.js#L470.
+    // In aborted upload tests this output may be mistaken for an issue.
     if (parseInt(process.versions.node) <= 8)
-      server.on('clientError', (error, socket) => {
-        socket.destroy()
-      })
+      // Swallow errors and reimplement default behavior.
+      server.on('clientError', (error, socket) => socket.destroy())
   })
 
 const streamToString = stream =>
