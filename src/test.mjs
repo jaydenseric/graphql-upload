@@ -430,7 +430,7 @@ t.test('Aborted request.', async t => {
   })
 })
 
-t.todo('Deduped files.', async t => {
+t.test('Deduped files.', async t => {
   t.jobs = 2
 
   const sendRequest = async port => {

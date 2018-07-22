@@ -91,14 +91,18 @@ export const processRequest = (
             )
 
           map = new Map()
-          for (const [fieldName, paths] of mapEntries) {
-            map.set(fieldName, new Upload())
+          for (const [fieldName, paths] of mapEntries)
+            for (const path of paths) {
+              if (!map.has(fieldName)) map.set(fieldName, new Set())
 
-            // Repopulate operations with the promise wherever the file occurred
-            // for use by the Upload scalar.
-            for (const path of paths)
-              operationsPath.set(path, map.get(fieldName).promise)
-          }
+              // Each path will get its own Upload.
+              const upload = new Upload()
+              map.get(fieldName).add(upload)
+
+              // Repopulate operations with the promise wherever the file occurred
+              // for use by the Upload scalar.
+              operationsPath.set(path, upload.promise)
+            }
 
           resolve(operations)
         }
@@ -167,12 +171,13 @@ export const processRequest = (
 
         stream.pipe(capacitor)
 
-        map.get(fieldName).resolve({
-          stream: capacitor.createReadStream(),
-          filename,
-          mimetype,
-          encoding
-        })
+        for (const upload of map.get(fieldName))
+          upload.resolve({
+            stream: capacitor.createReadStream(),
+            filename,
+            mimetype,
+            encoding
+          })
       }
       // Discard the unexpected file.
       else {
@@ -192,11 +197,12 @@ export const processRequest = (
       request.resume()
 
       if (map)
-        for (const upload of map.values())
-          if (!upload.file)
-            upload.reject(
-              new FileMissingUploadError('File missing in the request.', 400)
-            )
+        for (const uploads of map.values())
+          for (const upload of uploads)
+            if (!upload.file)
+              upload.reject(
+                new FileMissingUploadError('File missing in the request.', 400)
+              )
     })
 
     parser.on('error', error => {
@@ -204,21 +210,22 @@ export const processRequest = (
       request.resume()
 
       if (map)
-        for (const upload of map.values())
-          if (!upload.file) upload.reject(error)
+        for (const uploads of map.values())
+          for (const upload of uploads) if (!upload.file) upload.reject(error)
 
       if (currentStream) currentStream.destroy(error)
     })
 
     request.on('close', () => {
       if (map)
-        for (const upload of map.values())
-          if (!upload.file)
-            upload.reject(
-              new UploadPromiseDisconnectUploadError(
-                'Request disconnected before file upload stream parsing.'
+        for (const uploads of map.values())
+          for (const upload of uploads)
+            if (!upload.file)
+              upload.reject(
+                new UploadPromiseDisconnectUploadError(
+                  'Request disconnected before file upload stream parsing.'
+                )
               )
-            )
 
       if (!parser._finished)
         parser.destroy(
