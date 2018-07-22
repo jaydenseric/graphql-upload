@@ -5,6 +5,7 @@ import Koa from 'koa'
 import express from 'express'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
+import { ReadStream } from 'fs-capacitor'
 import {
   apolloUploadKoa,
   apolloUploadExpress,
@@ -76,7 +77,7 @@ t.test('Single file.', async t => {
   const uploadTest = upload => async t => {
     const { stream, ...meta } = await upload
 
-    t.type(stream, 'Capacitor', 'Stream type.')
+    t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'a', 'Contents.')
     t.deepEquals(
       meta,
@@ -153,7 +154,7 @@ t.test('Handles unconsumed uploads.', async t => {
   const uploadBTest = upload => async t => {
     const { stream, ...meta } = await upload
 
-    t.type(stream, 'Capacitor', 'Stream type.')
+    t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'b', 'Contents.')
     t.deepEquals(
       meta,
@@ -281,8 +282,7 @@ t.test('Aborted request.', async t => {
 
   const uploadATest = upload => async t => {
     const { stream, ...meta } = await upload
-
-    t.type(stream, 'Capacitor', 'Stream type.')
+    t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'a', 'Contents.')
     t.deepEquals(
       meta,
@@ -297,7 +297,6 @@ t.test('Aborted request.', async t => {
 
   const uploadBTest = upload => async t => {
     const { stream } = await upload
-
     await new Promise(resolve => {
       stream
         .on('error', error => {
@@ -461,7 +460,7 @@ t.todo('Deduped files.', async t => {
   const uploadTest = upload => async t => {
     const { stream, ...meta } = await upload
 
-    t.type(stream, 'Capacitor', 'Stream type.')
+    t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'a', 'Contents.')
     t.deepEquals(
       meta,
@@ -603,7 +602,7 @@ t.test('Extraneous file.', async t => {
   const uploadTest = upload => async t => {
     const { stream, ...meta } = await upload
 
-    t.type(stream, 'Capacitor', 'Stream type.')
+    t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'a', 'Contents.')
     t.deepEquals(
       meta,
@@ -747,7 +746,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   const uploadATest = upload => async t => {
     const { stream, ...meta } = await upload
 
-    t.type(stream, 'Capacitor', 'Stream type.')
+    t.type(stream, ReadStream, 'Stream type.')
     t.deepEquals(
       meta,
       {
@@ -846,7 +845,7 @@ t.test('Exceed max file size.', async t => {
   const uploadBTest = upload => async t => {
     const { stream, ...meta } = await upload
 
-    t.type(stream, 'Capacitor', 'Stream type.')
+    t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'b', 'Contents.')
     t.deepEquals(
       meta,

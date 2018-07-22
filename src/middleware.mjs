@@ -50,6 +50,7 @@ export const processRequest = (
 
     const exit = error => {
       reject(error)
+      request.unpipe(parser)
       parser.destroy(error)
     }
 
@@ -133,14 +134,15 @@ export const processRequest = (
           stream.resume()
         })
 
-        stream.on('limit', () =>
+        stream.on('limit', () => {
+          stream.unpipe()
           capacitor.destroy(
             new MaxFileSizeUploadError(
               'File truncated as it exceeds the size limit.',
               413
             )
           )
-        )
+        })
 
         stream.on('error', error => {
           if (capacitor.finished || capacitor.destroyed) return
@@ -159,13 +161,14 @@ export const processRequest = (
           )
             error = new FileStreamDisconnectUploadError(error.message)
 
+          stream.unpipe()
           capacitor.destroy(error)
         })
 
         stream.pipe(capacitor)
 
         map.get(fieldName).resolve({
-          stream: capacitor,
+          stream: capacitor.createReadStream(),
           filename,
           mimetype,
           encoding
