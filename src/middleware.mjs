@@ -228,16 +228,17 @@ export const processRequest = (
                   'Request disconnected before file upload stream parsing.'
                 )
               )
-            // Set the WriteStream to be destroyed once all its ReadStreams
-            // have been destroyed.
             else {
-              if (requestEnded && !upload.file.stream.destroyed)
+              // Destroy any stream that has never had a consumer.
+              if (requestEnded && upload.file.stream.readableFlowing === null)
                 upload.file.stream.destroy(
-                  new UploadPromiseDisconnectUploadError(
+                  new FileStreamDisconnectUploadError(
                     'Request disconnected before file upload stream consumed.'
                   )
                 )
 
+              // Set the WriteStream to be destroyed once all its ReadStreams
+              // have been destroyed.
               upload.file.capacitor.destroy()
             }
 
