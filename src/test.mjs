@@ -19,9 +19,6 @@ import {
   FileStreamDisconnectUploadError
 } from '.'
 
-// See: https://github.com/mike-marcacci/fs-capacitor/issues/1
-process.setMaxListeners(20)
-
 // GraphQL multipart request spec:
 // https://github.com/jaydenseric/graphql-multipart-request-spec
 
