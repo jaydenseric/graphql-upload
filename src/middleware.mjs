@@ -1,6 +1,6 @@
 import Busboy from 'busboy'
 import objectPath from 'object-path'
-import Capacitor from 'fs-capacitor'
+import WriteStream from 'fs-capacitor'
 import {
   SPEC_URL,
   MaxFileSizeUploadError,
@@ -47,6 +47,7 @@ export const processRequest = (
     let operationsPath
     let map
     let currentStream
+    let requestEnded = false
 
     const exit = error => {
       reject(error)
@@ -131,7 +132,7 @@ export const processRequest = (
       })
 
       if (map.has(fieldName)) {
-        const capacitor = new Capacitor()
+        const capacitor = new WriteStream()
 
         capacitor.on('error', () => {
           stream.unpipe()
@@ -174,6 +175,7 @@ export const processRequest = (
         for (const upload of map.get(fieldName))
           upload.resolve({
             stream: capacitor.createReadStream(),
+            capacitor,
             filename,
             mimetype,
             encoding
@@ -226,6 +228,18 @@ export const processRequest = (
                   'Request disconnected before file upload stream parsing.'
                 )
               )
+            // Set the WriteStream to be destroyed once all its ReadStreams
+            // have been destroyed.
+            else {
+              if (requestEnded && !upload.file.stream.destroyed)
+                upload.file.stream.destroy(
+                  new UploadPromiseDisconnectUploadError(
+                    'Request disconnected before file upload stream consumed.'
+                  )
+                )
+
+              upload.file.capacitor.destroy()
+            }
 
       if (!parser._finished)
         parser.destroy(
@@ -233,6 +247,10 @@ export const processRequest = (
             'Request disconnected during file upload stream parsing.'
           )
         )
+    })
+
+    request.on('end', () => {
+      requestEnded = true
     })
 
     request.pipe(parser)
