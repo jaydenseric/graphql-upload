@@ -93,7 +93,7 @@ t.test('Single file.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(2)
+    t.plan(3)
 
     let variables
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
@@ -109,11 +109,15 @@ t.test('Single file.', async t => {
 
     await sendRequest(port)
 
-    t.notOk(fs.existsSync((await variables.file).capacitor.path), 'Cleanup.')
+    const file = await variables.file
+    await t.resolves(
+      new Promise(resolve => file.capacitor.once('close', resolve))
+    )
+    t.notOk(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(2)
+    t.plan(3)
 
     let variables
     const app = express()
@@ -130,7 +134,11 @@ t.test('Single file.', async t => {
 
     await sendRequest(port)
 
-    t.notOk(fs.existsSync((await variables.file).capacitor.path), 'Cleanup.')
+    const file = await variables.file
+    await t.resolves(
+      new Promise(resolve => file.capacitor.once('close', resolve))
+    )
+    t.notOk(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 })
 
@@ -181,7 +189,7 @@ t.test('Handles unconsumed uploads.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(3)
+    t.plan(5)
 
     let variables
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
@@ -197,12 +205,21 @@ t.test('Handles unconsumed uploads.', async t => {
 
     await sendRequest(port)
 
-    t.notOk(fs.existsSync((await variables.fileA).capacitor.path), 'Cleanup A.')
-    t.notOk(fs.existsSync((await variables.fileB).capacitor.path), 'Cleanup B.')
+    const fileA = await variables.fileA
+    await t.resolves(
+      new Promise(resolve => fileA.capacitor.once('close', resolve))
+    )
+    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await variables.fileB
+    await t.resolves(
+      new Promise(resolve => fileB.capacitor.once('close', resolve))
+    )
+    t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(3)
+    t.plan(5)
 
     let variables
     const app = express()
@@ -219,8 +236,17 @@ t.test('Handles unconsumed uploads.', async t => {
 
     await sendRequest(port)
 
-    t.notOk(fs.existsSync((await variables.fileA).capacitor.path), 'Cleanup A.')
-    t.notOk(fs.existsSync((await variables.fileB).capacitor.path), 'Cleanup B.')
+    const fileA = await variables.fileA
+    await t.resolves(
+      new Promise(resolve => fileA.capacitor.once('close', resolve))
+    )
+    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await variables.fileB
+    await t.resolves(
+      new Promise(resolve => fileB.capacitor.once('close', resolve))
+    )
+    t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
 
@@ -348,7 +374,7 @@ t.test('Aborted request.', async t => {
 
   await t.test('Stream error handled.', async t => {
     await t.test('Koa middleware.', async t => {
-      t.plan(5)
+      t.plan(7)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
@@ -376,18 +402,21 @@ t.test('Aborted request.', async t => {
       const port = await startServer(t, app)
       await sendRequest(port, requestHasBeenReceivedPromise)
 
-      t.notOk(
-        fs.existsSync((await variables.fileA).capacitor.path),
-        'Cleanup A.'
+      const fileA = await variables.fileA
+      await t.resolves(
+        new Promise(resolve => fileA.capacitor.once('close', resolve))
       )
-      t.notOk(
-        fs.existsSync((await variables.fileB).capacitor.path),
-        'Cleanup B.'
+      t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+      const fileB = await variables.fileB
+      await t.resolves(
+        new Promise(resolve => fileB.capacitor.once('close', resolve))
       )
+      t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
 
     await t.test('Express middleware.', async t => {
-      t.plan(5)
+      t.plan(7)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
@@ -415,20 +444,23 @@ t.test('Aborted request.', async t => {
       const port = await startServer(t, app)
       await sendRequest(port, requestHasBeenReceivedPromise)
 
-      t.notOk(
-        fs.existsSync((await variables.fileA).capacitor.path),
-        'Cleanup A.'
+      const fileA = await variables.fileA
+      await t.resolves(
+        new Promise(resolve => fileA.capacitor.once('close', resolve))
       )
-      t.notOk(
-        fs.existsSync((await variables.fileB).capacitor.path),
-        'Cleanup B.'
+      t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+      const fileB = await variables.fileB
+      await t.resolves(
+        new Promise(resolve => fileB.capacitor.once('close', resolve))
       )
+      t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
   })
 
   await t.test('Stream error unhandled.', async t => {
     await t.test('Koa middleware.', async t => {
-      t.plan(4)
+      t.plan(6)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
@@ -455,18 +487,21 @@ t.test('Aborted request.', async t => {
       const port = await startServer(t, app)
       await sendRequest(port, requestHasBeenReceivedPromise)
 
-      t.notOk(
-        fs.existsSync((await variables.fileA).capacitor.path),
-        'Cleanup A.'
+      const fileA = await variables.fileA
+      await t.resolves(
+        new Promise(resolve => fileA.capacitor.once('close', resolve))
       )
-      t.notOk(
-        fs.existsSync((await variables.fileB).capacitor.path),
-        'Cleanup B.'
+      t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+      const fileB = await variables.fileB
+      await t.resolves(
+        new Promise(resolve => fileB.capacitor.once('close', resolve))
       )
+      t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
 
     await t.test('Express middleware.', async t => {
-      t.plan(4)
+      t.plan(6)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
@@ -493,14 +528,17 @@ t.test('Aborted request.', async t => {
       const port = await startServer(t, app)
       await sendRequest(port, requestHasBeenReceivedPromise)
 
-      t.notOk(
-        fs.existsSync((await variables.fileA).capacitor.path),
-        'Cleanup A.'
+      const fileA = await variables.fileA
+      await t.resolves(
+        new Promise(resolve => fileA.capacitor.once('close', resolve))
       )
-      t.notOk(
-        fs.existsSync((await variables.fileB).capacitor.path),
-        'Cleanup B.'
+      t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+      const fileB = await variables.fileB
+      await t.resolves(
+        new Promise(resolve => fileB.capacitor.once('close', resolve))
       )
+      t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
   })
 })
@@ -550,7 +588,7 @@ t.test('Deduped files.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(4)
+    t.plan(6)
 
     let variables
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
@@ -569,18 +607,21 @@ t.test('Deduped files.', async t => {
 
     await sendRequest(port)
 
-    t.notOk(
-      fs.existsSync((await variables.files[0]).capacitor.path),
-      'Cleanup A.'
+    const fileA = await variables.files[0]
+    await t.resolves(
+      new Promise(resolve => fileA.capacitor.once('close', resolve))
     )
-    t.notOk(
-      fs.existsSync((await variables.files[1]).capacitor.path),
-      'Cleanup B.'
+    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await variables.files[1]
+    await t.resolves(
+      new Promise(resolve => fileB.capacitor.once('close', resolve))
     )
+    t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(4)
+    t.plan(6)
 
     let variables
     const app = express()
@@ -598,14 +639,17 @@ t.test('Deduped files.', async t => {
 
     await sendRequest(port)
 
-    t.notOk(
-      fs.existsSync((await variables.files[0]).capacitor.path),
-      'Cleanup A.'
+    const fileA = await variables.files[0]
+    await t.resolves(
+      new Promise(resolve => fileA.capacitor.once('close', resolve))
     )
-    t.notOk(
-      fs.existsSync((await variables.files[1]).capacitor.path),
-      'Cleanup B.'
+    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await variables.files[1]
+    await t.resolves(
+      new Promise(resolve => fileB.capacitor.once('close', resolve))
     )
+    t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
 
@@ -717,7 +761,7 @@ t.test('Extraneous file.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(2)
+    t.plan(3)
 
     let variables
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
@@ -732,11 +776,15 @@ t.test('Extraneous file.', async t => {
 
     await sendRequest(port)
 
-    t.notOk(fs.existsSync((await variables.file).capacitor.path), 'Cleanup.')
+    const file = await variables.file
+    await t.resolves(
+      new Promise(resolve => file.capacitor.once('close', resolve))
+    )
+    t.notOk(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(2)
+    t.plan(3)
 
     let variables
     const app = express()
@@ -753,7 +801,11 @@ t.test('Extraneous file.', async t => {
 
     await sendRequest(port)
 
-    t.notOk(fs.existsSync((await variables.file).capacitor.path), 'Cleanup.')
+    const file = await variables.file
+    await t.resolves(
+      new Promise(resolve => file.capacitor.once('close', resolve))
+    )
+    t.notOk(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 })
 
@@ -875,7 +927,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(3)
+    t.plan(4)
 
     let variables
     const app = new Koa()
@@ -896,17 +948,15 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
 
     await sendRequest(port)
 
-    // TODO: what is delaying cleanup here?
-    await new Promise(r => setTimeout(r, 100))
-
-    t.notOk(
-      fs.existsSync((await variables.files[0]).capacitor.path),
-      'Cleanup A.'
+    const fileA = await variables.files[0]
+    await t.resolves(
+      new Promise(resolve => fileA.capacitor.once('close', resolve))
     )
+    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(3)
+    t.plan(4)
 
     let variables
     const app = express()
@@ -924,13 +974,11 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
 
     await sendRequest(port)
 
-    // TODO: what is delaying cleanup here?
-    await new Promise(r => setTimeout(r, 100))
-
-    t.notOk(
-      fs.existsSync((await variables.files[0]).capacitor.path),
-      'Cleanup A.'
+    const fileA = await variables.files[0]
+    await t.resolves(
+      new Promise(resolve => fileA.capacitor.once('close', resolve))
     )
+    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
   })
 })
 
@@ -994,7 +1042,7 @@ t.test('Exceed max file size.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(4)
+    t.plan(6)
 
     let variables
     const app = new Koa()
@@ -1020,18 +1068,21 @@ t.test('Exceed max file size.', async t => {
 
     await sendRequest(port)
 
-    t.notOk(
-      fs.existsSync((await variables.files[0]).capacitor.path),
-      'Cleanup A.'
+    const fileA = await variables.files[0]
+    await t.resolves(
+      new Promise(resolve => fileA.capacitor.once('close', resolve))
     )
-    t.notOk(
-      fs.existsSync((await variables.files[1]).capacitor.path),
-      'Cleanup B.'
+    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await variables.files[1]
+    await t.resolves(
+      new Promise(resolve => fileB.capacitor.once('close', resolve))
     )
+    t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(4)
+    t.plan(6)
 
     let variables
     const app = express()
@@ -1049,14 +1100,17 @@ t.test('Exceed max file size.', async t => {
 
     await sendRequest(port)
 
-    t.notOk(
-      fs.existsSync((await variables.files[0]).capacitor.path),
-      'Cleanup A.'
+    const fileA = await variables.files[0]
+    await t.resolves(
+      new Promise(resolve => fileA.capacitor.once('close', resolve))
     )
-    t.notOk(
-      fs.existsSync((await variables.files[1]).capacitor.path),
-      'Cleanup B.'
+    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await variables.files[1]
+    await t.resolves(
+      new Promise(resolve => fileB.capacitor.once('close', resolve))
     )
+    t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
 
