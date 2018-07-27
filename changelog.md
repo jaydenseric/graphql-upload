@@ -1,5 +1,11 @@
 # apollo-upload-server changelog
 
+## Next
+
+### Patch
+
+- Ensure the readme Travis build status badge only tracks `master` branch.
+
 ## 6.0.0-alpha.1
 
 Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci) for his help solving tricky bugs and edge-cases!
