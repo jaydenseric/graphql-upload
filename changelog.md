@@ -5,6 +5,7 @@
 ### Patch
 
 - Updated dev dependencies.
+- Configured Prettier to lint `.yml` files.
 - Ensure the readme Travis build status badge only tracks `master` branch.
 
 ## 6.0.0-alpha.1

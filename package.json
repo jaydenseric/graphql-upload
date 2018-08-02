@@ -71,7 +71,7 @@
     "prepare:prettier": "prettier 'lib/**/*.{mjs,js}' --write",
     "test": "FORCE_COLOR=1 TAP_COLORS=1 run-p test:* -c --aggregate-output",
     "test:eslint": "eslint . --ext mjs,js",
-    "test:prettier": "prettier '**/*.{json,md}' -l",
+    "test:prettier": "prettier '**/*.{json,yml,md}' -l",
     "test:mjs": "node --experimental-modules --no-warnings lib/test | tap-mocha-reporter spec",
     "test:js": "node lib/test | tap-mocha-reporter spec",
     "prepublishOnly": "run-s prepare test",
@@ -80,7 +80,7 @@
   },
   "lint-staged": {
     "*.{mjs,js}": "eslint",
-    "*.{json,md}": "prettier -l"
+    "*.{json,yml,md}": "prettier -l"
   },
   "eslintIgnore": [
     "lib"
