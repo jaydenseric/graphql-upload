@@ -250,6 +250,33 @@ export const processRequest = (
         )
     })
 
+    request.on('release', () => {
+      if (map)
+        for (const uploads of map.values())
+          for (const upload of uploads)
+            if (!upload.file)
+              upload.reject(
+                new UploadPromiseDisconnectUploadError(
+                  'Request disconnected before file upload stream parsing.'
+                )
+              )
+            // Set the WriteStream to be destroyed once all its ReadStreams
+            // have been destroyed.
+            else
+              upload.file.capacitor.destroy(
+                new FileStreamDisconnectUploadError(
+                  'Request disconnected before file upload stream consumed.'
+                )
+              )
+
+      if (!parser._finished)
+        parser.destroy(
+          new FileStreamDisconnectUploadError(
+            'Request disconnected during file upload stream parsing.'
+          )
+        )
+    })
+
     request.on('end', () => {
       requestEnded = true
     })
@@ -266,6 +293,7 @@ export const apolloUploadKoa = options => async (ctx, next) => {
     ctx.request.body = await processRequest(ctx.req, options)
     await next()
   } finally {
+    ctx.req.emit('release')
     await finished
   }
 }
@@ -274,8 +302,15 @@ export const apolloUploadExpress = options => (request, response, next) => {
   if (!request.is('multipart/form-data')) return next()
 
   const finished = new Promise(resolve => request.on('end', resolve))
-  const { send } = response
 
+  const { writeHead } = response
+  response.writeHead = (...args) => {
+    request.emit('release')
+    response.writeHead = writeHead
+    response.writeHead(...args)
+  }
+
+  const { send } = response
   response.send = (...args) => {
     finished.then(() => {
       response.send = send

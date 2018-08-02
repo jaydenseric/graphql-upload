@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "busboy": "^0.2.14",
-    "fs-capacitor": "^1.0.0-beta.3",
+    "fs-capacitor": "^1.0.0",
     "object-path": "^0.11.4"
   },
   "devDependencies": {
