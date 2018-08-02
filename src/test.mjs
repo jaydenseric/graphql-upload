@@ -8,6 +8,7 @@ import FormData from 'form-data'
 import {
   apolloUploadKoa,
   apolloUploadExpress,
+  ParseUploadError,
   MaxFileSizeUploadError,
   MaxFilesUploadError,
   MapBeforeOperationsUploadError,
@@ -118,6 +119,115 @@ t.test('Single file.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
+  })
+})
+
+t.test('Invalid ‘operations’ JSON.', async t => {
+  t.jobs = 2
+
+  const sendRequest = async (t, port) => {
+    const body = new FormData()
+
+    body.append('operations', '{ variables: { "file": null } }')
+    body.append('map', JSON.stringify({ 1: ['variables.file'] }))
+    body.append('1', 'a', { filename: 'a.txt' })
+
+    const { status } = await fetch(`http://localhost:${port}`, {
+      method: 'POST',
+      body
+    })
+
+    t.equal(status, 400, 'Response status.')
+  }
+
+  await t.test('Koa middleware.', async t => {
+    t.plan(2)
+
+    const app = new Koa()
+      .on('error', error =>
+        t.type(error, ParseUploadError, 'Middleware throws.')
+      )
+      .use(apolloUploadKoa())
+
+    const port = await startServer(t, app)
+
+    await sendRequest(t, port)
+  })
+
+  await t.test('Express middleware.', async t => {
+    t.plan(2)
+
+    const app = express()
+      .use(apolloUploadExpress({ maxFiles: 1 }))
+      .use((error, request, response, next) => {
+        if (response.headersSent) return next(error)
+
+        t.type(error, ParseUploadError, 'Middleware throws.')
+
+        response.send()
+      })
+
+    const port = await startServer(t, app)
+
+    await sendRequest(t, port)
+  })
+})
+
+t.test('Invalid ‘map’ JSON.', async t => {
+  t.jobs = 2
+
+  const sendRequest = async (t, port) => {
+    const body = new FormData()
+
+    body.append(
+      'operations',
+      JSON.stringify({
+        variables: {
+          file: null
+        }
+      })
+    )
+    body.append('map', '{ 1: ["variables.file"] }')
+    body.append('1', 'a', { filename: 'a.txt' })
+
+    const { status } = await fetch(`http://localhost:${port}`, {
+      method: 'POST',
+      body
+    })
+
+    t.equal(status, 400, 'Response status.')
+  }
+
+  await t.test('Koa middleware.', async t => {
+    t.plan(2)
+
+    const app = new Koa()
+      .on('error', error =>
+        t.type(error, ParseUploadError, 'Middleware throws.')
+      )
+      .use(apolloUploadKoa())
+
+    const port = await startServer(t, app)
+
+    await sendRequest(t, port)
+  })
+
+  await t.test('Express middleware.', async t => {
+    t.plan(2)
+
+    const app = express()
+      .use(apolloUploadExpress({ maxFiles: 1 }))
+      .use((error, request, response, next) => {
+        if (response.headersSent) return next(error)
+
+        t.type(error, ParseUploadError, 'Middleware throws.')
+
+        response.send()
+      })
+
+    const port = await startServer(t, app)
+
+    await sendRequest(t, port)
   })
 })
 

@@ -2,6 +2,10 @@
 
 ## Next
 
+### Minor
+
+- Export a new `ParseUploadError` that is thrown with a `400` status when `operations` or `map` multipart fields contain invalid JSON, fixing [#95](https://github.com/jaydenseric/apollo-upload-server/issues/95).
+
 ### Patch
 
 - Updated dev dependencies.

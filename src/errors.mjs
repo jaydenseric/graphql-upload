@@ -18,6 +18,7 @@ export class UploadError extends Error {
   }
 }
 
+export class ParseUploadError extends UploadError {}
 export class MaxFileSizeUploadError extends UploadError {}
 export class MaxFilesUploadError extends UploadError {}
 export class MapBeforeOperationsUploadError extends UploadError {}
