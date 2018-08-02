@@ -955,112 +955,100 @@ t.test('Exceed max files.', async t => {
   })
 })
 
-// t.test('Exceed max files with extraneous files interspersed.', async t => {
-//   t.jobs = 2
+t.test('Exceed max files with extraneous files interspersed.', async t => {
+  t.jobs = 2
 
-//   const sendRequest = async port => {
-//     const body = new FormData()
+  const sendRequest = async port => {
+    const body = new FormData()
 
-//     body.append(
-//       'operations',
-//       JSON.stringify({
-//         variables: {
-//           files: [null, null]
-//         }
-//       })
-//     )
+    body.append(
+      'operations',
+      JSON.stringify({
+        variables: {
+          files: [null, null]
+        }
+      })
+    )
 
-//     body.append(
-//       'map',
-//       JSON.stringify({
-//         '1': ['variables.files.0'],
-//         '2': ['variables.files.1']
-//       })
-//     )
+    body.append(
+      'map',
+      JSON.stringify({
+        '1': ['variables.files.0'],
+        '2': ['variables.files.1']
+      })
+    )
 
-//     body.append('1', 'a', { filename: 'a.txt' })
-//     body.append('extraneous', 'b', { filename: 'b.txt' })
-//     body.append('2', 'c', { filename: 'c.txt' })
+    body.append('1', 'a', { filename: 'a.txt' })
+    body.append('extraneous', 'b', { filename: 'b.txt' })
+    body.append('2', 'c', { filename: 'c.txt' })
 
-//     await fetch(`http://localhost:${port}`, { method: 'POST', body })
-//   }
+    await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  }
 
-//   const uploadATest = upload => async t => {
-//     // eslint-disable-next-line no-unused-vars
-//     const { createReadStream, capacitor, ...meta } = await upload
-//     const stream = createReadStream()
+  const uploadATest = upload => async t => {
+    const { createReadStream } = await upload
+    t.throws(() => createReadStream(), MaxFilesUploadError, 'Stream error.')
+  }
 
-//     t.type(stream, ReadStream, 'Stream type.')
-//     t.deepEquals(
-//       meta,
-//       {
-//         filename: 'a.txt',
-//         mimetype: 'text/plain',
-//         encoding: '7bit'
-//       },
-//       'Metadata.'
-//     )
-//   }
+  const uploadBTest = upload => async t => {
+    await t.rejects(upload, MaxFilesUploadError, 'Rejection error.')
+  }
 
-//   const uploadBTest = upload => async t => {
-//     await t.rejects(upload, MaxFilesUploadError, 'Rejection error.')
-//   }
+  await t.test('Koa middleware.', async t => {
+    t.plan(4)
 
-//   await t.test('Koa middleware.', async t => {
-//     t.plan(4)
+    let variables
+    const app = new Koa()
+      .use(apolloUploadKoa({ maxFiles: 2 }))
+      .use(async (ctx, next) => {
+        // eslint-disable-next-line prefer-destructuring
+        variables = ctx.request.body.variables
+        await Promise.all([
+          t.test('Upload A.', uploadATest(ctx.request.body.variables.files[0])),
+          t.test('Upload B.', uploadBTest(ctx.request.body.variables.files[1]))
+        ])
 
-//     let variables
-//     const app = new Koa()
-//       .use(apolloUploadKoa({ maxFiles: 2 }))
-//       .use(async (ctx, next) => {
-//         // eslint-disable-next-line prefer-destructuring
-//         variables = ctx.request.body.variables
-//         await Promise.all([
-//           t.test('Upload A.', uploadATest(ctx.request.body.variables.files[0])),
-//           t.test('Upload B.', uploadBTest(ctx.request.body.variables.files[1]))
-//         ])
+        ctx.status = 204
+        await next()
+      })
 
-//         ctx.status = 204
-//         await next()
-//       })
+    const port = await startServer(t, app)
 
-//     const port = await startServer(t, app)
+    await sendRequest(port)
 
-//     await sendRequest(port)
+    const fileA = await variables.files[0]
+    await t.resolves(
+      new Promise(resolve => fileA.capacitor.once('close', resolve))
+    )
+    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+  })
 
-//     const fileA = await variables.files[0]
-//     await t.resolves(
-//       new Promise(resolve => fileA.capacitor.once('close', resolve))
-//     )
-//     t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-//   })
+  await t.test('Express middleware.', async t => {
+    t.plan(4)
 
-//   await t.test('Express middleware.', async t => {
-//     t.plan(4)
+    let variables
+    const app = express()
+      .use(apolloUploadExpress({ maxFiles: 2 }))
+      .use((request, response, next) => {
+        // eslint-disable-next-line prefer-destructuring
+        variables = request.body.variables
+        Promise.all([
+          t.test('Upload A.', uploadATest(request.body.variables.files[0])),
+          t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
+        ]).then(() => next())
+      })
 
-//     let variables
-//     const app = express()
-//       .use(apolloUploadExpress({ maxFiles: 2 }))
-//       .use((request, response, next) => {
-//         // eslint-disable-next-line prefer-destructuring
-//         variables = request.body.variables
-//         Promise.all([
-//           t.test('Upload A.', uploadATest(request.body.variables.files[0])),
-//           t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
-//         ]).then(() => next())
-//       })
+    const port = await startServer(t, app)
 
-//     const port = await startServer(t, app)
+    await sendRequest(port)
 
-//     await sendRequest(port)
-
-//     const fileA = await variables.files[0]
-//     await t.resolves(
-//       new Promise(resolve => fileA.capacitor.once('close', resolve))
-//     )
-//     t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-//   })
-// })
+    const fileA = await variables.files[0]
+    await t.resolves(
+      new Promise(resolve => fileA.capacitor.once('close', resolve))
+    )
+    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+  })
+})
 
 t.test('Exceed max file size.', async t => {
   t.jobs = 2
