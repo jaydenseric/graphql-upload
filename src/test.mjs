@@ -1141,3 +1141,61 @@ t.test('Misorder files before ‘map’.', async t => {
     await sendRequest(t, port)
   })
 })
+
+t.todo('Missing ‘map’ and files.', async t => {
+  t.jobs = 2
+
+  const sendRequest = async (t, port) => {
+    const body = new FormData()
+
+    body.append(
+      'operations',
+      JSON.stringify({
+        variables: {
+          file: null
+        }
+      })
+    )
+
+    const { status } = await fetch(`http://localhost:${port}`, {
+      method: 'POST',
+      body
+    })
+
+    t.equal(status, 400, 'Response status.')
+  }
+
+  await t.test('Koa middleware.', async t => {
+    t.plan(2)
+
+    const app = new Koa()
+      .on('error', () =>
+        // Todo: Test the error.
+        t.pass('Error.')
+      )
+      .use(apolloUploadKoa())
+
+    const port = await startServer(t, app)
+
+    await sendRequest(t, port)
+  })
+
+  await t.test('Express middleware.', async t => {
+    t.plan(2)
+
+    const app = express()
+      .use(apolloUploadExpress())
+      .use((error, request, response, next) => {
+        if (response.headersSent) return next(error)
+
+        // Todo: Test the error.
+        t.pass('Error.')
+
+        response.send()
+      })
+
+    const port = await startServer(t, app)
+
+    await sendRequest(t, port)
+  })
+})
