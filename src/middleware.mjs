@@ -50,8 +50,8 @@ export const processRequest = (
     let requestEnded = false
     let error
 
-    const exit = e => {
-      error = error || e
+    const exit = exitError => {
+      error = error || exitError
       reject(error)
       request.unpipe(parser)
       parser.destroy(error)
@@ -210,15 +210,15 @@ export const processRequest = (
             )
     })
 
-    parser.on('error', error => {
+    parser.on('error', parseError => {
       request.unpipe(parser)
       request.resume()
 
-      if (currentStream) currentStream.destroy(error)
+      if (currentStream) currentStream.destroy(error || parseError)
 
       if (map)
         for (const upload of map.values())
-          if (!upload.file) upload.reject(error)
+          if (!upload.file) upload.reject(error || parseError)
     })
 
     const release = () => {
