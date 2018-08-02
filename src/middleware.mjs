@@ -48,8 +48,10 @@ export const processRequest = (
     let map
     let currentStream
     let requestEnded = false
+    let error
 
-    const exit = error => {
+    const exit = e => {
+      error = error || e
       reject(error)
       request.unpipe(parser)
       parser.destroy(error)
@@ -172,7 +174,7 @@ export const processRequest = (
             capacitor: { value: capacitor, enumerable: false },
             createReadStream: {
               value() {
-                if (capacitor.error) throw capacitor.error
+                if (capacitor.error || error) throw capacitor.error || error
                 return capacitor.createReadStream()
               },
               enumerable: true
@@ -226,7 +228,7 @@ export const processRequest = (
     }
 
     response.on('finish', release)
-    // response.on('close', release)
+    response.on('close', release)
 
     request.on('end', () => {
       requestEnded = true
