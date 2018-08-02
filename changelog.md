@@ -4,6 +4,7 @@
 
 ### Patch
 
+- Updated dev dependencies.
 - Ensure the readme Travis build status badge only tracks `master` branch.
 
 ## 6.0.0-alpha.1
