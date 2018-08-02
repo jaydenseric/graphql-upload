@@ -79,7 +79,7 @@ app.use(
 
 ### Custom middleware
 
-Middleware wraps the async function `processRequest` which accepts a Node.js request and an optional [options object](#options) as arguments. It returns a promise that resolves an operations object for a GraphQL server to consume (usually as the request body). Import it to create custom middleware:
+Middleware wraps the async function `processRequest` which accepts a required [http.IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage), a required [http.ServerResponse](https://nodejs.org/api/http.html#http_class_http_serverresponse), and an optional [options object](#options) as arguments. It returns a promise that resolves an operations object for a GraphQL server to consume (usually as the request body). Import it to create custom middleware:
 
 ```js
 import { processRequest } from 'apollo-upload-server'
@@ -89,10 +89,10 @@ import { processRequest } from 'apollo-upload-server'
 
 A file upload promise that resolves an object containing:
 
-- `stream`
-- `filename`
-- `mimetype`
-- `encoding`
+- `filename`: `string` - the filename of the upload
+- `mimetype`: `string` - the mimetype of the upload
+- `encoding`: `string` - the encoding of the upload
+- `createReadStream`: `() => ReadStream` - calling this method returns a readable stream of the upload's contents. Calling `createReadStream` multiple times will create multiple streams which can be read indipendantly of each other. Note that `createReadStream` will throw if called after all resolvers have finished, or after an error has interrupted the request.
 
 It must be added to your types and resolvers:
 

@@ -2,6 +2,15 @@
 
 ## 6.0.0-alpha.1
 
+### Major
+
+- API change: `processRequest` now requires a [`http.ServerResponse`](https://nodejs.org/api/http.html#http_class_http_serverresponse) as its second argument
+- API change: upload promises now resolve with a `createReadStream` method instead of a `stream` property
+- An `Upload` variable can now be used by multiple resolvers
+- Multile `Upload` variables can now use the same multipart data
+
+## 6.0.0-alpha.1
+
 Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci) for his help solving tricky bugs and edge-cases!
 
 ### Major
