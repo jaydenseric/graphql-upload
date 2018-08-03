@@ -1008,7 +1008,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    // t.plan(4)
+    t.plan(4)
 
     let variables
     let finish

@@ -54,7 +54,10 @@ export const processRequest = (
       error = exitError
 
       reject(error)
+
       request.unpipe(parser)
+      request.resume()
+
       parser.destroy()
 
       if (currentStream) currentStream.destroy(error)
