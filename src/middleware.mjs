@@ -33,6 +33,12 @@ export const processRequest = (
   { maxFieldSize, maxFileSize, maxFiles } = {}
 ) =>
   new Promise((resolve, reject) => {
+    let operations
+    let operationsPath
+    let map
+    let currentStream
+    let error
+
     const parser = new Busboy({
       headers: request.headers,
       limits: {
@@ -43,20 +49,29 @@ export const processRequest = (
       }
     })
 
-    let operations
-    let operationsPath
-    let map
-    let currentStream
-    let requestEnded = false
-    let error
-
     const exit = exitError => {
-      error = error || exitError
+      if (error) return
+      error = exitError
+
       reject(error)
       request.unpipe(parser)
-      parser.destroy(error)
+      parser.destroy()
+
+      if (currentStream) currentStream.destroy(error || error)
+
+      if (map)
+        for (const upload of map.values())
+          if (!upload.file) upload.reject(error || error)
     }
 
+    const release = () => {
+      if (map)
+        for (const upload of map.values())
+          if (upload.file) upload.file.capacitor.destroy()
+    }
+
+    // Parser Events
+    // -------------
     parser.on('field', (fieldName, value) => {
       switch (fieldName) {
         case 'operations':
@@ -135,7 +150,7 @@ export const processRequest = (
         })
 
         stream.on('limit', () => {
-          currentStream = null
+          if (currentStream === stream) currentStream = null
           stream.unpipe()
           capacitor.destroy(
             new MaxFileSizeUploadError(
@@ -145,26 +160,11 @@ export const processRequest = (
           )
         })
 
-        stream.on('error', error => {
-          currentStream = null
-          if (capacitor.finished || capacitor.destroyed) return
-
-          // A terminated connection may cause the request to emit a 'close'
-          // event either before or after the parser encounters an error,
-          // depending on the Node.js version and the state of stream buffers.
-
-          if (
-            error.message ===
-              // https://github.com/mscdex/dicer/blob/v0.2.5/lib/Dicer.js#L62
-              'Unexpected end of multipart data' ||
-            error.message ===
-              // https://github.com/mscdex/dicer/blob/v0.2.5/lib/Dicer.js#L65
-              'Part terminated early due to unexpected end of multipart data'
-          )
-            error = new DisconnectUploadError(error.message)
+        stream.on('error', streamError => {
+          if (currentStream === stream) currentStream = null
 
           stream.unpipe()
-          capacitor.destroy(error)
+          capacitor.destroy(error || streamError)
         })
 
         stream.pipe(capacitor)
@@ -210,31 +210,23 @@ export const processRequest = (
             )
     })
 
-    parser.on('error', parseError => {
-      request.unpipe(parser)
-      request.resume()
-
-      if (currentStream) currentStream.destroy(error || parseError)
-
-      if (map)
-        for (const upload of map.values())
-          if (!upload.file) upload.reject(error || parseError)
+    parser.once('error', error => {
+      exit(error)
     })
 
-    const release = () => {
-      if (map)
-        for (const upload of map.values())
-          if (upload.file) upload.file.capacitor.destroy()
-    }
+    // Response Events
+    // ---------------
+    response.once('finish', release)
+    response.once('close', release)
 
-    response.on('finish', release)
-    response.on('close', release)
-
-    request.on('end', () => {
+    // Request Events
+    // --------------
+    let requestEnded = false
+    request.once('end', () => {
       requestEnded = true
     })
 
-    request.on('close', () => {
+    request.once('close', () => {
       if (!requestEnded)
         exit(
           new DisconnectUploadError(
