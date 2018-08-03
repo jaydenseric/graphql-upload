@@ -57,14 +57,18 @@ export const processRequest = (
       request.unpipe(parser)
       parser.destroy()
 
-      if (currentStream) currentStream.destroy(error || error)
+      if (currentStream) currentStream.destroy(error)
 
       if (map)
         for (const upload of map.values())
-          if (!upload.file) upload.reject(error || error)
+          if (!upload.file) upload.reject(error)
     }
 
+    let isReleased = false
     const release = () => {
+      if (isReleased) return
+      isReleased = true
+
       if (map)
         for (const upload of map.values())
           if (upload.file) upload.file.capacitor.destroy()
@@ -174,7 +178,10 @@ export const processRequest = (
             capacitor: { value: capacitor, enumerable: false },
             createReadStream: {
               value() {
-                if (capacitor.error || error) throw capacitor.error || error
+                const createReadStreamError =
+                  capacitor.error || (isReleased ? error : null)
+
+                if (createReadStreamError) throw createReadStreamError
                 return capacitor.createReadStream()
               },
               enumerable: true
