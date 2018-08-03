@@ -55,9 +55,6 @@ export const processRequest = (
 
       reject(error)
 
-      request.unpipe(parser)
-      request.resume()
-
       parser.destroy()
 
       if (currentStream) currentStream.destroy(error)
@@ -65,6 +62,9 @@ export const processRequest = (
       if (map)
         for (const upload of map.values())
           if (!upload.file) upload.reject(error)
+
+      request.unpipe(parser)
+      request.resume()
     }
 
     let isReleased = false
