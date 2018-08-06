@@ -91,12 +91,12 @@ t.test('Single file.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(3)
+    t.plan(2)
 
     let variables
+
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-      // eslint-disable-next-line prefer-destructuring
-      variables = ctx.request.body.variables
+      ;({ variables } = ctx.request.body)
       await t.test('Upload.', uploadTest(ctx.request.body.variables.file))
 
       ctx.status = 204
@@ -108,21 +108,19 @@ t.test('Single file.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    await t.resolves(
-      new Promise(resolve => file.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(file.capacitor.path), 'Cleanup.')
+    await new Promise(resolve => file.capacitor.once('close', resolve))
+    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(3)
+    t.plan(2)
 
     let variables
+
     const app = express()
       .use(apolloUploadExpress())
       .use((request, response, next) => {
-        // eslint-disable-next-line prefer-destructuring
-        variables = request.body.variables
+        ;({ variables } = request.body)
         t.test('Upload.', uploadTest(request.body.variables.file))
           .then(() => next())
           .catch(next)
@@ -133,10 +131,8 @@ t.test('Single file.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    await t.resolves(
-      new Promise(resolve => file.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(file.capacitor.path), 'Cleanup.')
+    await new Promise(resolve => file.capacitor.once('close', resolve))
+    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 })
 
@@ -297,12 +293,13 @@ t.test('Handles unconsumed uploads.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(5)
+    t.plan(3)
 
     let variables
+
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-      // eslint-disable-next-line prefer-destructuring
-      variables = ctx.request.body.variables
+      ;({ variables } = ctx.request.body)
+
       await t.test('Upload B.', uploadBTest(ctx.request.body.variables.fileB))
 
       ctx.status = 204
@@ -314,27 +311,24 @@ t.test('Handles unconsumed uploads.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.fileA
-    await t.resolves(
-      new Promise(resolve => fileA.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
     const fileB = await variables.fileB
-    await t.resolves(
-      new Promise(resolve => fileB.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(5)
+    t.plan(3)
 
     let variables
+
     const app = express()
       .use(apolloUploadExpress())
       .use((request, response, next) => {
-        // eslint-disable-next-line prefer-destructuring
-        variables = request.body.variables
+        ;({ variables } = request.body)
+
         t.test('Upload B.', uploadBTest(request.body.variables.fileB))
           .then(() => next())
           .catch(next)
@@ -345,16 +339,12 @@ t.test('Handles unconsumed uploads.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.fileA
-    await t.resolves(
-      new Promise(resolve => fileA.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
     const fileB = await variables.fileB
-    await t.resolves(
-      new Promise(resolve => fileB.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
 
@@ -477,7 +467,7 @@ t.test('Aborted request.', async t => {
     }
 
     await t.test('Koa middleware.', async t => {
-      t.plan(7)
+      t.plan(5)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
@@ -486,6 +476,7 @@ t.test('Aborted request.', async t => {
 
       let variables
       let finish
+
       const finished = new Promise(resolve => (finish = resolve))
       const app = new Koa()
         .use(async (ctx, next) => {
@@ -494,18 +485,20 @@ t.test('Aborted request.', async t => {
         })
         .use(apolloUploadKoa())
         .use(async (ctx, next) => {
-          // eslint-disable-next-line prefer-destructuring
-          variables = ctx.request.body.variables
+          ;({ variables } = ctx.request.body)
+
           const fileA = await ctx.request.body.variables.fileA
           const fileB = await ctx.request.body.variables.fileB
 
           const streamA = fileA.createReadStream()
           const streamB = fileB.createReadStream()
+
           await Promise.all([
             t.test('Upload A.', uploadATest(fileA, streamA)),
             t.test('Upload B.', uploadBTest(fileB, streamB)),
             t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
           ])
+
           ctx.status = 204
           await next()
           finish()
@@ -515,20 +508,16 @@ t.test('Aborted request.', async t => {
       await finished
 
       const fileA = await variables.fileA
-      await t.resolves(
-        new Promise(resolve => fileA.capacitor.once('close', resolve))
-      )
-      t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
       const fileB = await variables.fileB
-      await t.resolves(
-        new Promise(resolve => fileB.capacitor.once('close', resolve))
-      )
-      t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
 
     await t.test('Express middleware.', async t => {
-      t.plan(7)
+      t.plan(5)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
@@ -537,6 +526,7 @@ t.test('Aborted request.', async t => {
 
       let variables
       let finish
+
       const finished = new Promise(resolve => (finish = resolve))
       const app = express()
         .use((request, response, next) => {
@@ -545,18 +535,20 @@ t.test('Aborted request.', async t => {
         })
         .use(apolloUploadExpress())
         .use(async (request, response, next) => {
-          // eslint-disable-next-line prefer-destructuring
-          variables = request.body.variables
+          ;({ variables } = request.body)
+
           const fileA = await request.body.variables.fileA
           const fileB = await request.body.variables.fileB
 
           const streamA = fileA.createReadStream()
           const streamB = fileB.createReadStream()
+
           await Promise.all([
             t.test('Upload A.', uploadATest(fileA, streamA)),
             t.test('Upload B.', uploadBTest(fileB, streamB)),
             t.test('Upload C.', uploadCTest(request.body.variables.fileC))
           ])
+
           finish()
           next()
         })
@@ -565,16 +557,12 @@ t.test('Aborted request.', async t => {
       await finished
 
       const fileA = await variables.fileA
-      await t.resolves(
-        new Promise(resolve => fileA.capacitor.once('close', resolve))
-      )
-      t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
       const fileB = await variables.fileB
-      await t.resolves(
-        new Promise(resolve => fileB.capacitor.once('close', resolve))
-      )
-      t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
   })
 
@@ -602,7 +590,7 @@ t.test('Aborted request.', async t => {
     }
 
     await t.test('Koa middleware.', async t => {
-      t.plan(7)
+      t.plan(5)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
@@ -611,6 +599,7 @@ t.test('Aborted request.', async t => {
 
       let variables
       let finish
+
       const finished = new Promise(resolve => (finish = resolve))
       const app = new Koa()
         .use(async (ctx, next) => {
@@ -619,14 +608,16 @@ t.test('Aborted request.', async t => {
         })
         .use(apolloUploadKoa())
         .use(async (ctx, next) => {
-          // eslint-disable-next-line prefer-destructuring
-          variables = ctx.request.body.variables
+          ;({ variables } = ctx.request.body)
+
           await new Promise(resolve => setTimeout(resolve, 10))
+
           await Promise.all([
             t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
             t.test('Upload B.', uploadBTest(ctx.request.body.variables.fileB)),
             t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
           ])
+
           ctx.status = 204
           await next()
           finish()
@@ -637,20 +628,16 @@ t.test('Aborted request.', async t => {
       await finished
 
       const fileA = await variables.fileA
-      await t.resolves(
-        new Promise(resolve => fileA.capacitor.once('close', resolve))
-      )
-      t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
       const fileB = await variables.fileB
-      await t.resolves(
-        new Promise(resolve => fileB.capacitor.once('close', resolve))
-      )
-      t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
 
     await t.test('Express middleware.', async t => {
-      t.plan(7)
+      t.plan(5)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
@@ -659,6 +646,7 @@ t.test('Aborted request.', async t => {
 
       let variables
       let finish
+
       const finished = new Promise(resolve => (finish = resolve))
       const app = express()
         .use((request, response, next) => {
@@ -667,8 +655,7 @@ t.test('Aborted request.', async t => {
         })
         .use(apolloUploadExpress())
         .use(async (request, response, next) => {
-          // eslint-disable-next-line prefer-destructuring
-          variables = request.body.variables
+          ;({ variables } = request.body)
           await new Promise(resolve => setTimeout(resolve, 10))
           await Promise.all([
             t.test('Upload A.', uploadATest(request.body.variables.fileA)),
@@ -683,16 +670,12 @@ t.test('Aborted request.', async t => {
       await finished
 
       const fileA = await variables.fileA
-      await t.resolves(
-        new Promise(resolve => fileA.capacitor.once('close', resolve))
-      )
-      t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
       const fileB = await variables.fileB
-      await t.resolves(
-        new Promise(resolve => fileB.capacitor.once('close', resolve))
-      )
-      t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
   })
 })
@@ -742,12 +725,13 @@ t.test('Deduped files.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(9)
+    t.plan(7)
 
     let variables
+
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-      // eslint-disable-next-line prefer-destructuring
-      variables = ctx.request.body.variables
+      ;({ variables } = ctx.request.body)
+
       t.strictSame(
         ctx.request.body.variables.files[0],
         ctx.request.body.variables.files[1],
@@ -758,10 +742,12 @@ t.test('Deduped files.', async t => {
         ctx.request.body.variables.files[0],
         ctx.request.body.variables.files[1]
       ])
+
       t.strictSame(file1, file2, 'Same file.')
 
       const stream1 = file1.createReadStream()
       const stream2 = file2.createReadStream()
+
       t.strictNotSame(stream1, stream2, 'Different streams.')
 
       await Promise.all([
@@ -778,27 +764,23 @@ t.test('Deduped files.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    await t.resolves(
-      new Promise(resolve => fileA.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
     const fileB = await variables.files[1]
-    await t.resolves(
-      new Promise(resolve => fileB.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(9)
+    t.plan(7)
 
     let variables
+
     const app = express()
       .use(apolloUploadExpress())
       .use(async (request, response, next) => {
-        // eslint-disable-next-line prefer-destructuring
-        variables = request.body.variables
+        ;({ variables } = request.body)
         t.strictSame(
           request.body.variables.files[0],
           request.body.variables.files[1],
@@ -828,16 +810,12 @@ t.test('Deduped files.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    await t.resolves(
-      new Promise(resolve => fileA.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
     const fileB = await variables.files[1]
-    await t.resolves(
-      new Promise(resolve => fileB.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
 
@@ -950,12 +928,12 @@ t.test('Extraneous file.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(3)
+    t.plan(2)
 
     let variables
+
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-      // eslint-disable-next-line prefer-destructuring
-      variables = ctx.request.body.variables
+      ;({ variables } = ctx.request.body)
       await t.test('Upload.', uploadTest(ctx.request.body.variables.file))
       ctx.status = 204
       await next()
@@ -966,21 +944,19 @@ t.test('Extraneous file.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    await t.resolves(
-      new Promise(resolve => file.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(file.capacitor.path), 'Cleanup.')
+    await new Promise(resolve => file.capacitor.once('close', resolve))
+    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(3)
+    t.plan(2)
 
     let variables
+
     const app = express()
       .use(apolloUploadExpress())
       .use((request, response, next) => {
-        // eslint-disable-next-line prefer-destructuring
-        variables = request.body.variables
+        ;({ variables } = request.body)
         t.test('Upload.', uploadTest(request.body.variables.file))
           .then(() => next())
           .catch(next)
@@ -991,10 +967,8 @@ t.test('Extraneous file.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    await t.resolves(
-      new Promise(resolve => file.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(file.capacitor.path), 'Cleanup.')
+    await new Promise(resolve => file.capacitor.once('close', resolve))
+    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 })
 
@@ -1118,16 +1092,17 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(4)
+    t.plan(3)
 
     let variables
     let finish
+
     const finished = new Promise(resolve => (finish = resolve))
     const app = new Koa()
       .use(apolloUploadKoa({ maxFiles: 2 }))
       .use(async (ctx, next) => {
-        // eslint-disable-next-line prefer-destructuring
-        variables = ctx.request.body.variables
+        ;({ variables } = ctx.request.body)
+
         await Promise.all([
           t.test('Upload A.', uploadATest(ctx.request.body.variables.files[0])),
           t.test('Upload B.', uploadBTest(ctx.request.body.variables.files[1]))
@@ -1144,21 +1119,19 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
     await finished
 
     const fileA = await variables.files[0]
-    await t.resolves(
-      new Promise(resolve => fileA.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
   })
 
   await t.skip('Express middleware.', async t => {
-    t.plan(4)
+    t.plan(3)
 
     let variables
+
     const app = express()
       .use(apolloUploadExpress({ maxFiles: 2 }))
       .use((request, response, next) => {
-        // eslint-disable-next-line prefer-destructuring
-        variables = request.body.variables
+        ;({ variables } = request.body)
         Promise.all([
           t.test('Upload A.', uploadATest(request.body.variables.files[0])),
           t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
@@ -1170,10 +1143,8 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    await t.resolves(
-      new Promise(resolve => fileA.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
   })
 })
 
@@ -1230,14 +1201,14 @@ t.test('Exceed max file size.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(6)
+    t.plan(4)
 
     let variables
+
     const app = new Koa()
       .use(apolloUploadKoa({ maxFileSize: 1 }))
       .use(async (ctx, next) => {
-        // eslint-disable-next-line prefer-destructuring
-        variables = ctx.request.body.variables
+        ;({ variables } = ctx.request.body)
         await t.test(
           'Upload A.',
           uploadATest(ctx.request.body.variables.files[0])
@@ -1257,27 +1228,24 @@ t.test('Exceed max file size.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    await t.resolves(
-      new Promise(resolve => fileA.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
     const fileB = await variables.files[1]
-    await t.resolves(
-      new Promise(resolve => fileB.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(6)
+    t.plan(4)
 
     let variables
+
     const app = express()
       .use(apolloUploadExpress({ maxFileSize: 1 }))
       .use((request, response, next) => {
-        // eslint-disable-next-line prefer-destructuring
-        variables = request.body.variables
+        ;({ variables } = request.body)
+
         Promise.all([
           t.test('Upload A.', uploadATest(request.body.variables.files[0])),
           t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
@@ -1289,16 +1257,12 @@ t.test('Exceed max file size.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    await t.resolves(
-      new Promise(resolve => fileA.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
     const fileB = await variables.files[1]
-    await t.resolves(
-      new Promise(resolve => fileB.capacitor.once('close', resolve))
-    )
-    t.notOk(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
 
