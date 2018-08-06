@@ -83,7 +83,8 @@
     "*.{json,yml,md}": "prettier -l"
   },
   "eslintIgnore": [
-    "lib"
+    "lib",
+    "tap-snapshots"
   ],
   "eslintConfig": {
     "extends": [

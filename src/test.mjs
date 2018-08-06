@@ -73,21 +73,12 @@ t.test('Single file.', async t => {
   }
 
   const uploadTest = upload => async t => {
-    // eslint-disable-next-line no-unused-vars
-    const { createReadStream, capacitor, ...meta } = await upload
-    const stream = createReadStream()
+    const resolved = await upload
+    const stream = resolved.createReadStream()
 
+    t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
     t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'a', 'Contents.')
-    t.deepEquals(
-      meta,
-      {
-        filename: 'a.txt',
-        mimetype: 'text/plain',
-        encoding: '7bit'
-      },
-      'Metadata.'
-    )
   }
 
   await t.test('Koa middleware.', async t => {
@@ -275,21 +266,12 @@ t.test('Handles unconsumed uploads.', async t => {
   }
 
   const uploadBTest = upload => async t => {
-    // eslint-disable-next-line no-unused-vars
-    const { createReadStream, capacitor, ...meta } = await upload
-    const stream = createReadStream()
+    const resolved = await upload
+    const stream = resolved.createReadStream()
 
+    t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
     t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'b', 'Contents.')
-    t.deepEquals(
-      meta,
-      {
-        filename: 'b.txt',
-        mimetype: 'text/plain',
-        encoding: '7bit'
-      },
-      'Metadata.'
-    )
   }
 
   await t.test('Koa middleware.', async t => {
@@ -378,8 +360,8 @@ t.test('Aborted request.', async t => {
       body.append('1', 'a', { filename: 'a.txt' })
       body.append(
         '2',
-        // Will arrive in multiple chunks as the TCP max packet size is 64KB
-        // and the default node fs stream buffer is 65536 bytes.
+        // Will arrive in multiple chunks as the TCP max packet size is 64000
+        // bytes and the default Node.js fs stream buffer is 65536 bytes.
         `${'1'.repeat(70000)}⛔${'2'.repeat(10)}`,
         { filename: 'b.txt' }
       )
@@ -436,19 +418,9 @@ t.test('Aborted request.', async t => {
 
   await t.test('Immediate stream creation.', async t => {
     const uploadATest = (file, stream) => async t => {
-      // eslint-disable-next-line no-unused-vars
-      const { createReadStream, capacitor, ...meta } = file
+      t.matchSnapshot(JSON.stringify(file, null, 2), 'Enumerable properties.')
       t.type(stream, ReadStream, 'Stream type.')
       t.equals(await streamToString(stream), 'a', 'Contents.')
-      t.deepEquals(
-        meta,
-        {
-          filename: 'a.txt',
-          mimetype: 'text/plain',
-          encoding: '7bit'
-        },
-        'Metadata.'
-      )
     }
 
     const uploadBTest = (file, stream) => async t => {
@@ -708,20 +680,9 @@ t.test('Deduped files.', async t => {
   }
 
   const uploadTest = (file, stream) => async t => {
-    // eslint-disable-next-line no-unused-vars
-    const { createReadStream, capacitor, ...meta } = file
-
+    t.matchSnapshot(JSON.stringify(file, null, 2), 'Enumerable properties.')
     t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'a', 'Contents.')
-    t.deepEquals(
-      meta,
-      {
-        filename: 'a.txt',
-        mimetype: 'text/plain',
-        encoding: '7bit'
-      },
-      'Metadata.'
-    )
   }
 
   await t.test('Koa middleware.', async t => {
@@ -910,21 +871,12 @@ t.test('Extraneous file.', async t => {
   }
 
   const uploadTest = upload => async t => {
-    // eslint-disable-next-line no-unused-vars
-    const { createReadStream, capacitor, ...meta } = await upload
-    const stream = createReadStream()
+    const resolved = await upload
+    const stream = resolved.createReadStream()
 
+    t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
     t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'a', 'Contents.')
-    t.deepEquals(
-      meta,
-      {
-        filename: 'a.txt',
-        mimetype: 'text/plain',
-        encoding: '7bit'
-      },
-      'Metadata.'
-    )
   }
 
   await t.test('Koa middleware.', async t => {
@@ -1070,20 +1022,11 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   }
 
   const uploadATest = upload => async t => {
-    // eslint-disable-next-line no-unused-vars
-    const { createReadStream, capacitor, ...meta } = await upload
-    const stream = createReadStream()
+    const resolved = await upload
+    const stream = resolved.createReadStream()
 
+    t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
     t.type(stream, ReadStream, 'Stream type.')
-    t.deepEquals(
-      meta,
-      {
-        filename: 'a.txt',
-        mimetype: 'text/plain',
-        encoding: '7bit'
-      },
-      'Metadata.'
-    )
     t.equals(await streamToString(stream), 'a', 'Contents.')
   }
 
@@ -1183,21 +1126,12 @@ t.test('Exceed max file size.', async t => {
   }
 
   const uploadBTest = upload => async t => {
-    // eslint-disable-next-line no-unused-vars
-    const { createReadStream, capacitor, ...meta } = await upload
-    const stream = createReadStream()
+    const resolved = await upload
+    const stream = resolved.createReadStream()
 
+    t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
     t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'b', 'Contents.')
-    t.deepEquals(
-      meta,
-      {
-        filename: 'b.txt',
-        mimetype: 'text/plain',
-        encoding: '7bit'
-      },
-      'Metadata.'
-    )
   }
 
   await t.test('Koa middleware.', async t => {
