@@ -3,6 +3,7 @@ import objectPath from 'object-path'
 import WriteStream from 'fs-capacitor'
 import {
   SPEC_URL,
+  ParseUploadError,
   MaxFileSizeUploadError,
   MaxFilesUploadError,
   MapBeforeOperationsUploadError,
@@ -86,7 +87,12 @@ export const processRequest = (
             operations = JSON.parse(value)
             operationsPath = objectPath(operations)
           } catch (error) {
-            exit(error)
+            exit(
+              new ParseUploadError(
+                `Invalid JSON in the ‘operations’ multipart field (${SPEC_URL}).`,
+                400
+              )
+            )
           }
           break
         case 'map': {
@@ -102,7 +108,12 @@ export const processRequest = (
           try {
             mapEntries = Object.entries(JSON.parse(value))
           } catch (error) {
-            return exit(error)
+            return exit(
+              new ParseUploadError(
+                `Invalid JSON in the ‘map’ multipart field (${SPEC_URL}).`,
+                400
+              )
+            )
           }
 
           // Check max files is not exceeded, even though the number of files to

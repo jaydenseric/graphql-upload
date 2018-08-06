@@ -2,7 +2,7 @@
 
 # apollo-upload-server
 
-[![Build status](https://travis-ci.org/jaydenseric/apollo-upload-server.svg)](https://travis-ci.org/jaydenseric/apollo-upload-server) [![npm version](https://badgen.now.sh/npm/v/apollo-upload-server)](https://npm.im/apollo-upload-server)
+[![Build status](https://travis-ci.org/jaydenseric/apollo-upload-server.svg?branch=master)](https://travis-ci.org/jaydenseric/apollo-upload-server) [![npm version](https://badgen.now.sh/npm/v/apollo-upload-server)](https://npm.im/apollo-upload-server)
 
 Enhances Node.js GraphQL servers for intuitive file uploads via GraphQL queries or mutations. Use with a [GraphQL multipart request spec client implementation](https://github.com/jaydenseric/graphql-multipart-request-spec#client) such as [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client).
 
