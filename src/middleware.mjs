@@ -188,20 +188,19 @@ export const processRequest = (
 
         upload.resolve(
           Object.create(null, {
-            capacitor: { value: capacitor, enumerable: false },
+            filename: { value: filename, enumerable: true },
+            mimetype: { value: mimetype, enumerable: true },
+            encoding: { value: encoding, enumerable: true },
             createReadStream: {
               value() {
                 const error = capacitor.error || (released ? exitError : null)
-
                 if (error) throw error
 
                 return capacitor.createReadStream()
               },
               enumerable: true
             },
-            encoding: { value: encoding, enumerable: true },
-            filename: { value: filename, enumerable: true },
-            mimetype: { value: mimetype, enumerable: true }
+            capacitor: { value: capacitor }
           })
         )
       } else {
