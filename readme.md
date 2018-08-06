@@ -79,22 +79,30 @@ app.use(
 
 ### Custom middleware
 
-Middleware wraps the async function `processRequest` which accepts a required [http.IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage), a required [http.ServerResponse](https://nodejs.org/api/http.html#http_class_http_serverresponse), and an optional [options object](#options) as arguments. It returns a promise that resolves an operations object for a GraphQL server to consume (usually as the request body). Import it to create custom middleware:
+To create custom middleware import the `processRequest` function:
 
 ```js
 import { processRequest } from 'apollo-upload-server'
 ```
 
+It has the following parameters:
+
+- `request` ([http.IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage)): Node.js HTTP server request instance.
+- `response` ([http.ServerResponse](https://nodejs.org/api/http.html#http_class_http_serverresponse)): Node.js HTTP server response instance.
+- `options` ([options object](#options)): Options (optional).
+
+It returns a promise that resolves an operations object for a GraphQL server to consume (usually as the request body).
+
 ### `Upload` scalar
 
 A file upload promise that resolves an object containing:
 
-- `filename`: `string` - the filename of the upload
-- `mimetype`: `string` - the mimetype of the upload
-- `encoding`: `string` - the encoding of the upload
-- `createReadStream`: `() => ReadStream` - calling this method returns a readable stream of the upload's contents. Calling `createReadStream` multiple times will create multiple streams which can be read indipendantly of each other. Note that `createReadStream` will throw if called after all resolvers have finished, or after an error has interrupted the request.
+- `filename` (string): File name.
+- `mimetype` (string): File MIME type.
+- `encoding` (string): File stream transfer encoding.
+- `createReadStream` (function): Returns a readable stream of the file contents. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request.
 
-It must be added to your types and resolvers:
+Add it to your types and resolvers:
 
 ```js
 import { makeExecutableSchema } from 'graphql-tools'

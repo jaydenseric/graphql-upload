@@ -34,11 +34,13 @@ export const processRequest = (
   { maxFieldSize, maxFileSize, maxFiles } = {}
 ) =>
   new Promise((resolve, reject) => {
+    let requestEnded = false
+    let released = false
+    let exitError
+    let currentStream
     let operations
     let operationsPath
     let map
-    let currentStream
-    let error
 
     const parser = new Busboy({
       headers: request.headers,
@@ -50,36 +52,33 @@ export const processRequest = (
       }
     })
 
-    const exit = exitError => {
-      if (error) return
-      error = exitError
+    const exit = error => {
+      if (exitError) return
+      exitError = error
 
-      reject(error)
+      reject(exitError)
 
       parser.destroy()
 
-      if (currentStream) currentStream.destroy(error)
+      if (currentStream) currentStream.destroy(exitError)
 
       if (map)
         for (const upload of map.values())
-          if (!upload.file) upload.reject(error)
+          if (!upload.file) upload.reject(exitError)
 
       request.unpipe(parser)
       request.resume()
     }
 
-    let isReleased = false
     const release = () => {
-      if (isReleased) return
-      isReleased = true
+      if (released) return
+      released = true
 
       if (map)
         for (const upload of map.values())
           if (upload.file) upload.file.capacitor.destroy()
     }
 
-    // Parser Events
-    // -------------
     parser.on('field', (fieldName, value) => {
       switch (fieldName) {
         case 'operations':
@@ -178,11 +177,11 @@ export const processRequest = (
           )
         })
 
-        stream.on('error', streamError => {
+        stream.on('error', error => {
           if (currentStream === stream) currentStream = null
 
           stream.unpipe()
-          capacitor.destroy(error || streamError)
+          capacitor.destroy(exitError || error)
         })
 
         stream.pipe(capacitor)
@@ -192,10 +191,10 @@ export const processRequest = (
             capacitor: { value: capacitor, enumerable: false },
             createReadStream: {
               value() {
-                const createReadStreamError =
-                  capacitor.error || (isReleased ? error : null)
+                const error = capacitor.error || (released ? exitError : null)
 
-                if (createReadStreamError) throw createReadStreamError
+                if (error) throw error
+
                 return capacitor.createReadStream()
               },
               enumerable: true
@@ -205,19 +204,18 @@ export const processRequest = (
             mimetype: { value: mimetype, enumerable: true }
           })
         )
-      }
-      // Discard the unexpected file.
-      else {
+      } else {
+        // Discard the unexpected file.
         stream.on('error', () => {})
         stream.resume()
       }
     })
 
-    parser.once('filesLimit', () => {
+    parser.once('filesLimit', () =>
       exit(
         new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`, 413)
       )
-    })
+    )
 
     parser.once('finish', () => {
       request.unpipe(parser)
@@ -231,18 +229,11 @@ export const processRequest = (
             )
     })
 
-    parser.once('error', error => {
-      exit(error)
-    })
+    parser.once('error', exit)
 
-    // Response Events
-    // ---------------
     response.once('finish', release)
     response.once('close', release)
 
-    // Request Events
-    // --------------
-    let requestEnded = false
     request.once('end', () => {
       requestEnded = true
     })
