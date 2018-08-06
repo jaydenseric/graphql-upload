@@ -52,8 +52,6 @@ const streamToString = stream =>
   })
 
 t.test('Single file.', async t => {
-  t.jobs = 2
-
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -128,8 +126,6 @@ t.test('Single file.', async t => {
 })
 
 t.test('Invalid ‘operations’ JSON.', async t => {
-  t.jobs = 2
-
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
@@ -179,8 +175,6 @@ t.test('Invalid ‘operations’ JSON.', async t => {
 })
 
 t.test('Invalid ‘map’ JSON.', async t => {
-  t.jobs = 2
-
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
@@ -237,8 +231,6 @@ t.test('Invalid ‘map’ JSON.', async t => {
 })
 
 t.test('Handles unconsumed uploads.', async t => {
-  t.jobs = 2
-
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -331,8 +323,6 @@ t.test('Handles unconsumed uploads.', async t => {
 })
 
 t.test('Aborted request.', async t => {
-  t.jobs = 2
-
   const sendRequest = (port, requestHasBeenReceived) =>
     new Promise((resolve, reject) => {
       const body = new FormData()
@@ -653,8 +643,6 @@ t.test('Aborted request.', async t => {
 })
 
 t.test('Deduped files.', async t => {
-  t.jobs = 2
-
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -781,8 +769,6 @@ t.test('Deduped files.', async t => {
 })
 
 t.test('Missing file.', async t => {
-  t.jobs = 2
-
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -843,8 +829,6 @@ t.test('Missing file.', async t => {
 })
 
 t.test('Extraneous file.', async t => {
-  t.jobs = 2
-
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -925,8 +909,6 @@ t.test('Extraneous file.', async t => {
 })
 
 t.test('Exceed max files.', async t => {
-  t.jobs = 2
-
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
@@ -992,8 +974,6 @@ t.test('Exceed max files.', async t => {
 })
 
 t.test('Exceed max files with extraneous files interspersed.', async t => {
-  t.jobs = 2
-
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -1092,8 +1072,6 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
 })
 
 t.test('Exceed max file size.', async t => {
-  t.jobs = 2
-
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -1201,8 +1179,6 @@ t.test('Exceed max file size.', async t => {
 })
 
 t.test('Misorder ‘map’ before ‘operations’.', async t => {
-  t.jobs = 2
-
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
@@ -1266,8 +1242,6 @@ t.test('Misorder ‘map’ before ‘operations’.', async t => {
 })
 
 t.test('Misorder files before ‘map’.', async t => {
-  t.jobs = 2
-
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
@@ -1331,8 +1305,6 @@ t.test('Misorder files before ‘map’.', async t => {
 })
 
 t.todo('Missing ‘map’ and files.', async t => {
-  t.jobs = 2
-
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
