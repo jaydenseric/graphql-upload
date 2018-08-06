@@ -1066,7 +1066,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
     t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
   })
 
-  await t.skip('Express middleware.', async t => {
+  await t.test('Express middleware.', async t => {
     t.plan(3)
 
     let variables

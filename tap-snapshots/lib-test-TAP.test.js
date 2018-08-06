@@ -109,6 +109,14 @@ exports[`lib/test TAP Exceed max files with extraneous files interspersed. Koa m
 }
 `
 
+exports[`lib/test TAP Exceed max files with extraneous files interspersed. Express middleware. Upload A. > Enumerable properties. 1`] = `
+{
+  "encoding": "7bit",
+  "filename": "a.txt",
+  "mimetype": "text/plain"
+}
+`
+
 exports[`lib/test TAP Exceed max file size. Koa middleware. Upload B. > Enumerable properties. 1`] = `
 {
   "encoding": "7bit",
