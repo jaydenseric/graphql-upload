@@ -2,13 +2,21 @@
 
 ## Next
 
+### Major
+
+- The `processRequest` function now requires a [`http.ServerResponse`](https://nodejs.org/api/http.html#http_class_http_serverresponse) instance as its second argument.
+- `Upload` scalar promises now resolve with a `createReadStream` method instead of a `stream` property, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
+
 ### Minor
 
+- An `Upload` variable can now be used by multiple resolvers, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
+- Multiple `Upload` scalar variables can now use the same multipart data, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
 - Export a new `ParseUploadError` that is thrown with a `400` status when `operations` or `map` multipart fields contain invalid JSON, fixing [#95](https://github.com/jaydenseric/apollo-upload-server/issues/95).
 
 ### Patch
 
 - Updated dev dependencies.
+- Removed the [`npm-run-all`](https://npm.im/npm-run-all) dev dependency and made scripts and tests sync for easier debugging, at the cost of slightly longer build times.
 - Configured Prettier to lint `.yml` files.
 - Ensure the readme Travis build status badge only tracks `master` branch.
 

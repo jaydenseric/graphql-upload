@@ -1,3 +1,4 @@
+import fs from 'fs'
 import stream from 'stream'
 import http from 'http'
 import t from 'tap'
@@ -5,6 +6,7 @@ import Koa from 'koa'
 import express from 'express'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
+import { ReadStream } from 'fs-capacitor'
 import {
   apolloUploadKoa,
   apolloUploadExpress,
@@ -14,12 +16,8 @@ import {
   MapBeforeOperationsUploadError,
   FilesBeforeMapUploadError,
   FileMissingUploadError,
-  UploadPromiseDisconnectUploadError,
-  FileStreamDisconnectUploadError
+  DisconnectUploadError
 } from '.'
-
-// See: https://github.com/mike-marcacci/fs-capacitor/issues/1
-process.setMaxListeners(20)
 
 // GraphQL multipart request spec:
 // https://github.com/jaydenseric/graphql-multipart-request-spec
@@ -54,8 +52,6 @@ const streamToString = stream =>
   })
 
 t.test('Single file.', async t => {
-  t.jobs = 2
-
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -75,25 +71,21 @@ t.test('Single file.', async t => {
   }
 
   const uploadTest = upload => async t => {
-    const { stream, ...meta } = await upload
+    const resolved = await upload
+    const stream = resolved.createReadStream()
 
-    t.type(stream, 'Capacitor', 'Stream type.')
+    t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
+    t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'a', 'Contents.')
-    t.deepEquals(
-      meta,
-      {
-        filename: 'a.txt',
-        mimetype: 'text/plain',
-        encoding: '7bit'
-      },
-      'Metadata.'
-    )
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(1)
+    t.plan(2)
+
+    let variables
 
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+      ;({ variables } = ctx.request.body)
       await t.test('Upload.', uploadTest(ctx.request.body.variables.file))
 
       ctx.status = 204
@@ -103,14 +95,21 @@ t.test('Single file.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
+
+    const file = await variables.file
+    await new Promise(resolve => file.capacitor.once('close', resolve))
+    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(1)
+    t.plan(2)
+
+    let variables
 
     const app = express()
       .use(apolloUploadExpress())
       .use((request, response, next) => {
+        ;({ variables } = request.body)
         t.test('Upload.', uploadTest(request.body.variables.file))
           .then(() => next())
           .catch(next)
@@ -119,12 +118,14 @@ t.test('Single file.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
+
+    const file = await variables.file
+    await new Promise(resolve => file.capacitor.once('close', resolve))
+    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 })
 
 t.test('Invalid ‘operations’ JSON.', async t => {
-  t.jobs = 2
-
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
@@ -174,8 +175,6 @@ t.test('Invalid ‘operations’ JSON.', async t => {
 })
 
 t.test('Invalid ‘map’ JSON.', async t => {
-  t.jobs = 2
-
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
@@ -232,8 +231,6 @@ t.test('Invalid ‘map’ JSON.', async t => {
 })
 
 t.test('Handles unconsumed uploads.', async t => {
-  t.jobs = 2
-
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -261,25 +258,22 @@ t.test('Handles unconsumed uploads.', async t => {
   }
 
   const uploadBTest = upload => async t => {
-    const { stream, ...meta } = await upload
+    const resolved = await upload
+    const stream = resolved.createReadStream()
 
-    t.type(stream, 'Capacitor', 'Stream type.')
+    t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
+    t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'b', 'Contents.')
-    t.deepEquals(
-      meta,
-      {
-        filename: 'b.txt',
-        mimetype: 'text/plain',
-        encoding: '7bit'
-      },
-      'Metadata.'
-    )
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(1)
+    t.plan(3)
+
+    let variables
 
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+      ;({ variables } = ctx.request.body)
+
       await t.test('Upload B.', uploadBTest(ctx.request.body.variables.fileB))
 
       ctx.status = 204
@@ -289,14 +283,26 @@ t.test('Handles unconsumed uploads.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
+
+    const fileA = await variables.fileA
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await variables.fileB
+    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(1)
+    t.plan(3)
+
+    let variables
 
     const app = express()
       .use(apolloUploadExpress())
       .use((request, response, next) => {
+        ;({ variables } = request.body)
+
         t.test('Upload B.', uploadBTest(request.body.variables.fileB))
           .then(() => next())
           .catch(next)
@@ -305,12 +311,18 @@ t.test('Handles unconsumed uploads.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
+
+    const fileA = await variables.fileA
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await variables.fileB
+    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
 
 t.test('Aborted request.', async t => {
-  t.jobs = 2
-
   const sendRequest = (port, requestHasBeenReceived) =>
     new Promise((resolve, reject) => {
       const body = new FormData()
@@ -338,7 +350,8 @@ t.test('Aborted request.', async t => {
       body.append('1', 'a', { filename: 'a.txt' })
       body.append(
         '2',
-        // Will arrive in multiple chunks as the TCP max packet size is 64KB.
+        // Will arrive in multiple chunks as the TCP max packet size is 64000
+        // bytes and the default Node.js fs stream buffer is 65536 bytes.
         `${'1'.repeat(70000)}⛔${'2'.repeat(10)}`,
         { filename: 'b.txt' }
       )
@@ -389,56 +402,44 @@ t.test('Aborted request.', async t => {
       body.pipe(transform).pipe(request)
     })
 
-  const uploadATest = upload => async t => {
-    const { stream, ...meta } = await upload
-
-    t.type(stream, 'Capacitor', 'Stream type.')
-    t.equals(await streamToString(stream), 'a', 'Contents.')
-    t.deepEquals(
-      meta,
-      {
-        filename: 'a.txt',
-        mimetype: 'text/plain',
-        encoding: '7bit'
-      },
-      'Metadata.'
-    )
-  }
-
-  const uploadBTest = upload => async t => {
-    const { stream } = await upload
-
-    await new Promise(resolve => {
-      stream
-        .on('error', error => {
-          t.type(error, FileStreamDisconnectUploadError, 'Stream error.')
-          resolve()
-        })
-        .on('end', () => {
-          t.fail('File shouldn’t fully upload.')
-          resolve()
-        })
-        .resume()
-    })
-  }
-
   const uploadCTest = upload => async t => {
-    await t.rejects(
-      upload,
-      UploadPromiseDisconnectUploadError,
-      'Rejection error.'
-    )
+    await t.rejects(upload, DisconnectUploadError, 'Rejection error.')
   }
 
-  await t.test('Stream error handled.', async t => {
+  await t.test('Immediate stream creation.', async t => {
+    const uploadATest = (file, stream) => async t => {
+      t.matchSnapshot(JSON.stringify(file, null, 2), 'Enumerable properties.')
+      t.type(stream, ReadStream, 'Stream type.')
+      t.equals(await streamToString(stream), 'a', 'Contents.')
+    }
+
+    const uploadBTest = (file, stream) => async t => {
+      await new Promise(resolve => {
+        stream
+          .on('error', error => {
+            t.type(error, DisconnectUploadError, 'Stream error.')
+            resolve()
+          })
+          .on('end', () => {
+            t.fail('File shouldn’t fully upload.')
+            resolve()
+          })
+          .resume()
+      })
+    }
+
     await t.test('Koa middleware.', async t => {
-      t.plan(3)
+      t.plan(5)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
         resolve => (requestHasBeenReceived = resolve)
       )
 
+      let variables
+      let finish
+
+      const finished = new Promise(resolve => (finish = resolve))
       const app = new Koa()
         .use(async (ctx, next) => {
           requestHasBeenReceived()
@@ -446,104 +447,202 @@ t.test('Aborted request.', async t => {
         })
         .use(apolloUploadKoa())
         .use(async (ctx, next) => {
+          ;({ variables } = ctx.request.body)
+
+          const fileA = await ctx.request.body.variables.fileA
+          const fileB = await ctx.request.body.variables.fileB
+
+          const streamA = fileA.createReadStream()
+          const streamB = fileB.createReadStream()
+
+          await Promise.all([
+            t.test('Upload A.', uploadATest(fileA, streamA)),
+            t.test('Upload B.', uploadBTest(fileB, streamB)),
+            t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
+          ])
+
+          ctx.status = 204
+          await next()
+          finish()
+        })
+      const port = await startServer(t, app)
+      await sendRequest(port, requestHasBeenReceivedPromise)
+      await finished
+
+      const fileA = await variables.fileA
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+      const fileB = await variables.fileB
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    })
+
+    await t.test('Express middleware.', async t => {
+      t.plan(5)
+
+      let requestHasBeenReceived
+      const requestHasBeenReceivedPromise = new Promise(
+        resolve => (requestHasBeenReceived = resolve)
+      )
+
+      let variables
+      let finish
+
+      const finished = new Promise(resolve => (finish = resolve))
+      const app = express()
+        .use((request, response, next) => {
+          requestHasBeenReceived()
+          next()
+        })
+        .use(apolloUploadExpress())
+        .use(async (request, response, next) => {
+          ;({ variables } = request.body)
+
+          const fileA = await request.body.variables.fileA
+          const fileB = await request.body.variables.fileB
+
+          const streamA = fileA.createReadStream()
+          const streamB = fileB.createReadStream()
+
+          await Promise.all([
+            t.test('Upload A.', uploadATest(fileA, streamA)),
+            t.test('Upload B.', uploadBTest(fileB, streamB)),
+            t.test('Upload C.', uploadCTest(request.body.variables.fileC))
+          ])
+
+          finish()
+          next()
+        })
+      const port = await startServer(t, app)
+      await sendRequest(port, requestHasBeenReceivedPromise)
+      await finished
+
+      const fileA = await variables.fileA
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+      const fileB = await variables.fileB
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    })
+  })
+
+  await t.test('Delayed stream creation.', async t => {
+    const uploadATest = upload => async t => {
+      const { createReadStream } = await upload
+      t.throws(
+        () => {
+          createReadStream()
+        },
+        DisconnectUploadError,
+        'Stream error.'
+      )
+    }
+
+    const uploadBTest = upload => async t => {
+      const { createReadStream } = await upload
+      t.throws(
+        () => {
+          createReadStream()
+        },
+        DisconnectUploadError,
+        'Stream error.'
+      )
+    }
+
+    await t.test('Koa middleware.', async t => {
+      t.plan(5)
+
+      let requestHasBeenReceived
+      const requestHasBeenReceivedPromise = new Promise(
+        resolve => (requestHasBeenReceived = resolve)
+      )
+
+      let variables
+      let finish
+
+      const finished = new Promise(resolve => (finish = resolve))
+      const app = new Koa()
+        .use(async (ctx, next) => {
+          requestHasBeenReceived()
+          await next()
+        })
+        .use(apolloUploadKoa())
+        .use(async (ctx, next) => {
+          ;({ variables } = ctx.request.body)
+
+          await new Promise(resolve => setTimeout(resolve, 10))
+
           await Promise.all([
             t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
             t.test('Upload B.', uploadBTest(ctx.request.body.variables.fileB)),
             t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
           ])
+
           ctx.status = 204
           await next()
+          finish()
         })
+
       const port = await startServer(t, app)
       await sendRequest(port, requestHasBeenReceivedPromise)
+      await finished
+
+      const fileA = await variables.fileA
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+      const fileB = await variables.fileB
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
 
     await t.test('Express middleware.', async t => {
-      t.plan(3)
+      t.plan(5)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
         resolve => (requestHasBeenReceived = resolve)
       )
 
+      let variables
+      let finish
+
+      const finished = new Promise(resolve => (finish = resolve))
       const app = express()
         .use((request, response, next) => {
           requestHasBeenReceived()
           next()
         })
         .use(apolloUploadExpress())
-        .use((request, response, next) => {
-          Promise.all([
+        .use(async (request, response, next) => {
+          ;({ variables } = request.body)
+          await new Promise(resolve => setTimeout(resolve, 10))
+          await Promise.all([
             t.test('Upload A.', uploadATest(request.body.variables.fileA)),
             t.test('Upload B.', uploadBTest(request.body.variables.fileB)),
             t.test('Upload C.', uploadCTest(request.body.variables.fileC))
-          ]).then(() => {
-            next()
-          })
-        })
-      const port = await startServer(t, app)
-      await sendRequest(port, requestHasBeenReceivedPromise)
-    })
-  })
-
-  await t.test('Stream error unhandled.', async t => {
-    await t.test('Koa middleware.', async t => {
-      t.plan(2)
-
-      let requestHasBeenReceived
-      const requestHasBeenReceivedPromise = new Promise(
-        resolve => (requestHasBeenReceived = resolve)
-      )
-
-      const app = new Koa()
-        .use(async (ctx, next) => {
-          requestHasBeenReceived()
-          await next()
-        })
-        .use(apolloUploadKoa())
-        .use(async (ctx, next) => {
-          await Promise.all([
-            t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
-            t.test('Upload C.', uploadCTest(ctx.request.body.variables.fileC))
           ])
-          ctx.status = 204
-          await next()
-        })
-      const port = await startServer(t, app)
-      await sendRequest(port, requestHasBeenReceivedPromise)
-    })
-
-    await t.test('Express middleware.', async t => {
-      t.plan(2)
-
-      let requestHasBeenReceived
-      const requestHasBeenReceivedPromise = new Promise(
-        resolve => (requestHasBeenReceived = resolve)
-      )
-
-      const app = express()
-        .use((request, response, next) => {
-          requestHasBeenReceived()
+          finish()
           next()
         })
-        .use(apolloUploadExpress())
-        .use((request, response, next) => {
-          Promise.all([
-            t.test('Upload A.', uploadATest(request.body.variables.fileA)),
-            t.test('Upload C.', uploadCTest(request.body.variables.fileC))
-          ]).then(() => {
-            next()
-          })
-        })
       const port = await startServer(t, app)
       await sendRequest(port, requestHasBeenReceivedPromise)
+      await finished
+
+      const fileA = await variables.fileA
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+      const fileB = await variables.fileB
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
   })
 })
 
-t.todo('Deduped files.', async t => {
-  t.jobs = 2
-
+t.test('Deduped files.', async t => {
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -568,29 +667,41 @@ t.todo('Deduped files.', async t => {
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
 
-  const uploadTest = upload => async t => {
-    const { stream, ...meta } = await upload
-
-    t.type(stream, 'Capacitor', 'Stream type.')
+  const uploadTest = (file, stream) => async t => {
+    t.matchSnapshot(JSON.stringify(file, null, 2), 'Enumerable properties.')
+    t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'a', 'Contents.')
-    t.deepEquals(
-      meta,
-      {
-        filename: 'a.txt',
-        mimetype: 'text/plain',
-        encoding: '7bit'
-      },
-      'Metadata.'
-    )
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(2)
+    t.plan(7)
+
+    let variables
 
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+      ;({ variables } = ctx.request.body)
+
+      t.strictSame(
+        ctx.request.body.variables.files[0],
+        ctx.request.body.variables.files[1],
+        'Same promise.'
+      )
+
+      const [file1, file2] = await Promise.all([
+        ctx.request.body.variables.files[0],
+        ctx.request.body.variables.files[1]
+      ])
+
+      t.strictSame(file1, file2, 'Same file.')
+
+      const stream1 = file1.createReadStream()
+      const stream2 = file2.createReadStream()
+
+      t.strictNotSame(stream1, stream2, 'Different streams.')
+
       await Promise.all([
-        t.test('Upload A.', uploadTest(ctx.request.body.variables.files[0])),
-        t.test('Upload B.', uploadTest(ctx.request.body.variables.files[1]))
+        t.test('Upload A.', uploadTest(file1, stream1)),
+        t.test('Upload B.', uploadTest(file2, stream2))
       ])
 
       ctx.status = 204
@@ -600,29 +711,64 @@ t.todo('Deduped files.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
+
+    const fileA = await variables.files[0]
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await variables.files[1]
+    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(2)
+    t.plan(7)
+
+    let variables
 
     const app = express()
       .use(apolloUploadExpress())
-      .use((request, response, next) => {
-        Promise.all([
-          t.test('Upload A.', uploadTest(request.body.variables.files[0])),
-          t.test('Upload B.', uploadTest(request.body.variables.files[1]))
-        ]).then(() => next())
+      .use(async (request, response, next) => {
+        ;({ variables } = request.body)
+        t.strictSame(
+          request.body.variables.files[0],
+          request.body.variables.files[1],
+          'Same promise.'
+        )
+
+        const [file1, file2] = await Promise.all([
+          request.body.variables.files[0],
+          request.body.variables.files[1]
+        ])
+        t.strictSame(file1, file2, 'Same file.')
+
+        const stream1 = file1.createReadStream()
+        const stream2 = file2.createReadStream()
+        t.strictNotSame(stream1, stream2, 'Different streams.')
+
+        await Promise.all([
+          t.test('Upload A.', uploadTest(file1, stream1)),
+          t.test('Upload B.', uploadTest(file2, stream2))
+        ])
+
+        next()
       })
 
     const port = await startServer(t, app)
 
     await sendRequest(port)
+
+    const fileA = await variables.files[0]
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await variables.files[1]
+    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
 
 t.test('Missing file.', async t => {
-  t.jobs = 2
-
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -683,8 +829,6 @@ t.test('Missing file.', async t => {
 })
 
 t.test('Extraneous file.', async t => {
-  t.jobs = 2
-
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -711,25 +855,21 @@ t.test('Extraneous file.', async t => {
   }
 
   const uploadTest = upload => async t => {
-    const { stream, ...meta } = await upload
+    const resolved = await upload
+    const stream = resolved.createReadStream()
 
-    t.type(stream, 'Capacitor', 'Stream type.')
+    t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
+    t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'a', 'Contents.')
-    t.deepEquals(
-      meta,
-      {
-        filename: 'a.txt',
-        mimetype: 'text/plain',
-        encoding: '7bit'
-      },
-      'Metadata.'
-    )
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(1)
+    t.plan(2)
+
+    let variables
 
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+      ;({ variables } = ctx.request.body)
       await t.test('Upload.', uploadTest(ctx.request.body.variables.file))
       ctx.status = 204
       await next()
@@ -738,14 +878,21 @@ t.test('Extraneous file.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
+
+    const file = await variables.file
+    await new Promise(resolve => file.capacitor.once('close', resolve))
+    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(1)
+    t.plan(2)
+
+    let variables
 
     const app = express()
       .use(apolloUploadExpress())
       .use((request, response, next) => {
+        ;({ variables } = request.body)
         t.test('Upload.', uploadTest(request.body.variables.file))
           .then(() => next())
           .catch(next)
@@ -754,12 +901,14 @@ t.test('Extraneous file.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
+
+    const file = await variables.file
+    await new Promise(resolve => file.capacitor.once('close', resolve))
+    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 })
 
 t.test('Exceed max files.', async t => {
-  t.jobs = 2
-
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
@@ -825,8 +974,6 @@ t.test('Exceed max files.', async t => {
 })
 
 t.test('Exceed max files with extraneous files interspersed.', async t => {
-  t.jobs = 2
-
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -855,18 +1002,12 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   }
 
   const uploadATest = upload => async t => {
-    const { stream, ...meta } = await upload
+    const resolved = await upload
+    const stream = resolved.createReadStream()
 
-    t.type(stream, 'Capacitor', 'Stream type.')
-    t.deepEquals(
-      meta,
-      {
-        filename: 'a.txt',
-        mimetype: 'text/plain',
-        encoding: '7bit'
-      },
-      'Metadata.'
-    )
+    t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
+    t.type(stream, ReadStream, 'Stream type.')
+    t.equals(await streamToString(stream), 'a', 'Contents.')
   }
 
   const uploadBTest = upload => async t => {
@@ -874,11 +1015,17 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(2)
+    t.plan(3)
 
+    let variables
+    let finish
+
+    const finished = new Promise(resolve => (finish = resolve))
     const app = new Koa()
       .use(apolloUploadKoa({ maxFiles: 2 }))
       .use(async (ctx, next) => {
+        ;({ variables } = ctx.request.body)
+
         await Promise.all([
           t.test('Upload A.', uploadATest(ctx.request.body.variables.files[0])),
           t.test('Upload B.', uploadBTest(ctx.request.body.variables.files[1]))
@@ -886,19 +1033,28 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
 
         ctx.status = 204
         await next()
+        finish()
       })
 
     const port = await startServer(t, app)
 
     await sendRequest(port)
+    await finished
+
+    const fileA = await variables.files[0]
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(2)
+    t.plan(3)
+
+    let variables
 
     const app = express()
       .use(apolloUploadExpress({ maxFiles: 2 }))
       .use((request, response, next) => {
+        ;({ variables } = request.body)
         Promise.all([
           t.test('Upload A.', uploadATest(request.body.variables.files[0])),
           t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
@@ -908,12 +1064,14 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
+
+    const fileA = await variables.files[0]
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
   })
 })
 
 t.test('Exceed max file size.', async t => {
-  t.jobs = 2
-
   const sendRequest = async port => {
     const body = new FormData()
 
@@ -941,40 +1099,28 @@ t.test('Exceed max file size.', async t => {
   }
 
   const uploadATest = upload => async t => {
-    const { stream } = await upload
-
-    await new Promise((resolve, reject) => {
-      stream
-        .on('error', error => {
-          t.type(error, MaxFileSizeUploadError, 'Stream error.')
-          resolve()
-        })
-        .on('end', reject)
-    })
+    const { createReadStream } = await upload
+    t.throws(() => createReadStream(), MaxFileSizeUploadError, 'Stream error.')
   }
 
   const uploadBTest = upload => async t => {
-    const { stream, ...meta } = await upload
+    const resolved = await upload
+    const stream = resolved.createReadStream()
 
-    t.type(stream, 'Capacitor', 'Stream type.')
+    t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
+    t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'b', 'Contents.')
-    t.deepEquals(
-      meta,
-      {
-        filename: 'b.txt',
-        mimetype: 'text/plain',
-        encoding: '7bit'
-      },
-      'Metadata.'
-    )
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(2)
+    t.plan(4)
+
+    let variables
 
     const app = new Koa()
       .use(apolloUploadKoa({ maxFileSize: 1 }))
       .use(async (ctx, next) => {
+        ;({ variables } = ctx.request.body)
         await t.test(
           'Upload A.',
           uploadATest(ctx.request.body.variables.files[0])
@@ -992,14 +1138,26 @@ t.test('Exceed max file size.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
+
+    const fileA = await variables.files[0]
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await variables.files[1]
+    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(2)
+    t.plan(4)
+
+    let variables
 
     const app = express()
       .use(apolloUploadExpress({ maxFileSize: 1 }))
       .use((request, response, next) => {
+        ;({ variables } = request.body)
+
         Promise.all([
           t.test('Upload A.', uploadATest(request.body.variables.files[0])),
           t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
@@ -1009,12 +1167,18 @@ t.test('Exceed max file size.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
+
+    const fileA = await variables.files[0]
+    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await variables.files[1]
+    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
 
 t.test('Misorder ‘map’ before ‘operations’.', async t => {
-  t.jobs = 2
-
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
@@ -1078,8 +1242,6 @@ t.test('Misorder ‘map’ before ‘operations’.', async t => {
 })
 
 t.test('Misorder files before ‘map’.', async t => {
-  t.jobs = 2
-
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
@@ -1143,8 +1305,6 @@ t.test('Misorder files before ‘map’.', async t => {
 })
 
 t.todo('Missing ‘map’ and files.', async t => {
-  t.jobs = 2
-
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
