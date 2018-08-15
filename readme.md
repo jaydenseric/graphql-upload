@@ -41,79 +41,169 @@ npm install apollo-upload-server graphql
 
 Add the middleware just before GraphQL middleware.
 
-### Options
-
-- `maxFieldSize` (integer): Max allowed non-file multipart form field size in bytes; enough for your queries (default: 1 MB).
-- `maxFileSize` (integer): Max allowed file size in bytes (default: Infinity).
-- `maxFiles` (integer): Max allowed number of files (default: Infinity).
-
-### Koa
-
-```js
-import { apolloUploadKoa } from 'apollo-upload-server'
-
-// …
-
-router.post(
-  '/graphql',
-  koaBody(),
-  apolloUploadKoa(/* Options */),
-  graphqlKoa(/* … */)
-)
-```
-
-### Express
-
-```js
-import { apolloUploadExpress } from 'apollo-upload-server'
-
-// …
-
-app.use(
-  '/graphql',
-  bodyParser.json(),
-  apolloUploadExpress(/* Options */),
-  graphqlExpress(/* … */)
-)
-```
-
-### Custom middleware
-
-To create custom middleware import the `processRequest` function:
-
-```js
-import { processRequest } from 'apollo-upload-server'
-```
-
-It has the following parameters:
-
-- `request` ([http.IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage)): Node.js HTTP server request instance.
-- `response` ([http.ServerResponse](https://nodejs.org/api/http.html#http_class_http_serverresponse)): Node.js HTTP server response instance.
-- `options` ([options object](#options)): Options (optional).
-
-It returns a promise that resolves an operations object for a GraphQL server to consume (usually as the request body).
-
-### `Upload` scalar
-
-A file upload promise that resolves an object containing:
-
-- `filename` (string): File name.
-- `mimetype` (string): File MIME type.
-- `encoding` (string): File stream transfer encoding.
-- `createReadStream` (function): Returns a readable stream of the file contents. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request.
-
-Add it to your types and resolvers:
-
-```js
-import { makeExecutableSchema } from 'graphql-tools'
-import { GraphQLUpload } from 'apollo-upload-server'
-
-const schema = makeExecutableSchema({
-  typeDefs: `scalar Upload`,
-  resolvers: { Upload: GraphQLUpload }
-})
-```
-
 ## Usage
 
 Files uploaded via a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec) appear as [`Upload` scalars](#upload-scalar) in resolver arguments. The upload streams can be used to store the files in the local filesystem or in the cloud. See also [apollo-upload-client usage](https://github.com/jaydenseric/apollo-upload-client#usage) and the [example API and client](https://github.com/jaydenseric/apollo-upload-examples).
+
+## API
+
+### Table of contents
+
+- [class GraphQLUpload](#class-graphqlupload)
+  - [Examples](#examples)
+- [function apolloUploadExpress](#function-apollouploadexpress)
+  - [Examples](#examples-1)
+- [function apolloUploadKoa](#function-apollouploadkoa)
+  - [Examples](#examples-2)
+- [function processRequest](#function-processrequest)
+  - [Examples](#examples-3)
+- [constant SPEC_URL](#constant-spec_url)
+  - [Examples](#examples-4)
+- [type GraphQLOperation](#type-graphqloperation)
+  - [See](#see)
+- [type UploadFile](#type-uploadfile)
+- [type UploadOptions](#type-uploadoptions)
+
+### class GraphQLUpload
+
+GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphql.org/graphql-js/type/#graphqlschema).
+
+#### Examples
+
+_How to import._
+
+> ```js
+> import { GraphQLUpload } from 'apollo-upload-server'
+> ```
+
+### function apolloUploadExpress
+
+Creates Express middleware that processes GraphQL multipart requests using [`processRequest`](#function-processrequest), ignoring non-multipart requests.
+
+| Parameter | Type                                 | Description             |
+| :-------- | :----------------------------------- | :---------------------- |
+| `options` | [UploadOptions](#type-uploadoptions) | GraphQL upload options. |
+
+**Returns:** [function](https://developer.mozilla.org/javascript/reference/global_objects/function) — Express middleware.
+
+#### Examples
+
+_Basic [`express-graphql`](https://npm.im/express-graphql) setup._
+
+> ```js
+> import express from 'express'
+> import graphqlHTTP from 'express-graphql'
+> import { apolloUploadExpress } from 'apollo-upload-server'
+> import schema from './schema'
+>
+> express()
+>   .use(
+>     '/graphql',
+>     apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
+>     graphqlHTTP({ schema })
+>   )
+>   .listen(3000)
+> ```
+
+### function apolloUploadKoa
+
+Creates Koa middleware that processes GraphQL multipart requests using [`processRequest`](#function-processrequest), ignoring non-multipart requests.
+
+| Parameter | Type                                 | Description             |
+| :-------- | :----------------------------------- | :---------------------- |
+| `options` | [UploadOptions](#type-uploadoptions) | GraphQL upload options. |
+
+**Returns:** [function](https://developer.mozilla.org/javascript/reference/global_objects/function) — Koa middleware.
+
+#### Examples
+
+_Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
+
+> ```js
+> import Koa from 'koa'
+> import bodyParser from 'koa-bodyparser'
+> import { errorHandler, execute } from 'graphql-api-koa'
+> import { apolloUploadKoa } from 'apollo-upload-server'
+> import schema from './schema'
+>
+> new Koa()
+>   .use(errorHandler())
+>   .use(bodyParser())
+>   .use(apolloUploadKoa({ maxFileSize: 10000000, maxFiles: 10 }))
+>   .use(execute({ schema }))
+>   .listen(3000)
+> ```
+
+### function processRequest
+
+Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). Used in [`apolloUploadKoa`](#function-apollouploadkoa) and [`apolloUploadExpress`](#function-apollouploadexpress) and can be used to create custom middleware.
+
+| Parameter  | Type                                  | Description                                                                                               |
+| :--------- | :------------------------------------ | :-------------------------------------------------------------------------------------------------------- |
+| `request`  | IncomingMessage                       | [Node.js HTTP server request instance](https://nodejs.org/api/http.html#http_class_http_incomingmessage). |
+| `response` | ServerResponse                        | [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse). |
+| `options`  | [UploadOptions](#type-uploadoptions)? | GraphQL upload options.                                                                                   |
+
+**Returns:** Promise&lt;[GraphQLOperation](#type-graphqloperation) | [Array](https://developer.mozilla.org/javascript/reference/global_objects/array)&lt;[GraphQLOperation](#type-graphqloperation)>> — GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
+
+#### Examples
+
+_How to import._
+
+> ```js
+> import { processRequest } from 'apollo-upload-server'
+> ```
+
+### constant SPEC_URL
+
+Official [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec) URL. Useful for error messages, etc.
+
+#### Examples
+
+_How to import._
+
+> ```js
+> import { SPEC_URL } from 'apollo-upload-server'
+> ```
+
+### type GraphQLOperation
+
+A GraphQL operation that can be consumed and executed by most GraphQL servers.
+
+**Type:** [object](https://developer.mozilla.org/javascript/reference/global_objects/object)
+
+| Property        | Type                                                                                        | Description                                          |
+| :-------------- | :------------------------------------------------------------------------------------------ | :--------------------------------------------------- |
+| `query`         | [string](https://developer.mozilla.org/javascript/reference/global_objects/string)          | GraphQL document containing queries and fragments.   |
+| `operationName` | [string](https://developer.mozilla.org/javascript/reference/global_objects/string) \| null? | GraphQL document operation name to execute.          |
+| `variables`     | [object](https://developer.mozilla.org/javascript/reference/global_objects/object) \| null? | GraphQL document operation variables and values map. |
+
+#### See
+
+- [GraphQL over HTTP spec](https://github.com/APIs-guru/graphql-over-http#request-parameters).
+- [Apollo Server POST requests](https://www.apollographql.com/docs/apollo-server/requests#postRequests).
+
+### type UploadFile
+
+Resolved details about a file upload.
+
+**Type:** [object](https://developer.mozilla.org/javascript/reference/global_objects/object)
+
+| Property           | Type                                                                                   | Description                                                                                                                                                                                           |
+| :----------------- | :------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `filename`         | [string](https://developer.mozilla.org/javascript/reference/global_objects/string)     | File name.                                                                                                                                                                                            |
+| `mimetype`         | [string](https://developer.mozilla.org/javascript/reference/global_objects/string)     | File MIME type.                                                                                                                                                                                       |
+| `encoding`         | [string](https://developer.mozilla.org/javascript/reference/global_objects/string)     | File stream transfer encoding.                                                                                                                                                                        |
+| `createReadStream` | [function](https://developer.mozilla.org/javascript/reference/global_objects/function) | Returns a Node.js readable stream of the file contents. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. |
+
+### type UploadOptions
+
+GraphQL upload server options, mostly relating to security, performance and limits.
+
+**Type:** [object](https://developer.mozilla.org/javascript/reference/global_objects/object)
+
+| Property       | Type                                                                                             | Description                                                                           |
+| :------------- | :----------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
+| `maxFieldSize` | [number](https://developer.mozilla.org/javascript/reference/global_objects/number)? = `1000000`  | Maximum allowed non-file multipart form field size in bytes; enough for your queries. |
+| `maxFileSize`  | [number](https://developer.mozilla.org/javascript/reference/global_objects/number)? = `Infinity` | Maximum allowed file size in bytes.                                                   |
+| `maxFiles`     | [number](https://developer.mozilla.org/javascript/reference/global_objects/number)? = `Infinity` | Maximum allowed number of files.                                                      |

@@ -12,14 +12,77 @@ import {
   DisconnectUploadError
 } from './errors'
 
+/**
+ * GraphQL upload server options, mostly relating to security, performance and
+ * limits.
+ * @kind typedef
+ * @name UploadOptions
+ * @type {object}
+ * @prop {number} [maxFieldSize=1000000] Maximum allowed non-file multipart form field size in bytes; enough for your queries.
+ * @prop {number} [maxFileSize=Infinity] Maximum allowed file size in bytes.
+ * @prop {number} [maxFiles=Infinity] Maximum allowed number of files.
+ */
+
+/**
+ * Resolved details about a file upload.
+ * @kind typedef
+ * @name UploadFile
+ * @type {object}
+ * @prop {string} filename File name.
+ * @prop {string} mimetype File MIME type.
+ * @prop {string} encoding File stream transfer encoding.
+ * @prop {function} createReadStream Returns a Node.js readable stream of the file contents. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request.
+ */
+
+/**
+ * A GraphQL operation that can be consumed and executed by most GraphQL servers.
+ * @kind typedef
+ * @name GraphQLOperation
+ * @type {object}
+ * @prop {string} query GraphQL document containing queries and fragments.
+ * @prop {string|null} [operationName] GraphQL document operation name to execute.
+ * @prop {object|null} [variables] GraphQL document operation variables and values map.
+ * @see [GraphQL over HTTP spec](https://github.com/APIs-guru/graphql-over-http#request-parameters).
+ * @see [Apollo Server POST requests](https://www.apollographql.com/docs/apollo-server/requests#postRequests).
+ */
+
+/**
+ * An expected file upload.
+ * @kind class
+ * @name Upload
+ * @ignore
+ */
 class Upload {
+  // eslint-disable-next-line require-jsdoc
   constructor() {
+    /**
+     * Promise that resolves file details.
+     * @kind member
+     * @name Upload#promise
+     * @type {Promise<UploadFile>}
+     * @ignore
+     */
     this.promise = new Promise((resolve, reject) => {
-      this.reject = reject
+      /**
+       * Resolves the upload promise with the file details.
+       * @kind function
+       * @name Upload#resolve
+       * @param {Object} file File details.
+       * @ignore
+       */
       this.resolve = file => {
         this.file = file
         resolve(file)
       }
+
+      /**
+       * Rejects the upload promise with an error.
+       * @kind function
+       * @name Upload#reject
+       * @param {object} error Error instance.
+       * @ignore
+       */
+      this.reject = reject
     })
 
     // Prevent errors crashing Node.js, see:
@@ -28,6 +91,21 @@ class Upload {
   }
 }
 
+/**
+ * Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
+ * Used in [`apolloUploadKoa`]{@link apolloUploadKoa} and [`apolloUploadExpress`]{@link apolloUploadExpress}
+ * and can be used to create custom middleware.
+ * @kind function
+ * @name processRequest
+ * @param {IncomingMessage} request [Node.js HTTP server request instance](https://nodejs.org/api/http.html#http_class_http_incomingmessage).
+ * @param {ServerResponse} response [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse).
+ * @param {UploadOptions} [options] GraphQL upload options.
+ * @returns {Promise<GraphQLOperation | Array<GraphQLOperation>>} GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
+ * @example <caption>How to import.</caption>
+ * ```js
+ * import { processRequest } from 'apollo-upload-server'
+ * ```
+ */
 export const processRequest = (
   request,
   response,
@@ -52,6 +130,13 @@ export const processRequest = (
       }
     })
 
+    /**
+     * Exits request processing with an error. Successive calls have no effect.
+     * @kind function
+     * @name processRequest~exit
+     * @param {Object} error Error instance.
+     * @ignore
+     */
     const exit = error => {
       if (exitError) return
       exitError = error
@@ -70,6 +155,13 @@ export const processRequest = (
       request.resume()
     }
 
+    /**
+     * Releases resources and cleans up Capacitor temporary files. Successive
+     * calls have no effect.
+     * @kind function
+     * @name processRequest~release
+     * @ignore
+     */
     const release = () => {
       if (released) return
       released = true
@@ -249,6 +341,29 @@ export const processRequest = (
     request.pipe(parser)
   })
 
+/**
+ * Creates Koa middleware that processes GraphQL multipart requests using
+ * [`processRequest`]{@link processRequest}, ignoring non-multipart requests.
+ * @kind function
+ * @name apolloUploadKoa
+ * @param {UploadOptions} options GraphQL upload options.
+ * @returns {function} Koa middleware.
+ * @example <caption>Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup.</caption>
+ * ```js
+ * import Koa from 'koa'
+ * import bodyParser from 'koa-bodyparser'
+ * import { errorHandler, execute } from 'graphql-api-koa'
+ * import { apolloUploadKoa } from 'apollo-upload-server'
+ * import schema from './schema'
+ *
+ * new Koa()
+ *   .use(errorHandler())
+ *   .use(bodyParser())
+ *   .use(apolloUploadKoa({ maxFileSize: 10000000, maxFiles: 10 }))
+ *   .use(execute({ schema }))
+ *   .listen(3000)
+ * ```
+ */
 export const apolloUploadKoa = options => async (ctx, next) => {
   if (!ctx.request.is('multipart/form-data')) return next()
 
@@ -262,6 +377,29 @@ export const apolloUploadKoa = options => async (ctx, next) => {
   }
 }
 
+/**
+ * Creates Express middleware that processes GraphQL multipart requests using
+ * [`processRequest`]{@link processRequest}, ignoring non-multipart requests.
+ * @kind function
+ * @name apolloUploadExpress
+ * @param {UploadOptions} options GraphQL upload options.
+ * @returns {function} Express middleware.
+ * @example <caption>Basic [`express-graphql`](https://npm.im/express-graphql) setup.</caption>
+ * ```js
+ * import express from 'express'
+ * import graphqlHTTP from 'express-graphql'
+ * import { apolloUploadExpress } from 'apollo-upload-server'
+ * import schema from './schema'
+ *
+ * express()
+ *   .use(
+ *     '/graphql',
+ *     apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
+ *     graphqlHTTP({ schema })
+ *   )
+ *   .listen(3000)
+ * ```
+ */
 export const apolloUploadExpress = options => (request, response, next) => {
   if (!request.is('multipart/form-data')) return next()
 

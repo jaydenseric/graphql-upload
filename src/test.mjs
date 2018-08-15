@@ -1,3 +1,5 @@
+/* eslint-disable require-jsdoc */
+
 import fs from 'fs'
 import stream from 'stream'
 import http from 'http'
