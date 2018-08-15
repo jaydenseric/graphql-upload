@@ -26,7 +26,7 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 
 ### Major
 
-- Updated Node.js support from v6.10+ to v8.5+ for [native ESM](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V8.md#8.5.0), [object rest/spread properties](https://node.green/#ES2018-features-object-rest-spread-properties), and [async functions](https://node.green/#ES2017-features-async-functions).
+- Updated Node.js support from v6.10+ to v8.5+ for [native ESM](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V8.md#8.5.0), [object rest/spread properties](https://node.green#ES2018-features-object-rest-spread-properties), and [async functions](https://node.green#ES2017-features-async-functions).
 - Removed the [`@babel/runtime`](https://npm.im/@babel/runtime) dependency and config.
 - Fixed [#45](https://github.com/jaydenseric/apollo-upload-server/issues/45), [#77](https://github.com/jaydenseric/apollo-upload-server/issues/77) and [#83](https://github.com/jaydenseric/apollo-upload-server/issues/83) via [#81](https://github.com/jaydenseric/apollo-upload-server/pull/81):
   - Add `error` event listeners to file streams to prevent server crashes on aborted requests or parser errors.
@@ -69,10 +69,10 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 - Improved documentation.
 - Readme badge changes to deal with [shields.io](https://shields.io) unreliability:
   - Use the official Travis build status badge.
-  - Use [badgen.now.sh](https://badgen.now.sh) for the npm version badge.
+  - Use [Badgen](https://badgen.net) for the npm version badge.
   - Removed the licence badge. The licence can be found in `package.json` and rarely changes.
   - Removed the Github issues and stars badges. The readme is most viewed on Github anyway.
-- `changelog.md` version entries now have “Major”, “Minor” and “Patch” subheadings.
+- Changelog version entries now have “Major”, “Minor” and “Patch” subheadings.
 
 ## 5.0.0
 
@@ -234,7 +234,7 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 
 ### Major
 
-- Support `apollo-upload-client` v3 and [query batching](https://apollographql.com/docs/apollo-server/requests.html#batching).
+- Support `apollo-upload-client` v3 and [query batching](https://apollographql.com/docs/apollo-server/requests#batching).
 
 ### Patch
 
