@@ -12,6 +12,8 @@
 - An `Upload` variable can now be used by multiple resolvers, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
 - Multiple `Upload` scalar variables can now use the same multipart data, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
 - Export a new `ParseUploadError` that is thrown with a `400` status when `operations` or `map` multipart fields contain invalid JSON, fixing [#95](https://github.com/jaydenseric/apollo-upload-server/issues/95).
+- Tweaked `GraphQLUpload` scalar description to remove details about how it resolves on the server as they are irrelevant to API users.
+- Tweaked `GraphQLUpload` scalar error messages.
 
 ### Patch
 
