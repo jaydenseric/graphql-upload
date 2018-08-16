@@ -97,6 +97,42 @@ _Setup for a schema built with [`makeExecutableSchema`](https://apollographql.co
 > export const schema = makeExecutableSchema({ typeDefs, resolvers })
 > ```
 
+_A manually constructed schema with an image upload mutation._
+
+> ```js
+> import {
+>   GraphQLSchema,
+>   GraphQLObjectType,
+>   GraphQLNonNull,
+>   GraphQLBoolean
+> } from 'graphql'
+> import { GraphQLUpload } from 'apollo-upload-server'
+>
+> export const schema = new GraphQLSchema({
+>   mutation: new GraphQLObjectType({
+>     name: 'Mutation',
+>     fields: {
+>       uploadImage: {
+>         description: 'Uploads an image.',
+>         type: new GraphQLNonNull(GraphQLBoolean),
+>         args: {
+>           image: {
+>             description: 'Image file.',
+>             type: GraphQLUpload
+>           }
+>         },
+>         async resolve(parent, { image }) {
+>           const { filename, mimetype, createReadStream } = await image
+>           const stream = createReadStream()
+>           // Promisify the stream and store the file, then…
+>           return true
+>         }
+>       }
+>     }
+>   })
+> })
+> ```
+
 ### function apolloUploadExpress
 
 Creates [Express](https://expressjs.com) middleware that processes GraphQL multipart requests using [`processRequest`](#function-processrequest), ignoring non-multipart requests.

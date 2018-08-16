@@ -32,6 +32,40 @@ import { GraphQLScalarType } from 'graphql'
  *
  * export const schema = makeExecutableSchema({ typeDefs, resolvers })
  * ```
+ * @example <caption>A manually constructed schema with an image upload mutation.</caption>
+ * ```js
+ * import {
+ *   GraphQLSchema,
+ *   GraphQLObjectType,
+ *   GraphQLNonNull,
+ *   GraphQLBoolean
+ * } from 'graphql'
+ * import { GraphQLUpload } from 'apollo-upload-server'
+ *
+ * export const schema = new GraphQLSchema({
+ *   mutation: new GraphQLObjectType({
+ *     name: 'Mutation',
+ *     fields: {
+ *       uploadImage: {
+ *         description: 'Uploads an image.',
+ *         type: new GraphQLNonNull(GraphQLBoolean),
+ *         args: {
+ *           image: {
+ *             description: 'Image file.',
+ *             type: GraphQLUpload
+ *           }
+ *         },
+ *         async resolve(parent, { image }) {
+ *           const { filename, mimetype, createReadStream } = await image
+ *           const stream = createReadStream()
+ *           // Promisify the stream and store the file, then…
+ *           return true
+ *         }
+ *       }
+ *     }
+ *   })
+ * })
+ * ```
  */
 export const GraphQLUpload = new GraphQLScalarType({
   name: 'Upload',
