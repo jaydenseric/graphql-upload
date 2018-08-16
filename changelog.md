@@ -23,6 +23,7 @@
 - Configured Prettier to lint `.yml` files.
 - Explicitly set `processRequest` default options instead of relying on [`busboy`](https://npm.im/busboy) defaults.
 - Ensure the readme Travis build status badge only tracks `master` branch.
+- Better organized project file structure.
 
 ## 6.0.0-alpha.1
 
