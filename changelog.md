@@ -6,7 +6,7 @@
 
 - The `processRequest` function now requires a [`http.ServerResponse`](https://nodejs.org/api/http.html#http_class_http_serverresponse) instance as its second argument.
 - `Upload` scalar promises now resolve with a `createReadStream` method instead of a `stream` property, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
-- Removed the previously exported error classes to use [`http-errors`](https://npm.im/http-errors) instead. Error details are now snapshot tested.
+- Replaced the previously exported error classes with [`http-errors`](https://npm.im/http-errors) and snapshot tested error details, via [#105](https://github.com/jaydenseric/apollo-upload-server/pull/105).
 
 ### Minor
 
