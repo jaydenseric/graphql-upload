@@ -13,7 +13,7 @@
 
 - An `Upload` variable can now be used by multiple resolvers, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
 - Multiple `Upload` scalar variables can now use the same multipart data, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
-- Export a new `ParseUploadError` that is thrown with a `400` status when `operations` or `map` multipart fields contain invalid JSON, fixing [#95](https://github.com/jaydenseric/apollo-upload-server/issues/95).
+- Malformed requests containing invalid JSON for `operations` or `map` multipart fields cause an appropriate error with a `400` status instead of crashing the process, relating to [#81](https://github.com/jaydenseric/apollo-upload-server/pull/81) and [#95](https://github.com/jaydenseric/apollo-upload-server/issues/95).
 - Tweaked `GraphQLUpload` scalar description to remove details about how it resolves on the server as they are irrelevant to API users.
 - Tweaked `GraphQLUpload` scalar error messages.
 
@@ -21,10 +21,10 @@
 
 - Updated dev dependencies.
 - Removed the [`npm-run-all`](https://npm.im/npm-run-all) dev dependency and made scripts and tests sync for easier debugging, at the cost of slightly longer build times.
-- Configured Prettier to lint `.yml` files.
 - Explicitly set `processRequest` default options instead of relying on [`busboy`](https://npm.im/busboy) defaults.
-- Ensure the readme Travis build status badge only tracks `master` branch.
 - Better organized project file structure.
+- Configured Prettier to lint `.yml` files.
+- Ensure the readme Travis build status badge only tracks `master` branch.
 
 ## 6.0.0-alpha.1
 
