@@ -49,7 +49,7 @@ Clients implementing the [GraphQL multipart request spec](https://github.com/jay
 
 Tips:
 
-- File upload streams in resolvers should be promisified and awaited or else the server will send a response back to the client before the upload has completed, causing a disconnect.
+- Promisify and await file upload streams in resolvers or else the server will send a response back to the client before uploads are done, causing a disconnect.
 - Handle promise rejection and stream errors; uploads often disconnect due to network connectivity issues or impatient users.
 - Process multiple uploads asynchronously with [`Promise.all`](https://developer.mozilla.org/docs/web/javascript/reference/global_objects/promise/all) or a more flexible solution where an error in one does not reject them all.
 
