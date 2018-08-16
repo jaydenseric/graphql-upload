@@ -572,7 +572,16 @@ t.test('Aborted request.', async t => {
         .use(async (ctx, next) => {
           ;({ variables } = ctx.request.body)
 
-          await new Promise(resolve => setTimeout(resolve, 10))
+          // This ensures that the upload has streamed in as far as it will, and
+          // the parser has been detached.
+          await new Promise(resolve => {
+            const interval = setInterval(() => {
+              if (!ctx.req.listeners('data').length) {
+                clearInterval(interval)
+                resolve()
+              }
+            }, 1)
+          })
 
           await Promise.all([
             t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
@@ -618,7 +627,18 @@ t.test('Aborted request.', async t => {
         .use(apolloUploadExpress())
         .use(async (request, response, next) => {
           ;({ variables } = request.body)
-          await new Promise(resolve => setTimeout(resolve, 10))
+
+          // This ensures that the upload has streamed in as far as it will, and
+          // the parser has been detached.
+          await new Promise(resolve => {
+            const interval = setInterval(() => {
+              if (!request.listeners('data').length) {
+                clearInterval(interval)
+                resolve()
+              }
+            }, 1)
+          })
+
           await Promise.all([
             t.test('Upload A.', uploadATest(request.body.variables.fileA)),
             t.test('Upload B.', uploadBTest(request.body.variables.fileB)),
