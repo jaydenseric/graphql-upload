@@ -572,7 +572,9 @@ t.test('Aborted request.', async t => {
         .use(async (ctx, next) => {
           ;({ variables } = ctx.request.body)
 
-          await new Promise(resolve => setTimeout(resolve, 10))
+          // This ensures that the upload has already begun streaming into the
+          // capacitor. TODO: replace with events
+          await new Promise(resolve => setTimeout(resolve, 100))
 
           await Promise.all([
             t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
@@ -618,7 +620,11 @@ t.test('Aborted request.', async t => {
         .use(apolloUploadExpress())
         .use(async (request, response, next) => {
           ;({ variables } = request.body)
-          await new Promise(resolve => setTimeout(resolve, 10))
+
+          // This ensures that the upload has already begun streaming into the
+          // capacitor. TODO: replace with events
+          await new Promise(resolve => setTimeout(resolve, 100))
+
           await Promise.all([
             t.test('Upload A.', uploadATest(request.body.variables.fileA)),
             t.test('Upload B.', uploadBTest(request.body.variables.fileB)),
