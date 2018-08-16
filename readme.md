@@ -49,8 +49,8 @@ Clients implementing the [GraphQL multipart request spec](https://github.com/jay
 
 Tips:
 
-- File upload streams should be promisified and awaited in resolvers or else the server will send a response back to the client before the upload has completed, causing a disconnect.
-- Be careful to handle promise rejection and stream errors, as uploads often disconnect due to network connectivity issues or impatient users.
+- File upload streams in resolvers should be promisified and awaited or else the server will send a response back to the client before the upload has completed, causing a disconnect.
+- Handle promise rejection and stream errors; uploads often disconnect due to network connectivity issues or impatient users.
 - Process multiple uploads asynchronously with [`Promise.all`](https://developer.mozilla.org/docs/web/javascript/reference/global_objects/promise/all) or a more flexible solution where an error in one does not reject them all.
 
 See also the [example API and client](https://github.com/jaydenseric/apollo-upload-examples).
@@ -100,12 +100,7 @@ _Setup for a schema built with [`makeExecutableSchema`](https://apollographql.co
 _A manually constructed schema with an image upload mutation._
 
 > ```js
-> import {
->   GraphQLSchema,
->   GraphQLObjectType,
->   GraphQLNonNull,
->   GraphQLBoolean
-> } from 'graphql'
+> import { GraphQLSchema, GraphQLObjectType, GraphQLBoolean } from 'graphql'
 > import { GraphQLUpload } from 'apollo-upload-server'
 >
 > export const schema = new GraphQLSchema({
@@ -114,7 +109,7 @@ _A manually constructed schema with an image upload mutation._
 >     fields: {
 >       uploadImage: {
 >         description: 'Uploads an image.',
->         type: new GraphQLNonNull(GraphQLBoolean),
+>         type: GraphQLBoolean,
 >         args: {
 >           image: {
 >             description: 'Image file.',

@@ -34,12 +34,7 @@ import { GraphQLScalarType } from 'graphql'
  * ```
  * @example <caption>A manually constructed schema with an image upload mutation.</caption>
  * ```js
- * import {
- *   GraphQLSchema,
- *   GraphQLObjectType,
- *   GraphQLNonNull,
- *   GraphQLBoolean
- * } from 'graphql'
+ * import { GraphQLSchema, GraphQLObjectType, GraphQLBoolean } from 'graphql'
  * import { GraphQLUpload } from 'apollo-upload-server'
  *
  * export const schema = new GraphQLSchema({
@@ -48,7 +43,7 @@ import { GraphQLScalarType } from 'graphql'
  *     fields: {
  *       uploadImage: {
  *         description: 'Uploads an image.',
- *         type: new GraphQLNonNull(GraphQLBoolean),
+ *         type: GraphQLBoolean,
  *         args: {
  *           image: {
  *             description: 'Image file.',
