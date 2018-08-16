@@ -45,17 +45,13 @@ A schema built with separate SDL and resolvers (e.g. using [`makeExecutableSchem
 
 ## Usage
 
-A client implementing the [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec#client) uploads files as query or mutation [`Upload` scalar](#class-graphqlupload) variables.
+Clients implementing the [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec#client) upload files as [`Upload` scalar](#class-graphqlupload) query or mutation variables. Their resolver values are promises that resolve [file upload details](#type-fileupload) for processing and storage. Files are typically streamed into cloud storage but may also be stored in the filesystem.
 
-They are provided to resolvers as promises that [resolve file metadata along with a `createReadStream` function](#type-uploadfile) for processing and storage.
+Tips:
 
-Files are typically streamed into cloud storage but may also be stored in the local filesystem.
-
-File upload streams should be promisified and awaited in resolvers or else the server will send a response back to the client before the upload has completed, causing a disconnect.
-
-Process multiple uploads asynchronously with [`Promise.all`](https://developer.mozilla.org/docs/web/javascript/reference/global_objects/promise/all) or a more flexible solution where an error in one does not reject them all.
-
-Be careful to handle promise rejection and stream errors, as uploads often disconnect due to network connectivity issues or impatient users.
+- File upload streams should be promisified and awaited in resolvers or else the server will send a response back to the client before the upload has completed, causing a disconnect.
+- Be careful to handle promise rejection and stream errors, as uploads often disconnect due to network connectivity issues or impatient users.
+- Process multiple uploads asynchronously with [`Promise.all`](https://developer.mozilla.org/docs/web/javascript/reference/global_objects/promise/all) or a more flexible solution where an error in one does not reject them all.
 
 See also the [example API and client](https://github.com/jaydenseric/apollo-upload-examples).
 
@@ -73,14 +69,14 @@ See also the [example API and client](https://github.com/jaydenseric/apollo-uplo
   - [Examples](#examples-3)
 - [constant SPEC_URL](#constant-spec_url)
   - [Examples](#examples-4)
+- [type FileUpload](#type-fileupload)
 - [type GraphQLOperation](#type-graphqloperation)
   - [See](#see)
-- [type UploadFile](#type-uploadfile)
 - [type UploadOptions](#type-uploadoptions)
 
 ### class GraphQLUpload
 
-GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphql.org/graphql-js/type/#graphqlschema).
+A GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphql.org/graphql-js/type/#graphqlschema). It’s value in resolvers is a promise that resolves [file upload details](#type-fileupload) for processing and storage.
 
 #### Examples
 
@@ -191,6 +187,19 @@ _How to import._
 > import { SPEC_URL } from 'apollo-upload-server'
 > ```
 
+### type FileUpload
+
+File upload details, resolved from an [`Upload` scalar](#class-graphqlupload) promise.
+
+**Type:** [object](https://developer.mozilla.org/javascript/reference/global_objects/object)
+
+| Property           | Type                                                                                   | Description                                                                                                                                                                                                                                |
+| :----------------- | :------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `filename`         | [string](https://developer.mozilla.org/javascript/reference/global_objects/string)     | File name.                                                                                                                                                                                                                                 |
+| `mimetype`         | [string](https://developer.mozilla.org/javascript/reference/global_objects/string)     | File MIME type.                                                                                                                                                                                                                            |
+| `encoding`         | [string](https://developer.mozilla.org/javascript/reference/global_objects/string)     | File stream transfer encoding.                                                                                                                                                                                                             |
+| `createReadStream` | [function](https://developer.mozilla.org/javascript/reference/global_objects/function) | Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. |
+
 ### type GraphQLOperation
 
 A GraphQL operation object in a shape that can be consumed and executed by most GraphQL servers.
@@ -207,19 +216,6 @@ A GraphQL operation object in a shape that can be consumed and executed by most 
 
 - [GraphQL over HTTP spec](https://github.com/APIs-guru/graphql-over-http#request-parameters).
 - [Apollo Server POST requests](https://www.apollographql.com/docs/apollo-server/requests#postRequests).
-
-### type UploadFile
-
-Resolved details about a file upload.
-
-**Type:** [object](https://developer.mozilla.org/javascript/reference/global_objects/object)
-
-| Property           | Type                                                                                   | Description                                                                                                                                                                                           |
-| :----------------- | :------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `filename`         | [string](https://developer.mozilla.org/javascript/reference/global_objects/string)     | File name.                                                                                                                                                                                            |
-| `mimetype`         | [string](https://developer.mozilla.org/javascript/reference/global_objects/string)     | File MIME type.                                                                                                                                                                                       |
-| `encoding`         | [string](https://developer.mozilla.org/javascript/reference/global_objects/string)     | File stream transfer encoding.                                                                                                                                                                        |
-| `createReadStream` | [function](https://developer.mozilla.org/javascript/reference/global_objects/function) | Returns a Node.js readable stream of the file contents. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. |
 
 ### type UploadOptions
 

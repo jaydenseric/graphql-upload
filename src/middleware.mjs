@@ -24,17 +24,6 @@ import {
  */
 
 /**
- * Resolved details about a file upload.
- * @kind typedef
- * @name UploadFile
- * @type {object}
- * @prop {string} filename File name.
- * @prop {string} mimetype File MIME type.
- * @prop {string} encoding File stream transfer encoding.
- * @prop {function} createReadStream Returns a Node.js readable stream of the file contents. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request.
- */
-
-/**
  * A GraphQL operation object in a shape that can be consumed and executed by
  * most GraphQL servers.
  * @kind typedef
@@ -60,7 +49,7 @@ class Upload {
      * Promise that resolves file details.
      * @kind member
      * @name Upload#promise
-     * @type {Promise<UploadFile>}
+     * @type {Promise<FileUpload>}
      * @ignore
      */
     this.promise = new Promise((resolve, reject) => {
