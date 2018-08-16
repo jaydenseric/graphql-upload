@@ -35,7 +35,8 @@ import {
  */
 
 /**
- * A GraphQL operation that can be consumed and executed by most GraphQL servers.
+ * A GraphQL operation object in a shape that can be consumed and executed by
+ * most GraphQL servers.
  * @kind typedef
  * @name GraphQLOperation
  * @type {object}
@@ -342,8 +343,9 @@ export const processRequest = (
   })
 
 /**
- * Creates Koa middleware that processes GraphQL multipart requests using
- * [`processRequest`]{@link processRequest}, ignoring non-multipart requests.
+ * Creates [Koa](https://koajs.com) middleware that processes GraphQL multipart
+ * requests using [`processRequest`]{@link processRequest}, ignoring
+ * non-multipart requests.
  * @kind function
  * @name apolloUploadKoa
  * @param {UploadOptions} options GraphQL upload options.
@@ -378,8 +380,9 @@ export const apolloUploadKoa = options => async (ctx, next) => {
 }
 
 /**
- * Creates Express middleware that processes GraphQL multipart requests using
- * [`processRequest`]{@link processRequest}, ignoring non-multipart requests.
+ * Creates [Express](https://expressjs.com) middleware that processes GraphQL
+ * multipart requests using [`processRequest`]{@link processRequest}, ignoring
+ * non-multipart requests.
  * @kind function
  * @name apolloUploadExpress
  * @param {UploadOptions} options GraphQL upload options.
