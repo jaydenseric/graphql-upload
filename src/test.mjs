@@ -572,9 +572,16 @@ t.test('Aborted request.', async t => {
         .use(async (ctx, next) => {
           ;({ variables } = ctx.request.body)
 
-          // This ensures that the upload has already begun streaming into the
-          // capacitor. TODO: replace with events
-          await new Promise(resolve => setTimeout(resolve, 100))
+          // This ensures that the upload has streamed in as far as it will, and
+          // the parser has been detached.
+          await new Promise(resolve => {
+            const interval = setInterval(() => {
+              if (!ctx.req.listeners('data').length) {
+                clearInterval(interval)
+                resolve()
+              }
+            }, 1)
+          })
 
           await Promise.all([
             t.test('Upload A.', uploadATest(ctx.request.body.variables.fileA)),
@@ -621,9 +628,16 @@ t.test('Aborted request.', async t => {
         .use(async (request, response, next) => {
           ;({ variables } = request.body)
 
-          // This ensures that the upload has already begun streaming into the
-          // capacitor. TODO: replace with events
-          await new Promise(resolve => setTimeout(resolve, 100))
+          // This ensures that the upload has streamed in as far as it will, and
+          // the parser has been detached.
+          await new Promise(resolve => {
+            const interval = setInterval(() => {
+              if (!request.listeners('data').length) {
+                clearInterval(interval)
+                resolve()
+              }
+            }, 1)
+          })
 
           await Promise.all([
             t.test('Upload A.', uploadATest(request.body.variables.fileA)),
