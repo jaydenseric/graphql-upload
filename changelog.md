@@ -21,6 +21,7 @@
 - Updated dev dependencies.
 - Removed the [`npm-run-all`](https://npm.im/npm-run-all) dev dependency and made scripts and tests sync for easier debugging, at the cost of slightly longer build times.
 - Configured Prettier to lint `.yml` files.
+- Explicitly set `processRequest` default options instead of relying on [`busboy`](https://npm.im/busboy) defaults.
 - Ensure the readme Travis build status badge only tracks `master` branch.
 
 ## 6.0.0-alpha.1

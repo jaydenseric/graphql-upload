@@ -104,7 +104,11 @@ class Upload {
 export const processRequest = (
   request,
   response,
-  { maxFieldSize, maxFileSize, maxFiles } = {}
+  {
+    maxFieldSize = 1000000, // 1 MB
+    maxFileSize = Infinity,
+    maxFiles = Infinity
+  } = {}
 ) =>
   new Promise((resolve, reject) => {
     let requestEnded = false
