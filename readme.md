@@ -45,7 +45,19 @@ A schema built with separate SDL and resolvers (e.g. using [`makeExecutableSchem
 
 ## Usage
 
-Files uploaded via a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec) appear as [`Upload` scalars](#upload-scalar) in resolver arguments. The upload streams can be used to store the files in the local filesystem or in the cloud. See also [apollo-upload-client usage](https://github.com/jaydenseric/apollo-upload-client#usage) and the [example API and client](https://github.com/jaydenseric/apollo-upload-examples).
+A client implementing the [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec#client) uploads files as query or mutation [`Upload` scalar](#class-graphqlupload) variables.
+
+They are provided to resolvers as promises that [resolve file metadata along with a `createReadStream` function](#type-uploadfile) for processing and storage.
+
+Files are typically streamed into cloud storage but may also be stored in the local filesystem.
+
+File upload streams should be promisified and awaited in resolvers or else the server will send a response back to the client before the upload has completed, causing a disconnect.
+
+Process multiple uploads asynchronously with [`Promise.all`](https://developer.mozilla.org/docs/web/javascript/reference/global_objects/promise/all) or a more flexible solution where an error in one does not reject them all.
+
+Be careful to handle promise rejection and stream errors, as uploads often disconnect due to network connectivity issues or impatient users.
+
+See also the [example API and client](https://github.com/jaydenseric/apollo-upload-examples).
 
 ## API
 
