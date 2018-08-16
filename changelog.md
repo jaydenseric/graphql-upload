@@ -14,6 +14,7 @@
 - An `Upload` variable can now be used by multiple resolvers, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
 - Multiple `Upload` scalar variables can now use the same multipart data, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
 - Malformed requests containing invalid JSON for `operations` or `map` multipart fields cause an appropriate error with a `400` status instead of crashing the process, relating to [#81](https://github.com/jaydenseric/apollo-upload-server/pull/81) and [#95](https://github.com/jaydenseric/apollo-upload-server/issues/95).
+- Malformed requests missing `operations`, `map` and files, or just `map` and files, cause an appropriate error with a `400` status instead of hanging, fixing [#96](https://github.com/jaydenseric/apollo-upload-server/issues/96).
 - Tweaked `GraphQLUpload` scalar description to remove details about how it resolves on the server as they are irrelevant to API users.
 - Tweaked `GraphQLUpload` scalar error messages.
 

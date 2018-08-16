@@ -1346,7 +1346,7 @@ t.test('Misorder files before ‘map’.', async t => {
   })
 })
 
-t.todo('Missing ‘map’ and files.', async t => {
+t.test('Missing ‘map’ and files.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
@@ -1371,9 +1371,8 @@ t.todo('Missing ‘map’ and files.', async t => {
     t.plan(2)
 
     const app = new Koa()
-      .on('error', () =>
-        // Todo: Test the error.
-        t.pass('Error.')
+      .on('error', error =>
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
       )
       .use(apolloUploadKoa())
 
@@ -1389,10 +1388,48 @@ t.todo('Missing ‘map’ and files.', async t => {
       .use(apolloUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
+        response.send()
+      })
 
-        // Todo: Test the error.
-        t.pass('Error.')
+    const port = await startServer(t, app)
 
+    await sendRequest(t, port)
+  })
+})
+
+t.test('Missing ‘operations’, ‘map’ and files.', async t => {
+  const sendRequest = async (t, port) => {
+    const { status } = await fetch(`http://localhost:${port}`, {
+      method: 'POST',
+      body: new FormData()
+    })
+
+    t.equal(status, 400, 'Response status.')
+  }
+
+  await t.test('Koa middleware.', async t => {
+    t.plan(2)
+
+    const app = new Koa()
+      .on('error', error =>
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
+      )
+      .use(apolloUploadKoa())
+
+    const port = await startServer(t, app)
+
+    await sendRequest(t, port)
+  })
+
+  await t.test('Express middleware.', async t => {
+    t.plan(2)
+
+    const app = express()
+      .use(apolloUploadExpress())
+      .use((error, request, response, next) => {
+        if (response.headersSent) return next(error)
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
         response.send()
       })
 

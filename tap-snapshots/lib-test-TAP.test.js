@@ -392,3 +392,43 @@ exports[`lib/test TAP Misorder files before ‘map’. Express middleware. > Mid
   "expose": true
 }
 `
+
+exports[`lib/test TAP Missing ‘map’ and files. Koa middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Missing multipart field ‘map’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
+exports[`lib/test TAP Missing ‘map’ and files. Express middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Missing multipart field ‘map’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
+exports[`lib/test TAP Missing ‘operations’, ‘map’ and files. Koa middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Missing multipart field ‘operations’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
+exports[`lib/test TAP Missing ‘operations’, ‘map’ and files. Express middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Missing multipart field ‘operations’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
