@@ -4,7 +4,7 @@ import { GraphQLScalarType } from 'graphql'
  * File upload details, resolved from an [`Upload` scalar]{@link GraphQLUpload} promise.
  * @kind typedef
  * @name FileUpload
- * @type {object}
+ * @type {Object}
  * @prop {string} filename File name.
  * @prop {string} mimetype File MIME type. Provided by the client and can’t be trusted.
  * @prop {string} encoding File stream transfer encoding.

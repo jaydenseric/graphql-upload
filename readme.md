@@ -208,7 +208,7 @@ _How to import._
 
 File upload details, resolved from an [`Upload` scalar](#class-graphqlupload) promise.
 
-**Type:** [object](https://developer.mozilla.org/javascript/reference/global_objects/object)
+**Type:** [Object](https://developer.mozilla.org/javascript/reference/global_objects/object)
 
 | Property           | Type                                                                                   | Description                                                                                                                                                                                                                                |
 | :----------------- | :------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -221,7 +221,7 @@ File upload details, resolved from an [`Upload` scalar](#class-graphqlupload) pr
 
 A GraphQL operation object in a shape that can be consumed and executed by most GraphQL servers.
 
-**Type:** [object](https://developer.mozilla.org/javascript/reference/global_objects/object)
+**Type:** [Object](https://developer.mozilla.org/javascript/reference/global_objects/object)
 
 | Property        | Type                                                                                        | Description                                          |
 | :-------------- | :------------------------------------------------------------------------------------------ | :--------------------------------------------------- |
@@ -238,7 +238,7 @@ A GraphQL operation object in a shape that can be consumed and executed by most 
 
 GraphQL upload server options, mostly relating to security, performance and limits.
 
-**Type:** [object](https://developer.mozilla.org/javascript/reference/global_objects/object)
+**Type:** [Object](https://developer.mozilla.org/javascript/reference/global_objects/object)
 
 | Property       | Type                                                                                             | Description                                                                           |
 | :------------- | :----------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------ |

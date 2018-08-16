@@ -8,7 +8,7 @@ import createError from 'http-errors'
  * limits.
  * @kind typedef
  * @name UploadOptions
- * @type {object}
+ * @type {Object}
  * @prop {number} [maxFieldSize=1000000] Maximum allowed non-file multipart form field size in bytes; enough for your queries.
  * @prop {number} [maxFileSize=Infinity] Maximum allowed file size in bytes.
  * @prop {number} [maxFiles=Infinity] Maximum allowed number of files.
@@ -19,7 +19,7 @@ import createError from 'http-errors'
  * most GraphQL servers.
  * @kind typedef
  * @name GraphQLOperation
- * @type {object}
+ * @type {Object}
  * @prop {string} query GraphQL document containing queries and fragments.
  * @prop {string|null} [operationName] GraphQL document operation name to execute.
  * @prop {object|null} [variables] GraphQL document operation variables and values map.
@@ -47,7 +47,7 @@ class Upload {
   // eslint-disable-next-line require-jsdoc
   constructor() {
     /**
-     * Promise that resolves file details.
+     * Promise that resolves file upload details.
      * @kind member
      * @name Upload#promise
      * @type {Promise<FileUpload>}
@@ -55,10 +55,10 @@ class Upload {
      */
     this.promise = new Promise((resolve, reject) => {
       /**
-       * Resolves the upload promise with the file details.
+       * Resolves the upload promise with the file upload details.
        * @kind function
        * @name Upload#resolve
-       * @param {Object} file File details.
+       * @param {FileUpload} file File upload details.
        * @ignore
        */
       this.resolve = file => {
@@ -70,7 +70,7 @@ class Upload {
        * Rejects the upload promise with an error.
        * @kind function
        * @name Upload#reject
-       * @param {object} error Error instance.
+       * @param {Object} error Error instance.
        * @ignore
        */
       this.reject = reject
