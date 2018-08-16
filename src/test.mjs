@@ -1,5 +1,3 @@
-/* eslint-disable require-jsdoc */
-
 import fs from 'fs'
 import stream from 'stream'
 import http from 'http'
@@ -21,9 +19,16 @@ import {
   DisconnectUploadError
 } from '.'
 
-// GraphQL multipart request spec:
-// https://github.com/jaydenseric/graphql-multipart-request-spec
-
+/**
+ * Asynchronously starts a server and automatically closes it when the given
+ * test tears down.
+ * @kind function
+ * @name startServer
+ * @param {Test} t Tap test.
+ * @param {Object} app A Koa or Express app.
+ * @returns {Promise<number>} The port the server is listening on.
+ * @ignore
+ */
 const startServer = (t, app) =>
   new Promise((resolve, reject) => {
     const server = app.listen(undefined, 'localhost', function(error) {
@@ -42,6 +47,14 @@ const startServer = (t, app) =>
       server.on('clientError', (error, socket) => socket.destroy())
   })
 
+/**
+ * Converts a readable stream to a string.
+ * @kind function
+ * @name streamToString
+ * @param {ReadableStream} stream Readable stream.
+ * @returns {Promise<string>} A string promise.
+ * @ignore
+ */
 const streamToString = stream =>
   new Promise((resolve, reject) => {
     let data = ''
@@ -52,6 +65,8 @@ const streamToString = stream =>
       })
       .on('end', () => resolve(data))
   })
+
+/* eslint-disable require-jsdoc */
 
 t.test('Single file.', async t => {
   const sendRequest = async port => {
