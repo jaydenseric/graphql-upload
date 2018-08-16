@@ -7,17 +7,7 @@ import express from 'express'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
 import { ReadStream } from 'fs-capacitor'
-import {
-  apolloUploadKoa,
-  apolloUploadExpress,
-  ParseUploadError,
-  MaxFileSizeUploadError,
-  MaxFilesUploadError,
-  MapBeforeOperationsUploadError,
-  FilesBeforeMapUploadError,
-  FileMissingUploadError,
-  DisconnectUploadError
-} from '.'
+import { apolloUploadKoa, apolloUploadExpress } from '.'
 
 /**
  * Asynchronously starts a server and automatically closes it when the given
@@ -65,6 +55,14 @@ const streamToString = stream =>
       })
       .on('end', () => resolve(data))
   })
+
+/**
+ * Snapshots an error.
+ * @param {Object} error An error.
+ * @returns {string} Error snapshot.
+ */
+const snapshotError = ({ name, message, status, statusCode, expose }) =>
+  JSON.stringify({ name, message, status, statusCode, expose }, null, 2)
 
 /* eslint-disable require-jsdoc */
 
@@ -163,7 +161,7 @@ t.test('Invalid ‘operations’ JSON.', async t => {
 
     const app = new Koa()
       .on('error', error =>
-        t.type(error, ParseUploadError, 'Middleware throws.')
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
       )
       .use(apolloUploadKoa())
 
@@ -179,9 +177,7 @@ t.test('Invalid ‘operations’ JSON.', async t => {
       .use(apolloUploadExpress({ maxFiles: 1 }))
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
-
-        t.type(error, ParseUploadError, 'Middleware throws.')
-
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
         response.send()
       })
 
@@ -219,7 +215,7 @@ t.test('Invalid ‘map’ JSON.', async t => {
 
     const app = new Koa()
       .on('error', error =>
-        t.type(error, ParseUploadError, 'Middleware throws.')
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
       )
       .use(apolloUploadKoa())
 
@@ -235,9 +231,7 @@ t.test('Invalid ‘map’ JSON.', async t => {
       .use(apolloUploadExpress({ maxFiles: 1 }))
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
-
-        t.type(error, ParseUploadError, 'Middleware throws.')
-
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
         response.send()
       })
 
@@ -420,7 +414,12 @@ t.test('Aborted request.', async t => {
     })
 
   const uploadCTest = upload => async t => {
-    await t.rejects(upload, DisconnectUploadError, 'Rejection error.')
+    try {
+      await upload
+      t.fail('No rejection error.')
+    } catch (error) {
+      t.matchSnapshot(snapshotError(error), 'Rejection error.')
+    }
   }
 
   await t.test('Immediate stream creation.', async t => {
@@ -434,7 +433,7 @@ t.test('Aborted request.', async t => {
       await new Promise(resolve => {
         stream
           .on('error', error => {
-            t.type(error, DisconnectUploadError, 'Stream error.')
+            t.matchSnapshot(snapshotError(error), 'Stream error.')
             resolve()
           })
           .on('end', () => {
@@ -548,24 +547,22 @@ t.test('Aborted request.', async t => {
   await t.test('Delayed stream creation.', async t => {
     const uploadATest = upload => async t => {
       const { createReadStream } = await upload
-      t.throws(
-        () => {
-          createReadStream()
-        },
-        DisconnectUploadError,
-        'Stream error.'
-      )
+      try {
+        createReadStream()
+        t.fail('No stream error.')
+      } catch (error) {
+        t.matchSnapshot(snapshotError(error), 'Stream error.')
+      }
     }
 
     const uploadBTest = upload => async t => {
       const { createReadStream } = await upload
-      t.throws(
-        () => {
-          createReadStream()
-        },
-        DisconnectUploadError,
-        'Stream error.'
-      )
+      try {
+        createReadStream()
+        t.fail('No stream error.')
+      } catch (error) {
+        t.matchSnapshot(snapshotError(error), 'Stream error.')
+      }
     }
 
     await t.test('Koa middleware.', async t => {
@@ -830,11 +827,13 @@ t.test('Missing file.', async t => {
     t.plan(1)
 
     const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
-      await t.rejects(
-        ctx.request.body.variables.file,
-        FileMissingUploadError,
-        'Rejection error.'
-      )
+      try {
+        await ctx.request.body.variables.file
+        t.fail('No rejection error.')
+      } catch (error) {
+        t.matchSnapshot(snapshotError(error), 'Rejection error.')
+      }
+
       ctx.status = 204
       await next()
     })
@@ -850,13 +849,15 @@ t.test('Missing file.', async t => {
     const app = express()
       .use(apolloUploadExpress())
       .use((request, response, next) => {
-        t.rejects(
-          request.body.variables.file,
-          FileMissingUploadError,
-          'Rejection error.'
-        )
-          .then(() => next())
-          .catch(next)
+        request.body.variables.file
+          .then(() => {
+            t.fail('No rejection error.')
+            next()
+          })
+          .catch(error => {
+            t.matchSnapshot(snapshotError(error), 'Rejection error.')
+            next()
+          })
       })
 
     const port = await startServer(t, app)
@@ -982,7 +983,7 @@ t.test('Exceed max files.', async t => {
 
     const app = new Koa()
       .on('error', error =>
-        t.type(error, MaxFilesUploadError, 'Middleware throws.')
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
       )
       .use(apolloUploadKoa({ maxFiles: 1 }))
 
@@ -998,9 +999,7 @@ t.test('Exceed max files.', async t => {
       .use(apolloUploadExpress({ maxFiles: 1 }))
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
-
-        t.type(error, MaxFilesUploadError, 'Middleware throws.')
-
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
         response.send()
       })
 
@@ -1048,7 +1047,12 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   }
 
   const uploadBTest = upload => async t => {
-    await t.rejects(upload, MaxFilesUploadError, 'Rejection error.')
+    try {
+      await upload
+      t.fail('No rejection error.')
+    } catch (error) {
+      t.matchSnapshot(snapshotError(error), 'Rejection error.')
+    }
   }
 
   await t.test('Koa middleware.', async t => {
@@ -1137,7 +1141,12 @@ t.test('Exceed max file size.', async t => {
 
   const uploadATest = upload => async t => {
     const { createReadStream } = await upload
-    t.throws(() => createReadStream(), MaxFileSizeUploadError, 'Stream error.')
+    try {
+      createReadStream()
+      t.fail('No stream error.')
+    } catch (error) {
+      t.matchSnapshot(snapshotError(error), 'Stream error.')
+    }
   }
 
   const uploadBTest = upload => async t => {
@@ -1250,7 +1259,7 @@ t.test('Misorder ‘map’ before ‘operations’.', async t => {
 
     const app = new Koa()
       .on('error', error =>
-        t.type(error, MapBeforeOperationsUploadError, 'Middleware throws.')
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
       )
       .use(apolloUploadKoa())
 
@@ -1266,9 +1275,7 @@ t.test('Misorder ‘map’ before ‘operations’.', async t => {
       .use(apolloUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
-
-        t.type(error, MapBeforeOperationsUploadError, 'Middleware throws.')
-
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
         response.send()
       })
 
@@ -1313,7 +1320,7 @@ t.test('Misorder files before ‘map’.', async t => {
 
     const app = new Koa()
       .on('error', error =>
-        t.type(error, FilesBeforeMapUploadError, 'Middleware throws.')
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
       )
       .use(apolloUploadKoa())
 
@@ -1329,9 +1336,7 @@ t.test('Misorder files before ‘map’.', async t => {
       .use(apolloUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
-
-        t.type(error, FilesBeforeMapUploadError, 'Middleware throws.')
-
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
         response.send()
       })
 

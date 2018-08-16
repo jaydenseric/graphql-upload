@@ -1,16 +1,7 @@
 import Busboy from 'busboy'
 import objectPath from 'object-path'
 import WriteStream from 'fs-capacitor'
-import {
-  SPEC_URL,
-  ParseUploadError,
-  MaxFileSizeUploadError,
-  MaxFilesUploadError,
-  MapBeforeOperationsUploadError,
-  FilesBeforeMapUploadError,
-  FileMissingUploadError,
-  DisconnectUploadError
-} from './errors'
+import createError from 'http-errors'
 
 /**
  * GraphQL upload server options, mostly relating to security, performance and
@@ -35,6 +26,20 @@ import {
  * @see [GraphQL over HTTP spec](https://github.com/APIs-guru/graphql-over-http#request-parameters).
  * @see [Apollo Server POST requests](https://www.apollographql.com/docs/apollo-server/requests#postRequests).
  */
+
+/**
+ * Official [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec)
+ * URL. Useful for error messages, etc.
+ * @kind constant
+ * @name SPEC_URL
+ * @type {string}
+ * @example <caption>How to import.</caption>
+ * ```js
+ * import { SPEC_URL } from 'apollo-upload-server'
+ * ```
+ */
+export const SPEC_URL =
+  'https://github.com/jaydenseric/graphql-multipart-request-spec'
 
 /**
  * An expected file upload.
@@ -169,9 +174,9 @@ export const processRequest = (
             operationsPath = objectPath(operations)
           } catch (error) {
             exit(
-              new ParseUploadError(
-                `Invalid JSON in the ‘operations’ multipart field (${SPEC_URL}).`,
-                400
+              createError(
+                400,
+                `Invalid JSON in the ‘operations’ multipart field (${SPEC_URL}).`
               )
             )
           }
@@ -179,9 +184,9 @@ export const processRequest = (
         case 'map': {
           if (!operations)
             return exit(
-              new MapBeforeOperationsUploadError(
-                `Misordered multipart fields; ‘map’ should follow ‘operations’ (${SPEC_URL}).`,
-                400
+              createError(
+                400,
+                `Misordered multipart fields; ‘map’ should follow ‘operations’ (${SPEC_URL}).`
               )
             )
 
@@ -190,9 +195,9 @@ export const processRequest = (
             mapEntries = Object.entries(JSON.parse(value))
           } catch (error) {
             return exit(
-              new ParseUploadError(
-                `Invalid JSON in the ‘map’ multipart field (${SPEC_URL}).`,
-                400
+              createError(
+                400,
+                `Invalid JSON in the ‘map’ multipart field (${SPEC_URL}).`
               )
             )
           }
@@ -201,10 +206,7 @@ export const processRequest = (
           // parse might not match the map provided by the client.
           if (mapEntries.length > maxFiles)
             return exit(
-              new MaxFilesUploadError(
-                `${maxFiles} max file uploads exceeded.`,
-                413
-              )
+              createError(413, `${maxFiles} max file uploads exceeded.`)
             )
 
           map = new Map()
@@ -227,9 +229,9 @@ export const processRequest = (
         stream.resume()
 
         return exit(
-          new FilesBeforeMapUploadError(
-            `Misordered multipart fields; files should follow ‘map’ (${SPEC_URL}).`,
-            400
+          createError(
+            400,
+            `Misordered multipart fields; files should follow ‘map’ (${SPEC_URL}).`
           )
         )
       }
@@ -252,10 +254,7 @@ export const processRequest = (
           if (currentStream === stream) currentStream = null
           stream.unpipe()
           capacitor.destroy(
-            new MaxFileSizeUploadError(
-              'File truncated as it exceeds the size limit.',
-              413
-            )
+            createError(413, 'File truncated as it exceeds the size limit.')
           )
         })
 
@@ -293,9 +292,7 @@ export const processRequest = (
     })
 
     parser.once('filesLimit', () =>
-      exit(
-        new MaxFilesUploadError(`${maxFiles} max file uploads exceeded.`, 413)
-      )
+      exit(createError(413, `${maxFiles} max file uploads exceeded.`))
     )
 
     parser.once('finish', () => {
@@ -305,9 +302,7 @@ export const processRequest = (
       if (map)
         for (const upload of map.values())
           if (!upload.file)
-            upload.reject(
-              new FileMissingUploadError('File missing in the request.', 400)
-            )
+            upload.reject(createError(400, 'File missing in the request.'))
     })
 
     parser.once('error', exit)
@@ -322,7 +317,8 @@ export const processRequest = (
     request.once('close', () => {
       if (!requestEnded)
         exit(
-          new DisconnectUploadError(
+          createError(
+            499,
             'Request disconnected during file upload stream parsing.'
           )
         )
