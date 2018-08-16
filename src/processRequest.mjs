@@ -33,13 +33,9 @@ import createError from 'http-errors'
  * @kind constant
  * @name SPEC_URL
  * @type {string}
- * @example <caption>How to import.</caption>
- * ```js
- * import { SPEC_URL } from 'apollo-upload-server'
- * ```
+ * @ignore
  */
-export const SPEC_URL =
-  'https://github.com/jaydenseric/graphql-multipart-request-spec'
+const SPEC_URL = 'https://github.com/jaydenseric/graphql-multipart-request-spec'
 
 /**
  * An expected file upload.

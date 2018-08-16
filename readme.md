@@ -67,8 +67,6 @@ See also the [example API and client](https://github.com/jaydenseric/apollo-uplo
   - [Examples](#examples-2)
 - [function processRequest](#function-processrequest)
   - [Examples](#examples-3)
-- [constant SPEC_URL](#constant-spec_url)
-  - [Examples](#examples-4)
 - [type FileUpload](#type-fileupload)
 - [type GraphQLOperation](#type-graphqloperation)
   - [See](#see)
@@ -204,18 +202,6 @@ _How to import._
 
 > ```js
 > import { processRequest } from 'apollo-upload-server'
-> ```
-
-### constant SPEC_URL
-
-Official [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec) URL. Useful for error messages, etc.
-
-#### Examples
-
-_How to import._
-
-> ```js
-> import { SPEC_URL } from 'apollo-upload-server'
 > ```
 
 ### type FileUpload
