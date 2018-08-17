@@ -55,6 +55,25 @@ Tips:
 
 See also the [example API and client](https://github.com/jaydenseric/apollo-upload-examples).
 
+## Architecture
+
+The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec#client) makes it possible to use the same multipart data in multiple places, by either mapping the same data to multiple variables, or by using the same variable multiple times. Because GraphQL resolvers are executed asynchronously, each instance needs its own stream.
+
+Additionally, it's possible that GraphQL resolvers for a particular query will require data in a different order than the query's multipart stream.
+
+For these reasons, apollo-upload-server needs to be able to buffer uploads to the filesystem, and uses the library [fs-capacitor](https://github.com/mike-marcacci/fs-capacitor) coordinate simultaneous reading and writing.
+
+As multipart data streams in, it is parsed by [busboy](https://github.com/mscdex/busboy). When both the `operations` and `map` fields load, instances of GraphQL scalar `Upload` in the `operations` are replaced with promises, and the `operations` is passed down the middleware chain to graphql resolvers.
+
+As soon as an upload's contents begins streaming, its data begins buffering to the filesystem, and its associated promise resolves. GraphQL resolvers can then create new streams from the buffer by calling `createReadStream()`. Once all streams have ended or closed, and server has finished responding to the request, the buffer is destroyed.
+
+This has a few ramifications that should be kept in mind:
+
+- The process must have both read and write access to the directory identified by `os.tmpdir()`.
+- For temporary files to be removed in a timely fashon, each stream created with `createReadStream()` MUST be either "end" or "close", meaning that `stream.destroy()` should be called if an incomplete stream is no longer needed.
+- Once all GraphQL resolvers resolve, existing streams can continue to be used, but attemts to create new ones using `createReadStream()` will throw an error. In other words, make sure you create all necessary streams _before your resolver returns_.
+- All remaining temporary files created by apollo-upload-server will be destroyed when the process exits.
+
 ## API
 
 ### Table of contents
