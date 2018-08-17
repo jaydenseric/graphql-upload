@@ -432,3 +432,33 @@ exports[`lib/test TAP Missing ‘operations’, ‘map’ and files. Express mid
   "expose": true
 }
 `
+
+exports[`lib/test TAP Deprecated file upload ‘stream’ property. Koa middleware. Upload. > Deprecation warning. 1`] = `
+{
+  "name": "DeprecationWarning",
+  "message": "File upload property ‘stream’ is deprecated. Use ‘createReadStream()’ instead."
+}
+`
+
+exports[`lib/test TAP Deprecated file upload ‘stream’ property. Koa middleware. Upload. > Enumerable properties. 1`] = `
+{
+  "filename": "a.txt",
+  "mimetype": "text/plain",
+  "encoding": "7bit"
+}
+`
+
+exports[`lib/test TAP Deprecated file upload ‘stream’ property. Express middleware. Upload. > Deprecation warning. 1`] = `
+{
+  "name": "DeprecationWarning",
+  "message": "File upload property ‘stream’ is deprecated. Use ‘createReadStream()’ instead."
+}
+`
+
+exports[`lib/test TAP Deprecated file upload ‘stream’ property. Express middleware. Upload. > Enumerable properties. 1`] = `
+{
+  "filename": "a.txt",
+  "mimetype": "text/plain",
+  "encoding": "7bit"
+}
+`
