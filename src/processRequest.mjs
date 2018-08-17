@@ -268,21 +268,24 @@ export const processRequest = (
         stream.pipe(capacitor)
 
         upload.resolve(
-          Object.create(null, {
-            filename: { value: filename, enumerable: true },
-            mimetype: { value: mimetype, enumerable: true },
-            encoding: { value: encoding, enumerable: true },
-            createReadStream: {
-              value() {
-                const error = capacitor.error || (released ? exitError : null)
-                if (error) throw error
+          Object.create(
+            {},
+            {
+              filename: { value: filename, enumerable: true },
+              mimetype: { value: mimetype, enumerable: true },
+              encoding: { value: encoding, enumerable: true },
+              createReadStream: {
+                value() {
+                  const error = capacitor.error || (released ? exitError : null)
+                  if (error) throw error
 
-                return capacitor.createReadStream()
+                  return capacitor.createReadStream()
+                },
+                enumerable: true
               },
-              enumerable: true
-            },
-            capacitor: { value: capacitor }
-          })
+              capacitor: { value: capacitor }
+            }
+          )
         )
       } else {
         // Discard the unexpected file.
