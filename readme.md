@@ -138,7 +138,7 @@ _A manually constructed schema with an image upload mutation._
 
 ### function apolloUploadExpress
 
-Creates [Express](https://expressjs.com) middleware that processes GraphQL multipart requests using [`processRequest`](#function-processrequest), ignoring non-multipart requests.
+Creates [Express](https://expressjs.com) middleware that processes GraphQL multipart requests using [`processRequest`](#function-processrequest), ignoring non-multipart requests. It sets the request body to be [similar to a conventional GraphQL POST request](#type-graphqloperation) for following GraphQL middleware to consume.
 
 | Parameter | Type                                 | Description             |
 | :-------- | :----------------------------------- | :---------------------- |
@@ -167,7 +167,7 @@ _Basic [`express-graphql`](https://npm.im/express-graphql) setup._
 
 ### function apolloUploadKoa
 
-Creates [Koa](https://koajs.com) middleware that processes GraphQL multipart requests using [`processRequest`](#function-processrequest), ignoring non-multipart requests.
+Creates [Koa](https://koajs.com) middleware that processes GraphQL multipart requests using [`processRequest`](#function-processrequest), ignoring non-multipart requests. It sets the request body to be [similar to a conventional GraphQL POST request](#type-graphqloperation) for following GraphQL middleware to consume.
 
 | Parameter | Type                                 | Description             |
 | :-------- | :----------------------------------- | :---------------------- |

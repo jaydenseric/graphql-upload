@@ -3,7 +3,9 @@ import { processRequest } from './processRequest'
 /**
  * Creates [Express](https://expressjs.com) middleware that processes GraphQL
  * multipart requests using [`processRequest`]{@link processRequest}, ignoring
- * non-multipart requests.
+ * non-multipart requests. It sets the request body to be [similar to a
+ * conventional GraphQL POST request]{@link GraphQLOperation} for following
+ * GraphQL middleware to consume.
  * @kind function
  * @name apolloUploadExpress
  * @param {UploadOptions} options GraphQL upload options.
