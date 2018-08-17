@@ -1459,9 +1459,10 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
   }
 
   const uploadTest = upload => async t => {
-    // Store the original process deprecation modes.
-    const { noDeprecation, throwDeprecation } = process
     const resolved = await upload
+
+    // Store the original process deprecation mode.
+    const { throwDeprecation } = process
 
     // Allow deprecation warning to be tested.
     process.throwDeprecation = true
@@ -1473,13 +1474,11 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
       t.matchSnapshot(snapshotError(error), 'Deprecation warning.')
     }
 
-    // Restore process deprecation mode.
+    // Restore process deprecation mode. The warning won't appear again as
+    // Node.js only displays it once per process.
     process.throwDeprecation = throwDeprecation
 
     t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
-
-    // Silence deprecation warnings.
-    process.noDeprecation = true
 
     t.true(
       resolved.stream === resolved.stream,
@@ -1487,9 +1486,6 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
     )
     t.type(resolved.stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(resolved.stream), 'a', 'Contents.')
-
-    // Restore process deprecation mode.
-    process.noDeprecation = noDeprecation
   }
 
   await t.test('Koa middleware.', async t => {
