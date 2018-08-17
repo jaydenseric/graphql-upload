@@ -47,17 +47,17 @@ A schema built with separate SDL and resolvers (e.g. using [`makeExecutableSchem
 
 Clients implementing the [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec#client) upload files as [`Upload` scalar](#class-graphqlupload) query or mutation variables. Their resolver values are promises that resolve [file upload details](#type-fileupload) for processing and storage. Files are typically streamed into cloud storage but may also be stored in the filesystem.
 
-Tips:
+See the [example API and client](https://github.com/jaydenseric/apollo-upload-examples).
 
-- Promisify and await file upload streams in resolvers or else the server will send a response back to the client before uploads are done, causing a disconnect.
-- Handle promise rejection and stream errors; uploads often disconnect due to network connectivity issues or impatient users.
+### Tips
+
+- The process must have both read and write access to the directory identified by [`os.tmpdir()`](https://nodejs.org/api/os.html#os_os_tmpdir).
+- The device requires sufficient disk space to buffer the expected number of concurrent upload requests.
+- Promisify and await file upload streams in resolvers or the server will send a response to the client before uploads are complete, causing a disconnect.
+- Handle file upload promise rejection and stream errors; uploads sometimes fail due to network connectivity issues or impatient users disconnecting.
 - Process multiple uploads asynchronously with [`Promise.all`](https://developer.mozilla.org/docs/web/javascript/reference/global_objects/promise/all) or a more flexible solution where an error in one does not reject them all.
-- Make sure you create all necessary read streams _before your resolver returns_. Once the response is sent, existing streams can continue to be used, but attemts to create new ones using `createReadStream()` will throw an error.
-- Call `stream.destroy()` on any incomplete stream when it is no longer needed, or temporary files may not be cleaned up the process exits.
-- The process must have both read and write access to the directory identified by `os.tmpdir()`.
-- The device should have sufficient disk space to buffer the expected number of concurrent upload requests.
-
-See also the [example API and client](https://github.com/jaydenseric/apollo-upload-examples).
+- Only use [`createReadStream()`](#type-fileupload) _before_ the resolver returns; late calls (e.g. in an unawaited async function or callback) throw an error. Existing streams can still be used after a response is sent, although there are few valid reasons for not awaiting their completion.
+- Use [`stream.destroy()`](https://nodejs.org/api/stream.html#stream_readable_destroy_error) when an incomplete stream is no longer needed, or temporary files may not get cleaned up.
 
 ## Architecture
 
