@@ -52,6 +52,10 @@ Tips:
 - Promisify and await file upload streams in resolvers or else the server will send a response back to the client before uploads are done, causing a disconnect.
 - Handle promise rejection and stream errors; uploads often disconnect due to network connectivity issues or impatient users.
 - Process multiple uploads asynchronously with [`Promise.all`](https://developer.mozilla.org/docs/web/javascript/reference/global_objects/promise/all) or a more flexible solution where an error in one does not reject them all.
+- Make sure you create all necessary read streams _before your resolver returns_. Once the response is sent, existing streams can continue to be used, but attemts to create new ones using `createReadStream()` will throw an error.
+- Call `stream.destroy()` on any incomplete stream when it is no longer needed, or temporary files may not be cleaned up the process exits.
+- The process must have both read and write access to the directory identified by `os.tmpdir()`.
+- The device should have sufficient disk space to buffer the expected number of concurrent upload requests.
 
 See also the [example API and client](https://github.com/jaydenseric/apollo-upload-examples).
 
@@ -65,14 +69,7 @@ For these reasons, apollo-upload-server needs to be able to buffer uploads to th
 
 As multipart data streams in, it is parsed by [busboy](https://github.com/mscdex/busboy). When both the `operations` and `map` fields load, instances of GraphQL scalar `Upload` in the `operations` are replaced with promises, and the `operations` are passed down the middleware chain to graphql resolvers.
 
-As soon as an upload's contents begins streaming, its data begins buffering to the filesystem, and its associated promise resolves. GraphQL resolvers can then create new streams from the buffer by calling `createReadStream()`. Once all streams have ended or closed, and server has finished responding to the request, the buffer is destroyed.
-
-This has a few ramifications that should be kept in mind:
-
-- The process must have both read and write access to the directory identified by `os.tmpdir()`.
-- For temporary files to be removed in a timely fashon, each stream created with `createReadStream()` MUST be either "end" or "close", meaning that `stream.destroy()` should be called if an incomplete stream is no longer needed.
-- Once a response is sent, existing streams can continue to be used, but attemts to create new ones using `createReadStream()` will throw an error. In other words, make sure you create all necessary streams _before your resolver returns_.
-- All remaining temporary files created by `fs-capacitor` will be destroyed when the process exits.
+As soon as an upload's contents begins streaming, its data begins buffering to the filesystem, and its associated promise resolves. GraphQL resolvers can then create new streams from the buffer by calling `createReadStream()`. Once all streams have ended or closed, and server has finished responding to the request, the buffer is destroyed. Any remaining buffer files will be destroyed when the process exits.
 
 ## API
 
