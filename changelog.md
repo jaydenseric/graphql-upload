@@ -5,12 +5,13 @@
 ### Major
 
 - The `processRequest` function now requires a [`http.ServerResponse`](https://nodejs.org/api/http.html#http_class_http_serverresponse) instance as its second argument.
-- `Upload` scalar promises now resolve with a `createReadStream` method instead of a `stream` property, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
 - Replaced the previously exported error classes with [`http-errors`](https://npm.im/http-errors) and snapshot tested error details, via [#105](https://github.com/jaydenseric/apollo-upload-server/pull/105).
 - No longer exporting the `SPEC_URL` constant.
 
 ### Minor
 
+- `Upload` scalar promises now resolve with a `createReadStream` method instead of a `stream` property, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
+- Accessing an `Upload` scalar promise resolved `stream` property results in a deprecation warning that recommends using `createReadStream` instead. It will be removed in a future release.
 - An `Upload` variable can now be used by multiple resolvers, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
 - Multiple `Upload` scalar variables can now use the same multipart data, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
 - Malformed requests containing invalid JSON for `operations` or `map` multipart fields cause an appropriate error with a `400` status instead of crashing the process, relating to [#81](https://github.com/jaydenseric/apollo-upload-server/pull/81) and [#95](https://github.com/jaydenseric/apollo-upload-server/issues/95).

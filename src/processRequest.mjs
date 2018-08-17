@@ -1,3 +1,4 @@
+import util from 'util'
 import Busboy from 'busboy'
 import objectPath from 'object-path'
 import WriteStream from 'fs-capacitor'
@@ -267,26 +268,28 @@ export const processRequest = (
 
         stream.pipe(capacitor)
 
-        upload.resolve(
-          Object.create(
-            {},
-            {
-              filename: { value: filename, enumerable: true },
-              mimetype: { value: mimetype, enumerable: true },
-              encoding: { value: encoding, enumerable: true },
-              createReadStream: {
-                value() {
-                  const error = capacitor.error || (released ? exitError : null)
-                  if (error) throw error
+        const file = {
+          filename,
+          mimetype,
+          encoding,
+          createReadStream() {
+            const error = capacitor.error || (released ? exitError : null)
+            if (error) throw error
+            return capacitor.createReadStream()
+          }
+        }
 
-                  return capacitor.createReadStream()
-                },
-                enumerable: true
-              },
-              capacitor: { value: capacitor }
-            }
-          )
-        )
+        let capacitorStream
+        Object.defineProperty(file, 'stream', {
+          get: util.deprecate(function() {
+            if (!capacitorStream) capacitorStream = this.createReadStream()
+            return capacitorStream
+          }, 'File upload property ‘stream’ is deprecated. Use ‘createReadStream()’ instead.')
+        })
+
+        Object.defineProperty(file, 'capacitor', { value: capacitor })
+
+        upload.resolve(file)
       } else {
         // Discard the unexpected file.
         stream.on('error', () => {})

@@ -1438,3 +1438,102 @@ t.test('Missing ‘operations’, ‘map’ and files.', async t => {
     await sendRequest(t, port)
   })
 })
+
+t.test('Deprecated file upload ‘stream’ property.', async t => {
+  const sendRequest = async port => {
+    const body = new FormData()
+
+    body.append(
+      'operations',
+      JSON.stringify({
+        variables: {
+          file: null
+        }
+      })
+    )
+
+    body.append('map', JSON.stringify({ 1: ['variables.file'] }))
+    body.append('1', 'a', { filename: 'a.txt' })
+
+    await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  }
+
+  const uploadTest = upload => async t => {
+    // Store the original process deprecation modes.
+    const { noDeprecation, throwDeprecation } = process
+    const resolved = await upload
+
+    // Allow deprecation warning to be tested.
+    process.throwDeprecation = true
+
+    try {
+      resolved.stream
+      t.fail('No deprecation warning.')
+    } catch (error) {
+      t.matchSnapshot(snapshotError(error), 'Deprecation warning.')
+    }
+
+    // Restore process deprecation mode.
+    process.throwDeprecation = throwDeprecation
+
+    t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
+
+    // Silence deprecation warnings.
+    process.noDeprecation = true
+
+    t.true(
+      resolved.stream === resolved.stream,
+      'Accessing ‘stream’ multiple times gets the same stream.'
+    )
+    t.type(resolved.stream, ReadStream, 'Stream type.')
+    t.equals(await streamToString(resolved.stream), 'a', 'Contents.')
+
+    // Restore process deprecation mode.
+    process.noDeprecation = noDeprecation
+  }
+
+  await t.test('Koa middleware.', async t => {
+    t.plan(2)
+
+    let variables
+
+    const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+      ;({ variables } = ctx.request.body)
+      await t.test('Upload.', uploadTest(ctx.request.body.variables.file))
+
+      ctx.status = 204
+      await next()
+    })
+
+    const port = await startServer(t, app)
+
+    await sendRequest(port)
+
+    const file = await variables.file
+    await new Promise(resolve => file.capacitor.once('close', resolve))
+    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
+  })
+
+  await t.test('Express middleware.', async t => {
+    t.plan(2)
+
+    let variables
+
+    const app = express()
+      .use(apolloUploadExpress())
+      .use((request, response, next) => {
+        ;({ variables } = request.body)
+        t.test('Upload.', uploadTest(request.body.variables.file))
+          .then(() => next())
+          .catch(next)
+      })
+
+    const port = await startServer(t, app)
+
+    await sendRequest(port)
+
+    const file = await variables.file
+    await new Promise(resolve => file.capacitor.once('close', resolve))
+    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
+  })
+})
