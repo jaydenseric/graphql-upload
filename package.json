@@ -33,7 +33,7 @@
     "node": ">=8.5"
   },
   "peerDependencies": {
-    "graphql": "^0.13.1"
+    "graphql": "0.13.1 - 14"
   },
   "dependencies": {
     "busboy": "^0.2.14",
@@ -54,7 +54,7 @@
     "eslint-plugin-prettier": "^2.6.2",
     "express": "^4.16.3",
     "form-data": "^2.3.2",
-    "graphql": "^0.13.2",
+    "graphql": "^14.0.0",
     "husky": "^0.14.3",
     "jsdoc-md": "^1.6.0",
     "koa": "^2.5.2",

@@ -2,6 +2,10 @@
 
 ## Next
 
+### Minor
+
+- Support [`graphql`](https://npm.im/graphql) v14.
+
 ### Patch
 
 - Updated dev dependencies.
