@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Fixed broken readme API documentation links.
+
 ## 8.0.0
 
 ### Major
