@@ -1,5 +1,11 @@
 # apollo-upload-server changelog
 
+## Next
+
+### Patch
+
+- Updated dependencies.
+
 ## 7.1.0
 
 ### Minor
