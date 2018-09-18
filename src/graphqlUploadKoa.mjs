@@ -7,7 +7,7 @@ import { processRequest } from './processRequest'
  * conventional GraphQL POST request]{@link GraphQLOperation} for following
  * GraphQL middleware to consume.
  * @kind function
- * @name apolloUploadKoa
+ * @name graphqlUploadKoa
  * @param {UploadOptions} options GraphQL upload options.
  * @returns {function} Koa middleware.
  * @example <caption>Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup.</caption>
@@ -15,18 +15,18 @@ import { processRequest } from './processRequest'
  * import Koa from 'koa'
  * import bodyParser from 'koa-bodyparser'
  * import { errorHandler, execute } from 'graphql-api-koa'
- * import { apolloUploadKoa } from 'apollo-upload-server'
+ * import { graphqlUploadKoa } from 'graphql-upload'
  * import schema from './schema'
  *
  * new Koa()
  *   .use(errorHandler())
  *   .use(bodyParser())
- *   .use(apolloUploadKoa({ maxFileSize: 10000000, maxFiles: 10 }))
+ *   .use(graphqlUploadKoa({ maxFileSize: 10000000, maxFiles: 10 }))
  *   .use(execute({ schema }))
  *   .listen(3000)
  * ```
  */
-export const apolloUploadKoa = options => async (ctx, next) => {
+export const graphqlUploadKoa = options => async (ctx, next) => {
   if (!ctx.request.is('multipart/form-data')) return next()
 
   const finished = new Promise(resolve => ctx.req.on('end', resolve))

@@ -1,10 +1,27 @@
-# apollo-upload-server changelog
+# graphql-upload changelog
 
 ## Next
+
+### Major
+
+- New naming that drops “apollo” to reflect the independent and universal nature of the project, fixing [#68](https://github.com/jaydenseric/apollo-upload-server/issues/68):
+
+  - Changed the package name from [`apollo-upload-server`](https://npm.im/apollo-upload-server) to [`graphql-upload`](https://npm.im/graphql-upload).
+  - Renamed `apolloUploadKoa` to `graphqlUploadKoa`.
+  - Renamed `apolloUploadExpress` to `graphqlUploadExpress`.
+
+  To migrate you project from `apollo-upload-server@7.1.0` to `graphql-upload@8.0.0`:
+
+  1. Run `npm uninstall apollo-upload-server`.
+  2. Run `npm install graphql-upload`.
+  3. Find and replace:
+     - `apolloUploadKoa` → `graphqlUploadKoa`.
+     - `apolloUploadExpress` → `graphqlUploadExpress`.
 
 ### Patch
 
 - Updated dependencies.
+- New project logo.
 
 ## 7.1.0
 

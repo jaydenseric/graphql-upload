@@ -7,26 +7,26 @@ import { processRequest } from './processRequest'
  * conventional GraphQL POST request]{@link GraphQLOperation} for following
  * GraphQL middleware to consume.
  * @kind function
- * @name apolloUploadExpress
+ * @name graphqlUploadExpress
  * @param {UploadOptions} options GraphQL upload options.
  * @returns {function} Express middleware.
  * @example <caption>Basic [`express-graphql`](https://npm.im/express-graphql) setup.</caption>
  * ```js
  * import express from 'express'
  * import graphqlHTTP from 'express-graphql'
- * import { apolloUploadExpress } from 'apollo-upload-server'
+ * import { graphqlUploadExpress } from 'graphql-upload'
  * import schema from './schema'
  *
  * express()
  *   .use(
  *     '/graphql',
- *     apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
+ *     graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
  *     graphqlHTTP({ schema })
  *   )
  *   .listen(3000)
  * ```
  */
-export const apolloUploadExpress = options => (request, response, next) => {
+export const graphqlUploadExpress = options => (request, response, next) => {
   if (!request.is('multipart/form-data')) return next()
 
   const finished = new Promise(resolve => request.on('end', resolve))

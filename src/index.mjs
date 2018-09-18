@@ -1,4 +1,4 @@
 export * from './GraphQLUpload'
 export * from './processRequest'
-export * from './apolloUploadKoa'
-export * from './apolloUploadExpress'
+export * from './graphqlUploadKoa'
+export * from './graphqlUploadExpress'

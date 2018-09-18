@@ -1,5 +1,5 @@
 {
-  "name": "apollo-upload-server",
+  "name": "graphql-upload",
   "version": "7.1.0",
   "description": "Middleware and an Upload scalar to add support for GraphQL multipart requests (file uploads via queries and mutations) to various Node.js GraphQL servers.",
   "license": "MIT",
@@ -8,18 +8,18 @@
     "email": "me@jaydenseric.com",
     "url": "https://jaydenseric.com"
   },
-  "repository": "github:jaydenseric/apollo-upload-server",
-  "homepage": "https://github.com/jaydenseric/apollo-upload-server#readme",
-  "bugs": "https://github.com/jaydenseric/apollo-upload-server/issues",
+  "repository": "github:jaydenseric/graphql-upload",
+  "homepage": "https://github.com/jaydenseric/graphql-upload#readme",
+  "bugs": "https://github.com/jaydenseric/graphql-upload/issues",
   "keywords": [
-    "apollo",
-    "server",
     "graphql",
-    "file",
     "upload",
+    "file",
     "multipart",
+    "server",
     "koa",
     "express",
+    "apollo",
     "esm",
     "mjs"
   ],

@@ -7,7 +7,7 @@ import express from 'express'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
 import { ReadStream } from 'fs-capacitor'
-import { apolloUploadKoa, apolloUploadExpress } from '.'
+import { graphqlUploadKoa, graphqlUploadExpress } from '.'
 
 /**
  * Asynchronously starts a server and automatically closes it when the given
@@ -99,7 +99,7 @@ t.test('Single file.', async t => {
 
     let variables
 
-    const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+    const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
       ;({ variables } = ctx.request.body)
       await t.test('Upload.', uploadTest(ctx.request.body.variables.file))
 
@@ -122,7 +122,7 @@ t.test('Single file.', async t => {
     let variables
 
     const app = express()
-      .use(apolloUploadExpress())
+      .use(graphqlUploadExpress())
       .use((request, response, next) => {
         ;({ variables } = request.body)
         t.test('Upload.', uploadTest(request.body.variables.file))
@@ -163,7 +163,7 @@ t.test('Invalid ‘operations’ JSON.', async t => {
       .on('error', error =>
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
       )
-      .use(apolloUploadKoa())
+      .use(graphqlUploadKoa())
 
     const port = await startServer(t, app)
 
@@ -174,7 +174,7 @@ t.test('Invalid ‘operations’ JSON.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(apolloUploadExpress({ maxFiles: 1 }))
+      .use(graphqlUploadExpress({ maxFiles: 1 }))
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
@@ -217,7 +217,7 @@ t.test('Invalid ‘map’ JSON.', async t => {
       .on('error', error =>
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
       )
-      .use(apolloUploadKoa())
+      .use(graphqlUploadKoa())
 
     const port = await startServer(t, app)
 
@@ -228,7 +228,7 @@ t.test('Invalid ‘map’ JSON.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(apolloUploadExpress({ maxFiles: 1 }))
+      .use(graphqlUploadExpress({ maxFiles: 1 }))
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
@@ -282,7 +282,7 @@ t.test('Handles unconsumed uploads.', async t => {
 
     let variables
 
-    const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+    const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
       ;({ variables } = ctx.request.body)
 
       await t.test('Upload B.', uploadBTest(ctx.request.body.variables.fileB))
@@ -310,7 +310,7 @@ t.test('Handles unconsumed uploads.', async t => {
     let variables
 
     const app = express()
-      .use(apolloUploadExpress())
+      .use(graphqlUploadExpress())
       .use((request, response, next) => {
         ;({ variables } = request.body)
 
@@ -461,7 +461,7 @@ t.test('Aborted request.', async t => {
           requestHasBeenReceived()
           await next()
         })
-        .use(apolloUploadKoa())
+        .use(graphqlUploadKoa())
         .use(async (ctx, next) => {
           ;({ variables } = ctx.request.body)
 
@@ -511,7 +511,7 @@ t.test('Aborted request.', async t => {
           requestHasBeenReceived()
           next()
         })
-        .use(apolloUploadExpress())
+        .use(graphqlUploadExpress())
         .use(async (request, response, next) => {
           ;({ variables } = request.body)
 
@@ -582,7 +582,7 @@ t.test('Aborted request.', async t => {
           requestHasBeenReceived()
           await next()
         })
-        .use(apolloUploadKoa())
+        .use(graphqlUploadKoa())
         .use(async (ctx, next) => {
           ;({ variables } = ctx.request.body)
 
@@ -638,7 +638,7 @@ t.test('Aborted request.', async t => {
           requestHasBeenReceived()
           next()
         })
-        .use(apolloUploadExpress())
+        .use(graphqlUploadExpress())
         .use(async (request, response, next) => {
           ;({ variables } = request.body)
 
@@ -712,7 +712,7 @@ t.test('Deduped files.', async t => {
 
     let variables
 
-    const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+    const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
       ;({ variables } = ctx.request.body)
 
       t.strictSame(
@@ -761,7 +761,7 @@ t.test('Deduped files.', async t => {
     let variables
 
     const app = express()
-      .use(apolloUploadExpress())
+      .use(graphqlUploadExpress())
       .use(async (request, response, next) => {
         ;({ variables } = request.body)
         t.strictSame(
@@ -826,7 +826,7 @@ t.test('Missing file.', async t => {
   await t.test('Koa middleware.', async t => {
     t.plan(1)
 
-    const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+    const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
       try {
         await ctx.request.body.variables.file
         t.fail('No rejection error.')
@@ -847,7 +847,7 @@ t.test('Missing file.', async t => {
     t.plan(1)
 
     const app = express()
-      .use(apolloUploadExpress())
+      .use(graphqlUploadExpress())
       .use((request, response, next) => {
         request.body.variables.file
           .then(() => {
@@ -906,7 +906,7 @@ t.test('Extraneous file.', async t => {
 
     let variables
 
-    const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+    const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
       ;({ variables } = ctx.request.body)
       await t.test('Upload.', uploadTest(ctx.request.body.variables.file))
       ctx.status = 204
@@ -928,7 +928,7 @@ t.test('Extraneous file.', async t => {
     let variables
 
     const app = express()
-      .use(apolloUploadExpress())
+      .use(graphqlUploadExpress())
       .use((request, response, next) => {
         ;({ variables } = request.body)
         t.test('Upload.', uploadTest(request.body.variables.file))
@@ -985,7 +985,7 @@ t.test('Exceed max files.', async t => {
       .on('error', error =>
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
       )
-      .use(apolloUploadKoa({ maxFiles: 1 }))
+      .use(graphqlUploadKoa({ maxFiles: 1 }))
 
     const port = await startServer(t, app)
 
@@ -996,7 +996,7 @@ t.test('Exceed max files.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(apolloUploadExpress({ maxFiles: 1 }))
+      .use(graphqlUploadExpress({ maxFiles: 1 }))
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
@@ -1063,7 +1063,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
 
     const finished = new Promise(resolve => (finish = resolve))
     const app = new Koa()
-      .use(apolloUploadKoa({ maxFiles: 2 }))
+      .use(graphqlUploadKoa({ maxFiles: 2 }))
       .use(async (ctx, next) => {
         ;({ variables } = ctx.request.body)
 
@@ -1093,7 +1093,7 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
     let variables
 
     const app = express()
-      .use(apolloUploadExpress({ maxFiles: 2 }))
+      .use(graphqlUploadExpress({ maxFiles: 2 }))
       .use((request, response, next) => {
         ;({ variables } = request.body)
         Promise.all([
@@ -1164,7 +1164,7 @@ t.test('Exceed max file size.', async t => {
     let variables
 
     const app = new Koa()
-      .use(apolloUploadKoa({ maxFileSize: 1 }))
+      .use(graphqlUploadKoa({ maxFileSize: 1 }))
       .use(async (ctx, next) => {
         ;({ variables } = ctx.request.body)
         await t.test(
@@ -1200,7 +1200,7 @@ t.test('Exceed max file size.', async t => {
     let variables
 
     const app = express()
-      .use(apolloUploadExpress({ maxFileSize: 1 }))
+      .use(graphqlUploadExpress({ maxFileSize: 1 }))
       .use((request, response, next) => {
         ;({ variables } = request.body)
 
@@ -1261,7 +1261,7 @@ t.test('Misorder ‘map’ before ‘operations’.', async t => {
       .on('error', error =>
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
       )
-      .use(apolloUploadKoa())
+      .use(graphqlUploadKoa())
 
     const port = await startServer(t, app)
 
@@ -1272,7 +1272,7 @@ t.test('Misorder ‘map’ before ‘operations’.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(apolloUploadExpress())
+      .use(graphqlUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
@@ -1322,7 +1322,7 @@ t.test('Misorder files before ‘map’.', async t => {
       .on('error', error =>
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
       )
-      .use(apolloUploadKoa())
+      .use(graphqlUploadKoa())
 
     const port = await startServer(t, app)
 
@@ -1333,7 +1333,7 @@ t.test('Misorder files before ‘map’.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(apolloUploadExpress())
+      .use(graphqlUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
@@ -1374,7 +1374,7 @@ t.test('Missing ‘map’ and files.', async t => {
       .on('error', error =>
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
       )
-      .use(apolloUploadKoa())
+      .use(graphqlUploadKoa())
 
     const port = await startServer(t, app)
 
@@ -1385,7 +1385,7 @@ t.test('Missing ‘map’ and files.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(apolloUploadExpress())
+      .use(graphqlUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
@@ -1415,7 +1415,7 @@ t.test('Missing ‘operations’, ‘map’ and files.', async t => {
       .on('error', error =>
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
       )
-      .use(apolloUploadKoa())
+      .use(graphqlUploadKoa())
 
     const port = await startServer(t, app)
 
@@ -1426,7 +1426,7 @@ t.test('Missing ‘operations’, ‘map’ and files.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(apolloUploadExpress())
+      .use(graphqlUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
@@ -1493,7 +1493,7 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
 
     let variables
 
-    const app = new Koa().use(apolloUploadKoa()).use(async (ctx, next) => {
+    const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
       ;({ variables } = ctx.request.body)
       await t.test('Upload.', uploadTest(ctx.request.body.variables.file))
 
@@ -1516,7 +1516,7 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
     let variables
 
     const app = express()
-      .use(apolloUploadExpress())
+      .use(graphqlUploadExpress())
       .use((request, response, next) => {
         ;({ variables } = request.body)
         t.test('Upload.', uploadTest(request.body.variables.file))

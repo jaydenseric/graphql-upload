@@ -85,7 +85,7 @@ class Upload {
 
 /**
  * Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
- * Used in [`apolloUploadKoa`]{@link apolloUploadKoa} and [`apolloUploadExpress`]{@link apolloUploadExpress}
+ * Used in [`graphqlUploadKoa`]{@link graphqlUploadKoa} and [`graphqlUploadExpress`]{@link graphqlUploadExpress}
  * and can be used to create custom middleware.
  * @kind function
  * @name processRequest
@@ -95,7 +95,7 @@ class Upload {
  * @returns {Promise<GraphQLOperation | Array<GraphQLOperation>>} GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
  * @example <caption>How to import.</caption>
  * ```js
- * import { processRequest } from 'apollo-upload-server'
+ * import { processRequest } from 'graphql-upload'
  * ```
  */
 export const processRequest = (

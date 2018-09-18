@@ -1,29 +1,24 @@
-![Apollo upload logo](https://cdn.rawgit.com/jaydenseric/apollo-upload-server/6831fef/apollo-upload-logo.svg)
+![graphql-upload logo](graphql-upload-logo.svg)
 
-# apollo-upload-server
+# graphql-upload
 
-[![npm version](https://badgen.net/npm/v/apollo-upload-server)](https://npm.im/apollo-upload-server) [![Build status](https://travis-ci.org/jaydenseric/apollo-upload-server.svg?branch=master)](https://travis-ci.org/jaydenseric/apollo-upload-server)
+[![npm version](https://badgen.net/npm/v/graphql-upload)](https://npm.im/graphql-upload) [![Build status](https://travis-ci.org/jaydenseric/graphql-upload.svg?branch=master)](https://travis-ci.org/jaydenseric/graphql-upload)
 
 Middleware and an [`Upload` scalar](#class-graphqlupload) to add support for [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec) (file uploads via queries and mutations) to various Node.js GraphQL servers.
 
+⚠️ Previously published as [`apollo-upload-server`](https://npm.im/apollo-upload-server).
+
 ## Support
 
-The following environments are known to be compatible, or feature this package built in:
+The following environments are known to be compatible:
 
 - Node.js v8.5+
   - CJS
   - Native ESM with [`--experimental-modules`](https://nodejs.org/api/esm.html#esm_enabling)
 - [Koa](https://koajs.com)
-  - [`apollo-server-koa`](https://npm.im/apollo-server-koa) (built in)
   - [`graphql-api-koa`](https://npm.im/graphql-api-koa)
 - [Express](https://expressjs.com)
-  - [`apollo-server`](https://npm.im/apollo-server) (built in)
-  - [`apollo-server-express`](https://npm.im/apollo-server-express) (built in)
   - [`express-graphql`](https://npm.im/express-graphql)
-- [hapi](https://hapijs.com)
-  - [`apollo-server-hapi`](https://npm.im/apollo-server-hapi) (built in)
-- [Micro](https://github.com/zeit/micro)
-  - [`apollo-server-micro`](https://npm.im/apollo-server-micro) (built in)
 
 See also [GraphQL multipart request spec server implementations](https://github.com/jaydenseric/graphql-multipart-request-spec#server).
 
@@ -31,13 +26,13 @@ See also [GraphQL multipart request spec server implementations](https://github.
 
 Setup is necessary if your environment doesn’t feature this package built in (see **_[Support](#support)_**).
 
-To install [`apollo-upload-server`](https://npm.im/apollo-upload-server) and the [`graphql`](https://npm.im/graphql) peer dependency from [npm](https://npmjs.com) run:
+To install [`graphql-upload`](https://npm.im/graphql-upload) and the [`graphql`](https://npm.im/graphql) peer dependency from [npm](https://npmjs.com) run:
 
 ```shell
-npm install apollo-upload-server graphql
+npm install graphql-upload graphql
 ```
 
-Use the [`apolloUploadKoa`](#function-apollouploadkoa) or [`apolloUploadExpress`](#function-apollouploadexpress) middleware just before GraphQL middleware. Alternatively, use [`processRequest`](#function-processrequest) to create custom middleware.
+Use the [`graphqlUploadKoa`](#function-apollouploadkoa) or [`graphqlUploadExpress`](#function-apollouploadexpress) middleware just before GraphQL middleware. Alternatively, use [`processRequest`](#function-processrequest) to create custom middleware.
 
 A schema built with separate SDL and resolvers (e.g. using [`makeExecutableSchema`](https://apollographql.com/docs/graphql-tools/generate-schema#makeExecutableSchema)) requires the [`Upload` scalar](#class-graphqlupload) to be setup.
 
@@ -71,9 +66,9 @@ The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-mult
 
 - [class GraphQLUpload](#class-graphqlupload)
   - [Examples](#examples)
-- [function apolloUploadExpress](#function-apollouploadexpress)
+- [function graphqlUploadExpress](#function-graphqluploadexpress)
   - [Examples](#examples-1)
-- [function apolloUploadKoa](#function-apollouploadkoa)
+- [function graphqlUploadKoa](#function-graphqluploadkoa)
   - [Examples](#examples-2)
 - [function processRequest](#function-processrequest)
   - [Examples](#examples-3)
@@ -92,7 +87,7 @@ _Setup for a schema built with [`makeExecutableSchema`](https://apollographql.co
 
 > ```js
 > import { makeExecutableSchema } from 'graphql-tools'
-> import { GraphQLUpload } from 'apollo-upload-server'
+> import { GraphQLUpload } from 'graphql-upload'
 >
 > const typeDefs = `
 >   scalar Upload
@@ -109,7 +104,7 @@ _A manually constructed schema with an image upload mutation._
 
 > ```js
 > import { GraphQLSchema, GraphQLObjectType, GraphQLBoolean } from 'graphql'
-> import { GraphQLUpload } from 'apollo-upload-server'
+> import { GraphQLUpload } from 'graphql-upload'
 >
 > export const schema = new GraphQLSchema({
 >   mutation: new GraphQLObjectType({
@@ -136,7 +131,7 @@ _A manually constructed schema with an image upload mutation._
 > })
 > ```
 
-### function apolloUploadExpress
+### function graphqlUploadExpress
 
 Creates [Express](https://expressjs.com) middleware that processes GraphQL multipart requests using [`processRequest`](#function-processrequest), ignoring non-multipart requests. It sets the request body to be [similar to a conventional GraphQL POST request](#type-graphqloperation) for following GraphQL middleware to consume.
 
@@ -153,19 +148,19 @@ _Basic [`express-graphql`](https://npm.im/express-graphql) setup._
 > ```js
 > import express from 'express'
 > import graphqlHTTP from 'express-graphql'
-> import { apolloUploadExpress } from 'apollo-upload-server'
+> import { graphqlUploadExpress } from 'graphql-upload'
 > import schema from './schema'
 >
 > express()
 >   .use(
 >     '/graphql',
->     apolloUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
+>     graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
 >     graphqlHTTP({ schema })
 >   )
 >   .listen(3000)
 > ```
 
-### function apolloUploadKoa
+### function graphqlUploadKoa
 
 Creates [Koa](https://koajs.com) middleware that processes GraphQL multipart requests using [`processRequest`](#function-processrequest), ignoring non-multipart requests. It sets the request body to be [similar to a conventional GraphQL POST request](#type-graphqloperation) for following GraphQL middleware to consume.
 
@@ -183,20 +178,20 @@ _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
 > import Koa from 'koa'
 > import bodyParser from 'koa-bodyparser'
 > import { errorHandler, execute } from 'graphql-api-koa'
-> import { apolloUploadKoa } from 'apollo-upload-server'
+> import { graphqlUploadKoa } from 'graphql-upload'
 > import schema from './schema'
 >
 > new Koa()
 >   .use(errorHandler())
 >   .use(bodyParser())
->   .use(apolloUploadKoa({ maxFileSize: 10000000, maxFiles: 10 }))
+>   .use(graphqlUploadKoa({ maxFileSize: 10000000, maxFiles: 10 }))
 >   .use(execute({ schema }))
 >   .listen(3000)
 > ```
 
 ### function processRequest
 
-Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). Used in [`apolloUploadKoa`](#function-apollouploadkoa) and [`apolloUploadExpress`](#function-apollouploadexpress) and can be used to create custom middleware.
+Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). Used in [`graphqlUploadKoa`](#function-graphqluploadkoa) and [`graphqlUploadExpress`](#function-graphqluploadexpress) and can be used to create custom middleware.
 
 | Parameter  | Type                                  | Description                                                                                               |
 | :--------- | :------------------------------------ | :-------------------------------------------------------------------------------------------------------- |
@@ -211,7 +206,7 @@ Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-m
 _How to import._
 
 > ```js
-> import { processRequest } from 'apollo-upload-server'
+> import { processRequest } from 'graphql-upload'
 > ```
 
 ### type FileUpload

@@ -20,7 +20,7 @@ import { GraphQLScalarType } from 'graphql'
  * @example <caption>Setup for a schema built with [`makeExecutableSchema`](https://apollographql.com/docs/graphql-tools/generate-schema#makeExecutableSchema).</caption>
  * ```js
  * import { makeExecutableSchema } from 'graphql-tools'
- * import { GraphQLUpload } from 'apollo-upload-server'
+ * import { GraphQLUpload } from 'graphql-upload'
  *
  * const typeDefs = `
  *   scalar Upload
@@ -35,7 +35,7 @@ import { GraphQLScalarType } from 'graphql'
  * @example <caption>A manually constructed schema with an image upload mutation.</caption>
  * ```js
  * import { GraphQLSchema, GraphQLObjectType, GraphQLBoolean } from 'graphql'
- * import { GraphQLUpload } from 'apollo-upload-server'
+ * import { GraphQLUpload } from 'graphql-upload'
  *
  * export const schema = new GraphQLSchema({
  *   mutation: new GraphQLObjectType({
