@@ -28,7 +28,6 @@
     "!lib/test.*"
   ],
   "main": "lib",
-  "module": "lib/index.mjs",
   "engines": {
     "node": ">=8.5"
   },
