@@ -9,6 +9,13 @@ import FormData from 'form-data'
 import { ReadStream } from 'fs-capacitor'
 import { graphqlUploadKoa, graphqlUploadExpress } from '.'
 
+// eslint-disable-next-line no-console
+console.log(
+  `Testing ${
+    process.execArgv.includes('--experimental-modules') ? 'ESM' : 'CJS'
+  } library with ${process.env.NODE_ENV} NODE_ENV…\n\n`
+)
+
 /**
  * Asynchronously starts a server and automatically closes it when the given
  * test tears down.
