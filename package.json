@@ -76,8 +76,12 @@
     "test:mjs": "node --experimental-modules --no-warnings lib/test | tap-mocha-reporter spec",
     "test:js": "node lib/test | tap-mocha-reporter spec",
     "prepublishOnly": "npm run prepare && npm test",
-    "watch": "watch 'npm run prepublishOnly --silent' src --interval 1",
-    "precommit": "lint-staged"
+    "watch": "watch 'npm run prepublishOnly --silent' src --interval 1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
     "*.{mjs,js}": "eslint",
