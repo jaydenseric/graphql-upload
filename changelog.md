@@ -4,6 +4,7 @@
 
 ### Patch
 
+- Updated dev dependencies.
 - Fixed broken readme API documentation links.
 
 ## 8.0.0
