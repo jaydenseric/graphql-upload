@@ -7,6 +7,7 @@
 - Updated dev dependencies.
 - Removed the package `module` field. Webpack by default resolves extensionless paths the same way Node.js in `--experimental-modules` mode does; `.mjs` files are preferred. Tools misconfigured or unable to resolve `.mjs` can get confused when `module` points to an `.mjs` ESM file and they attempt to resolve named imports from `.js` CJS files.
 - Updated package scripts and config for the new [`husky`](https://npm.im/husky) version.
+- Added a package `browserslist` field with the target Node.js version for [`@babel/preset-env`](https://npm.im/@babel/preset-env) and removed related config from `babel.config.js`.
 - Tests now log if the environment is CJS or ESM (`--experimental-modules`) and the `NODE_ENV`.
 - Fixed broken readme API documentation links.
 
