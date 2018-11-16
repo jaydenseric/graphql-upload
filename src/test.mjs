@@ -153,7 +153,7 @@ t.test('Invalid ‘operations’ JSON.', async t => {
 
     body.append('operations', '{ variables: { "file": null } }')
     body.append('map', JSON.stringify({ 1: ['variables.file'] }))
-    body.append('1', 'a', { filename: 'a.txt' })
+    body.append('1', 'a'.repeat(70000), { filename: 'a.txt' })
 
     const { status } = await fetch(`http://localhost:${port}`, {
       method: 'POST',

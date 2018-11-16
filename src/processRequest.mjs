@@ -148,7 +148,9 @@ export const processRequest = (
           if (!upload.file) upload.reject(exitError)
 
       request.unpipe(parser)
-      request.resume()
+      setImmediate(() => {
+        request.resume()
+      })
     }
 
     /**
