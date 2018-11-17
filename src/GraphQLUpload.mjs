@@ -1,17 +1,6 @@
 import { GraphQLScalarType } from 'graphql'
 
 /**
- * File upload details, resolved from an [`Upload` scalar]{@link GraphQLUpload} promise.
- * @kind typedef
- * @name FileUpload
- * @type {Object}
- * @prop {string} filename File name.
- * @prop {string} mimetype File MIME type. Provided by the client and can’t be trusted.
- * @prop {string} encoding File stream transfer encoding.
- * @prop {function} createReadStream Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request.
- */
-
-/**
  * A GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphql.org/graphql-js/type/#graphqlschema).
  * It’s value in resolvers is a promise that resolves [file upload details]{@link FileUpload}
  * for processing and storage.
@@ -73,3 +62,14 @@ export const GraphQLUpload = new GraphQLScalarType({
     throw new Error('‘Upload’ scalar serialization unsupported.')
   }
 })
+
+/**
+ * File upload details, resolved from an [`Upload` scalar]{@link GraphQLUpload} promise.
+ * @kind typedef
+ * @name FileUpload
+ * @type {Object}
+ * @prop {string} filename File name.
+ * @prop {string} mimetype File MIME type. Provided by the client and can’t be trusted.
+ * @prop {string} encoding File stream transfer encoding.
+ * @prop {function} createReadStream Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request.
+ */
