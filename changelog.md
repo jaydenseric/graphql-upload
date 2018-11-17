@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Fixed hanging when a request with a large payload has an “immediate” error, such as a malformed request, fixing [#123](https://github.com/jaydenseric/graphql-upload/issues/123) via [#124](https://github.com/jaydenseric/graphql-upload/pull/124).
+
 ## 8.0.1
 
 ### Patch

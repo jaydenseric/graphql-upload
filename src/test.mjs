@@ -153,7 +153,12 @@ t.test('Invalid ‘operations’ JSON.', async t => {
 
     body.append('operations', '{ variables: { "file": null } }')
     body.append('map', JSON.stringify({ 1: ['variables.file'] }))
-    body.append('1', 'a', { filename: 'a.txt' })
+
+    // We need at least one of these “immediate” failures to have a request body
+    // larger than node’s internal stream buffer, so that we can test stream
+    // resumption.
+    // See: https://github.com/jaydenseric/graphql-upload/issues/123
+    body.append('1', 'a'.repeat(70000), { filename: 'a.txt' })
 
     const { status } = await fetch(`http://localhost:${port}`, {
       method: 'POST',

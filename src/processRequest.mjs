@@ -148,7 +148,14 @@ export const processRequest = (
           if (!upload.file) upload.reject(exitError)
 
       request.unpipe(parser)
-      request.resume()
+
+      // With a sufficiently large request body, subsequent events in the same
+      // event frame cause the stream to pause after the parser is destroyed. To
+      // ensure that the request resumes, the call to .resume() is scheduled for
+      // later in the event loop.
+      setImmediate(() => {
+        request.resume()
+      })
     }
 
     /**
