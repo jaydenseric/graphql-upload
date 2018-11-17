@@ -1,12 +1,12 @@
 import fs from 'fs'
-import stream from 'stream'
 import http from 'http'
-import t from 'tap'
-import Koa from 'koa'
+import stream from 'stream'
 import express from 'express'
-import fetch from 'node-fetch'
 import FormData from 'form-data'
 import { ReadStream } from 'fs-capacitor'
+import Koa from 'koa'
+import fetch from 'node-fetch'
+import t from 'tap'
 import { graphqlUploadKoa, graphqlUploadExpress } from '.'
 
 // eslint-disable-next-line no-console

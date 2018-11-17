@@ -1,8 +1,8 @@
 import util from 'util'
 import Busboy from 'busboy'
-import objectPath from 'object-path'
 import WriteStream from 'fs-capacitor'
 import createError from 'http-errors'
+import objectPath from 'object-path'
 
 /**
  * GraphQL upload server options, mostly relating to security, performance and
