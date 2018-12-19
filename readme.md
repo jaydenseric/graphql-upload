@@ -1,4 +1,4 @@
-![graphql-upload logo](https://cdn.rawgit.com/jaydenseric/graphql-upload/a3c4590/graphql-upload-logo.svg)
+![graphql-upload logo](https://cdn.jsdelivr.net/gh/jaydenseric/graphql-upload@8.0.0/graphql-upload-logo.svg)
 
 # graphql-upload
 
