@@ -119,7 +119,8 @@ t.test('Single file.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    await new Promise(resolve => file.capacitor.once('close', resolve))
+    if (!file.capacitor.closed)
+      await new Promise(resolve => file.capacitor.once('close', resolve))
     t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 
@@ -142,7 +143,8 @@ t.test('Single file.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    await new Promise(resolve => file.capacitor.once('close', resolve))
+    if (!file.capacitor.closed)
+      await new Promise(resolve => file.capacitor.once('close', resolve))
     t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 })
@@ -308,11 +310,13 @@ t.test('Handles unconsumed uploads.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.fileA
-    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    if (!fileA.capacitor.closed)
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
     const fileB = await variables.fileB
-    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    if (!fileB.capacitor.closed)
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
@@ -336,11 +340,13 @@ t.test('Handles unconsumed uploads.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.fileA
-    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    if (!fileA.capacitor.closed)
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
     const fileB = await variables.fileB
-    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    if (!fileB.capacitor.closed)
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
@@ -443,6 +449,18 @@ t.test('Aborted request.', async t => {
 
     const uploadBTest = (file, stream) => async t => {
       await new Promise(resolve => {
+        if (stream.error) {
+          t.matchSnapshot(snapshotError(stream.error), 'Stream error.')
+          resolve()
+          return
+        }
+
+        if (stream.ended) {
+          t.fail('File shouldn’t fully upload.')
+          resolve()
+          return
+        }
+
         stream
           .on('error', error => {
             t.matchSnapshot(snapshotError(error), 'Stream error.')
@@ -498,11 +516,13 @@ t.test('Aborted request.', async t => {
       await finished
 
       const fileA = await variables.fileA
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+      if (!fileA.capacitor.closed)
+        await new Promise(resolve => fileA.capacitor.once('close', resolve))
       t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
       const fileB = await variables.fileB
-      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+      if (!fileB.capacitor.closed)
+        await new Promise(resolve => fileB.capacitor.once('close', resolve))
       t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
 
@@ -547,11 +567,13 @@ t.test('Aborted request.', async t => {
       await finished
 
       const fileA = await variables.fileA
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+      if (!fileA.capacitor.closed)
+        await new Promise(resolve => fileA.capacitor.once('close', resolve))
       t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
       const fileB = await variables.fileB
-      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+      if (!fileB.capacitor.closed)
+        await new Promise(resolve => fileB.capacitor.once('close', resolve))
       t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
   })
@@ -625,11 +647,13 @@ t.test('Aborted request.', async t => {
       await finished
 
       const fileA = await variables.fileA
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+      if (!fileA.capacitor.closed)
+        await new Promise(resolve => fileA.capacitor.once('close', resolve))
       t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
       const fileB = await variables.fileB
-      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+      if (!fileB.capacitor.closed)
+        await new Promise(resolve => fileB.capacitor.once('close', resolve))
       t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
 
@@ -678,11 +702,13 @@ t.test('Aborted request.', async t => {
       await finished
 
       const fileA = await variables.fileA
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+      if (!fileA.capacitor.closed)
+        await new Promise(resolve => fileA.capacitor.once('close', resolve))
       t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
       const fileB = await variables.fileB
-      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+      if (!fileB.capacitor.closed)
+        await new Promise(resolve => fileB.capacitor.once('close', resolve))
       t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
   })
@@ -759,11 +785,13 @@ t.test('Deduped files.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    if (!fileA.capacitor.closed)
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
     const fileB = await variables.files[1]
-    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    if (!fileB.capacitor.closed)
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
@@ -805,11 +833,13 @@ t.test('Deduped files.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    if (!fileA.capacitor.closed)
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
     const fileB = await variables.files[1]
-    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    if (!fileB.capacitor.closed)
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
@@ -930,7 +960,8 @@ t.test('Extraneous file.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    await new Promise(resolve => file.capacitor.once('close', resolve))
+    if (!file.capacitor.closed)
+      await new Promise(resolve => file.capacitor.once('close', resolve))
     t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 
@@ -953,7 +984,8 @@ t.test('Extraneous file.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    await new Promise(resolve => file.capacitor.once('close', resolve))
+    if (!file.capacitor.closed)
+      await new Promise(resolve => file.capacitor.once('close', resolve))
     t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 })
@@ -1095,7 +1127,8 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
     await finished
 
     const fileA = await variables.files[0]
-    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    if (!fileA.capacitor.closed)
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
   })
 
@@ -1119,7 +1152,8 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    if (!fileA.capacitor.closed)
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
   })
 })
@@ -1198,11 +1232,13 @@ t.test('Exceed max file size.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    if (!fileA.capacitor.closed)
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
     const fileB = await variables.files[1]
-    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    if (!fileB.capacitor.closed)
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
@@ -1227,11 +1263,13 @@ t.test('Exceed max file size.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    if (!fileA.capacitor.closed)
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
 
     const fileB = await variables.files[1]
-    await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    if (!fileB.capacitor.closed)
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
     t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
@@ -1518,7 +1556,8 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    await new Promise(resolve => file.capacitor.once('close', resolve))
+    if (!file.capacitor.closed)
+      await new Promise(resolve => file.capacitor.once('close', resolve))
     t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 
@@ -1541,7 +1580,8 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    await new Promise(resolve => file.capacitor.once('close', resolve))
+    if (!file.capacitor.closed)
+      await new Promise(resolve => file.capacitor.once('close', resolve))
     t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 })
