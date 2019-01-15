@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to v2, fixing [#131](https://github.com/jaydenseric/graphql-upload/issues/131) via [#132](https://github.com/jaydenseric/graphql-upload/pull/132).
+
 ## 8.0.3
 
 ### Patch
