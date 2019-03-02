@@ -139,7 +139,7 @@ Creates [Express](https://expressjs.com) middleware that processes GraphQL multi
 | :-------- | :----------------------------------- | :---------------------- |
 | `options` | [UploadOptions](#type-uploadoptions) | GraphQL upload options. |
 
-**Returns:** [function](https://mdn.io/function) — Express middleware.
+**Returns:** function — Express middleware.
 
 #### Examples
 
@@ -168,7 +168,7 @@ Creates [Koa](https://koajs.com) middleware that processes GraphQL multipart req
 | :-------- | :----------------------------------- | :---------------------- |
 | `options` | [UploadOptions](#type-uploadoptions) | GraphQL upload options. |
 
-**Returns:** [function](https://mdn.io/function) — Koa middleware.
+**Returns:** function — Koa middleware.
 
 #### Examples
 
@@ -199,7 +199,7 @@ Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-m
 | `response` | ServerResponse                        | [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse). |
 | `options`  | [UploadOptions](#type-uploadoptions)? | GraphQL upload options.                                                                                   |
 
-**Returns:** [Promise](https://mdn.io/promise)&lt;[GraphQLOperation](#type-graphqloperation) | [Array](https://mdn.io/array)&lt;[GraphQLOperation](#type-graphqloperation)>> — GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
+**Returns:** Promise&lt;[GraphQLOperation](#type-graphqloperation) | Array&lt;[GraphQLOperation](#type-graphqloperation)>> — GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
 
 #### Examples
 
@@ -213,26 +213,26 @@ _How to import._
 
 File upload details, resolved from an [`Upload` scalar](#class-graphqlupload) promise.
 
-**Type:** [Object](https://mdn.io/object)
+**Type:** Object
 
-| Property           | Type                                | Description                                                                                                                                                                                                                                |
-| :----------------- | :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `filename`         | [string](https://mdn.io/string)     | File name.                                                                                                                                                                                                                                 |
-| `mimetype`         | [string](https://mdn.io/string)     | File MIME type. Provided by the client and can’t be trusted.                                                                                                                                                                               |
-| `encoding`         | [string](https://mdn.io/string)     | File stream transfer encoding.                                                                                                                                                                                                             |
-| `createReadStream` | [function](https://mdn.io/function) | Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. |
+| Property           | Type     | Description                                                                                                                                                                                                                                |
+| :----------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `filename`         | string   | File name.                                                                                                                                                                                                                                 |
+| `mimetype`         | string   | File MIME type. Provided by the client and can’t be trusted.                                                                                                                                                                               |
+| `encoding`         | string   | File stream transfer encoding.                                                                                                                                                                                                             |
+| `createReadStream` | function | Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. |
 
 ### type GraphQLOperation
 
 A GraphQL operation object in a shape that can be consumed and executed by most GraphQL servers.
 
-**Type:** [Object](https://mdn.io/object)
+**Type:** Object
 
-| Property        | Type                                     | Description                                          |
-| :-------------- | :--------------------------------------- | :--------------------------------------------------- |
-| `query`         | [string](https://mdn.io/string)          | GraphQL document containing queries and fragments.   |
-| `operationName` | [string](https://mdn.io/string) \| null? | GraphQL document operation name to execute.          |
-| `variables`     | [object](https://mdn.io/object) \| null? | GraphQL document operation variables and values map. |
+| Property        | Type            | Description                                          |
+| :-------------- | :-------------- | :--------------------------------------------------- |
+| `query`         | string          | GraphQL document containing queries and fragments.   |
+| `operationName` | string \| null? | GraphQL document operation name to execute.          |
+| `variables`     | object \| null? | GraphQL document operation variables and values map. |
 
 #### See
 
@@ -243,10 +243,10 @@ A GraphQL operation object in a shape that can be consumed and executed by most 
 
 GraphQL upload server options, mostly relating to security, performance and limits.
 
-**Type:** [Object](https://mdn.io/object)
+**Type:** Object
 
-| Property       | Type                                          | Description                                                                           |
-| :------------- | :-------------------------------------------- | :------------------------------------------------------------------------------------ |
-| `maxFieldSize` | [number](https://mdn.io/number)? = `1000000`  | Maximum allowed non-file multipart form field size in bytes; enough for your queries. |
-| `maxFileSize`  | [number](https://mdn.io/number)? = `Infinity` | Maximum allowed file size in bytes.                                                   |
-| `maxFiles`     | [number](https://mdn.io/number)? = `Infinity` | Maximum allowed number of files.                                                      |
+| Property       | Type                 | Description                                                                           |
+| :------------- | :------------------- | :------------------------------------------------------------------------------------ |
+| `maxFieldSize` | number? = `1000000`  | Maximum allowed non-file multipart form field size in bytes; enough for your queries. |
+| `maxFileSize`  | number? = `Infinity` | Maximum allowed file size in bytes.                                                   |
+| `maxFiles`     | number? = `Infinity` | Maximum allowed number of files.                                                      |
