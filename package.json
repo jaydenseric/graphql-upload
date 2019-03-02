@@ -77,7 +77,7 @@
     "test:prettier": "prettier '**/*.{json,yml,md}' -l",
     "test:mjs": "node --experimental-modules --no-warnings lib/test | tap-mocha-reporter spec",
     "test:js": "node lib/test | tap-mocha-reporter spec",
-    "prepublishOnly": "npm run prepare && npm test",
+    "prepublishOnly": "npm test",
     "watch": "watch 'npm run prepublishOnly --silent' src --interval 1"
   },
   "husky": {

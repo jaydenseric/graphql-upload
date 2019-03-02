@@ -5,6 +5,7 @@
 ### Patch
 
 - Updated dependencies.
+- Simplified the `prepublishOnly` script.
 
 ## 8.0.4
 
