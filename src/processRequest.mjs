@@ -155,6 +155,10 @@ export const processRequest = (
         case 'operations':
           try {
             operations = JSON.parse(value)
+            if (typeof operations !== 'object')
+              throw new Error(
+                `‘operations’ was of type ${typeof operations} while expecting object`
+              )
             operationsPath = objectPath(operations)
           } catch (error) {
             exit(
@@ -191,6 +195,14 @@ export const processRequest = (
           if (mapEntries.length > maxFiles)
             return exit(
               createError(413, `${maxFiles} max file uploads exceeded.`)
+            )
+
+          if (typeof operations !== 'object')
+            return exit(
+              createError(
+                400,
+                `Invalid JSON in the ‘operations’ multipart field (${SPEC_URL}).`
+              )
             )
 
           map = new Map()
