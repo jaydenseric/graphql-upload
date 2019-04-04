@@ -1,5 +1,13 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Updated dependencies.
+- Removed the [`watch`](https://npm.im/watch) dev dependency and `watch` script.
+- Simplified the `prepublishOnly` script.
+
 ## 8.0.4
 
 ### Patch
