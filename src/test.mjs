@@ -205,7 +205,7 @@ t.test('Invalid ‘operations’ type.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
-    body.append('operations', '""')
+    body.append('operations', 'null')
     body.append('map', JSON.stringify({ 1: ['variables.file'] }))
 
     // We need at least one of these “immediate” failures to have a request body
@@ -319,7 +319,7 @@ t.todo('Invalid ‘map’ type.', async t => {
         }
       })
     )
-    body.append('map', '""')
+    body.append('map', 'null')
     body.append('1', 'a', { filename: 'a.txt' })
 
     const { status } = await fetch(`http://localhost:${port}`, {
