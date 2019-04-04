@@ -41,20 +41,20 @@ exports[`lib/test TAP Invalid ‘operations’ JSON. Express middleware. > Middl
 }
 `
 
-exports[`lib/test TAP Invalid ‘operations’ JSON - string instead of object. Koa middleware. > Middleware throws. 1`] = `
+exports[`lib/test TAP Invalid ‘operations’ type. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
-  "message": "Invalid JSON in the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "message": "Invalid type for the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
   "status": 400,
   "statusCode": 400,
   "expose": true
 }
 `
 
-exports[`lib/test TAP Invalid ‘operations’ JSON - string instead of object. Express middleware. > Middleware throws. 1`] = `
+exports[`lib/test TAP Invalid ‘operations’ type. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
-  "message": "Invalid JSON in the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "message": "Invalid type for the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
   "status": 400,
   "statusCode": 400,
   "expose": true
