@@ -307,7 +307,7 @@ t.test('Invalid ‘map’ JSON.', async t => {
   })
 })
 
-t.todo('Invalid ‘map’ type.', async t => {
+t.test('Invalid ‘map’ type.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()
 

@@ -223,6 +223,14 @@ export const processRequest = (
             )
           }
 
+          if (!isObject(parsedMap))
+            return exit(
+              createError(
+                400,
+                `Invalid type for the ‘map’ multipart field (${SPEC_URL}).`
+              )
+            )
+
           const mapEntries = Object.entries(parsedMap)
 
           // Check max files is not exceeded, even though the number of files to

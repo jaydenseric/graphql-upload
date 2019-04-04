@@ -81,6 +81,26 @@ exports[`lib/test TAP Invalid ‘map’ JSON. Express middleware. > Middleware t
 }
 `
 
+exports[`lib/test TAP Invalid ‘map’ type. Koa middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Invalid type for the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
+exports[`lib/test TAP Invalid ‘map’ type. Express middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Invalid type for the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
 exports[`lib/test TAP Handles unconsumed uploads. Koa middleware. Upload B. > Enumerable properties. 1`] = `
 {
   "filename": "b.txt",
