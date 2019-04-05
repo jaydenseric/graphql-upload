@@ -131,6 +131,8 @@ _A manually constructed schema with an image upload mutation._
 > })
 > ```
 
+---
+
 ### function graphqlUploadExpress
 
 Creates [Express](https://expressjs.com) middleware that processes GraphQL multipart requests using [`processRequest`](#function-processrequest), ignoring non-multipart requests. It sets the request body to be [similar to a conventional GraphQL POST request](#type-graphqloperation) for following GraphQL middleware to consume.
@@ -159,6 +161,8 @@ _Basic [`express-graphql`](https://npm.im/express-graphql) setup._
 >   )
 >   .listen(3000)
 > ```
+
+---
 
 ### function graphqlUploadKoa
 
@@ -189,6 +193,8 @@ _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
 >   .listen(3000)
 > ```
 
+---
+
 ### function processRequest
 
 Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). Used in [`graphqlUploadKoa`](#function-graphqluploadkoa) and [`graphqlUploadExpress`](#function-graphqluploadexpress) and can be used to create custom middleware.
@@ -209,6 +215,8 @@ _How to import._
 > import { processRequest } from 'graphql-upload'
 > ```
 
+---
+
 ### type FileUpload
 
 File upload details, resolved from an [`Upload` scalar](#class-graphqlupload) promise.
@@ -221,6 +229,8 @@ File upload details, resolved from an [`Upload` scalar](#class-graphqlupload) pr
 | `mimetype`         | string   | File MIME type. Provided by the client and can’t be trusted.                                                                                                                                                                               |
 | `encoding`         | string   | File stream transfer encoding.                                                                                                                                                                                                             |
 | `createReadStream` | function | Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. |
+
+---
 
 ### type GraphQLOperation
 
@@ -238,6 +248,8 @@ A GraphQL operation object in a shape that can be consumed and executed by most 
 
 - [GraphQL over HTTP spec](https://github.com/APIs-guru/graphql-over-http#request-parameters).
 - [Apollo Server POST requests](https://www.apollographql.com/docs/apollo-server/requests#postRequests).
+
+---
 
 ### type UploadOptions
 
