@@ -25,6 +25,16 @@ const SPEC_URL = 'https://github.com/jaydenseric/graphql-multipart-request-spec'
 const isObject = value => value && value.constructor === Object
 
 /**
+ * Checks if a value is a string.
+ * @kind function
+ * @name isString
+ * @param {*} value Value to check.
+ * @returns {boolean} Is the value a string.
+ * @ignore
+ */
+const isString = value => typeof value === 'string' || value instanceof String
+
+/**
  * Safely ignores a readable stream.
  * @kind function
  * @name ignoreStream
@@ -246,14 +256,23 @@ export const processRequest = (
               return exit(
                 createError(
                   400,
-                  `Invalid type for the ‘map’ multipart field key ‘${fieldName}’ value (${SPEC_URL}).`
+                  `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array (${SPEC_URL}).`
                 )
               )
 
             map.set(fieldName, new Upload())
 
-            for (const path of paths)
+            for (const [index, path] of paths.entries()) {
+              if (!isString(path))
+                return exit(
+                  createError(
+                    400,
+                    `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value (${SPEC_URL}).`
+                  )
+                )
+
               operationsPath.set(path, map.get(fieldName).promise)
+            }
           }
 
           resolve(operations)

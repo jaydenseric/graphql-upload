@@ -361,7 +361,7 @@ t.test('Invalid ‘map’ type.', async t => {
   })
 })
 
-t.test('Invalid ‘map’ property type.', async t => {
+t.test('Invalid ‘map’ entry type.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
@@ -374,6 +374,60 @@ t.test('Invalid ‘map’ property type.', async t => {
       })
     )
     body.append('map', JSON.stringify({ 1: null }))
+    body.append('1', 'a', { filename: 'a.txt' })
+
+    const { status } = await fetch(`http://localhost:${port}`, {
+      method: 'POST',
+      body
+    })
+
+    t.equal(status, 400, 'Response status.')
+  }
+
+  await t.test('Koa middleware.', async t => {
+    t.plan(2)
+
+    const app = new Koa()
+      .on('error', error =>
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
+      )
+      .use(graphqlUploadKoa())
+
+    const port = await startServer(t, app)
+
+    await sendRequest(t, port)
+  })
+
+  await t.test('Express middleware.', async t => {
+    t.plan(2)
+
+    const app = express()
+      .use(graphqlUploadExpress({ maxFiles: 1 }))
+      .use((error, request, response, next) => {
+        if (response.headersSent) return next(error)
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
+        response.send()
+      })
+
+    const port = await startServer(t, app)
+
+    await sendRequest(t, port)
+  })
+})
+
+t.test('Invalid ‘map’ entry array item type.', async t => {
+  const sendRequest = async (t, port) => {
+    const body = new FormData()
+
+    body.append(
+      'operations',
+      JSON.stringify({
+        variables: {
+          file: null
+        }
+      })
+    )
+    body.append('map', JSON.stringify({ 1: [null] }))
     body.append('1', 'a', { filename: 'a.txt' })
 
     const { status } = await fetch(`http://localhost:${port}`, {
