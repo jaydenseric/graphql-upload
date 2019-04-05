@@ -74,8 +74,8 @@
     "test": "npm run test:eslint && npm run test:prettier && npm run test:mjs && npm run test:js",
     "test:eslint": "eslint . --ext mjs,js",
     "test:prettier": "prettier '**/*.{json,yml,md}' -l",
-    "test:mjs": "node --experimental-modules --no-warnings lib/test | tap-mocha-reporter spec",
-    "test:js": "node lib/test | tap-mocha-reporter spec",
+    "test:mjs": "node --experimental-modules --no-warnings lib/test | tap-mocha-reporter classic",
+    "test:js": "node lib/test | tap-mocha-reporter classic",
     "prepublishOnly": "npm test"
   },
   "husky": {

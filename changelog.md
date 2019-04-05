@@ -12,6 +12,7 @@
   - Invalid `map` entry array item type.
 - Removed the [`watch`](https://npm.im/watch) dev dependency and `watch` script.
 - Simplified the `prepublishOnly` script.
+- Change to the `classic` TAP reporter for tests.
 
 ## 8.0.4
 
