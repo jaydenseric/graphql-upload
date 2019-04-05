@@ -242,6 +242,14 @@ export const processRequest = (
 
           map = new Map()
           for (const [fieldName, paths] of mapEntries) {
+            if (!Array.isArray(paths))
+              return exit(
+                createError(
+                  400,
+                  `Invalid type for the ‘map’ multipart field key ‘${fieldName}’ value (${SPEC_URL}).`
+                )
+              )
+
             map.set(fieldName, new Upload())
 
             for (const path of paths)
