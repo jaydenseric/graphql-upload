@@ -15,6 +15,41 @@ import objectPath from 'object-path'
 const SPEC_URL = 'https://github.com/jaydenseric/graphql-multipart-request-spec'
 
 /**
+ * Checks if a value is an object with properties.
+ * @kind function
+ * @name isObject
+ * @param {*} value Value to check.
+ * @returns {boolean} Is the value an object.
+ * @ignore
+ */
+const isObject = value => value && value.constructor === Object
+
+/**
+ * Checks if a value is a string.
+ * @kind function
+ * @name isString
+ * @param {*} value Value to check.
+ * @returns {boolean} Is the value a string.
+ * @ignore
+ */
+const isString = value => typeof value === 'string' || value instanceof String
+
+/**
+ * Safely ignores a readable stream.
+ * @kind function
+ * @name ignoreStream
+ * @param {ReadableStream} stream Readable stream.
+ * @ignore
+ */
+const ignoreStream = stream => {
+  // Prevent an unhandled error from crashing the process.
+  stream.on('error', () => {})
+
+  // Waste the stream.
+  stream.resume()
+}
+
+/**
  * An expected file upload.
  * @kind class
  * @name Upload
@@ -151,19 +186,31 @@ export const processRequest = (
     }
 
     parser.on('field', (fieldName, value) => {
+      if (exitError) return
+
       switch (fieldName) {
         case 'operations':
           try {
             operations = JSON.parse(value)
-            operationsPath = objectPath(operations)
           } catch (error) {
-            exit(
+            return exit(
               createError(
                 400,
                 `Invalid JSON in the ‘operations’ multipart field (${SPEC_URL}).`
               )
             )
           }
+
+          if (!isObject(operations))
+            return exit(
+              createError(
+                400,
+                `Invalid type for the ‘operations’ multipart field (${SPEC_URL}).`
+              )
+            )
+
+          operationsPath = objectPath(operations)
+
           break
         case 'map': {
           if (!operations)
@@ -174,9 +221,9 @@ export const processRequest = (
               )
             )
 
-          let mapEntries
+          let parsedMap
           try {
-            mapEntries = Object.entries(JSON.parse(value))
+            parsedMap = JSON.parse(value)
           } catch (error) {
             return exit(
               createError(
@@ -185,6 +232,16 @@ export const processRequest = (
               )
             )
           }
+
+          if (!isObject(parsedMap))
+            return exit(
+              createError(
+                400,
+                `Invalid type for the ‘map’ multipart field (${SPEC_URL}).`
+              )
+            )
+
+          const mapEntries = Object.entries(parsedMap)
 
           // Check max files is not exceeded, even though the number of files to
           // parse might not match the map provided by the client.
@@ -195,10 +252,27 @@ export const processRequest = (
 
           map = new Map()
           for (const [fieldName, paths] of mapEntries) {
+            if (!Array.isArray(paths))
+              return exit(
+                createError(
+                  400,
+                  `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array (${SPEC_URL}).`
+                )
+              )
+
             map.set(fieldName, new Upload())
 
-            for (const path of paths)
+            for (const [index, path] of paths.entries()) {
+              if (!isString(path))
+                return exit(
+                  createError(
+                    400,
+                    `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value (${SPEC_URL}).`
+                  )
+                )
+
               operationsPath.set(path, map.get(fieldName).promise)
+            }
           }
 
           resolve(operations)
@@ -207,11 +281,13 @@ export const processRequest = (
     })
 
     parser.on('file', (fieldName, stream, filename, encoding, mimetype) => {
-      if (!map) {
-        // Prevent an unhandled error from crashing the process.
-        stream.on('error', () => {})
-        stream.resume()
+      if (exitError) {
+        ignoreStream(stream)
+        return
+      }
 
+      if (!map) {
+        ignoreStream(stream)
         return exit(
           createError(
             400,
@@ -226,58 +302,59 @@ export const processRequest = (
       })
 
       const upload = map.get(fieldName)
-      if (upload) {
-        const capacitor = new WriteStream()
 
-        capacitor.on('error', () => {
-          stream.unpipe()
-          stream.resume()
-        })
-
-        stream.on('limit', () => {
-          if (currentStream === stream) currentStream = null
-          stream.unpipe()
-          capacitor.destroy(
-            createError(413, 'File truncated as it exceeds the size limit.')
-          )
-        })
-
-        stream.on('error', error => {
-          if (currentStream === stream) currentStream = null
-
-          stream.unpipe()
-          capacitor.destroy(exitError || error)
-        })
-
-        stream.pipe(capacitor)
-
-        const file = {
-          filename,
-          mimetype,
-          encoding,
-          createReadStream() {
-            const error = capacitor.error || (released ? exitError : null)
-            if (error) throw error
-            return capacitor.createReadStream()
-          }
-        }
-
-        let capacitorStream
-        Object.defineProperty(file, 'stream', {
-          get: util.deprecate(function() {
-            if (!capacitorStream) capacitorStream = this.createReadStream()
-            return capacitorStream
-          }, 'File upload property ‘stream’ is deprecated. Use ‘createReadStream()’ instead.')
-        })
-
-        Object.defineProperty(file, 'capacitor', { value: capacitor })
-
-        upload.resolve(file)
-      } else {
-        // Discard the unexpected file.
-        stream.on('error', () => {})
-        stream.resume()
+      if (!upload) {
+        // The file is extraneous. As the rest can still be processed, just
+        // ignore it and don’t exit with an error.
+        ignoreStream(stream)
+        return
       }
+
+      const capacitor = new WriteStream()
+
+      capacitor.on('error', () => {
+        stream.unpipe()
+        stream.resume()
+      })
+
+      stream.on('limit', () => {
+        if (currentStream === stream) currentStream = null
+        stream.unpipe()
+        capacitor.destroy(
+          createError(413, 'File truncated as it exceeds the size limit.')
+        )
+      })
+
+      stream.on('error', error => {
+        if (currentStream === stream) currentStream = null
+        stream.unpipe()
+        capacitor.destroy(exitError || error)
+      })
+
+      stream.pipe(capacitor)
+
+      const file = {
+        filename,
+        mimetype,
+        encoding,
+        createReadStream() {
+          const error = capacitor.error || (released ? exitError : null)
+          if (error) throw error
+          return capacitor.createReadStream()
+        }
+      }
+
+      let capacitorStream
+      Object.defineProperty(file, 'stream', {
+        get: util.deprecate(function() {
+          if (!capacitorStream) capacitorStream = this.createReadStream()
+          return capacitorStream
+        }, 'File upload property ‘stream’ is deprecated. Use ‘createReadStream()’ instead.')
+      })
+
+      Object.defineProperty(file, 'capacitor', { value: capacitor })
+
+      upload.resolve(file)
     })
 
     parser.once('filesLimit', () =>
