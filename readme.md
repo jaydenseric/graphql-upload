@@ -17,14 +17,16 @@ The following environments are known to be compatible:
   - Native ESM with [`--experimental-modules`](https://nodejs.org/api/esm.html#esm_enabling)
 - [Koa](https://koajs.com)
   - [`graphql-api-koa`](https://npm.im/graphql-api-koa)
+  - [`apollo-server-koa`](https://npm.im/apollo-server-koa) (inbuilt)
 - [Express](https://expressjs.com)
   - [`express-graphql`](https://npm.im/express-graphql)
+  - [`apollo-server-express`](https://npm.im/apollo-server-express) (inbuilt)
 
 See also [GraphQL multipart request spec server implementations](https://github.com/jaydenseric/graphql-multipart-request-spec#server).
 
 ## Setup
 
-Setup is necessary if your environment doesn’t feature this package built in (see **_[Support](#support)_**).
+Setup is necessary if your environment doesn’t feature this package inbuilt (see **_[Support](#support)_**).
 
 To install [`graphql-upload`](https://npm.im/graphql-upload) and the [`graphql`](https://npm.im/graphql) peer dependency from [npm](https://npmjs.com) run:
 

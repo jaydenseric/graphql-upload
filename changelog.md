@@ -15,6 +15,7 @@
 - Removed the [`watch`](https://npm.im/watch) dev dependency and `watch` script.
 - Simplified the `prepublishOnly` script.
 - Change to the `classic` TAP reporter for tests.
+- Add [`apollo-server-koa`](https://npm.im/apollo-server-koa) and [`apollo-server-express`](https://npm.im/apollo-server-express) back to the compatible environments list in the readme, now that they use the current version of this package.
 
 ## 8.0.4
 
