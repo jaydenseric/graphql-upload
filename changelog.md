@@ -5,6 +5,11 @@
 ### Patch
 
 - Updated dependencies.
+- Handle invalid types in multipart fields and respond with meaningful HTTP 400 errors, via [#139](https://github.com/jaydenseric/graphql-upload/pull/139):
+  - Invalid `operations` type.
+  - Invalid `map` type.
+  - Invalid `map` entry type.
+  - Invalid `map` entry array item type.
 - Removed the [`watch`](https://npm.im/watch) dev dependency and `watch` script.
 - Simplified the `prepublishOnly` script.
 
