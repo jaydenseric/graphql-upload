@@ -77,28 +77,5 @@
     "test:mjs": "node --experimental-modules --no-warnings lib/test | tap-mocha-reporter classic",
     "test:js": "node lib/test | tap-mocha-reporter classic",
     "prepublishOnly": "npm test"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{mjs,js}": "eslint",
-    "*.{json,yml,md}": "prettier -l"
-  },
-  "eslintIgnore": [
-    "lib",
-    "tap-snapshots"
-  ],
-  "eslintConfig": {
-    "extends": [
-      "env"
-    ]
-  },
-  "prettier": {
-    "proseWrap": "never",
-    "singleQuote": true,
-    "semi": false
   }
 }

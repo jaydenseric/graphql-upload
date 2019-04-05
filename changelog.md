@@ -10,6 +10,7 @@
   - Invalid `map` type.
   - Invalid `map` entry type.
   - Invalid `map` entry array item type.
+- Reduced the size of the published `package.json` by moving dev tool config to files. This also prevents editor extensions such as Prettier and ESLint from detecting config and attempting to operate when opening package files installed in `node_modules`.
 - Removed the [`watch`](https://npm.im/watch) dev dependency and `watch` script.
 - Simplified the `prepublishOnly` script.
 - Change to the `classic` TAP reporter for tests.
