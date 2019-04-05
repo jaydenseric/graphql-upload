@@ -41,6 +41,26 @@ exports[`lib/test TAP Invalid ‘operations’ JSON. Express middleware. > Middl
 }
 `
 
+exports[`lib/test TAP Invalid ‘operations’ type. Koa middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Invalid type for the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
+exports[`lib/test TAP Invalid ‘operations’ type. Express middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Invalid type for the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
 exports[`lib/test TAP Invalid ‘map’ JSON. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
@@ -55,6 +75,66 @@ exports[`lib/test TAP Invalid ‘map’ JSON. Express middleware. > Middleware t
 {
   "name": "BadRequestError",
   "message": "Invalid JSON in the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
+exports[`lib/test TAP Invalid ‘map’ type. Koa middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Invalid type for the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
+exports[`lib/test TAP Invalid ‘map’ type. Express middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Invalid type for the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
+exports[`lib/test TAP Invalid ‘map’ entry type. Koa middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Invalid type for the ‘map’ multipart field entry key ‘1’ array (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
+exports[`lib/test TAP Invalid ‘map’ entry type. Express middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Invalid type for the ‘map’ multipart field entry key ‘1’ array (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
+exports[`lib/test TAP Invalid ‘map’ entry array item type. Koa middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Invalid type for the ‘map’ multipart field entry key ‘1’ array index ‘0’ value (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
+exports[`lib/test TAP Invalid ‘map’ entry array item type. Express middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Invalid type for the ‘map’ multipart field entry key ‘1’ array index ‘0’ value (https://github.com/jaydenseric/graphql-multipart-request-spec).",
   "status": 400,
   "statusCode": 400,
   "expose": true

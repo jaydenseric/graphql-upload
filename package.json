@@ -37,33 +37,32 @@
   },
   "dependencies": {
     "busboy": "^0.3.0",
-    "fs-capacitor": "^2.0.0",
-    "http-errors": "^1.7.1",
+    "fs-capacitor": "^2.0.1",
+    "http-errors": "^1.7.2",
     "object-path": "^0.11.4"
   },
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
-    "@babel/preset-env": "^7.2.3",
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
     "babel-eslint": "^10.0.1",
-    "eslint": "^5.12.0",
-    "eslint-config-env": "^2.0.0",
-    "eslint-config-prettier": "^3.3.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint": "^5.16.0",
+    "eslint-config-env": "^4.0.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-import-order-alphabetical": "0.0.1",
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-prettier": "^3.0.1",
     "express": "^4.16.4",
     "form-data": "^2.3.3",
-    "graphql": "^14.0.2",
+    "graphql": "^14.2.1",
     "husky": "^1.3.1",
-    "jsdoc-md": "^1.7.0",
-    "koa": "^2.6.2",
-    "lint-staged": "^8.1.0",
+    "jsdoc-md": "^2.1.0",
+    "koa": "^2.7.0",
+    "lint-staged": "^8.1.5",
     "node-fetch": "^2.3.0",
-    "prettier": "^1.15.3",
-    "tap": "^12.1.1",
-    "watch": "^1.0.2"
+    "prettier": "^1.16.4",
+    "tap": "^12.6.1"
   },
   "scripts": {
     "prepare": "npm run prepare:clean && npm run prepare:mjs && npm run prepare:js && npm run prepare:jsdoc && npm run prepare:prettier",
@@ -75,32 +74,8 @@
     "test": "npm run test:eslint && npm run test:prettier && npm run test:mjs && npm run test:js",
     "test:eslint": "eslint . --ext mjs,js",
     "test:prettier": "prettier '**/*.{json,yml,md}' -l",
-    "test:mjs": "node --experimental-modules --no-warnings lib/test | tap-mocha-reporter spec",
-    "test:js": "node lib/test | tap-mocha-reporter spec",
-    "prepublishOnly": "npm run prepare && npm test",
-    "watch": "watch 'npm run prepublishOnly --silent' src --interval 1"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{mjs,js}": "eslint",
-    "*.{json,yml,md}": "prettier -l"
-  },
-  "eslintIgnore": [
-    "lib",
-    "tap-snapshots"
-  ],
-  "eslintConfig": {
-    "extends": [
-      "env"
-    ]
-  },
-  "prettier": {
-    "proseWrap": "never",
-    "singleQuote": true,
-    "semi": false
+    "test:mjs": "node --experimental-modules --no-warnings lib/test | tap-mocha-reporter classic",
+    "test:js": "node lib/test | tap-mocha-reporter classic",
+    "prepublishOnly": "npm test"
   }
 }
