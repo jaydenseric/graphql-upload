@@ -7,7 +7,7 @@
 - Updated dependencies.
 - Allow batched operations again, fixing [#142](https://github.com/jaydenseric/graphql-upload/issues/142).
 - Simplify tests by writing JSON as strings instead of using `JSON.stringify`.
-- Use async middleware for Express tests.
+- Use async middleware with [`express-async-handler`](https://npm.im/express-async-handler) for Express tests.
 - Added the Open Graph image design to the logo Sketch file.
 
 ## 8.0.5

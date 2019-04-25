@@ -54,6 +54,7 @@
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-prettier": "^3.0.1",
     "express": "^4.16.4",
+    "express-async-handler": "^1.1.4",
     "form-data": "^2.3.3",
     "graphql": "^14.2.1",
     "husky": "^2.1.0",
