@@ -6,6 +6,7 @@
 
 - Updated dependencies.
 - Simplify tests by writing JSON as strings instead of using `JSON.stringify`.
+- Use async middleware for Express tests.
 - Added the Open Graph image design to the logo Sketch file.
 
 ## 8.0.5

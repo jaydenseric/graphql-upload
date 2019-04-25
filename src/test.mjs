@@ -123,11 +123,15 @@ t.test('Single file.', async t => {
 
     const app = express()
       .use(graphqlUploadExpress())
-      .use((request, response, next) => {
+      .use(async (request, response, next) => {
         ;({ variables } = request.body)
-        t.test('Upload.', uploadTest(request.body.variables.file))
-          .then(() => next())
-          .catch(next)
+
+        try {
+          await t.test('Upload.', uploadTest(request.body.variables.file))
+          next()
+        } catch (error) {
+          next(error)
+        }
       })
 
     const port = await startServer(t, app)
@@ -493,12 +497,15 @@ t.test('Handles unconsumed uploads.', async t => {
 
     const app = express()
       .use(graphqlUploadExpress())
-      .use((request, response, next) => {
+      .use(async (request, response, next) => {
         ;({ variables } = request.body)
 
-        t.test('Upload B.', uploadBTest(request.body.variables.fileB))
-          .then(() => next())
-          .catch(next)
+        try {
+          await t.test('Upload B.', uploadBTest(request.body.variables.fileB))
+          next()
+        } catch (error) {
+          next(error)
+        }
       })
 
     const port = await startServer(t, app)
@@ -1019,16 +1026,15 @@ t.test('Missing file.', async t => {
 
     const app = express()
       .use(graphqlUploadExpress())
-      .use((request, response, next) => {
-        request.body.variables.file
-          .then(() => {
-            t.fail('No rejection error.')
-            next()
-          })
-          .catch(error => {
-            t.matchSnapshot(snapshotError(error), 'Rejection error.')
-            next()
-          })
+      .use(async (request, response, next) => {
+        try {
+          await request.body.variables.file
+          t.fail('No rejection error.')
+        } catch (error) {
+          t.matchSnapshot(snapshotError(error), 'Rejection error.')
+        }
+
+        next()
       })
 
     const port = await startServer(t, app)
@@ -1087,11 +1093,15 @@ t.test('Extraneous file.', async t => {
 
     const app = express()
       .use(graphqlUploadExpress())
-      .use((request, response, next) => {
+      .use(async (request, response, next) => {
         ;({ variables } = request.body)
-        t.test('Upload.', uploadTest(request.body.variables.file))
-          .then(() => next())
-          .catch(next)
+
+        try {
+          await t.test('Upload.', uploadTest(request.body.variables.file))
+          next()
+        } catch (error) {
+          next(error)
+        }
       })
 
     const port = await startServer(t, app)
@@ -1230,12 +1240,15 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
 
     const app = express()
       .use(graphqlUploadExpress({ maxFiles: 2 }))
-      .use((request, response, next) => {
+      .use(async (request, response, next) => {
         ;({ variables } = request.body)
-        Promise.all([
+
+        await Promise.all([
           t.test('Upload A.', uploadATest(request.body.variables.files[0])),
           t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
-        ]).then(() => next())
+        ])
+
+        next()
       })
 
     const port = await startServer(t, app)
@@ -1328,13 +1341,15 @@ t.test('Exceed max file size.', async t => {
 
     const app = express()
       .use(graphqlUploadExpress({ maxFileSize: 1 }))
-      .use((request, response, next) => {
+      .use(async (request, response, next) => {
         ;({ variables } = request.body)
 
-        Promise.all([
+        await Promise.all([
           t.test('Upload A.', uploadATest(request.body.variables.files[0])),
           t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
-        ]).then(() => next())
+        ])
+
+        next()
       })
 
     const port = await startServer(t, app)
@@ -1604,11 +1619,15 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
 
     const app = express()
       .use(graphqlUploadExpress())
-      .use((request, response, next) => {
+      .use(async (request, response, next) => {
         ;({ variables } = request.body)
-        t.test('Upload.', uploadTest(request.body.variables.file))
-          .then(() => next())
-          .catch(next)
+
+        try {
+          await t.test('Upload.', uploadTest(request.body.variables.file))
+          next()
+        } catch (error) {
+          next(error)
+        }
       })
 
     const port = await startServer(t, app)
