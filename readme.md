@@ -201,11 +201,11 @@ _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
 
 Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). Used in [`graphqlUploadKoa`](#function-graphqluploadkoa) and [`graphqlUploadExpress`](#function-graphqluploadexpress) and can be used to create custom middleware.
 
-| Parameter  | Type                                  | Description                                                                                               |
-| :--------- | :------------------------------------ | :-------------------------------------------------------------------------------------------------------- |
-| `request`  | IncomingMessage                       | [Node.js HTTP server request instance](https://nodejs.org/api/http.html#http_class_http_incomingmessage). |
-| `response` | ServerResponse                        | [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse). |
-| `options`  | [UploadOptions](#type-uploadoptions)? | GraphQL upload options.                                                                                   |
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| `request` | IncomingMessage | [Node.js HTTP server request instance](https://nodejs.org/api/http.html#http_class_http_incomingmessage). |
+| `response` | ServerResponse | [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse). |
+| `options` | [UploadOptions](#type-uploadoptions)? | GraphQL upload options. |
 
 **Returns:** Promise&lt;[GraphQLOperation](#type-graphqloperation) | Array&lt;[GraphQLOperation](#type-graphqloperation)>> — GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
 
@@ -225,11 +225,11 @@ File upload details, resolved from an [`Upload` scalar](#class-graphqlupload) pr
 
 **Type:** Object
 
-| Property           | Type     | Description                                                                                                                                                                                                                                |
-| :----------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `filename`         | string   | File name.                                                                                                                                                                                                                                 |
-| `mimetype`         | string   | File MIME type. Provided by the client and can’t be trusted.                                                                                                                                                                               |
-| `encoding`         | string   | File stream transfer encoding.                                                                                                                                                                                                             |
+| Property | Type | Description |
+| :-- | :-- | :-- |
+| `filename` | string | File name. |
+| `mimetype` | string | File MIME type. Provided by the client and can’t be trusted. |
+| `encoding` | string | File stream transfer encoding. |
 | `createReadStream` | function | Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. |
 
 ---
@@ -240,11 +240,11 @@ A GraphQL operation object in a shape that can be consumed and executed by most 
 
 **Type:** Object
 
-| Property        | Type            | Description                                          |
-| :-------------- | :-------------- | :--------------------------------------------------- |
-| `query`         | string          | GraphQL document containing queries and fragments.   |
-| `operationName` | string \| null? | GraphQL document operation name to execute.          |
-| `variables`     | object \| null? | GraphQL document operation variables and values map. |
+| Property | Type | Description |
+| :-- | :-- | :-- |
+| `query` | string | GraphQL document containing queries and fragments. |
+| `operationName` | string \| null? | GraphQL document operation name to execute. |
+| `variables` | object \| null? | GraphQL document operation variables and values map. |
 
 #### See
 
@@ -259,8 +259,8 @@ GraphQL upload server options, mostly relating to security, performance and limi
 
 **Type:** Object
 
-| Property       | Type                 | Description                                                                           |
-| :------------- | :------------------- | :------------------------------------------------------------------------------------ |
-| `maxFieldSize` | number? = `1000000`  | Maximum allowed non-file multipart form field size in bytes; enough for your queries. |
-| `maxFileSize`  | number? = `Infinity` | Maximum allowed file size in bytes.                                                   |
-| `maxFiles`     | number? = `Infinity` | Maximum allowed number of files.                                                      |
+| Property | Type | Description |
+| :-- | :-- | :-- |
+| `maxFieldSize` | number? = `1000000` | Maximum allowed non-file multipart form field size in bytes; enough for your queries. |
+| `maxFileSize` | number? = `Infinity` | Maximum allowed file size in bytes. |
+| `maxFiles` | number? = `Infinity` | Maximum allowed number of files. |
