@@ -77,16 +77,8 @@ t.test('Single file.', async t => {
   const sendRequest = async port => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          file: null
-        }
-      })
-    )
-
-    body.append('map', JSON.stringify({ 1: ['variables.file'] }))
+    body.append('operations', '{ "variables": { "file": null } }')
+    body.append('map', '{ "1": ["variables.file"] }')
     body.append('1', 'a', { filename: 'a.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
@@ -154,7 +146,7 @@ t.test('Invalid ‘operations’ JSON.', async t => {
     const body = new FormData()
 
     body.append('operations', '{ variables: { "file": null } }')
-    body.append('map', JSON.stringify({ 1: ['variables.file'] }))
+    body.append('map', '{ "1": ["variables.file"] }')
 
     // We need at least one of these “immediate” failures to have a request body
     // larger than node’s internal stream buffer, so that we can test stream
@@ -206,7 +198,7 @@ t.test('Invalid ‘operations’ type.', async t => {
     const body = new FormData()
 
     body.append('operations', 'null')
-    body.append('map', JSON.stringify({ 1: ['variables.file'] }))
+    body.append('map', '{ "1": ["variables.file"] }')
 
     // We need at least one of these “immediate” failures to have a request body
     // larger than node’s internal stream buffer, so that we can test stream
@@ -257,14 +249,7 @@ t.test('Invalid ‘map’ JSON.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          file: null
-        }
-      })
-    )
+    body.append('operations', '{ "variables": { "file": null } }')
     body.append('map', '{ 1: ["variables.file"] }')
     body.append('1', 'a', { filename: 'a.txt' })
 
@@ -311,14 +296,7 @@ t.test('Invalid ‘map’ type.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          file: null
-        }
-      })
-    )
+    body.append('operations', '{ "variables": { "file": null } }')
     body.append('map', 'null')
     body.append('1', 'a', { filename: 'a.txt' })
 
@@ -365,15 +343,8 @@ t.test('Invalid ‘map’ entry type.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          file: null
-        }
-      })
-    )
-    body.append('map', JSON.stringify({ 1: null }))
+    body.append('operations', '{ "variables": { "file": null } }')
+    body.append('map', '{ "1": null }')
     body.append('1', 'a', { filename: 'a.txt' })
 
     const { status } = await fetch(`http://localhost:${port}`, {
@@ -419,15 +390,8 @@ t.test('Invalid ‘map’ entry array item type.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          file: null
-        }
-      })
-    )
-    body.append('map', JSON.stringify({ 1: [null] }))
+    body.append('operations', '{ "variables": { "file": null } }')
+    body.append('map', '{ "1": [null] }')
     body.append('1', 'a', { filename: 'a.txt' })
 
     const { status } = await fetch(`http://localhost:${port}`, {
@@ -475,21 +439,9 @@ t.test('Handles unconsumed uploads.', async t => {
 
     body.append(
       'operations',
-      JSON.stringify({
-        variables: {
-          fileA: null,
-          fileB: null
-        }
-      })
+      '{ "variables": { "fileA": null, "fileB": null } }'
     )
-
-    body.append(
-      'map',
-      JSON.stringify({
-        1: ['variables.fileA'],
-        2: ['variables.fileB']
-      })
-    )
+    body.append('map', '{ "1": ["variables.fileA"], "2": ["variables.fileB"] }')
     body.append('1', 'a', { filename: 'a.txt' })
     body.append('2', 'b', { filename: 'b.txt' })
 
@@ -572,24 +524,12 @@ t.test('Aborted request.', async t => {
 
       body.append(
         'operations',
-        JSON.stringify({
-          variables: {
-            fileA: null,
-            fileB: null,
-            fileC: null
-          }
-        })
+        '{ "variables": { "fileA": null, "fileB": null, "fileC": null } }'
       )
-
       body.append(
         'map',
-        JSON.stringify({
-          1: ['variables.fileA'],
-          2: ['variables.fileB'],
-          3: ['variables.fileC']
-        })
+        '{ "1": ["variables.fileA"], "2": ["variables.fileB"], "3": ["variables.fileC"] }'
       )
-
       body.append('1', 'a', { filename: 'a.txt' })
       body.append(
         '2',
@@ -932,22 +872,8 @@ t.test('Deduped files.', async t => {
   const sendRequest = async port => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          files: [null, null]
-        }
-      })
-    )
-
-    body.append(
-      'map',
-      JSON.stringify({
-        1: ['variables.files.0', 'variables.files.1']
-      })
-    )
-
+    body.append('operations', '{ "variables": { "files": [null, null] } }')
+    body.append('map', '{ "1": ["variables.files.0", "variables.files.1"] }')
     body.append('1', 'a', { filename: 'a.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
@@ -1062,19 +988,8 @@ t.test('Missing file.', async t => {
   const sendRequest = async port => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: { file: null }
-      })
-    )
-
-    body.append(
-      'map',
-      JSON.stringify({
-        1: ['variables.file']
-      })
-    )
+    body.append('operations', '{ "variables": { "file": null } }')
+    body.append('map', '{ "1": ["variables.file"] }')
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
   }
@@ -1126,22 +1041,8 @@ t.test('Extraneous file.', async t => {
   const sendRequest = async port => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          file: null
-        }
-      })
-    )
-
-    body.append(
-      'map',
-      JSON.stringify({
-        1: ['variables.file']
-      })
-    )
-
+    body.append('operations', '{ "variables": { "file": null } }')
+    body.append('map', '{ "1": ["variables.file"] }')
     body.append('1', 'a', { filename: 'a.txt' })
     body.append('2', 'b', { filename: 'b.txt' })
 
@@ -1208,23 +1109,11 @@ t.test('Exceed max files.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          files: [null, null]
-        }
-      })
-    )
-
+    body.append('operations', '{ "variables": { "files": [null, null] } }')
     body.append(
       'map',
-      JSON.stringify({
-        1: ['variables.files.0'],
-        2: ['variables.files.1']
-      })
+      '{ "1": ["variables.files.0"], "2": ["variables.files.1"] }'
     )
-
     body.append('1', 'a', { filename: 'a.txt' })
     body.append('2', 'b', { filename: 'b.txt' })
 
@@ -1271,23 +1160,11 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   const sendRequest = async port => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          files: [null, null]
-        }
-      })
-    )
-
+    body.append('operations', '{ "variables": { "files": [null, null] } }')
     body.append(
       'map',
-      JSON.stringify({
-        '1': ['variables.files.0'],
-        '2': ['variables.files.1']
-      })
+      '{ "1": ["variables.files.0"], "2": ["variables.files.1"] }'
     )
-
     body.append('1', 'a', { filename: 'a.txt' })
     body.append('extraneous', 'b', { filename: 'b.txt' })
     body.append('2', 'c', { filename: 'c.txt' })
@@ -1376,23 +1253,11 @@ t.test('Exceed max file size.', async t => {
   const sendRequest = async port => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          files: [null, null]
-        }
-      })
-    )
-
+    body.append('operations', '{ "variables": { "files": [null, null] } }')
     body.append(
       'map',
-      JSON.stringify({
-        1: ['variables.files.0'],
-        2: ['variables.files.1']
-      })
+      '{ "1": ["variables.files.0"], "2": ["variables.files.1"] }'
     )
-
     body.append('1', 'aa', { filename: 'a.txt' })
     body.append('2', 'b', { filename: 'b.txt' })
 
@@ -1492,22 +1357,8 @@ t.test('Misorder ‘map’ before ‘operations’.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
-    body.append(
-      'map',
-      JSON.stringify({
-        '1': ['variables.file']
-      })
-    )
-
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          file: null
-        }
-      })
-    )
-
+    body.append('map', '{ "1": ["variables.file"] }')
+    body.append('operations', '{ "variables": { "file": null } }')
     body.append('1', 'a', { filename: 'a.txt' })
 
     const { status } = await fetch(`http://localhost:${port}`, {
@@ -1553,23 +1404,9 @@ t.test('Misorder files before ‘map’.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          file: null
-        }
-      })
-    )
-
+    body.append('operations', '{ "variables": { "file": null } }')
     body.append('1', 'a', { filename: 'a.txt' })
-
-    body.append(
-      'map',
-      JSON.stringify({
-        '1': ['variables.file']
-      })
-    )
+    body.append('map', '{ "1": ["variables.file"] }')
 
     const { status } = await fetch(`http://localhost:${port}`, {
       method: 'POST',
@@ -1614,14 +1451,7 @@ t.test('Missing ‘map’ and files.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          file: null
-        }
-      })
-    )
+    body.append('operations', '{ "variables": { "file": null } }')
 
     const { status } = await fetch(`http://localhost:${port}`, {
       method: 'POST',
@@ -1707,16 +1537,8 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
   const sendRequest = async port => {
     const body = new FormData()
 
-    body.append(
-      'operations',
-      JSON.stringify({
-        variables: {
-          file: null
-        }
-      })
-    )
-
-    body.append('map', JSON.stringify({ 1: ['variables.file'] }))
+    body.append('operations', '{ "variables": { "file": null } }')
+    body.append('map', '{ "1": ["variables.file"] }')
     body.append('1', 'a', { filename: 'a.txt' })
 
     await fetch(`http://localhost:${port}`, { method: 'POST', body })
