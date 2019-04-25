@@ -4,6 +4,7 @@
 
 ### Patch
 
+- Updated dependencies.
 - Added the Open Graph image design to the logo Sketch file.
 
 ## 8.0.5
