@@ -201,7 +201,7 @@ export const processRequest = (
             )
           }
 
-          if (!isObject(operations))
+          if (!isObject(operations) && !Array.isArray(operations))
             return exit(
               createError(
                 400,

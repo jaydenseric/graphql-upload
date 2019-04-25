@@ -145,6 +145,111 @@ t.test('Single file.', async t => {
   })
 })
 
+t.test('Single file batched.', async t => {
+  const sendRequest = async port => {
+    const body = new FormData()
+
+    body.append(
+      'operations',
+      '[{ "variables": { "file": null } }, { "variables": { "file": null } }]'
+    )
+    body.append(
+      'map',
+      '{ "1": ["0.variables.file"], "2": ["1.variables.file"] }'
+    )
+    body.append('1', 'a', { filename: 'a.txt' })
+    body.append('2', 'b', { filename: 'b.txt' })
+
+    await fetch(`http://localhost:${port}`, { method: 'POST', body })
+  }
+
+  const uploadATest = upload => async t => {
+    const resolved = await upload
+    const stream = resolved.createReadStream()
+
+    t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
+    t.type(stream, ReadStream, 'Stream type.')
+    t.equals(await streamToString(stream), 'a', 'Contents.')
+  }
+
+  const uploadBTest = upload => async t => {
+    const resolved = await upload
+    const stream = resolved.createReadStream()
+
+    t.matchSnapshot(JSON.stringify(resolved, null, 2), 'Enumerable properties.')
+    t.type(stream, ReadStream, 'Stream type.')
+    t.equals(await streamToString(stream), 'b', 'Contents.')
+  }
+
+  await t.test('Koa middleware.', async t => {
+    t.plan(4)
+
+    let operations
+
+    const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
+      operations = ctx.request.body
+
+      await Promise.all([
+        t.test('Upload A.', uploadATest(ctx.request.body[0].variables.file)),
+        t.test('Upload B.', uploadBTest(ctx.request.body[1].variables.file))
+      ])
+
+      ctx.status = 204
+      await next()
+    })
+
+    const port = await startServer(t, app)
+
+    await sendRequest(port)
+
+    const fileA = await operations[0].variables.file
+    if (!fileA.capacitor.closed)
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await operations[1].variables.file
+    if (!fileB.capacitor.closed)
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+  })
+
+  await t.test('Express middleware.', async t => {
+    t.plan(4)
+
+    let operations
+
+    const app = express()
+      .use(graphqlUploadExpress())
+      .use(async (request, response, next) => {
+        operations = request.body
+
+        try {
+          await Promise.all([
+            t.test('Upload A.', uploadATest(request.body[0].variables.file)),
+            t.test('Upload B.', uploadBTest(request.body[1].variables.file))
+          ])
+          next()
+        } catch (error) {
+          next(error)
+        }
+      })
+
+    const port = await startServer(t, app)
+
+    await sendRequest(port)
+
+    const fileA = await operations[0].variables.file
+    if (!fileA.capacitor.closed)
+      await new Promise(resolve => fileA.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+
+    const fileB = await operations[1].variables.file
+    if (!fileB.capacitor.closed)
+      await new Promise(resolve => fileB.capacitor.once('close', resolve))
+    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+  })
+})
+
 t.test('Invalid ‘operations’ JSON.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()

@@ -527,6 +527,38 @@ exports[`lib/test TAP Missing ‘operations’, ‘map’ and files. Koa middlew
 }
 `
 
+exports[`lib/test TAP Single file batched. Express middleware. Upload A. > Enumerable properties. 1`] = `
+{
+  "filename": "a.txt",
+  "mimetype": "text/plain",
+  "encoding": "7bit"
+}
+`
+
+exports[`lib/test TAP Single file batched. Express middleware. Upload B. > Enumerable properties. 1`] = `
+{
+  "filename": "b.txt",
+  "mimetype": "text/plain",
+  "encoding": "7bit"
+}
+`
+
+exports[`lib/test TAP Single file batched. Koa middleware. Upload A. > Enumerable properties. 1`] = `
+{
+  "filename": "a.txt",
+  "mimetype": "text/plain",
+  "encoding": "7bit"
+}
+`
+
+exports[`lib/test TAP Single file batched. Koa middleware. Upload B. > Enumerable properties. 1`] = `
+{
+  "filename": "b.txt",
+  "mimetype": "text/plain",
+  "encoding": "7bit"
+}
+`
+
 exports[`lib/test TAP Single file. Express middleware. Upload. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
