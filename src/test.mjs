@@ -769,7 +769,9 @@ t.test('Aborted request.', async t => {
           await next()
           finish()
         })
+
       const port = await startServer(t, app)
+
       await sendRequest(port, requestHasBeenReceivedPromise)
       await finished
 
