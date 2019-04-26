@@ -284,7 +284,7 @@ t.test('Invalid ‘operations’ JSON.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(graphqlUploadExpress({ maxFiles: 1 }))
+      .use(graphqlUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
@@ -336,7 +336,7 @@ t.test('Invalid ‘operations’ type.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(graphqlUploadExpress({ maxFiles: 1 }))
+      .use(graphqlUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
@@ -383,7 +383,7 @@ t.test('Invalid ‘map’ JSON.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(graphqlUploadExpress({ maxFiles: 1 }))
+      .use(graphqlUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
@@ -430,7 +430,7 @@ t.test('Invalid ‘map’ type.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(graphqlUploadExpress({ maxFiles: 1 }))
+      .use(graphqlUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
@@ -477,7 +477,7 @@ t.test('Invalid ‘map’ entry type.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(graphqlUploadExpress({ maxFiles: 1 }))
+      .use(graphqlUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
@@ -524,7 +524,7 @@ t.test('Invalid ‘map’ entry array item type.', async t => {
     t.plan(2)
 
     const app = express()
-      .use(graphqlUploadExpress({ maxFiles: 1 }))
+      .use(graphqlUploadExpress())
       .use((error, request, response, next) => {
         if (response.headersSent) return next(error)
         t.matchSnapshot(snapshotError(error), 'Middleware throws.')
