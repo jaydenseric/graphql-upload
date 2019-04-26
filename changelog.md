@@ -1,6 +1,6 @@
 # graphql-upload changelog
 
-## Next
+## 8.0.6
 
 ### Patch
 
