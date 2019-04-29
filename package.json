@@ -2,6 +2,7 @@
   "name": "graphql-upload",
   "version": "8.0.6",
   "description": "Middleware and an Upload scalar to add support for GraphQL multipart requests (file uploads via queries and mutations) to various Node.js GraphQL servers.",
+  "types": "src/types/graphql-upload.d.ts",
   "license": "MIT",
   "author": {
     "name": "Jayden Seric",
