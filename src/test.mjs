@@ -8,7 +8,7 @@ import { ReadStream } from 'fs-capacitor'
 import Koa from 'koa'
 import fetch from 'node-fetch'
 import t from 'tap'
-import { graphqlUploadKoa, graphqlUploadExpress } from '.'
+import { graphqlUploadExpress, graphqlUploadKoa } from '.'
 
 // eslint-disable-next-line no-console
 console.log(
