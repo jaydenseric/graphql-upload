@@ -1,6 +1,6 @@
 import util from 'util'
 import Busboy from 'busboy'
-import WriteStream from 'fs-capacitor'
+import { WriteStream } from 'fs-capacitor'
 import createError from 'http-errors'
 import objectPath from 'object-path'
 

@@ -6,6 +6,7 @@
 
 - Updated dependencies.
 - Handle invalid object paths in `map` multipart field entries, fixing [#154](https://github.com/jaydenseric/graphql-upload/issues/154).
+- Import `WriteStream` from [`fs-capacitor`](https://npm.im/fs-capacitor) as a named rather than default import.
 
 ## 8.0.6
 
