@@ -347,6 +347,26 @@ exports[`lib/test TAP Invalid ‘map’ entry array item type. Koa middleware. >
 }
 `
 
+exports[`lib/test TAP Invalid ‘map’ entry object path. Express middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Invalid object path for the ‘map’ multipart field entry key ‘1’ array index ‘0’ value ‘variables.file’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
+exports[`lib/test TAP Invalid ‘map’ entry object path. Koa middleware. > Middleware throws. 1`] = `
+{
+  "name": "BadRequestError",
+  "message": "Invalid object path for the ‘map’ multipart field entry key ‘1’ array index ‘0’ value ‘variables.file’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+  "status": 400,
+  "statusCode": 400,
+  "expose": true
+}
+`
+
 exports[`lib/test TAP Invalid ‘map’ entry type. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",

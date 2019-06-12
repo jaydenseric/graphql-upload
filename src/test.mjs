@@ -537,6 +537,53 @@ t.test('Invalid ‘map’ entry array item type.', async t => {
   })
 })
 
+t.test('Invalid ‘map’ entry object path.', async t => {
+  const sendRequest = async (t, port) => {
+    const body = new FormData()
+
+    body.append('operations', '{ "variables": "" }')
+    body.append('map', '{ "1": ["variables.file"] }')
+    body.append('1', 'a', { filename: 'a.txt' })
+
+    const { status } = await fetch(`http://localhost:${port}`, {
+      method: 'POST',
+      body
+    })
+
+    t.equal(status, 400, 'Response status.')
+  }
+
+  await t.test('Koa middleware.', async t => {
+    t.plan(2)
+
+    const app = new Koa()
+      .on('error', error =>
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
+      )
+      .use(graphqlUploadKoa())
+
+    const port = await startServer(t, app)
+
+    await sendRequest(t, port)
+  })
+
+  await t.test('Express middleware.', async t => {
+    t.plan(2)
+
+    const app = express()
+      .use(graphqlUploadExpress())
+      .use((error, request, response, next) => {
+        if (response.headersSent) return next(error)
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
+        response.send()
+      })
+
+    const port = await startServer(t, app)
+
+    await sendRequest(t, port)
+  })
+})
+
 t.test('Handles unconsumed uploads.', async t => {
   const sendRequest = async port => {
     const body = new FormData()

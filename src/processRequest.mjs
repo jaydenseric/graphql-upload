@@ -271,7 +271,16 @@ export const processRequest = (
                   )
                 )
 
-              operationsPath.set(path, map.get(fieldName).promise)
+              try {
+                operationsPath.set(path, map.get(fieldName).promise)
+              } catch (error) {
+                return exit(
+                  createError(
+                    400,
+                    `Invalid object path for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value ‘${path}’ (${SPEC_URL}).`
+                  )
+                )
+              }
             }
           }
 
