@@ -4,6 +4,7 @@
 
 ### Patch
 
+- Updated dependencies.
 - Handle invalid object paths in `map` multipart field entries, fixing [#154](https://github.com/jaydenseric/graphql-upload/issues/154).
 
 ## 8.0.6
