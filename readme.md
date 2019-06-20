@@ -17,6 +17,7 @@ The following environments are known to be compatible:
   - Native ESM with [`--experimental-modules`](https://nodejs.org/api/esm.html#esm_enabling)
 - [Koa](https://koajs.com)
   - [`graphql-api-koa`](https://npm.im/graphql-api-koa)
+  - [`koa-graphql`](https://npm.im/koa-graphql)
   - [`apollo-server-koa`](https://npm.im/apollo-server-koa) (inbuilt)
 - [Express](https://expressjs.com)
   - [`express-graphql`](https://npm.im/express-graphql)
