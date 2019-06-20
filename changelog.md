@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Documented [`koa-graphql`](https://npm.im/koa-graphql) as known to be compatible, via [#156](https://github.com/jaydenseric/graphql-upload/pull/156).
+
 ## 8.0.7
 
 ### Patch
