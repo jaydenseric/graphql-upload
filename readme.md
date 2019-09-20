@@ -82,7 +82,7 @@ The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-mult
 
 ### class GraphQLUpload
 
-A GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphql.org/graphql-js/type/#graphqlschema). It’s value in resolvers is a promise that resolves [file upload details](#type-fileupload) for processing and storage.
+A GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphql.org/graphql-js/type/#graphqlschema). Its value in resolvers is a promise that resolves [file upload details](#type-fileupload) for processing and storage.
 
 #### Examples
 
