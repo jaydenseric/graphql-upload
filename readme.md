@@ -2,7 +2,7 @@
 
 # graphql-upload
 
-[![npm version](https://badgen.net/npm/v/graphql-upload)](https://npm.im/graphql-upload) [![Build status](https://travis-ci.org/jaydenseric/graphql-upload.svg?branch=master)](https://travis-ci.org/jaydenseric/graphql-upload)
+[![npm version](https://badgen.net/npm/v/graphql-upload)](https://npm.im/graphql-upload) [![CI status](https://github.com/jaydenseric/graphql-upload/workflows/CI/badge.svg)](https://github.com/jaydenseric/graphql-upload/actions)
 
 Middleware and an [`Upload` scalar](#class-graphqlupload) to add support for [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec) (file uploads via queries and mutations) to various Node.js GraphQL servers.
 

@@ -8,6 +8,7 @@
 - Lint fixes and regenerated readme due to updated dependencies.
 - Documented [`koa-graphql`](https://npm.im/koa-graphql) as known to be compatible, via [#156](https://github.com/jaydenseric/graphql-upload/pull/156).
 - Fixed a readme typo, via [#161](https://github.com/jaydenseric/graphql-upload/pull/161).
+- Use GitHub Actions instead of Travis for CI.
 
 ## 8.0.7
 
