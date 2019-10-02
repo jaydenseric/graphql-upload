@@ -82,7 +82,7 @@ class Upload {
        * Rejects the upload promise with an error.
        * @kind function
        * @name Upload#reject
-       * @param {Object} error Error instance.
+       * @param {object} error Error instance.
        * @ignore
        */
       this.reject = reject
@@ -141,7 +141,7 @@ export const processRequest = (
      * Exits request processing with an error. Successive calls have no effect.
      * @kind function
      * @name processRequest~exit
-     * @param {Object} error Error instance.
+     * @param {object} error Error instance.
      * @ignore
      */
     const exit = error => {
@@ -419,7 +419,7 @@ export const processRequest = (
  * limits.
  * @kind typedef
  * @name UploadOptions
- * @type {Object}
+ * @type {object}
  * @prop {number} [maxFieldSize=1000000] Maximum allowed non-file multipart form field size in bytes; enough for your queries.
  * @prop {number} [maxFileSize=Infinity] Maximum allowed file size in bytes.
  * @prop {number} [maxFiles=Infinity] Maximum allowed number of files.
@@ -430,7 +430,7 @@ export const processRequest = (
  * most GraphQL servers.
  * @kind typedef
  * @name GraphQLOperation
- * @type {Object}
+ * @type {object}
  * @prop {string} query GraphQL document containing queries and fragments.
  * @prop {string|null} [operationName] GraphQL document operation name to execute.
  * @prop {object|null} [variables] GraphQL document operation variables and values map.

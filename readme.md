@@ -68,21 +68,16 @@ The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-mult
 ### Table of contents
 
 - [class GraphQLUpload](#class-graphqlupload)
-  - [Examples](#examples)
 - [function graphqlUploadExpress](#function-graphqluploadexpress)
-  - [Examples](#examples-1)
 - [function graphqlUploadKoa](#function-graphqluploadkoa)
-  - [Examples](#examples-2)
 - [function processRequest](#function-processrequest)
-  - [Examples](#examples-3)
 - [type FileUpload](#type-fileupload)
 - [type GraphQLOperation](#type-graphqloperation)
-  - [See](#see)
 - [type UploadOptions](#type-uploadoptions)
 
 ### class GraphQLUpload
 
-A GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphql.org/graphql-js/type/#graphqlschema). Its value in resolvers is a promise that resolves [file upload details](#type-fileupload) for processing and storage.
+A GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphql.org/graphql-js/type/#graphqlschema). It’s value in resolvers is a promise that resolves [file upload details](#type-fileupload) for processing and storage.
 
 #### Examples
 
@@ -244,8 +239,8 @@ A GraphQL operation object in a shape that can be consumed and executed by most 
 | Property | Type | Description |
 | :-- | :-- | :-- |
 | `query` | string | GraphQL document containing queries and fragments. |
-| `operationName` | string \| null? | GraphQL document operation name to execute. |
-| `variables` | object \| null? | GraphQL document operation variables and values map. |
+| `operationName` | string \| `null`? | GraphQL document operation name to execute. |
+| `variables` | object \| `null`? | GraphQL document operation variables and values map. |
 
 #### See
 
@@ -263,5 +258,5 @@ GraphQL upload server options, mostly relating to security, performance and limi
 | Property | Type | Description |
 | :-- | :-- | :-- |
 | `maxFieldSize` | number? = `1000000` | Maximum allowed non-file multipart form field size in bytes; enough for your queries. |
-| `maxFileSize` | number? = `Infinity` | Maximum allowed file size in bytes. |
-| `maxFiles` | number? = `Infinity` | Maximum allowed number of files. |
+| `maxFileSize` | number? = Infinity | Maximum allowed file size in bytes. |
+| `maxFiles` | number? = Infinity | Maximum allowed number of files. |

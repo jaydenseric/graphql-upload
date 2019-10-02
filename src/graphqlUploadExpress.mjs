@@ -9,7 +9,7 @@ import { processRequest } from './processRequest'
  * @kind function
  * @name graphqlUploadExpress
  * @param {UploadOptions} options GraphQL upload options.
- * @returns {function} Express middleware.
+ * @returns {Function} Express middleware.
  * @example <caption>Basic [`express-graphql`](https://npm.im/express-graphql) setup.</caption>
  * ```js
  * import express from 'express'

@@ -67,9 +67,9 @@ export const GraphQLUpload = new GraphQLScalarType({
  * File upload details, resolved from an [`Upload` scalar]{@link GraphQLUpload} promise.
  * @kind typedef
  * @name FileUpload
- * @type {Object}
+ * @type {object}
  * @prop {string} filename File name.
  * @prop {string} mimetype File MIME type. Provided by the client and can’t be trusted.
  * @prop {string} encoding File stream transfer encoding.
- * @prop {function} createReadStream Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request.
+ * @prop {Function} createReadStream Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request.
  */

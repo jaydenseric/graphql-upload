@@ -23,7 +23,7 @@ console.log(
  * @kind function
  * @name startServer
  * @param {Test} t Tap test.
- * @param {Object} app A Koa or Express app.
+ * @param {object} app A Koa or Express app.
  * @returns {Promise<number>} The port the server is listening on.
  * @ignore
  */
@@ -66,7 +66,7 @@ const streamToString = stream =>
 
 /**
  * Snapshots an error.
- * @param {Object} error An error.
+ * @param {object} error An error.
  * @returns {string} Error snapshot.
  */
 const snapshotError = ({ name, message, status, statusCode, expose }) =>

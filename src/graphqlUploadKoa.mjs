@@ -9,7 +9,7 @@ import { processRequest } from './processRequest'
  * @kind function
  * @name graphqlUploadKoa
  * @param {UploadOptions} options GraphQL upload options.
- * @returns {function} Koa middleware.
+ * @returns {Function} Koa middleware.
  * @example <caption>Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup.</caption>
  * ```js
  * import Koa from 'koa'
