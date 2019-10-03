@@ -25,7 +25,8 @@
   ],
   "files": [
     "lib",
-    "!lib/test.*"
+    "!*.test.*",
+    "!test-helpers"
   ],
   "main": "lib",
   "engines": {
@@ -73,11 +74,10 @@
     "prepare:js": "babel src -d lib",
     "prepare:jsdoc": "jsdoc-md",
     "prepare:prettier": "prettier 'lib/**/*.{mjs,js}' readme.md --write",
-    "test": "npm run test:eslint && npm run test:prettier && npm run test:mjs && npm run test:js",
+    "test": "npm run test:eslint && npm run test:prettier && npm run test:tap",
     "test:eslint": "eslint . --ext mjs,js",
     "test:prettier": "prettier '**/*.{json,yml,md}' -l",
-    "test:mjs": "node --experimental-modules --no-warnings lib/test | tap-mocha-reporter classic",
-    "test:js": "node lib/test | tap-mocha-reporter classic",
+    "test:tap": "tap --test-ignore=src",
     "prepublishOnly": "npm test"
   }
 }

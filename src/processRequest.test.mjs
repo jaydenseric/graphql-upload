@@ -8,71 +8,10 @@ import { ReadStream } from 'fs-capacitor'
 import Koa from 'koa'
 import fetch from 'node-fetch'
 import t from 'tap'
+import { snapshotError } from './test-helpers/snapshotError'
+import { startServer } from './test-helpers/startServer'
+import { streamToString } from './test-helpers/streamToString'
 import { graphqlUploadExpress, graphqlUploadKoa } from '.'
-
-// eslint-disable-next-line no-console
-console.log(
-  `Testing ${
-    process.execArgv.includes('--experimental-modules') ? 'ESM' : 'CJS'
-  } library with ${process.env.NODE_ENV} NODE_ENV…\n\n`
-)
-
-/**
- * Asynchronously starts a server and automatically closes it when the given
- * test tears down.
- * @kind function
- * @name startServer
- * @param {Test} t Tap test.
- * @param {object} app A Koa or Express app.
- * @returns {Promise<number>} The port the server is listening on.
- * @ignore
- */
-const startServer = (t, app) =>
-  new Promise((resolve, reject) => {
-    const server = app.listen(undefined, 'localhost', function(error) {
-      if (error) reject(error)
-      else {
-        t.tearDown(() => this.close())
-        resolve(this.address().port)
-      }
-    })
-
-    // Node.js < v9 writes errors passed to `socket.destroy(error)` to stderr:
-    // https://github.com/nodejs/node/blob/v8.11.3/lib/_http_server.js#L470.
-    // In aborted upload tests this output may be mistaken for an issue.
-    if (parseInt(process.versions.node) <= 8)
-      // Swallow errors and reimplement default behavior.
-      server.on('clientError', (error, socket) => socket.destroy())
-  })
-
-/**
- * Converts a readable stream to a string.
- * @kind function
- * @name streamToString
- * @param {ReadableStream} stream Readable stream.
- * @returns {Promise<string>} A string promise.
- * @ignore
- */
-const streamToString = stream =>
-  new Promise((resolve, reject) => {
-    let data = ''
-    stream
-      .on('error', reject)
-      .on('data', chunk => {
-        data += chunk
-      })
-      .on('end', () => resolve(data))
-  })
-
-/**
- * Snapshots an error.
- * @param {object} error An error.
- * @returns {string} Error snapshot.
- */
-const snapshotError = ({ name, message, status, statusCode, expose }) =>
-  JSON.stringify({ name, message, status, statusCode, expose }, null, 2)
-
-/* eslint-disable require-jsdoc */
 
 t.test('Single file.', async t => {
   const sendRequest = async port => {

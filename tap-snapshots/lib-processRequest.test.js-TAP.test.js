@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`lib/test TAP Aborted request. Delayed stream creation. Express middleware. Upload A. > Stream error. 1`] = `
+exports[`lib/processRequest.test.js TAP Aborted request. Delayed stream creation. Express middleware. Upload A. > Stream error. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Request disconnected during file upload stream parsing.",
@@ -15,7 +15,7 @@ exports[`lib/test TAP Aborted request. Delayed stream creation. Express middlewa
 }
 `
 
-exports[`lib/test TAP Aborted request. Delayed stream creation. Express middleware. Upload B. > Stream error. 1`] = `
+exports[`lib/processRequest.test.js TAP Aborted request. Delayed stream creation. Express middleware. Upload B. > Stream error. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Request disconnected during file upload stream parsing.",
@@ -25,7 +25,7 @@ exports[`lib/test TAP Aborted request. Delayed stream creation. Express middlewa
 }
 `
 
-exports[`lib/test TAP Aborted request. Delayed stream creation. Express middleware. Upload C. > Rejection error. 1`] = `
+exports[`lib/processRequest.test.js TAP Aborted request. Delayed stream creation. Express middleware. Upload C. > Rejection error. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Request disconnected during file upload stream parsing.",
@@ -35,7 +35,7 @@ exports[`lib/test TAP Aborted request. Delayed stream creation. Express middlewa
 }
 `
 
-exports[`lib/test TAP Aborted request. Delayed stream creation. Koa middleware. Upload A. > Stream error. 1`] = `
+exports[`lib/processRequest.test.js TAP Aborted request. Delayed stream creation. Koa middleware. Upload A. > Stream error. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Request disconnected during file upload stream parsing.",
@@ -45,7 +45,7 @@ exports[`lib/test TAP Aborted request. Delayed stream creation. Koa middleware. 
 }
 `
 
-exports[`lib/test TAP Aborted request. Delayed stream creation. Koa middleware. Upload B. > Stream error. 1`] = `
+exports[`lib/processRequest.test.js TAP Aborted request. Delayed stream creation. Koa middleware. Upload B. > Stream error. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Request disconnected during file upload stream parsing.",
@@ -55,7 +55,7 @@ exports[`lib/test TAP Aborted request. Delayed stream creation. Koa middleware. 
 }
 `
 
-exports[`lib/test TAP Aborted request. Delayed stream creation. Koa middleware. Upload C. > Rejection error. 1`] = `
+exports[`lib/processRequest.test.js TAP Aborted request. Delayed stream creation. Koa middleware. Upload C. > Rejection error. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Request disconnected during file upload stream parsing.",
@@ -65,7 +65,7 @@ exports[`lib/test TAP Aborted request. Delayed stream creation. Koa middleware. 
 }
 `
 
-exports[`lib/test TAP Aborted request. Immediate stream creation. Express middleware. Upload A. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Aborted request. Immediate stream creation. Express middleware. Upload A. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -73,7 +73,7 @@ exports[`lib/test TAP Aborted request. Immediate stream creation. Express middle
 }
 `
 
-exports[`lib/test TAP Aborted request. Immediate stream creation. Express middleware. Upload B. > Stream error. 1`] = `
+exports[`lib/processRequest.test.js TAP Aborted request. Immediate stream creation. Express middleware. Upload B. > Stream error. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Request disconnected during file upload stream parsing.",
@@ -83,7 +83,7 @@ exports[`lib/test TAP Aborted request. Immediate stream creation. Express middle
 }
 `
 
-exports[`lib/test TAP Aborted request. Immediate stream creation. Express middleware. Upload C. > Rejection error. 1`] = `
+exports[`lib/processRequest.test.js TAP Aborted request. Immediate stream creation. Express middleware. Upload C. > Rejection error. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Request disconnected during file upload stream parsing.",
@@ -93,7 +93,7 @@ exports[`lib/test TAP Aborted request. Immediate stream creation. Express middle
 }
 `
 
-exports[`lib/test TAP Aborted request. Immediate stream creation. Koa middleware. Upload A. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Aborted request. Immediate stream creation. Koa middleware. Upload A. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -101,7 +101,7 @@ exports[`lib/test TAP Aborted request. Immediate stream creation. Koa middleware
 }
 `
 
-exports[`lib/test TAP Aborted request. Immediate stream creation. Koa middleware. Upload B. > Stream error. 1`] = `
+exports[`lib/processRequest.test.js TAP Aborted request. Immediate stream creation. Koa middleware. Upload B. > Stream error. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Request disconnected during file upload stream parsing.",
@@ -111,7 +111,7 @@ exports[`lib/test TAP Aborted request. Immediate stream creation. Koa middleware
 }
 `
 
-exports[`lib/test TAP Aborted request. Immediate stream creation. Koa middleware. Upload C. > Rejection error. 1`] = `
+exports[`lib/processRequest.test.js TAP Aborted request. Immediate stream creation. Koa middleware. Upload C. > Rejection error. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Request disconnected during file upload stream parsing.",
@@ -121,7 +121,7 @@ exports[`lib/test TAP Aborted request. Immediate stream creation. Koa middleware
 }
 `
 
-exports[`lib/test TAP Deduped files. Express middleware. Upload A. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Deduped files. Express middleware. Upload A. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -129,7 +129,7 @@ exports[`lib/test TAP Deduped files. Express middleware. Upload A. > Enumerable 
 }
 `
 
-exports[`lib/test TAP Deduped files. Express middleware. Upload B. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Deduped files. Express middleware. Upload B. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -137,7 +137,7 @@ exports[`lib/test TAP Deduped files. Express middleware. Upload B. > Enumerable 
 }
 `
 
-exports[`lib/test TAP Deduped files. Koa middleware. Upload A. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Deduped files. Koa middleware. Upload A. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -145,7 +145,7 @@ exports[`lib/test TAP Deduped files. Koa middleware. Upload A. > Enumerable prop
 }
 `
 
-exports[`lib/test TAP Deduped files. Koa middleware. Upload B. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Deduped files. Koa middleware. Upload B. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -153,14 +153,14 @@ exports[`lib/test TAP Deduped files. Koa middleware. Upload B. > Enumerable prop
 }
 `
 
-exports[`lib/test TAP Deprecated file upload ‘stream’ property. Express middleware. Upload. > Deprecation warning. 1`] = `
+exports[`lib/processRequest.test.js TAP Deprecated file upload ‘stream’ property. Express middleware. Upload. > Deprecation warning. 1`] = `
 {
   "name": "DeprecationWarning",
   "message": "File upload property ‘stream’ is deprecated. Use ‘createReadStream()’ instead."
 }
 `
 
-exports[`lib/test TAP Deprecated file upload ‘stream’ property. Express middleware. Upload. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Deprecated file upload ‘stream’ property. Express middleware. Upload. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -168,14 +168,14 @@ exports[`lib/test TAP Deprecated file upload ‘stream’ property. Express midd
 }
 `
 
-exports[`lib/test TAP Deprecated file upload ‘stream’ property. Koa middleware. Upload. > Deprecation warning. 1`] = `
+exports[`lib/processRequest.test.js TAP Deprecated file upload ‘stream’ property. Koa middleware. Upload. > Deprecation warning. 1`] = `
 {
   "name": "DeprecationWarning",
   "message": "File upload property ‘stream’ is deprecated. Use ‘createReadStream()’ instead."
 }
 `
 
-exports[`lib/test TAP Deprecated file upload ‘stream’ property. Koa middleware. Upload. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Deprecated file upload ‘stream’ property. Koa middleware. Upload. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -183,7 +183,7 @@ exports[`lib/test TAP Deprecated file upload ‘stream’ property. Koa middlewa
 }
 `
 
-exports[`lib/test TAP Exceed max file size. Express middleware. Upload A. > Stream error. 1`] = `
+exports[`lib/processRequest.test.js TAP Exceed max file size. Express middleware. Upload A. > Stream error. 1`] = `
 {
   "name": "PayloadTooLargeError",
   "message": "File truncated as it exceeds the size limit.",
@@ -193,7 +193,7 @@ exports[`lib/test TAP Exceed max file size. Express middleware. Upload A. > Stre
 }
 `
 
-exports[`lib/test TAP Exceed max file size. Express middleware. Upload B. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Exceed max file size. Express middleware. Upload B. > Enumerable properties. 1`] = `
 {
   "filename": "b.txt",
   "mimetype": "text/plain",
@@ -201,7 +201,7 @@ exports[`lib/test TAP Exceed max file size. Express middleware. Upload B. > Enum
 }
 `
 
-exports[`lib/test TAP Exceed max file size. Koa middleware. Upload A. > Stream error. 1`] = `
+exports[`lib/processRequest.test.js TAP Exceed max file size. Koa middleware. Upload A. > Stream error. 1`] = `
 {
   "name": "PayloadTooLargeError",
   "message": "File truncated as it exceeds the size limit.",
@@ -211,7 +211,7 @@ exports[`lib/test TAP Exceed max file size. Koa middleware. Upload A. > Stream e
 }
 `
 
-exports[`lib/test TAP Exceed max file size. Koa middleware. Upload B. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Exceed max file size. Koa middleware. Upload B. > Enumerable properties. 1`] = `
 {
   "filename": "b.txt",
   "mimetype": "text/plain",
@@ -219,7 +219,7 @@ exports[`lib/test TAP Exceed max file size. Koa middleware. Upload B. > Enumerab
 }
 `
 
-exports[`lib/test TAP Exceed max files with extraneous files interspersed. Express middleware. Upload A. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Exceed max files with extraneous files interspersed. Express middleware. Upload A. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -227,7 +227,7 @@ exports[`lib/test TAP Exceed max files with extraneous files interspersed. Expre
 }
 `
 
-exports[`lib/test TAP Exceed max files with extraneous files interspersed. Express middleware. Upload B. > Rejection error. 1`] = `
+exports[`lib/processRequest.test.js TAP Exceed max files with extraneous files interspersed. Express middleware. Upload B. > Rejection error. 1`] = `
 {
   "name": "PayloadTooLargeError",
   "message": "2 max file uploads exceeded.",
@@ -237,7 +237,7 @@ exports[`lib/test TAP Exceed max files with extraneous files interspersed. Expre
 }
 `
 
-exports[`lib/test TAP Exceed max files with extraneous files interspersed. Koa middleware. Upload A. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Exceed max files with extraneous files interspersed. Koa middleware. Upload A. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -245,7 +245,7 @@ exports[`lib/test TAP Exceed max files with extraneous files interspersed. Koa m
 }
 `
 
-exports[`lib/test TAP Exceed max files with extraneous files interspersed. Koa middleware. Upload B. > Rejection error. 1`] = `
+exports[`lib/processRequest.test.js TAP Exceed max files with extraneous files interspersed. Koa middleware. Upload B. > Rejection error. 1`] = `
 {
   "name": "PayloadTooLargeError",
   "message": "2 max file uploads exceeded.",
@@ -255,7 +255,7 @@ exports[`lib/test TAP Exceed max files with extraneous files interspersed. Koa m
 }
 `
 
-exports[`lib/test TAP Exceed max files. Express middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Exceed max files. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "PayloadTooLargeError",
   "message": "1 max file uploads exceeded.",
@@ -265,7 +265,7 @@ exports[`lib/test TAP Exceed max files. Express middleware. > Middleware throws.
 }
 `
 
-exports[`lib/test TAP Exceed max files. Koa middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Exceed max files. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "PayloadTooLargeError",
   "message": "1 max file uploads exceeded.",
@@ -275,7 +275,7 @@ exports[`lib/test TAP Exceed max files. Koa middleware. > Middleware throws. 1`]
 }
 `
 
-exports[`lib/test TAP Extraneous file. Express middleware. Upload. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Extraneous file. Express middleware. Upload. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -283,7 +283,7 @@ exports[`lib/test TAP Extraneous file. Express middleware. Upload. > Enumerable 
 }
 `
 
-exports[`lib/test TAP Extraneous file. Koa middleware. Upload. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Extraneous file. Koa middleware. Upload. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -291,7 +291,7 @@ exports[`lib/test TAP Extraneous file. Koa middleware. Upload. > Enumerable prop
 }
 `
 
-exports[`lib/test TAP Handles unconsumed uploads. Express middleware. Upload B. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Handles unconsumed uploads. Express middleware. Upload B. > Enumerable properties. 1`] = `
 {
   "filename": "b.txt",
   "mimetype": "text/plain",
@@ -299,7 +299,7 @@ exports[`lib/test TAP Handles unconsumed uploads. Express middleware. Upload B. 
 }
 `
 
-exports[`lib/test TAP Handles unconsumed uploads. Koa middleware. Upload B. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Handles unconsumed uploads. Koa middleware. Upload B. > Enumerable properties. 1`] = `
 {
   "filename": "b.txt",
   "mimetype": "text/plain",
@@ -307,7 +307,7 @@ exports[`lib/test TAP Handles unconsumed uploads. Koa middleware. Upload B. > En
 }
 `
 
-exports[`lib/test TAP Invalid ‘map’ JSON. Express middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘map’ JSON. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid JSON in the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -317,7 +317,7 @@ exports[`lib/test TAP Invalid ‘map’ JSON. Express middleware. > Middleware t
 }
 `
 
-exports[`lib/test TAP Invalid ‘map’ JSON. Koa middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘map’ JSON. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid JSON in the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -327,7 +327,7 @@ exports[`lib/test TAP Invalid ‘map’ JSON. Koa middleware. > Middleware throw
 }
 `
 
-exports[`lib/test TAP Invalid ‘map’ entry array item type. Express middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘map’ entry array item type. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid type for the ‘map’ multipart field entry key ‘1’ array index ‘0’ value (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -337,7 +337,7 @@ exports[`lib/test TAP Invalid ‘map’ entry array item type. Express middlewar
 }
 `
 
-exports[`lib/test TAP Invalid ‘map’ entry array item type. Koa middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘map’ entry array item type. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid type for the ‘map’ multipart field entry key ‘1’ array index ‘0’ value (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -347,7 +347,7 @@ exports[`lib/test TAP Invalid ‘map’ entry array item type. Koa middleware. >
 }
 `
 
-exports[`lib/test TAP Invalid ‘map’ entry object path. Express middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘map’ entry object path. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid object path for the ‘map’ multipart field entry key ‘1’ array index ‘0’ value ‘variables.file’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -357,7 +357,7 @@ exports[`lib/test TAP Invalid ‘map’ entry object path. Express middleware. >
 }
 `
 
-exports[`lib/test TAP Invalid ‘map’ entry object path. Koa middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘map’ entry object path. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid object path for the ‘map’ multipart field entry key ‘1’ array index ‘0’ value ‘variables.file’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -367,7 +367,7 @@ exports[`lib/test TAP Invalid ‘map’ entry object path. Koa middleware. > Mid
 }
 `
 
-exports[`lib/test TAP Invalid ‘map’ entry type. Express middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘map’ entry type. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid type for the ‘map’ multipart field entry key ‘1’ array (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -377,7 +377,7 @@ exports[`lib/test TAP Invalid ‘map’ entry type. Express middleware. > Middle
 }
 `
 
-exports[`lib/test TAP Invalid ‘map’ entry type. Koa middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘map’ entry type. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid type for the ‘map’ multipart field entry key ‘1’ array (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -387,7 +387,7 @@ exports[`lib/test TAP Invalid ‘map’ entry type. Koa middleware. > Middleware
 }
 `
 
-exports[`lib/test TAP Invalid ‘map’ type. Express middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘map’ type. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid type for the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -397,7 +397,7 @@ exports[`lib/test TAP Invalid ‘map’ type. Express middleware. > Middleware t
 }
 `
 
-exports[`lib/test TAP Invalid ‘map’ type. Koa middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘map’ type. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid type for the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -407,7 +407,7 @@ exports[`lib/test TAP Invalid ‘map’ type. Koa middleware. > Middleware throw
 }
 `
 
-exports[`lib/test TAP Invalid ‘operations’ JSON. Express middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘operations’ JSON. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid JSON in the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -417,7 +417,7 @@ exports[`lib/test TAP Invalid ‘operations’ JSON. Express middleware. > Middl
 }
 `
 
-exports[`lib/test TAP Invalid ‘operations’ JSON. Koa middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘operations’ JSON. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid JSON in the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -427,7 +427,7 @@ exports[`lib/test TAP Invalid ‘operations’ JSON. Koa middleware. > Middlewar
 }
 `
 
-exports[`lib/test TAP Invalid ‘operations’ type. Express middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘operations’ type. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid type for the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -437,7 +437,7 @@ exports[`lib/test TAP Invalid ‘operations’ type. Express middleware. > Middl
 }
 `
 
-exports[`lib/test TAP Invalid ‘operations’ type. Koa middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Invalid ‘operations’ type. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Invalid type for the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -447,7 +447,7 @@ exports[`lib/test TAP Invalid ‘operations’ type. Koa middleware. > Middlewar
 }
 `
 
-exports[`lib/test TAP Misorder files before ‘map’. Express middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Misorder files before ‘map’. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Misordered multipart fields; files should follow ‘map’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -457,7 +457,7 @@ exports[`lib/test TAP Misorder files before ‘map’. Express middleware. > Mid
 }
 `
 
-exports[`lib/test TAP Misorder files before ‘map’. Koa middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Misorder files before ‘map’. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Misordered multipart fields; files should follow ‘map’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -467,7 +467,7 @@ exports[`lib/test TAP Misorder files before ‘map’. Koa middleware. > Middlew
 }
 `
 
-exports[`lib/test TAP Misorder ‘map’ before ‘operations’. Express middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Misorder ‘map’ before ‘operations’. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Misordered multipart fields; ‘map’ should follow ‘operations’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -477,7 +477,7 @@ exports[`lib/test TAP Misorder ‘map’ before ‘operations’. Express middle
 }
 `
 
-exports[`lib/test TAP Misorder ‘map’ before ‘operations’. Koa middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Misorder ‘map’ before ‘operations’. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Misordered multipart fields; ‘map’ should follow ‘operations’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -487,7 +487,7 @@ exports[`lib/test TAP Misorder ‘map’ before ‘operations’. Koa middleware
 }
 `
 
-exports[`lib/test TAP Missing file. Express middleware. > Rejection error. 1`] = `
+exports[`lib/processRequest.test.js TAP Missing file. Express middleware. > Rejection error. 1`] = `
 {
   "name": "BadRequestError",
   "message": "File missing in the request.",
@@ -497,7 +497,7 @@ exports[`lib/test TAP Missing file. Express middleware. > Rejection error. 1`] =
 }
 `
 
-exports[`lib/test TAP Missing file. Koa middleware. > Rejection error. 1`] = `
+exports[`lib/processRequest.test.js TAP Missing file. Koa middleware. > Rejection error. 1`] = `
 {
   "name": "BadRequestError",
   "message": "File missing in the request.",
@@ -507,7 +507,7 @@ exports[`lib/test TAP Missing file. Koa middleware. > Rejection error. 1`] = `
 }
 `
 
-exports[`lib/test TAP Missing ‘map’ and files. Express middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Missing ‘map’ and files. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Missing multipart field ‘map’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -517,7 +517,7 @@ exports[`lib/test TAP Missing ‘map’ and files. Express middleware. > Middlew
 }
 `
 
-exports[`lib/test TAP Missing ‘map’ and files. Koa middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Missing ‘map’ and files. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Missing multipart field ‘map’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -527,7 +527,7 @@ exports[`lib/test TAP Missing ‘map’ and files. Koa middleware. > Middleware 
 }
 `
 
-exports[`lib/test TAP Missing ‘operations’, ‘map’ and files. Express middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Missing ‘operations’, ‘map’ and files. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Missing multipart field ‘operations’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -537,7 +537,7 @@ exports[`lib/test TAP Missing ‘operations’, ‘map’ and files. Express mid
 }
 `
 
-exports[`lib/test TAP Missing ‘operations’, ‘map’ and files. Koa middleware. > Middleware throws. 1`] = `
+exports[`lib/processRequest.test.js TAP Missing ‘operations’, ‘map’ and files. Koa middleware. > Middleware throws. 1`] = `
 {
   "name": "BadRequestError",
   "message": "Missing multipart field ‘operations’ (https://github.com/jaydenseric/graphql-multipart-request-spec).",
@@ -547,7 +547,7 @@ exports[`lib/test TAP Missing ‘operations’, ‘map’ and files. Koa middlew
 }
 `
 
-exports[`lib/test TAP Single file batched. Express middleware. Upload A. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Single file batched. Express middleware. Upload A. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -555,7 +555,7 @@ exports[`lib/test TAP Single file batched. Express middleware. Upload A. > Enume
 }
 `
 
-exports[`lib/test TAP Single file batched. Express middleware. Upload B. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Single file batched. Express middleware. Upload B. > Enumerable properties. 1`] = `
 {
   "filename": "b.txt",
   "mimetype": "text/plain",
@@ -563,7 +563,7 @@ exports[`lib/test TAP Single file batched. Express middleware. Upload B. > Enume
 }
 `
 
-exports[`lib/test TAP Single file batched. Koa middleware. Upload A. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Single file batched. Koa middleware. Upload A. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -571,7 +571,7 @@ exports[`lib/test TAP Single file batched. Koa middleware. Upload A. > Enumerabl
 }
 `
 
-exports[`lib/test TAP Single file batched. Koa middleware. Upload B. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Single file batched. Koa middleware. Upload B. > Enumerable properties. 1`] = `
 {
   "filename": "b.txt",
   "mimetype": "text/plain",
@@ -579,7 +579,7 @@ exports[`lib/test TAP Single file batched. Koa middleware. Upload B. > Enumerabl
 }
 `
 
-exports[`lib/test TAP Single file. Express middleware. Upload. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Single file. Express middleware. Upload. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",
@@ -587,7 +587,7 @@ exports[`lib/test TAP Single file. Express middleware. Upload. > Enumerable prop
 }
 `
 
-exports[`lib/test TAP Single file. Koa middleware. Upload. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Single file. Koa middleware. Upload. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",

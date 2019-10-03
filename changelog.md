@@ -10,6 +10,8 @@
 - Fixed a readme typo, via [#161](https://github.com/jaydenseric/graphql-upload/pull/161).
 - Use GitHub Actions instead of Travis for CI.
 - Removed `package-lock.json` from `.gitignore` and `.prettierignore`, as it’s disabled in `.npmrc` anyway.
+- New file structure.
+- Enabled code coverage for tests.
 
 ## 8.0.7
 

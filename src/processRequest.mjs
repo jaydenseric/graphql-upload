@@ -3,51 +3,10 @@ import Busboy from 'busboy'
 import { WriteStream } from 'fs-capacitor'
 import createError from 'http-errors'
 import objectPath from 'object-path'
-
-/**
- * Official [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec)
- * URL. Useful for error messages, etc.
- * @kind constant
- * @name SPEC_URL
- * @type {string}
- * @ignore
- */
-const SPEC_URL = 'https://github.com/jaydenseric/graphql-multipart-request-spec'
-
-/**
- * Checks if a value is an object with properties.
- * @kind function
- * @name isObject
- * @param {*} value Value to check.
- * @returns {boolean} Is the value an object.
- * @ignore
- */
-const isObject = value => value && value.constructor === Object
-
-/**
- * Checks if a value is a string.
- * @kind function
- * @name isString
- * @param {*} value Value to check.
- * @returns {boolean} Is the value a string.
- * @ignore
- */
-const isString = value => typeof value === 'string' || value instanceof String
-
-/**
- * Safely ignores a readable stream.
- * @kind function
- * @name ignoreStream
- * @param {ReadableStream} stream Readable stream.
- * @ignore
- */
-const ignoreStream = stream => {
-  // Prevent an unhandled error from crashing the process.
-  stream.on('error', () => {})
-
-  // Waste the stream.
-  stream.resume()
-}
+import { SPEC_URL } from './constants'
+import { ignoreStream } from './ignoreStream'
+import { isObject } from './isObject'
+import { isString } from './isString'
 
 /**
  * An expected file upload.
