@@ -5,7 +5,7 @@ import createError from 'http-errors'
 import objectPath from 'object-path'
 import { SPEC_URL } from './constants'
 import { ignoreStream } from './ignoreStream'
-import { isObject } from './isObject'
+import { isEnumerableObject } from './isEnumerableObject'
 import { isString } from './isString'
 
 /**
@@ -159,7 +159,7 @@ export const processRequest = (
             )
           }
 
-          if (!isObject(operations) && !Array.isArray(operations))
+          if (!isEnumerableObject(operations) && !Array.isArray(operations))
             return exit(
               createError(
                 400,
@@ -191,7 +191,7 @@ export const processRequest = (
             )
           }
 
-          if (!isObject(parsedMap))
+          if (!isEnumerableObject(parsedMap))
             return exit(
               createError(
                 400,

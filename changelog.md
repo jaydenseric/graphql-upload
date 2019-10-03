@@ -15,6 +15,7 @@
 - Explicitly defined main exports (instead of using `export * from`) to prevent accidental public exposure of internal APIs.
 - Moved JSDoc typedefs into the index main entry file, alphabetically sorted.
 - Nicer Browserslist query syntax.
+- Replaced the `isObject` helper with a smarter and tested `isEnumerableObject`.
 
 ## 8.0.7
 
