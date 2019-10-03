@@ -15,7 +15,6 @@ import { isString } from './isString'
  * @ignore
  */
 class Upload {
-  // eslint-disable-next-line require-jsdoc
   constructor() {
     /**
      * Promise that resolves file upload details.
