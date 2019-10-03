@@ -17,6 +17,7 @@
 - Nicer Browserslist query syntax.
 - Replaced the `isObject` helper with a smarter and tested `isEnumerableObject`.
 - Removed the `isString` helper.
+- Removed a workaround from the `startServer` test helper.
 
 ## 8.0.7
 
