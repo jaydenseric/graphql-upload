@@ -1,4 +1,4 @@
-export * from './GraphQLUpload'
-export * from './processRequest'
-export * from './graphqlUploadKoa'
-export * from './graphqlUploadExpress'
+export { GraphQLUpload } from './GraphQLUpload'
+export { processRequest } from './processRequest'
+export { graphqlUploadKoa } from './graphqlUploadKoa'
+export { graphqlUploadExpress } from './graphqlUploadExpress'

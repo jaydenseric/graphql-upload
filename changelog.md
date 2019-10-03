@@ -12,6 +12,7 @@
 - Removed `package-lock.json` from `.gitignore` and `.prettierignore`, as it’s disabled in `.npmrc` anyway.
 - New file structure.
 - Enabled code coverage for tests.
+- Explicitly defined main exports (instead of using `export * from`) to prevent accidental public exposure of internal APIs.
 
 ## 8.0.7
 
