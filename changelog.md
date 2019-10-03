@@ -16,6 +16,7 @@
 - Moved JSDoc typedefs into the index main entry file, alphabetically sorted.
 - Nicer Browserslist query syntax.
 - Replaced the `isObject` helper with a smarter and tested `isEnumerableObject`.
+- Removed the `isString` helper.
 
 ## 8.0.7
 

@@ -6,7 +6,6 @@ import objectPath from 'object-path'
 import { SPEC_URL } from './constants'
 import { ignoreStream } from './ignoreStream'
 import { isEnumerableObject } from './isEnumerableObject'
-import { isString } from './isString'
 
 /**
  * An expected file upload.
@@ -202,7 +201,7 @@ export const processRequest = (
           const mapEntries = Object.entries(parsedMap)
 
           // Check max files is not exceeded, even though the number of files to
-          // parse might not match the map provided by the client.
+          // parse might not match th(e map provided by the client.
           if (mapEntries.length > maxFiles)
             return exit(
               createError(413, `${maxFiles} max file uploads exceeded.`)
@@ -221,7 +220,7 @@ export const processRequest = (
             map.set(fieldName, new Upload())
 
             for (const [index, path] of paths.entries()) {
-              if (!isString(path))
+              if (typeof path !== 'string')
                 return exit(
                   createError(
                     400,
