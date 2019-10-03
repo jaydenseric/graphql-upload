@@ -13,6 +13,7 @@
 - New file structure.
 - Enabled code coverage for tests.
 - Explicitly defined main exports (instead of using `export * from`) to prevent accidental public exposure of internal APIs.
+- Moved JSDoc typedefs into the index main entry file, alphabetically sorted.
 
 ## 8.0.7
 

@@ -371,27 +371,3 @@ export const processRequest = (
 
     request.pipe(parser)
   })
-
-/**
- * GraphQL upload server options, mostly relating to security, performance and
- * limits.
- * @kind typedef
- * @name UploadOptions
- * @type {object}
- * @prop {number} [maxFieldSize=1000000] Maximum allowed non-file multipart form field size in bytes; enough for your queries.
- * @prop {number} [maxFileSize=Infinity] Maximum allowed file size in bytes.
- * @prop {number} [maxFiles=Infinity] Maximum allowed number of files.
- */
-
-/**
- * A GraphQL operation object in a shape that can be consumed and executed by
- * most GraphQL servers.
- * @kind typedef
- * @name GraphQLOperation
- * @type {object}
- * @prop {string} query GraphQL document containing queries and fragments.
- * @prop {string|null} [operationName] GraphQL document operation name to execute.
- * @prop {object|null} [variables] GraphQL document operation variables and values map.
- * @see [GraphQL over HTTP spec](https://github.com/APIs-guru/graphql-over-http#request-parameters).
- * @see [Apollo Server POST requests](https://www.apollographql.com/docs/apollo-server/requests#postRequests).
- */
