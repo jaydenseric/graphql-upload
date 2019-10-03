@@ -139,7 +139,7 @@ Creates [Express](https://expressjs.com) middleware that processes GraphQL multi
 | :-------- | :----------------------------------- | :---------------------- |
 | `options` | [UploadOptions](#type-uploadoptions) | GraphQL upload options. |
 
-**Returns:** function — Express middleware.
+**Returns:** Function — Express middleware.
 
 #### Examples
 
@@ -170,7 +170,7 @@ Creates [Koa](https://koajs.com) middleware that processes GraphQL multipart req
 | :-------- | :----------------------------------- | :---------------------- |
 | `options` | [UploadOptions](#type-uploadoptions) | GraphQL upload options. |
 
-**Returns:** function — Koa middleware.
+**Returns:** Function — Koa middleware.
 
 #### Examples
 
@@ -219,14 +219,14 @@ _How to import._
 
 File upload details, resolved from an [`Upload` scalar](#class-graphqlupload) promise.
 
-**Type:** Object
+**Type:** object
 
 | Property | Type | Description |
 | :-- | :-- | :-- |
 | `filename` | string | File name. |
 | `mimetype` | string | File MIME type. Provided by the client and can’t be trusted. |
 | `encoding` | string | File stream transfer encoding. |
-| `createReadStream` | function | Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. |
+| `createReadStream` | Function | Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. |
 
 ---
 
@@ -234,7 +234,7 @@ File upload details, resolved from an [`Upload` scalar](#class-graphqlupload) pr
 
 A GraphQL operation object in a shape that can be consumed and executed by most GraphQL servers.
 
-**Type:** Object
+**Type:** object
 
 | Property | Type | Description |
 | :-- | :-- | :-- |
@@ -253,7 +253,7 @@ A GraphQL operation object in a shape that can be consumed and executed by most 
 
 GraphQL upload server options, mostly relating to security, performance and limits.
 
-**Type:** Object
+**Type:** object
 
 | Property | Type | Description |
 | :-- | :-- | :-- |
