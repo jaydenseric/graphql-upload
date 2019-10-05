@@ -8,10 +8,11 @@ import { ReadStream } from 'fs-capacitor'
 import Koa from 'koa'
 import fetch from 'node-fetch'
 import t from 'tap'
+import { graphqlUploadExpress } from './graphqlUploadExpress'
+import { graphqlUploadKoa } from './graphqlUploadKoa'
 import { snapshotError } from './test-helpers/snapshotError'
 import { startServer } from './test-helpers/startServer'
 import { streamToString } from './test-helpers/streamToString'
-import { graphqlUploadExpress, graphqlUploadKoa } from '.'
 
 t.test('Single file.', async t => {
   const sendRequest = async port => {
