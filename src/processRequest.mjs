@@ -53,14 +53,14 @@ class Upload {
 
 /**
  * Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
- * Used in [`graphqlUploadKoa`]{@link graphqlUploadKoa} and [`graphqlUploadExpress`]{@link graphqlUploadExpress}
- * and can be used to create custom middleware.
+ * Errors are created with [`http-errors`](https://npm.im/http-errors) to assist
+ * in sending responses with appropriate HTTP status codes. Used in
+ * [`graphqlUploadExpress`]{@link graphqlUploadExpress} and
+ * [`graphqlUploadKoa`]{@link graphqlUploadKoa} and can be used to
+ * create custom middleware.
  * @kind function
  * @name processRequest
- * @param {IncomingMessage} request [Node.js HTTP server request instance](https://nodejs.org/api/http.html#http_class_http_incomingmessage).
- * @param {ServerResponse} response [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse).
- * @param {UploadOptions} [options] GraphQL upload options.
- * @returns {Promise<GraphQLOperation | Array<GraphQLOperation>>} GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
+ * @type {ProcessRequestFunction}
  * @example <caption>How to import.</caption>
  * ```js
  * import { processRequest } from 'graphql-upload'

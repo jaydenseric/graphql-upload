@@ -1,14 +1,16 @@
-import { processRequest } from './processRequest'
+import { processRequest as defaultProcessRequest } from './processRequest'
 
 /**
- * Creates [Express](https://expressjs.com) middleware that processes GraphQL
- * multipart requests using [`processRequest`]{@link processRequest}, ignoring
- * non-multipart requests. It sets the request body to be [similar to a
- * conventional GraphQL POST request]{@link GraphQLOperation} for following
- * GraphQL middleware to consume.
+ * Creates [Express](https://expressjs.com) middleware that processes
+ * [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec)
+ * using [`processRequest`]{@link processRequest}, ignoring non-multipart
+ * requests. It sets the request body to be
+ * [similar to a conventional GraphQL POST request]{@link GraphQLOperation} for
+ * following GraphQL middleware to consume.
  * @kind function
  * @name graphqlUploadExpress
- * @param {UploadOptions} options GraphQL upload options.
+ * @param {ProcessRequestOptions} options Middleware options. Any [`ProcessRequestOptions`]{@link ProcessRequestOptions} can be used.
+ * @param {ProcessRequestFunction} [options.processRequest=processRequest] Used to process [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec).
  * @returns {Function} Express middleware.
  * @example <caption>Basic [`express-graphql`](https://npm.im/express-graphql) setup.</caption>
  * ```js
@@ -26,7 +28,10 @@ import { processRequest } from './processRequest'
  *   .listen(3000)
  * ```
  */
-export const graphqlUploadExpress = options => (request, response, next) => {
+export const graphqlUploadExpress = ({
+  processRequest = defaultProcessRequest,
+  ...processRequestOptions
+} = {}) => (request, response, next) => {
   if (!request.is('multipart/form-data')) return next()
 
   const finished = new Promise(resolve => request.on('end', resolve))
@@ -39,7 +44,7 @@ export const graphqlUploadExpress = options => (request, response, next) => {
     })
   }
 
-  processRequest(request, response, options)
+  processRequest(request, response, processRequestOptions)
     .then(body => {
       request.body = body
       next()

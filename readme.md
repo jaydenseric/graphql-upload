@@ -73,7 +73,8 @@ The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-mult
 - [function processRequest](#function-processrequest)
 - [type FileUpload](#type-fileupload)
 - [type GraphQLOperation](#type-graphqloperation)
-- [type UploadOptions](#type-uploadoptions)
+- [type ProcessRequestFunction](#type-processrequestfunction)
+- [type ProcessRequestOptions](#type-processrequestoptions)
 
 ### class GraphQLUpload
 
@@ -133,11 +134,12 @@ _A manually constructed schema with an image upload mutation._
 
 ### function graphqlUploadExpress
 
-Creates [Express](https://expressjs.com) middleware that processes GraphQL multipart requests using [`processRequest`](#function-processrequest), ignoring non-multipart requests. It sets the request body to be [similar to a conventional GraphQL POST request](#type-graphqloperation) for following GraphQL middleware to consume.
+Creates [Express](https://expressjs.com) middleware that processes [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec) using [`processRequest`](#function-processrequest), ignoring non-multipart requests. It sets the request body to be [similar to a conventional GraphQL POST request](#type-graphqloperation) for following GraphQL middleware to consume.
 
-| Parameter | Type                                 | Description             |
-| :-------- | :----------------------------------- | :---------------------- |
-| `options` | [UploadOptions](#type-uploadoptions) | GraphQL upload options. |
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| `options` | [ProcessRequestOptions](#type-processrequestoptions) | Middleware options. Any [`ProcessRequestOptions`](#type-processrequestoptions) can be used. |
+| `options.processRequest` | [ProcessRequestFunction](#type-processrequestfunction)? = [processRequest](#function-processrequest) | Used to process [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec). |
 
 **Returns:** Function — Express middleware.
 
@@ -164,11 +166,12 @@ _Basic [`express-graphql`](https://npm.im/express-graphql) setup._
 
 ### function graphqlUploadKoa
 
-Creates [Koa](https://koajs.com) middleware that processes GraphQL multipart requests using [`processRequest`](#function-processrequest), ignoring non-multipart requests. It sets the request body to be [similar to a conventional GraphQL POST request](#type-graphqloperation) for following GraphQL middleware to consume.
+Creates [Koa](https://koajs.com) middleware that processes [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec) using [`processRequest`](#function-processrequest), ignoring non-multipart requests. It sets the request body to be [similar to a conventional GraphQL POST request](#type-graphqloperation) for following GraphQL middleware to consume.
 
-| Parameter | Type                                 | Description             |
-| :-------- | :----------------------------------- | :---------------------- |
-| `options` | [UploadOptions](#type-uploadoptions) | GraphQL upload options. |
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| `options` | [ProcessRequestOptions](#type-processrequestoptions) | Middleware options. Any [`ProcessRequestOptions`](#type-processrequestoptions) can be used. |
+| `options.processRequest` | [ProcessRequestFunction](#type-processrequestfunction)? = [processRequest](#function-processrequest) | Used to process [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec). |
 
 **Returns:** Function — Koa middleware.
 
@@ -195,15 +198,9 @@ _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
 
 ### function processRequest
 
-Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). Used in [`graphqlUploadKoa`](#function-graphqluploadkoa) and [`graphqlUploadExpress`](#function-graphqluploadexpress) and can be used to create custom middleware.
+Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). Errors are created with [`http-errors`](https://npm.im/http-errors) to assist in sending responses with appropriate HTTP status codes. Used in [`graphqlUploadExpress`](#function-graphqluploadexpress) and [`graphqlUploadKoa`](#function-graphqluploadkoa) and can be used to create custom middleware.
 
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| `request` | IncomingMessage | [Node.js HTTP server request instance](https://nodejs.org/api/http.html#http_class_http_incomingmessage). |
-| `response` | ServerResponse | [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse). |
-| `options` | [UploadOptions](#type-uploadoptions)? | GraphQL upload options. |
-
-**Returns:** Promise&lt;[GraphQLOperation](#type-graphqloperation) | Array&lt;[GraphQLOperation](#type-graphqloperation)>> — GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
+**Type:** [ProcessRequestFunction](#type-processrequestfunction)
 
 #### Examples
 
@@ -249,9 +246,25 @@ A GraphQL operation object in a shape that can be consumed and executed by most 
 
 ---
 
-### type UploadOptions
+### type ProcessRequestFunction
 
-GraphQL upload server options, mostly relating to security, performance and limits.
+Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
+
+**Type:** Function
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| `request` | IncomingMessage | [Node.js HTTP server request instance](https://nodejs.org/api/http.html#http_class_http_incomingmessage). |
+| `response` | ServerResponse | [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse). |
+| `options` | [ProcessRequestOptions](#type-processrequestoptions)? | Options for processing the request. |
+
+**Returns:** Promise&lt;[GraphQLOperation](#type-graphqloperation) | Array&lt;[GraphQLOperation](#type-graphqloperation)>> — GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
+
+---
+
+### type ProcessRequestOptions
+
+Options for processing a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec); mostly relating to security, performance and limits.
 
 **Type:** object
 

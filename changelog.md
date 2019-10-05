@@ -2,6 +2,10 @@
 
 ## Next
 
+### Minor
+
+- Added a new `processRequest` option to the `graphqlUploadExpress` and `graphqlUploadKoa` middleware, for improved testing without mocks or spies which are difficult to achieve with ESM.
+
 ### Patch
 
 - Updated dependencies.
@@ -18,6 +22,9 @@
 - Replaced the `isObject` helper with a smarter and tested `isEnumerableObject`.
 - Removed the `isString` helper.
 - Removed a workaround from the `startServer` test helper.
+- Added a new `ProcessRequestFunction` JSDoc type, and applied it to `processRequest`.
+- Renamed the `UploadOptions` JSDoc type to `ProcessRequestOptions`.
+- Misc. documentation improvements.
 
 ## 8.0.7
 
