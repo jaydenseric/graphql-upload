@@ -275,7 +275,7 @@ export const processRequest = (
 
       currentStream = stream
       stream.on('end', () => {
-        if (currentStream === stream) currentStream = null
+        currentStream = null
       })
 
       const upload = map.get(fieldName)
@@ -295,7 +295,6 @@ export const processRequest = (
       })
 
       stream.on('limit', () => {
-        if (currentStream === stream) currentStream = null
         stream.unpipe()
         capacitor.destroy(
           createError(
@@ -306,7 +305,6 @@ export const processRequest = (
       })
 
       stream.on('error', error => {
-        if (currentStream === stream) currentStream = null
         stream.unpipe()
         capacitor.destroy(exitError || error)
       })
