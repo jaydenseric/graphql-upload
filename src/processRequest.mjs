@@ -134,6 +134,7 @@ export const processRequest = (
      * @ignore
      */
     const release = () => {
+      // istanbul ignore next
       if (released) return
       released = true
 
@@ -306,6 +307,7 @@ export const processRequest = (
 
       stream.on('error', error => {
         stream.unpipe()
+        // istanbul ignore next
         capacitor.destroy(exitError || error)
       })
 
