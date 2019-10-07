@@ -10,6 +10,7 @@ import fetch from 'node-fetch'
 import t from 'tap'
 import { graphqlUploadExpress } from './graphqlUploadExpress'
 import { graphqlUploadKoa } from './graphqlUploadKoa'
+import { processRequest } from './processRequest'
 import { snapshotError } from './test-helpers/snapshotError'
 import { startServer } from './test-helpers/startServer'
 import { streamToString } from './test-helpers/streamToString'
@@ -33,6 +34,48 @@ t.test('Single file.', async t => {
     t.type(stream, ReadStream, 'Stream type.')
     t.equals(await streamToString(stream), 'a', 'Contents.')
   }
+
+  await t.test('Node HTTP.', async t => {
+    t.plan(2)
+
+    let variables
+
+    const app = http.createServer(async (request, response) => {
+      const send = data => {
+        if (request.complete) response.end(data)
+        else {
+          request.on('end', () => response.end(data))
+          request.resume()
+        }
+      }
+
+      const contentType = request.headers['content-type']
+      if (!contentType || contentType.substr(0, 19) !== 'multipart/form-data') {
+        response.statusCode = 415
+        return send()
+      }
+
+      try {
+        const body = await processRequest(request, response)
+        ;({ variables } = body)
+        await t.test('Upload.', uploadTest(body.variables.file))
+        send()
+      } catch (error) {
+        console.error(error)
+        response.statusCode = 500
+        send()
+      }
+    })
+
+    const port = await startServer(t, app)
+
+    await sendRequest(port)
+
+    const file = await variables.file
+    if (!file.capacitor.closed)
+      await new Promise(resolve => file.capacitor.once('close', resolve))
+    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
+  })
 
   await t.test('Koa middleware.', async t => {
     t.plan(2)

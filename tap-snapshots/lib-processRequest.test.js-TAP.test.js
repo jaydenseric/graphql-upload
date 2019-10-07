@@ -614,3 +614,11 @@ exports[`lib/processRequest.test.js TAP Single file. Koa middleware. Upload. > E
   "encoding": "7bit"
 }
 `
+
+exports[`lib/processRequest.test.js TAP Single file. Node HTTP. Upload. > Enumerable properties. 1`] = `
+{
+  "filename": "a.txt",
+  "mimetype": "text/plain",
+  "encoding": "7bit"
+}
+`
