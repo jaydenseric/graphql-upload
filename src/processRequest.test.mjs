@@ -608,7 +608,7 @@ t.test('Handles unconsumed uploads.', async t => {
   })
 })
 
-t.only('Aborted request.', async t => {
+t.test('Aborted request.', async t => {
   const sendRequest = (port, requestHasBeenReceived) =>
     new Promise((resolve, reject) => {
       const body = new FormData()
