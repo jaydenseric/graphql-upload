@@ -1466,6 +1466,54 @@ t.test('Exceed max file size.', async t => {
   })
 })
 
+t.test('Exceed max field size.', async t => {
+  const maxFieldSize = 1
+  const sendRequest = async (t, port) => {
+    const body = new FormData()
+
+    body.append('operations', '{ "variables": { "file": null } }')
+    body.append('map', '{ 1: ["variables.file"] }')
+    body.append('1', 'a', { filename: 'a.txt' })
+
+    const { status } = await fetch(`http://localhost:${port}`, {
+      method: 'POST',
+      body
+    })
+
+    t.equal(status, 413, 'Response status.')
+  }
+
+  await t.test('Koa middleware.', async t => {
+    t.plan(2)
+
+    const app = new Koa()
+      .on('error', error =>
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
+      )
+      .use(graphqlUploadKoa({ maxFieldSize }))
+
+    const port = await startServer(t, app)
+
+    await sendRequest(t, port)
+  })
+
+  await t.test('Express middleware.', async t => {
+    t.plan(2)
+
+    const app = express()
+      .use(graphqlUploadExpress({ maxFieldSize }))
+      .use((error, request, response, next) => {
+        if (response.headersSent) return next(error)
+        t.matchSnapshot(snapshotError(error), 'Middleware throws.')
+        response.send()
+      })
+
+    const port = await startServer(t, app)
+
+    await sendRequest(t, port)
+  })
+})
+
 t.test('Misorder ‘map’ before ‘operations’.', async t => {
   const sendRequest = async (t, port) => {
     const body = new FormData()

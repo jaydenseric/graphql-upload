@@ -142,109 +142,120 @@ export const processRequest = (
           if (upload.file) upload.file.capacitor.destroy()
     }
 
-    parser.on('field', (fieldName, value) => {
-      if (exitError) return
+    parser.on(
+      'field',
+      (fieldName, value, fieldNameTruncated, valueTruncated) => {
+        if (exitError) return
 
-      switch (fieldName) {
-        case 'operations':
-          try {
-            operations = JSON.parse(value)
-          } catch (error) {
-            return exit(
-              createError(
-                400,
-                `Invalid JSON in the ‘operations’ multipart field (${SPEC_URL}).`
-              )
+        if (valueTruncated)
+          return exit(
+            createError(
+              413,
+              `The ‘${fieldName}’ multipart field value exceeds the ${maxFieldSize} byte size limit.`
             )
-          }
+          )
 
-          if (!isEnumerableObject(operations) && !Array.isArray(operations))
-            return exit(
-              createError(
-                400,
-                `Invalid type for the ‘operations’ multipart field (${SPEC_URL}).`
-              )
-            )
-
-          operationsPath = objectPath(operations)
-
-          break
-        case 'map': {
-          if (!operations)
-            return exit(
-              createError(
-                400,
-                `Misordered multipart fields; ‘map’ should follow ‘operations’ (${SPEC_URL}).`
-              )
-            )
-
-          let parsedMap
-          try {
-            parsedMap = JSON.parse(value)
-          } catch (error) {
-            return exit(
-              createError(
-                400,
-                `Invalid JSON in the ‘map’ multipart field (${SPEC_URL}).`
-              )
-            )
-          }
-
-          if (!isEnumerableObject(parsedMap))
-            return exit(
-              createError(
-                400,
-                `Invalid type for the ‘map’ multipart field (${SPEC_URL}).`
-              )
-            )
-
-          const mapEntries = Object.entries(parsedMap)
-
-          // Check max files is not exceeded, even though the number of files to
-          // parse might not match th(e map provided by the client.
-          if (mapEntries.length > maxFiles)
-            return exit(
-              createError(413, `${maxFiles} max file uploads exceeded.`)
-            )
-
-          map = new Map()
-          for (const [fieldName, paths] of mapEntries) {
-            if (!Array.isArray(paths))
+        switch (fieldName) {
+          case 'operations':
+            try {
+              operations = JSON.parse(value)
+            } catch (error) {
               return exit(
                 createError(
                   400,
-                  `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array (${SPEC_URL}).`
+                  `Invalid JSON in the ‘operations’ multipart field (${SPEC_URL}).`
+                )
+              )
+            }
+
+            if (!isEnumerableObject(operations) && !Array.isArray(operations))
+              return exit(
+                createError(
+                  400,
+                  `Invalid type for the ‘operations’ multipart field (${SPEC_URL}).`
                 )
               )
 
-            map.set(fieldName, new Upload())
+            operationsPath = objectPath(operations)
 
-            for (const [index, path] of paths.entries()) {
-              if (typeof path !== 'string')
+            break
+          case 'map': {
+            if (!operations)
+              return exit(
+                createError(
+                  400,
+                  `Misordered multipart fields; ‘map’ should follow ‘operations’ (${SPEC_URL}).`
+                )
+              )
+
+            let parsedMap
+            try {
+              parsedMap = JSON.parse(value)
+            } catch (error) {
+              return exit(
+                createError(
+                  400,
+                  `Invalid JSON in the ‘map’ multipart field (${SPEC_URL}).`
+                )
+              )
+            }
+
+            if (!isEnumerableObject(parsedMap))
+              return exit(
+                createError(
+                  400,
+                  `Invalid type for the ‘map’ multipart field (${SPEC_URL}).`
+                )
+              )
+
+            const mapEntries = Object.entries(parsedMap)
+
+            // Check max files is not exceeded, even though the number of files to
+            // parse might not match th(e map provided by the client.
+            if (mapEntries.length > maxFiles)
+              return exit(
+                createError(413, `${maxFiles} max file uploads exceeded.`)
+              )
+
+            map = new Map()
+            for (const [fieldName, paths] of mapEntries) {
+              if (!Array.isArray(paths))
                 return exit(
                   createError(
                     400,
-                    `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value (${SPEC_URL}).`
+                    `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array (${SPEC_URL}).`
                   )
                 )
 
-              try {
-                operationsPath.set(path, map.get(fieldName).promise)
-              } catch (error) {
-                return exit(
-                  createError(
-                    400,
-                    `Invalid object path for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value ‘${path}’ (${SPEC_URL}).`
+              map.set(fieldName, new Upload())
+
+              for (const [index, path] of paths.entries()) {
+                if (typeof path !== 'string')
+                  return exit(
+                    createError(
+                      400,
+                      `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value (${SPEC_URL}).`
+                    )
                   )
-                )
+
+                try {
+                  operationsPath.set(path, map.get(fieldName).promise)
+                } catch (error) {
+                  return exit(
+                    createError(
+                      400,
+                      `Invalid object path for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value ‘${path}’ (${SPEC_URL}).`
+                    )
+                  )
+                }
               }
             }
-          }
 
-          resolve(operations)
+            resolve(operations)
+          }
         }
       }
-    })
+    )
 
     parser.on('file', (fieldName, stream, filename, encoding, mimetype) => {
       if (exitError) {

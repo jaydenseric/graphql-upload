@@ -183,6 +183,26 @@ exports[`lib/processRequest.test.js TAP Deprecated file upload ‘stream’ prop
 }
 `
 
+exports[`lib/processRequest.test.js TAP Exceed max field size. Express middleware. > Middleware throws. 1`] = `
+{
+  "name": "PayloadTooLargeError",
+  "message": "The ‘operations’ multipart field value exceeds the 1 byte size limit.",
+  "status": 413,
+  "statusCode": 413,
+  "expose": true
+}
+`
+
+exports[`lib/processRequest.test.js TAP Exceed max field size. Koa middleware. > Middleware throws. 1`] = `
+{
+  "name": "PayloadTooLargeError",
+  "message": "The ‘operations’ multipart field value exceeds the 1 byte size limit.",
+  "status": 413,
+  "statusCode": 413,
+  "expose": true
+}
+`
+
 exports[`lib/processRequest.test.js TAP Exceed max file size. Express middleware. Upload A. > Stream error. 1`] = `
 {
   "name": "PayloadTooLargeError",
