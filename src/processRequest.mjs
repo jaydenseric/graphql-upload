@@ -298,7 +298,10 @@ export const processRequest = (
         if (currentStream === stream) currentStream = null
         stream.unpipe()
         capacitor.destroy(
-          createError(413, 'File truncated as it exceeds the size limit.')
+          createError(
+            413,
+            `File truncated as it exceeds the ${maxFileSize} byte size limit.`
+          )
         )
       })
 

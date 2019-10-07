@@ -5,6 +5,7 @@
 ### Minor
 
 - `processRequest` now throws an appropriate error when a multipart field value exceeds the configured size limit, fixing [#159](https://github.com/jaydenseric/graphql-upload/issues/159).
+- When the file size limit is exceeded, mention how many bytes the limit is in the stream error message.
 - Added a new `processRequest` option to the `graphqlUploadExpress` and `graphqlUploadKoa` middleware, for improved testing without mocks or spies which are difficult to achieve with ESM.
 
 ### Patch
