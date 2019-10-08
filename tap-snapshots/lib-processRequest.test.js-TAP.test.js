@@ -615,7 +615,7 @@ exports[`lib/processRequest.test.js TAP Single file. Koa middleware. Upload. > E
 }
 `
 
-exports[`lib/processRequest.test.js TAP Single file. Node HTTP. Upload. > Enumerable properties. 1`] = `
+exports[`lib/processRequest.test.js TAP Single file. Node.js HTTP. Upload. > Enumerable properties. 1`] = `
 {
   "filename": "a.txt",
   "mimetype": "text/plain",

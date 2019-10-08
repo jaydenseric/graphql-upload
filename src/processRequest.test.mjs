@@ -35,7 +35,7 @@ t.test('Single file.', async t => {
     t.equals(await streamToString(stream), 'a', 'Contents.')
   }
 
-  await t.test('Node HTTP.', async t => {
+  await t.test('Node.js HTTP.', async t => {
     t.plan(2)
 
     let variables
