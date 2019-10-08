@@ -17,7 +17,7 @@
 - Use GitHub Actions instead of Travis for CI.
 - Removed `package-lock.json` from `.gitignore` and `.prettierignore`, as it’s disabled in `.npmrc` anyway.
 - New file structure.
-- Enabled code coverage for tests.
+- Enforce 100% code coverage for tests.
 - Explicitly defined main exports (instead of using `export * from`) to prevent accidental public exposure of internal APIs.
 - Moved JSDoc typedefs into the index main entry file, alphabetically sorted.
 - Nicer Browserslist query syntax.
