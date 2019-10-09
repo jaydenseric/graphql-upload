@@ -22,9 +22,8 @@
 - Nicer Browserslist query syntax.
 - Replaced the `isObject` helper with a smarter and tested `isEnumerableObject`.
 - Removed the `isString` helper.
-- Enforce 100% code coverage for tests and improve tests, fixing [#130](https://github.com/jaydenseric/graphql-upload/issues/130) via [#162](https://github.com/jaydenseric/graphql-upload/pull/162).
+- Enforced 100% code coverage for tests, and improved `processRequest` internals and tests (including a new test using vanilla Node.js HTTP), fixing [#130](https://github.com/jaydenseric/graphql-upload/issues/130) via [#162](https://github.com/jaydenseric/graphql-upload/pull/162).
 - Removed a workaround from the `startServer` test helper.
-- Added a new `processRequest` test using vanilla Node.js HTTP.
 - Added a new `ProcessRequestFunction` JSDoc type, and applied it to `processRequest`.
 - Renamed the `UploadOptions` JSDoc type to `ProcessRequestOptions`.
 - Misc. documentation improvements.

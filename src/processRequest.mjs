@@ -76,7 +76,6 @@ export const processRequest = (
   } = {}
 ) =>
   new Promise((resolve, reject) => {
-    let requestEnded = false
     let released = false
     let exitError
     let currentStream
@@ -141,6 +140,21 @@ export const processRequest = (
       if (map)
         for (const upload of map.values())
           if (upload.file) upload.file.capacitor.destroy()
+    }
+
+    /**
+     * Handles when the request is closed before it properly ended.
+     * @kind function
+     * @name processRequest~abort
+     * @ignore
+     */
+    const abort = () => {
+      exit(
+        createError(
+          499,
+          'Request disconnected during file upload stream parsing.'
+        )
+      )
     }
 
     parser.on(
@@ -368,18 +382,9 @@ export const processRequest = (
     response.once('finish', release)
     response.once('close', release)
 
+    request.once('close', abort)
     request.once('end', () => {
-      requestEnded = true
-    })
-
-    request.once('close', () => {
-      if (!requestEnded)
-        exit(
-          createError(
-            499,
-            'Request disconnected during file upload stream parsing.'
-          )
-        )
+      request.removeListener('close', abort)
     })
 
     request.pipe(parser)
