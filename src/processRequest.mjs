@@ -76,7 +76,7 @@ export const processRequest = (
   } = {}
 ) =>
   new Promise((resolve, reject) => {
-    let released = false
+    let released
     let exitError
     let currentStream
     let operations
