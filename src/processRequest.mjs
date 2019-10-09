@@ -76,8 +76,7 @@ export const processRequest = (
   } = {}
 ) =>
   new Promise((resolve, reject) => {
-    let requestEnded = false
-    let released = false
+    let released
     let exitError
     let currentStream
     let operations
@@ -134,12 +133,28 @@ export const processRequest = (
      * @ignore
      */
     const release = () => {
+      // istanbul ignore next
       if (released) return
       released = true
 
       if (map)
         for (const upload of map.values())
           if (upload.file) upload.file.capacitor.destroy()
+    }
+
+    /**
+     * Handles when the request is closed before it properly ended.
+     * @kind function
+     * @name processRequest~abort
+     * @ignore
+     */
+    const abort = () => {
+      exit(
+        createError(
+          499,
+          'Request disconnected during file upload stream parsing.'
+        )
+      )
     }
 
     parser.on(
@@ -275,7 +290,7 @@ export const processRequest = (
 
       currentStream = stream
       stream.on('end', () => {
-        if (currentStream === stream) currentStream = null
+        currentStream = null
       })
 
       const upload = map.get(fieldName)
@@ -295,7 +310,6 @@ export const processRequest = (
       })
 
       stream.on('limit', () => {
-        if (currentStream === stream) currentStream = null
         stream.unpipe()
         capacitor.destroy(
           createError(
@@ -306,8 +320,8 @@ export const processRequest = (
       })
 
       stream.on('error', error => {
-        if (currentStream === stream) currentStream = null
         stream.unpipe()
+        // istanbul ignore next
         capacitor.destroy(exitError || error)
       })
 
@@ -368,18 +382,9 @@ export const processRequest = (
     response.once('finish', release)
     response.once('close', release)
 
+    request.once('close', abort)
     request.once('end', () => {
-      requestEnded = true
-    })
-
-    request.once('close', () => {
-      if (!requestEnded)
-        exit(
-          createError(
-            499,
-            'Request disconnected during file upload stream parsing.'
-          )
-        )
+      request.removeListener('close', abort)
     })
 
     request.pipe(parser)

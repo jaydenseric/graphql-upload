@@ -17,12 +17,12 @@
 - Use GitHub Actions instead of Travis for CI.
 - Removed `package-lock.json` from `.gitignore` and `.prettierignore`, as it’s disabled in `.npmrc` anyway.
 - New file structure.
-- Enabled code coverage for tests.
 - Explicitly defined main exports (instead of using `export * from`) to prevent accidental public exposure of internal APIs.
 - Moved JSDoc typedefs into the index main entry file, alphabetically sorted.
 - Nicer Browserslist query syntax.
 - Replaced the `isObject` helper with a smarter and tested `isEnumerableObject`.
 - Removed the `isString` helper.
+- Enforced 100% code coverage for tests, and improved `processRequest` internals and tests (including a new test using vanilla Node.js HTTP), fixing [#130](https://github.com/jaydenseric/graphql-upload/issues/130) via [#162](https://github.com/jaydenseric/graphql-upload/pull/162).
 - Removed a workaround from the `startServer` test helper.
 - Added a new `ProcessRequestFunction` JSDoc type, and applied it to `processRequest`.
 - Renamed the `UploadOptions` JSDoc type to `ProcessRequestOptions`.
