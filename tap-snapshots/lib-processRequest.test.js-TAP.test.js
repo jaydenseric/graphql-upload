@@ -35,6 +35,13 @@ exports[`lib/processRequest.test.js TAP Aborted request. Delayed stream creation
 }
 `
 
+exports[`lib/processRequest.test.js TAP Aborted request. Delayed stream creation. Koa middleware. > Middleware throws. 1`] = `
+{
+  "name": "Error",
+  "message": "Parse Error"
+}
+`
+
 exports[`lib/processRequest.test.js TAP Aborted request. Delayed stream creation. Koa middleware. Upload A. > Stream error. 1`] = `
 {
   "name": "BadRequestError",
@@ -90,6 +97,13 @@ exports[`lib/processRequest.test.js TAP Aborted request. Immediate stream creati
   "status": 499,
   "statusCode": 499,
   "expose": true
+}
+`
+
+exports[`lib/processRequest.test.js TAP Aborted request. Immediate stream creation. Koa middleware. > Middleware throws. 1`] = `
+{
+  "name": "Error",
+  "message": "Parse Error"
 }
 `
 

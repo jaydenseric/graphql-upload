@@ -775,6 +775,9 @@ t.test('Aborted request.', async t => {
 
       const finished = new Promise(resolve => (finish = resolve))
       const app = new Koa()
+        .on('error', error =>
+          t.matchSnapshot(snapshotError(error), 'Middleware throws.')
+        )
         .use(async (ctx, next) => {
           requestHasBeenReceived()
           await next()
@@ -800,9 +803,6 @@ t.test('Aborted request.', async t => {
           finish()
         })
 
-      let appErrors = 0
-      app.on('error', () => appErrors++)
-
       const port = await startServer(t, app)
 
       await sendRequest(port, requestHasBeenReceivedPromise)
@@ -817,8 +817,6 @@ t.test('Aborted request.', async t => {
       if (!fileB.capacitor.closed)
         await new Promise(resolve => fileB.capacitor.once('close', resolve))
       t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
-
-      await t.equals(appErrors, 1)
     })
 
     await t.test('Express middleware.', async t => {
@@ -911,6 +909,9 @@ t.test('Aborted request.', async t => {
 
       const finished = new Promise(resolve => (finish = resolve))
       const app = new Koa()
+        .on('error', error =>
+          t.matchSnapshot(snapshotError(error), 'Middleware throws.')
+        )
         .use(async (ctx, next) => {
           requestHasBeenReceived()
           await next()
@@ -941,9 +942,6 @@ t.test('Aborted request.', async t => {
           finish()
         })
 
-      let appErrors = 0
-      app.on('error', () => appErrors++)
-
       const port = await startServer(t, app)
 
       await sendRequest(port, requestHasBeenReceivedPromise)
@@ -958,8 +956,6 @@ t.test('Aborted request.', async t => {
       if (!fileB.capacitor.closed)
         await new Promise(resolve => fileB.capacitor.once('close', resolve))
       t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
-
-      t.equals(appErrors, 1)
     })
 
     await t.test('Express middleware.', async t => {
