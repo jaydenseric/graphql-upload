@@ -139,7 +139,7 @@ export const processRequest = (
 
       if (map)
         for (const upload of map.values())
-          if (upload.file) upload.file.capacitor.destroy()
+          if (upload.file) upload.file.capacitor.release()
     }
 
     /**
@@ -302,6 +302,7 @@ export const processRequest = (
         return
       }
 
+      let fileError
       const capacitor = new WriteStream()
 
       capacitor.on('error', () => {
@@ -310,29 +311,27 @@ export const processRequest = (
       })
 
       stream.on('limit', () => {
-        stream.unpipe()
-        capacitor.destroy(
-          createError(
-            413,
-            `File truncated as it exceeds the ${maxFileSize} byte size limit.`
-          )
+        fileError = createError(
+          413,
+          `File truncated as it exceeds the ${maxFileSize} byte size limit.`
         )
+        stream.unpipe()
+        capacitor.destroy(fileError)
       })
 
       stream.on('error', error => {
+        fileError = error
         stream.unpipe()
         // istanbul ignore next
         capacitor.destroy(exitError || error)
       })
-
-      stream.pipe(capacitor)
 
       const file = {
         filename,
         mimetype,
         encoding,
         createReadStream() {
-          const error = capacitor.error || (released ? exitError : null)
+          const error = fileError || (released ? exitError : null)
           if (error) throw error
           return capacitor.createReadStream()
         }
@@ -348,6 +347,11 @@ export const processRequest = (
 
       Object.defineProperty(file, 'capacitor', { value: capacitor })
 
+      capacitor.once('close', () =>
+        Object.defineProperty(file, 'closed', { value: true })
+      )
+
+      stream.pipe(capacitor)
       upload.resolve(file)
     })
 

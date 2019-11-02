@@ -72,9 +72,9 @@ t.test('Single file.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    if (!file.capacitor.closed)
+    if (!file.closed)
       await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
+    t.false(fs.existsSync(file.capacitor._path), 'Cleanup.')
   })
 
   await t.test('Koa middleware.', async t => {
@@ -95,9 +95,9 @@ t.test('Single file.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    if (!file.capacitor.closed)
+    if (!file.closed)
       await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
+    t.false(fs.existsSync(file.capacitor._path), 'Cleanup.')
   })
 
   await t.test('Express middleware.', async t => {
@@ -120,9 +120,9 @@ t.test('Single file.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    if (!file.capacitor.closed)
+    if (!file.closed)
       await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
+    t.false(fs.existsSync(file.capacitor._path), 'Cleanup.')
   })
 })
 
@@ -184,14 +184,14 @@ t.test('Single file batched.', async t => {
     await sendRequest(port)
 
     const fileA = await operations[0].variables.file
-    if (!fileA.capacitor.closed)
+    if (!fileA.closed)
       await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
 
     const fileB = await operations[1].variables.file
-    if (!fileB.capacitor.closed)
+    if (!fileB.closed)
       await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    t.false(fs.existsSync(fileB.capacitor._path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
@@ -217,14 +217,14 @@ t.test('Single file batched.', async t => {
     await sendRequest(port)
 
     const fileA = await operations[0].variables.file
-    if (!fileA.capacitor.closed)
+    if (!fileA.closed)
       await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
 
     const fileB = await operations[1].variables.file
-    if (!fileB.capacitor.closed)
+    if (!fileB.closed)
       await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    t.false(fs.existsSync(fileB.capacitor._path), 'Cleanup B.')
   })
 })
 
@@ -610,14 +610,14 @@ t.test('Handles unconsumed uploads.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.fileA
-    if (!fileA.capacitor.closed)
+    if (!fileA.closed)
       await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
 
     const fileB = await variables.fileB
-    if (!fileB.capacitor.closed)
+    if (!fileB.closed)
       await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    t.false(fs.existsSync(fileB.capacitor._path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
@@ -640,14 +640,14 @@ t.test('Handles unconsumed uploads.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.fileA
-    if (!fileA.capacitor.closed)
+    if (!fileA.closed)
       await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
 
     const fileB = await variables.fileB
-    if (!fileB.capacitor.closed)
+    if (!fileB.closed)
       await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    t.false(fs.existsSync(fileB.capacitor._path), 'Cleanup B.')
   })
 })
 
@@ -790,7 +790,12 @@ t.test('Aborted request.', async t => {
           const fileB = await ctx.request.body.variables.fileB
 
           const streamA = fileA.createReadStream()
+          streamA.once('end', () => (streamA.ended = true))
+          streamA.once('error', error => (streamA.error = error))
+
           const streamB = fileB.createReadStream()
+          streamB.once('end', () => (streamB.ended = true))
+          streamB.once('error', error => (streamB.error = error))
 
           await Promise.all([
             t.test('Upload A.', uploadATest(fileA, streamA)),
@@ -809,14 +814,14 @@ t.test('Aborted request.', async t => {
       await finished
 
       const fileA = await variables.fileA
-      if (!fileA.capacitor.closed)
+      if (!fileA.closed)
         await new Promise(resolve => fileA.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+      t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
 
       const fileB = await variables.fileB
-      if (!fileB.capacitor.closed)
+      if (!fileB.closed)
         await new Promise(resolve => fileB.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+      t.false(fs.existsSync(fileB.capacitor._path), 'Cleanup B.')
     })
 
     await t.test('Express middleware.', async t => {
@@ -845,7 +850,12 @@ t.test('Aborted request.', async t => {
             const fileB = await request.body.variables.fileB
 
             const streamA = fileA.createReadStream()
+            streamA.once('end', () => (streamA.ended = true))
+            streamA.once('error', error => (streamA.error = error))
+
             const streamB = fileB.createReadStream()
+            streamB.once('end', () => (streamB.ended = true))
+            streamB.once('error', error => (streamB.error = error))
 
             await Promise.all([
               t.test('Upload A.', uploadATest(fileA, streamA)),
@@ -864,14 +874,14 @@ t.test('Aborted request.', async t => {
       await finished
 
       const fileA = await variables.fileA
-      if (!fileA.capacitor.closed)
+      if (!fileA.closed)
         await new Promise(resolve => fileA.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+      t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
 
       const fileB = await variables.fileB
-      if (!fileB.capacitor.closed)
+      if (!fileB.closed)
         await new Promise(resolve => fileB.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+      t.false(fs.existsSync(fileB.capacitor._path), 'Cleanup B.')
     })
   })
 
@@ -948,14 +958,14 @@ t.test('Aborted request.', async t => {
       await finished
 
       const fileA = await variables.fileA
-      if (!fileA.capacitor.closed)
+      if (!fileA.closed)
         await new Promise(resolve => fileA.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+      t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
 
       const fileB = await variables.fileB
-      if (!fileB.capacitor.closed)
+      if (!fileB.closed)
         await new Promise(resolve => fileB.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+      t.false(fs.existsSync(fileB.capacitor._path), 'Cleanup B.')
     })
 
     await t.test('Express middleware.', async t => {
@@ -1007,14 +1017,14 @@ t.test('Aborted request.', async t => {
       await finished
 
       const fileA = await variables.fileA
-      if (!fileA.capacitor.closed)
+      if (!fileA.closed)
         await new Promise(resolve => fileA.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+      t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
 
       const fileB = await variables.fileB
-      if (!fileB.capacitor.closed)
+      if (!fileB.closed)
         await new Promise(resolve => fileB.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+      t.false(fs.existsSync(fileB.capacitor._path), 'Cleanup B.')
     })
   })
 })
@@ -1076,14 +1086,14 @@ t.test('Deduped files.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    if (!fileA.capacitor.closed)
+    if (!fileA.closed)
       await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
 
     const fileB = await variables.files[1]
-    if (!fileB.capacitor.closed)
+    if (!fileB.closed)
       await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    t.false(fs.existsSync(fileB.capacitor._path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
@@ -1126,14 +1136,14 @@ t.test('Deduped files.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    if (!fileA.capacitor.closed)
+    if (!fileA.closed)
       await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
 
     const fileB = await variables.files[1]
-    if (!fileB.capacitor.closed)
+    if (!fileB.closed)
       await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    t.false(fs.existsSync(fileB.capacitor._path), 'Cleanup B.')
   })
 })
 
@@ -1228,9 +1238,9 @@ t.test('Extraneous file.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    if (!file.capacitor.closed)
+    if (!file.closed)
       await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
+    t.false(fs.existsSync(file.capacitor._path), 'Cleanup.')
   })
 
   await t.test('Express middleware.', async t => {
@@ -1253,9 +1263,9 @@ t.test('Extraneous file.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    if (!file.capacitor.closed)
+    if (!file.closed)
       await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
+    t.false(fs.existsSync(file.capacitor._path), 'Cleanup.')
   })
 })
 
@@ -1372,9 +1382,9 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
     await finished
 
     const fileA = await variables.files[0]
-    if (!fileA.capacitor.closed)
+    if (!fileA.closed)
       await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
   })
 
   await t.test('Express middleware.', async t => {
@@ -1402,9 +1412,9 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    if (!fileA.capacitor.closed)
+    if (!fileA.closed)
       await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
   })
 })
 
@@ -1470,14 +1480,14 @@ t.test('Exceed max file size.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    if (!fileA.capacitor.closed)
+    if (!fileA.closed)
       await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
 
     const fileB = await variables.files[1]
-    if (!fileB.capacitor.closed)
+    if (!fileB.closed)
       await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    t.false(fs.existsSync(fileB.capacitor._path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
@@ -1505,14 +1515,14 @@ t.test('Exceed max file size.', async t => {
     await sendRequest(port)
 
     const fileA = await variables.files[0]
-    if (!fileA.capacitor.closed)
+    if (!fileA.closed)
       await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
+    t.false(fs.existsSync(fileA.capacitor._path), 'Cleanup A.')
 
     const fileB = await variables.files[1]
-    if (!fileB.capacitor.closed)
+    if (!fileB.closed)
       await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
+    t.false(fs.existsSync(fileB.capacitor._path), 'Cleanup B.')
   })
 })
 
@@ -1803,9 +1813,9 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    if (!file.capacitor.closed)
+    if (!file.closed)
       await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
+    t.false(fs.existsSync(file.capacitor._path), 'Cleanup.')
   })
 
   await t.test('Express middleware.', async t => {
@@ -1828,8 +1838,8 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
     await sendRequest(port)
 
     const file = await variables.file
-    if (!file.capacitor.closed)
+    if (!file.closed)
       await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
+    t.false(fs.existsSync(file.capacitor._path), 'Cleanup.')
   })
 })
