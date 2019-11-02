@@ -11,6 +11,7 @@
 export const startServer = (t, app) =>
   new Promise((resolve, reject) => {
     app.listen(undefined, 'localhost', function(error) {
+      // istanbul ignore next
       if (error) reject(error)
       else {
         t.tearDown(() => this.close())
