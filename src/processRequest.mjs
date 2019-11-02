@@ -1,11 +1,13 @@
 import util from 'util'
 import Busboy from 'busboy'
-import { WriteStream } from 'fs-capacitor'
+import fscapacitor from 'fs-capacitor'
 import createError from 'http-errors'
 import objectPath from 'object-path'
 import { SPEC_URL } from './constants'
 import { ignoreStream } from './ignoreStream'
 import { isEnumerableObject } from './isEnumerableObject'
+
+const { WriteStream } = fscapacitor
 
 /**
  * An expected file upload.

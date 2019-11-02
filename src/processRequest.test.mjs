@@ -4,7 +4,7 @@ import stream from 'stream'
 import express from 'express'
 import expressAsyncHandler from 'express-async-handler'
 import FormData from 'form-data'
-import { ReadStream } from 'fs-capacitor'
+import fscapacitor from 'fs-capacitor'
 import Koa from 'koa'
 import fetch from 'node-fetch'
 import t from 'tap'
@@ -14,6 +14,8 @@ import { processRequest } from './processRequest'
 import { snapshotError } from './test-helpers/snapshotError'
 import { startServer } from './test-helpers/startServer'
 import { streamToString } from './test-helpers/streamToString'
+
+const { ReadStream } = fscapacitor
 
 t.test('Single file.', async t => {
   const sendRequest = async port => {

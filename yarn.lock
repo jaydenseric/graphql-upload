@@ -2670,10 +2670,10 @@ fresh@0.5.2, fresh@~0.5.2:
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=
 
-fs-capacitor@^4.0.0-beta2:
-  version "4.0.0-beta2"
-  resolved "https://registry.yarnpkg.com/fs-capacitor/-/fs-capacitor-4.0.0-beta2.tgz#4ffcd7ba8cfc0e2532a65912cf6ed0451b9d4422"
-  integrity sha512-hMLanuyHMMGtEuc0G/cEF7RmzITYXgD4T4nTxDE+4B0o7Ej3TnOfJ8t3U2RIZ6mCbunleHA0s9t3xbdixyOXSA==
+fs-capacitor@^4.0.0-beta3:
+  version "4.0.0-beta3"
+  resolved "https://registry.yarnpkg.com/fs-capacitor/-/fs-capacitor-4.0.0-beta3.tgz#b3505b213522b2490957217e69c752a1a8e82a42"
+  integrity sha512-1fklQpBLc0PhFBWCA8TAC9lbppJzL4lhUY+WwAoQGUMVJ+ZX3yB/CMG1I1GpMo32GM25SF2K2/ICQfve/LObTA==
   dependencies:
     "@types/readable-stream" "^2.3.5"
     readable-stream "^3.4.0"
