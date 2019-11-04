@@ -30,7 +30,7 @@
   ],
   "main": "lib",
   "engines": {
-    "node": ">=8.5"
+    "node": ">=8.16.2"
   },
   "browserslist": "node >= 8.5",
   "peerDependencies": {
