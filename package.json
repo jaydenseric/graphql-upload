@@ -65,7 +65,7 @@
     "lint-staged": "^9.4.2",
     "node-fetch": "^2.6.0",
     "prettier": "^1.18.2",
-    "tap": "^14.6.9"
+    "tap": "^14.9.2"
   },
   "scripts": {
     "prepare": "npm run prepare:clean && npm run prepare:mjs && npm run prepare:js && npm run prepare:jsdoc && npm run prepare:prettier",
@@ -77,7 +77,7 @@
     "test": "npm run test:eslint && npm run test:prettier && npm run test:tap",
     "test:eslint": "eslint . --ext mjs,js",
     "test:prettier": "prettier '**/*.{json,yml,md}' -l",
-    "test:tap": "tap --test-ignore=src --100",
+    "test:tap": "tap --test-ignore=src --100 --nyc-arg=--exclude='**/test-helpers/**'",
     "prepublishOnly": "npm test"
   }
 }
