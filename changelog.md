@@ -1,5 +1,12 @@
 # graphql-upload changelog
 
+## 8.1.1
+
+### Patch
+
+- Fix race condition when trying to use fs-capacitor write stream before file created on disk, fixing [#166](https://github.com/jaydenseric/graphql-upload/issues/166).
+- Fix conflict with fs-capacitor & form-data , fixing [form-data/form-data#394](https://github.com/form-data/form-data/issues/394#issuecomment-554195772).
+
 ## 8.1.0
 
 ### Minor

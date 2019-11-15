@@ -22,6 +22,7 @@ class Upload {
      * @type {Promise<FileUpload>}
      * @ignore
      */
+    this.hasFile = false;
     this.promise = new Promise((resolve, reject) => {
       /**
        * Resolves the upload promise with the file upload details.
@@ -70,6 +71,7 @@ export const processRequest = (
   request,
   response,
   {
+    waitForFileOnDisk = false,
     maxFieldSize = 1000000, // 1 MB
     maxFileSize = Infinity,
     maxFiles = Infinity
@@ -302,6 +304,7 @@ export const processRequest = (
         return
       }
 
+      upload.hasFile = true;
       const capacitor = new WriteStream()
 
       capacitor.on('error', () => {
@@ -325,8 +328,6 @@ export const processRequest = (
         capacitor.destroy(exitError || error)
       })
 
-      stream.pipe(capacitor)
-
       const file = {
         filename,
         mimetype,
@@ -337,6 +338,12 @@ export const processRequest = (
           return capacitor.createReadStream()
         }
       }
+      if(waitForFileOnDisk) {
+        capacitor.once('finish',() => upload.resolve(file));
+      } else {
+        capacitor.once('ready',() => upload.resolve(file));
+      }
+      stream.pipe(capacitor)
 
       let capacitorStream
       Object.defineProperty(file, 'stream', {
@@ -347,8 +354,6 @@ export const processRequest = (
       })
 
       Object.defineProperty(file, 'capacitor', { value: capacitor })
-
-      upload.resolve(file)
     })
 
     parser.once('filesLimit', () =>
@@ -373,7 +378,7 @@ export const processRequest = (
         )
 
       for (const upload of map.values())
-        if (!upload.file)
+        if (!upload.hasFile)
           upload.reject(createError(400, 'File missing in the request.'))
     })
 
