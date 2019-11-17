@@ -2,6 +2,22 @@
 
 ## 8.1.0
 
+### Major
+
+- Increased minimum required version of node 8.10 from 8.5
+
+### Minor
+
+- Updated fs-capacitor to version 4 (now supporting node version 13)
+
+### Patch
+
+- Updated CI targets to use node 8 instead of 8.5
+- Updated dev dependencies.
+- Update tests to use the new "private" fields of fs-capacittor streams.
+
+## 8.1.0
+
 ### Minor
 
 - `processRequest` now throws an appropriate error when a multipart field value exceeds the configured size limit, fixing [#159](https://github.com/jaydenseric/graphql-upload/issues/159).
