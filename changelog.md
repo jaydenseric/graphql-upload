@@ -1,20 +1,22 @@
 # graphql-upload changelog
 
-## 8.1.0
+## Next
 
 ### Major
 
-- Increased minimum required version of node 8.10 from 8.5
+- Updated Node.js support from v8.5+ to v8.10+, to match what the [`eslint`](https://npm.im/eslint) dev dependency now supports. This is unlikely to be a breaking change for the published package.
 
 ### Minor
 
-- Updated fs-capacitor to version 4 (now supporting node version 13)
+- Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to v4 to support Node.js v13, making required changes to the source and tests, via [#166](https://github.com/jaydenseric/graphql-upload/pull/166).
 
 ### Patch
 
-- Updated CI targets to use node 8 instead of 8.5
 - Updated dev dependencies.
-- Update tests to use the new "private" fields of fs-capacittor streams.
+- Removed the `.nycrc.json` file:
+  - [`tap`](https://npm.im/tap) now ignores test files by default.
+  - The `lib/test-helpers` directory is now ignored using [`tap`](https://npm.im/tap) CLI arguments due to [tapjs/node-tap#612](https://github.com/tapjs/node-tap/issues/612).
+- Updated the “Support” section of the readme to clarify varying native ESM support across Node.js versions.
 
 ## 8.1.0
 
