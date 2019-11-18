@@ -6,6 +6,10 @@
 
 - Updated Node.js support from v8.5+ to v8.10+, to match what the [`eslint`](https://npm.im/eslint) dev dependency now supports. This is unlikely to be a breaking change for the published package.
 
+### Minor
+
+- Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to v4 to support Node.js v13, making required changes to the source and tests, via [#166](https://github.com/jaydenseric/graphql-upload/pull/166).
+
 ### Patch
 
 - Updated dev dependencies.
@@ -13,6 +17,7 @@
   - [`tap`](https://npm.im/tap) now ignores test files by default.
   - The `lib/test-helpers` directory is now ignored using [`tap`](https://npm.im/tap) CLI arguments due to [tapjs/node-tap#612](https://github.com/tapjs/node-tap/issues/612).
 - Updated the “Support” section of the readme to clarify varying native ESM support across Node.js versions.
+- No longer test [`fs-capacitor`](https://npm.im/fs-capacitor) implementation details such as temp file creation and cleanup.
 
 ## 8.1.0
 

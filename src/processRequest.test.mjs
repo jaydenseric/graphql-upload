@@ -1,10 +1,9 @@
-import fs from 'fs'
 import http from 'http'
 import stream from 'stream'
 import express from 'express'
 import expressAsyncHandler from 'express-async-handler'
 import FormData from 'form-data'
-import { ReadStream } from 'fs-capacitor'
+import fsCapacitor from 'fs-capacitor'
 import Koa from 'koa'
 import fetch from 'node-fetch'
 import t from 'tap'
@@ -14,6 +13,8 @@ import { processRequest } from './processRequest'
 import { snapshotError } from './test-helpers/snapshotError'
 import { startServer } from './test-helpers/startServer'
 import { streamToString } from './test-helpers/streamToString'
+
+const { ReadStream } = fsCapacitor
 
 t.test('Single file.', async t => {
   const sendRequest = async port => {
@@ -36,9 +37,7 @@ t.test('Single file.', async t => {
   }
 
   await t.test('Node.js HTTP.', async t => {
-    t.plan(2)
-
-    let variables
+    t.plan(1)
 
     const app = http.createServer(async (request, response) => {
       const send = data => {
@@ -57,7 +56,6 @@ t.test('Single file.', async t => {
 
       try {
         const body = await processRequest(request, response)
-        ;({ variables } = body)
         await t.test('Upload.', uploadTest(body.variables.file))
         send()
       } catch (error) {
@@ -70,20 +68,12 @@ t.test('Single file.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const file = await variables.file
-    if (!file.capacitor.closed)
-      await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 
   await t.test('Koa middleware.', async t => {
-    t.plan(2)
-
-    let variables
+    t.plan(1)
 
     const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
-      ;({ variables } = ctx.request.body)
       await t.test('Upload.', uploadTest(ctx.request.body.variables.file))
 
       ctx.status = 204
@@ -93,23 +83,15 @@ t.test('Single file.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const file = await variables.file
-    if (!file.capacitor.closed)
-      await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(2)
-
-    let variables
+    t.plan(1)
 
     const app = express()
       .use(graphqlUploadExpress())
       .use(
         expressAsyncHandler(async (request, response, next) => {
-          ;({ variables } = request.body)
           await t.test('Upload.', uploadTest(request.body.variables.file))
           next()
         })
@@ -118,11 +100,6 @@ t.test('Single file.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const file = await variables.file
-    if (!file.capacitor.closed)
-      await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 })
 
@@ -163,13 +140,9 @@ t.test('Single file batched.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(4)
-
-    let operations
+    t.plan(2)
 
     const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
-      operations = ctx.request.body
-
       await Promise.all([
         t.test('Upload A.', uploadATest(ctx.request.body[0].variables.file)),
         t.test('Upload B.', uploadBTest(ctx.request.body[1].variables.file))
@@ -182,28 +155,15 @@ t.test('Single file batched.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const fileA = await operations[0].variables.file
-    if (!fileA.capacitor.closed)
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-
-    const fileB = await operations[1].variables.file
-    if (!fileB.capacitor.closed)
-      await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(4)
-
-    let operations
+    t.plan(2)
 
     const app = express()
       .use(graphqlUploadExpress())
       .use(
         expressAsyncHandler(async (request, response, next) => {
-          operations = request.body
           await Promise.all([
             t.test('Upload A.', uploadATest(request.body[0].variables.file)),
             t.test('Upload B.', uploadBTest(request.body[1].variables.file))
@@ -215,16 +175,6 @@ t.test('Single file batched.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const fileA = await operations[0].variables.file
-    if (!fileA.capacitor.closed)
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-
-    const fileB = await operations[1].variables.file
-    if (!fileB.capacitor.closed)
-      await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
 
@@ -592,13 +542,9 @@ t.test('Handles unconsumed uploads.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(3)
-
-    let variables
+    t.plan(1)
 
     const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
-      ;({ variables } = ctx.request.body)
-
       await t.test('Upload B.', uploadBTest(ctx.request.body.variables.fileB))
 
       ctx.status = 204
@@ -608,28 +554,15 @@ t.test('Handles unconsumed uploads.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const fileA = await variables.fileA
-    if (!fileA.capacitor.closed)
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-
-    const fileB = await variables.fileB
-    if (!fileB.capacitor.closed)
-      await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(3)
-
-    let variables
+    t.plan(1)
 
     const app = express()
       .use(graphqlUploadExpress())
       .use(
         expressAsyncHandler(async (request, response, next) => {
-          ;({ variables } = request.body)
           await t.test('Upload B.', uploadBTest(request.body.variables.fileB))
           next()
         })
@@ -638,16 +571,6 @@ t.test('Handles unconsumed uploads.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const fileA = await variables.fileA
-    if (!fileA.capacitor.closed)
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-
-    const fileB = await variables.fileB
-    if (!fileB.capacitor.closed)
-      await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
 
@@ -763,14 +686,13 @@ t.test('Aborted request.', async t => {
     }
 
     await t.test('Koa middleware.', async t => {
-      t.plan(6)
+      t.plan(4)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
         resolve => (requestHasBeenReceived = resolve)
       )
 
-      let variables
       let finish
 
       const finished = new Promise(resolve => (finish = resolve))
@@ -784,13 +706,28 @@ t.test('Aborted request.', async t => {
         })
         .use(graphqlUploadKoa())
         .use(async (ctx, next) => {
-          ;({ variables } = ctx.request.body)
-
           const fileA = await ctx.request.body.variables.fileA
           const fileB = await ctx.request.body.variables.fileB
 
           const streamA = fileA.createReadStream()
+
+          streamA.once('end', () => {
+            streamA.ended = true
+          })
+
+          streamA.once('error', error => {
+            streamA.error = error
+          })
+
           const streamB = fileB.createReadStream()
+
+          streamB.once('end', () => {
+            streamB.ended = true
+          })
+
+          streamB.once('error', error => {
+            streamB.error = error
+          })
 
           await Promise.all([
             t.test('Upload A.', uploadATest(fileA, streamA)),
@@ -807,27 +744,16 @@ t.test('Aborted request.', async t => {
 
       await sendRequest(port, requestHasBeenReceivedPromise)
       await finished
-
-      const fileA = await variables.fileA
-      if (!fileA.capacitor.closed)
-        await new Promise(resolve => fileA.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-
-      const fileB = await variables.fileB
-      if (!fileB.capacitor.closed)
-        await new Promise(resolve => fileB.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
 
     await t.test('Express middleware.', async t => {
-      t.plan(5)
+      t.plan(3)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
         resolve => (requestHasBeenReceived = resolve)
       )
 
-      let variables
       let finish
 
       const finished = new Promise(resolve => (finish = resolve))
@@ -839,13 +765,28 @@ t.test('Aborted request.', async t => {
         .use(graphqlUploadExpress())
         .use(
           expressAsyncHandler(async (request, response, next) => {
-            ;({ variables } = request.body)
-
             const fileA = await request.body.variables.fileA
             const fileB = await request.body.variables.fileB
 
             const streamA = fileA.createReadStream()
+
+            streamA.once('end', () => {
+              streamA.ended = true
+            })
+
+            streamA.once('error', error => {
+              streamA.error = error
+            })
+
             const streamB = fileB.createReadStream()
+
+            streamB.once('end', () => {
+              streamB.ended = true
+            })
+
+            streamB.once('error', error => {
+              streamB.error = error
+            })
 
             await Promise.all([
               t.test('Upload A.', uploadATest(fileA, streamA)),
@@ -862,16 +803,6 @@ t.test('Aborted request.', async t => {
 
       await sendRequest(port, requestHasBeenReceivedPromise)
       await finished
-
-      const fileA = await variables.fileA
-      if (!fileA.capacitor.closed)
-        await new Promise(resolve => fileA.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-
-      const fileB = await variables.fileB
-      if (!fileB.capacitor.closed)
-        await new Promise(resolve => fileB.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
   })
 
@@ -897,14 +828,13 @@ t.test('Aborted request.', async t => {
     }
 
     await t.test('Koa middleware.', async t => {
-      t.plan(6)
+      t.plan(4)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
         resolve => (requestHasBeenReceived = resolve)
       )
 
-      let variables
       let finish
 
       const finished = new Promise(resolve => (finish = resolve))
@@ -918,8 +848,6 @@ t.test('Aborted request.', async t => {
         })
         .use(graphqlUploadKoa())
         .use(async (ctx, next) => {
-          ;({ variables } = ctx.request.body)
-
           // This ensures that the upload has streamed in as far as it will, and
           // the parser has been detached.
           await new Promise(resolve => {
@@ -946,27 +874,16 @@ t.test('Aborted request.', async t => {
 
       await sendRequest(port, requestHasBeenReceivedPromise)
       await finished
-
-      const fileA = await variables.fileA
-      if (!fileA.capacitor.closed)
-        await new Promise(resolve => fileA.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-
-      const fileB = await variables.fileB
-      if (!fileB.capacitor.closed)
-        await new Promise(resolve => fileB.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
 
     await t.test('Express middleware.', async t => {
-      t.plan(5)
+      t.plan(3)
 
       let requestHasBeenReceived
       const requestHasBeenReceivedPromise = new Promise(
         resolve => (requestHasBeenReceived = resolve)
       )
 
-      let variables
       let finish
 
       const finished = new Promise(resolve => (finish = resolve))
@@ -978,8 +895,6 @@ t.test('Aborted request.', async t => {
         .use(graphqlUploadExpress())
         .use(
           expressAsyncHandler(async (request, response, next) => {
-            ;({ variables } = request.body)
-
             // This ensures that the upload has streamed in as far as it will, and
             // the parser has been detached.
             await new Promise(resolve => {
@@ -1005,16 +920,6 @@ t.test('Aborted request.', async t => {
 
       await sendRequest(port, requestHasBeenReceivedPromise)
       await finished
-
-      const fileA = await variables.fileA
-      if (!fileA.capacitor.closed)
-        await new Promise(resolve => fileA.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-
-      const fileB = await variables.fileB
-      if (!fileB.capacitor.closed)
-        await new Promise(resolve => fileB.capacitor.once('close', resolve))
-      t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
     })
   })
 })
@@ -1037,13 +942,9 @@ t.test('Deduped files.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(7)
-
-    let variables
+    t.plan(5)
 
     const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
-      ;({ variables } = ctx.request.body)
-
       t.strictSame(
         ctx.request.body.variables.files[0],
         ctx.request.body.variables.files[1],
@@ -1074,28 +975,15 @@ t.test('Deduped files.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const fileA = await variables.files[0]
-    if (!fileA.capacitor.closed)
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-
-    const fileB = await variables.files[1]
-    if (!fileB.capacitor.closed)
-      await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(7)
-
-    let variables
+    t.plan(5)
 
     const app = express()
       .use(graphqlUploadExpress())
       .use(
         expressAsyncHandler(async (request, response, next) => {
-          ;({ variables } = request.body)
           t.strictSame(
             request.body.variables.files[0],
             request.body.variables.files[1],
@@ -1124,16 +1012,6 @@ t.test('Deduped files.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const fileA = await variables.files[0]
-    if (!fileA.capacitor.closed)
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-
-    const fileB = await variables.files[1]
-    if (!fileB.capacitor.closed)
-      await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
 
@@ -1212,12 +1090,9 @@ t.test('Extraneous file.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(2)
-
-    let variables
+    t.plan(1)
 
     const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
-      ;({ variables } = ctx.request.body)
       await t.test('Upload.', uploadTest(ctx.request.body.variables.file))
       ctx.status = 204
       await next()
@@ -1226,23 +1101,15 @@ t.test('Extraneous file.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const file = await variables.file
-    if (!file.capacitor.closed)
-      await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(2)
-
-    let variables
+    t.plan(1)
 
     const app = express()
       .use(graphqlUploadExpress())
       .use(
         expressAsyncHandler(async (request, response, next) => {
-          ;({ variables } = request.body)
           await t.test('Upload.', uploadTest(request.body.variables.file))
           next()
         })
@@ -1251,11 +1118,6 @@ t.test('Extraneous file.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const file = await variables.file
-    if (!file.capacitor.closed)
-      await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 })
 
@@ -1345,17 +1207,14 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(3)
+    t.plan(2)
 
-    let variables
     let finish
 
     const finished = new Promise(resolve => (finish = resolve))
     const app = new Koa()
       .use(graphqlUploadKoa({ maxFiles: 2 }))
       .use(async (ctx, next) => {
-        ;({ variables } = ctx.request.body)
-
         await Promise.all([
           t.test('Upload A.', uploadATest(ctx.request.body.variables.files[0])),
           t.test('Upload B.', uploadBTest(ctx.request.body.variables.files[1]))
@@ -1370,24 +1229,15 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
 
     await sendRequest(port)
     await finished
-
-    const fileA = await variables.files[0]
-    if (!fileA.capacitor.closed)
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(3)
-
-    let variables
+    t.plan(2)
 
     const app = express()
       .use(graphqlUploadExpress({ maxFiles: 2 }))
       .use(
         expressAsyncHandler(async (request, response, next) => {
-          ;({ variables } = request.body)
-
           await Promise.all([
             t.test('Upload A.', uploadATest(request.body.variables.files[0])),
             t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
@@ -1400,11 +1250,6 @@ t.test('Exceed max files with extraneous files interspersed.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const fileA = await variables.files[0]
-    if (!fileA.capacitor.closed)
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
   })
 })
 
@@ -1443,14 +1288,11 @@ t.test('Exceed max file size.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(4)
-
-    let variables
+    t.plan(2)
 
     const app = new Koa()
       .use(graphqlUploadKoa({ maxFileSize: 1 }))
       .use(async (ctx, next) => {
-        ;({ variables } = ctx.request.body)
         await t.test(
           'Upload A.',
           uploadATest(ctx.request.body.variables.files[0])
@@ -1468,29 +1310,15 @@ t.test('Exceed max file size.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const fileA = await variables.files[0]
-    if (!fileA.capacitor.closed)
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-
-    const fileB = await variables.files[1]
-    if (!fileB.capacitor.closed)
-      await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(4)
-
-    let variables
+    t.plan(2)
 
     const app = express()
       .use(graphqlUploadExpress({ maxFileSize: 1 }))
       .use(
         expressAsyncHandler(async (request, response, next) => {
-          ;({ variables } = request.body)
-
           await Promise.all([
             t.test('Upload A.', uploadATest(request.body.variables.files[0])),
             t.test('Upload B.', uploadBTest(request.body.variables.files[1]))
@@ -1503,16 +1331,6 @@ t.test('Exceed max file size.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const fileA = await variables.files[0]
-    if (!fileA.capacitor.closed)
-      await new Promise(resolve => fileA.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileA.capacitor.path), 'Cleanup A.')
-
-    const fileB = await variables.files[1]
-    if (!fileB.capacitor.closed)
-      await new Promise(resolve => fileB.capacitor.once('close', resolve))
-    t.false(fs.existsSync(fileB.capacitor.path), 'Cleanup B.')
   })
 })
 
@@ -1786,12 +1604,9 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
   }
 
   await t.test('Koa middleware.', async t => {
-    t.plan(2)
-
-    let variables
+    t.plan(1)
 
     const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
-      ;({ variables } = ctx.request.body)
       await t.test('Upload.', uploadTest(ctx.request.body.variables.file))
 
       ctx.status = 204
@@ -1801,23 +1616,15 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const file = await variables.file
-    if (!file.capacitor.closed)
-      await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 
   await t.test('Express middleware.', async t => {
-    t.plan(2)
-
-    let variables
+    t.plan(1)
 
     const app = express()
       .use(graphqlUploadExpress())
       .use(
         expressAsyncHandler(async (request, response, next) => {
-          ;({ variables } = request.body)
           await t.test('Upload.', uploadTest(request.body.variables.file))
           next()
         })
@@ -1826,10 +1633,5 @@ t.test('Deprecated file upload ‘stream’ property.', async t => {
     const port = await startServer(t, app)
 
     await sendRequest(port)
-
-    const file = await variables.file
-    if (!file.capacitor.closed)
-      await new Promise(resolve => file.capacitor.once('close', resolve))
-    t.false(fs.existsSync(file.capacitor.path), 'Cleanup.')
   })
 })
