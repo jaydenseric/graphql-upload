@@ -710,12 +710,24 @@ t.test('Aborted request.', async t => {
           const fileB = await ctx.request.body.variables.fileB
 
           const streamA = fileA.createReadStream()
-          streamA.once('end', () => (streamA.ended = true))
-          streamA.once('error', error => (streamA.error = error))
+
+          streamA.once('end', () => {
+            streamA.ended = true
+          })
+
+          streamA.once('error', error => {
+            streamA.error = error
+          })
 
           const streamB = fileB.createReadStream()
-          streamB.once('end', () => (streamB.ended = true))
-          streamB.once('error', error => (streamB.error = error))
+
+          streamB.once('end', () => {
+            streamB.ended = true
+          })
+
+          streamB.once('error', error => {
+            streamB.error = error
+          })
 
           await Promise.all([
             t.test('Upload A.', uploadATest(fileA, streamA)),
@@ -757,12 +769,24 @@ t.test('Aborted request.', async t => {
             const fileB = await request.body.variables.fileB
 
             const streamA = fileA.createReadStream()
-            streamA.once('end', () => (streamA.ended = true))
-            streamA.once('error', error => (streamA.error = error))
+
+            streamA.once('end', () => {
+              streamA.ended = true
+            })
+
+            streamA.once('error', error => {
+              streamA.error = error
+            })
 
             const streamB = fileB.createReadStream()
-            streamB.once('end', () => (streamB.ended = true))
-            streamB.once('error', error => (streamB.error = error))
+
+            streamB.once('end', () => {
+              streamB.ended = true
+            })
+
+            streamB.once('error', error => {
+              streamB.error = error
+            })
 
             await Promise.all([
               t.test('Upload A.', uploadATest(fileA, streamA)),
