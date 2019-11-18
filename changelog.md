@@ -5,6 +5,7 @@
 ### Major
 
 - Updated Node.js support from v8.5+ to v8.10+, to match what the [`eslint`](https://npm.im/eslint) dev dependency now supports. This is unlikely to be a breaking change for the published package.
+- Removed the `Upload` scalar promise resolved `stream` property that has been deprecated since v7, along with associated tests.
 
 ### Minor
 

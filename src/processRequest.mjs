@@ -1,4 +1,3 @@
-import util from 'util'
 import Busboy from 'busboy'
 import fsCapacitor from 'fs-capacitor'
 import createError from 'http-errors'
@@ -345,14 +344,6 @@ export const processRequest = (
           return capacitor.createReadStream()
         }
       }
-
-      let capacitorStream
-      Object.defineProperty(file, 'stream', {
-        get: util.deprecate(function() {
-          if (!capacitorStream) capacitorStream = this.createReadStream()
-          return capacitorStream
-        }, 'File upload property ‘stream’ is deprecated. Use ‘createReadStream()’ instead.')
-      })
 
       Object.defineProperty(file, 'capacitor', { value: capacitor })
 

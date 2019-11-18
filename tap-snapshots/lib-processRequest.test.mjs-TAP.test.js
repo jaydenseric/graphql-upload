@@ -167,36 +167,6 @@ exports[`lib/processRequest.test.mjs TAP Deduped files. Koa middleware. Upload B
 }
 `
 
-exports[`lib/processRequest.test.mjs TAP Deprecated file upload ‘stream’ property. Express middleware. Upload. > Deprecation warning. 1`] = `
-{
-  "name": "DeprecationWarning",
-  "message": "File upload property ‘stream’ is deprecated. Use ‘createReadStream()’ instead."
-}
-`
-
-exports[`lib/processRequest.test.mjs TAP Deprecated file upload ‘stream’ property. Express middleware. Upload. > Enumerable properties. 1`] = `
-{
-  "filename": "a.txt",
-  "mimetype": "text/plain",
-  "encoding": "7bit"
-}
-`
-
-exports[`lib/processRequest.test.mjs TAP Deprecated file upload ‘stream’ property. Koa middleware. Upload. > Deprecation warning. 1`] = `
-{
-  "name": "DeprecationWarning",
-  "message": "File upload property ‘stream’ is deprecated. Use ‘createReadStream()’ instead."
-}
-`
-
-exports[`lib/processRequest.test.mjs TAP Deprecated file upload ‘stream’ property. Koa middleware. Upload. > Enumerable properties. 1`] = `
-{
-  "filename": "a.txt",
-  "mimetype": "text/plain",
-  "encoding": "7bit"
-}
-`
-
 exports[`lib/processRequest.test.mjs TAP Exceed max field size. Express middleware. > Middleware throws. 1`] = `
 {
   "name": "PayloadTooLargeError",
