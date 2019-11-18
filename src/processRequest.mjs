@@ -349,10 +349,6 @@ export const processRequest = (
 
       Object.defineProperty(file, 'capacitor', { value: capacitor })
 
-      capacitor.once('close', () =>
-        Object.defineProperty(file, 'closed', { value: true })
-      )
-
       stream.pipe(capacitor)
       upload.resolve(file)
     })
