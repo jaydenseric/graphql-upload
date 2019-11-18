@@ -32,7 +32,7 @@
   "engines": {
     "node": ">=8.10"
   },
-  "browserslist": "node >= 8.5",
+  "browserslist": "node >= 8.10",
   "peerDependencies": {
     "graphql": "0.13.1 - 14"
   },
