@@ -77,7 +77,7 @@
     "test": "npm run test:eslint && npm run test:prettier && npm run test:tap",
     "test:eslint": "eslint . --ext mjs,js",
     "test:prettier": "prettier '**/*.{json,yml,md}' -l",
-    "test:tap": "tap --test-ignore=src --100",
+    "test:tap": "tap --test-ignore=src --100 --nyc-arg=--exclude='**/test-helpers/**'",
     "prepublishOnly": "npm test"
   }
 }

@@ -9,6 +9,9 @@
 ### Patch
 
 - Updated dev dependencies.
+- Removed the `.nycrc.json` file:
+  - [`tap`](https://npm.im/tap) now ignores test files by default.
+  - The `lib/test-helpers` directory is now ignored using `tap` CLI arguments due to [tapjs/node-tap#612](https://github.com/tapjs/node-tap/issues/612).
 
 ## 8.1.0
 
