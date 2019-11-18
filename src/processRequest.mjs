@@ -135,6 +135,8 @@ export const processRequest = (
      * @ignore
      */
     const release = () => {
+      // Due to event differences across supported Node.js versions, 100% code
+      // coverage here is impossible.
       // istanbul ignore next
       if (released) return
       released = true
@@ -324,8 +326,13 @@ export const processRequest = (
       stream.on('error', error => {
         fileError = error
         stream.unpipe()
-        // istanbul ignore next
-        capacitor.destroy(exitError || error)
+        capacitor.destroy(
+          // The error has to be managed two ways due to event differences
+          // across supported Node.js versions. 100% code coverage here is
+          // impossible.
+          // istanbul ignore next
+          exitError || error
+        )
       })
 
       const file = {
