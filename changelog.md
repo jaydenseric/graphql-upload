@@ -11,7 +11,7 @@
 - Updated dev dependencies.
 - Removed the `.nycrc.json` file:
   - [`tap`](https://npm.im/tap) now ignores test files by default.
-  - The `lib/test-helpers` directory is now ignored using `tap` CLI arguments due to [tapjs/node-tap#612](https://github.com/tapjs/node-tap/issues/612).
+  - The `lib/test-helpers` directory is now ignored using [`tap`](https://npm.im/tap) CLI arguments due to [tapjs/node-tap#612](https://github.com/tapjs/node-tap/issues/612).
 - Updated the “Support” section of the readme to clarify varying native ESM support across Node.js versions.
 
 ## 8.1.0
