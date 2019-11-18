@@ -30,7 +30,7 @@
   ],
   "main": "lib",
   "engines": {
-    "node": ">=8.5"
+    "node": ">=8.10"
   },
   "browserslist": "node >= 8.5",
   "peerDependencies": {
@@ -47,7 +47,7 @@
     "@babel/core": "^7.6.3",
     "@babel/preset-env": "^7.6.3",
     "babel-eslint": "^10.0.3",
-    "eslint": "^6.5.1",
+    "eslint": "^6.6.0",
     "eslint-config-env": "^11.0.0",
     "eslint-config-prettier": "^6.4.0",
     "eslint-plugin-import": "^2.18.2",
