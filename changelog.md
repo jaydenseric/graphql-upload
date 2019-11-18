@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Updated dev dependencies.
+
 ## 8.1.0
 
 ### Minor
