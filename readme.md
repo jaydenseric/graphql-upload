@@ -12,15 +12,7 @@ Middleware and an [`Upload` scalar](#class-graphqlupload) to add support for [Gr
 
 The following environments are known to be compatible:
 
-- [Node.js](https://nodejs.org)
-  - v8.10 - v11
-    - CJS
-    - ESM with [`--experimental-modules`](https://nodejs.org/docs/latest-v8.x/api/esm.html#esm_enabling)
-  - v12
-    - CJS
-    - ESM with [`--experimental-modules`](https://nodejs.org/docs/latest-v12.x/api/esm.html#esm_enabling) and [`--es-module-specifier-resolution=node`](https://nodejs.org/docs/latest-v12.x/api/esm.html#esm_customizing_esm_specifier_resolution_algorithm)
-  - v13
-    - CJS
+- [Node.js](https://nodejs.org) >= v8.10
 - [Koa](https://koajs.com)
   - [`graphql-api-koa`](https://npm.im/graphql-api-koa)
   - [`koa-graphql`](https://npm.im/koa-graphql)
@@ -91,8 +83,8 @@ A GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphq
 _Setup for a schema built with [`makeExecutableSchema`](https://apollographql.com/docs/graphql-tools/generate-schema#makeExecutableSchema)._
 
 > ```js
-> import { makeExecutableSchema } from 'graphql-tools'
-> import { GraphQLUpload } from 'graphql-upload'
+> const { makeExecutableSchema } = require('graphql-tools')
+> const { GraphQLUpload } = require('graphql-upload')
 >
 > const typeDefs = `
 >   scalar Upload
@@ -102,16 +94,20 @@ _Setup for a schema built with [`makeExecutableSchema`](https://apollographql.co
 >   Upload: GraphQLUpload
 > }
 >
-> export const schema = makeExecutableSchema({ typeDefs, resolvers })
+> exports.schema = makeExecutableSchema({ typeDefs, resolvers })
 > ```
 
 _A manually constructed schema with an image upload mutation._
 
 > ```js
-> import { GraphQLSchema, GraphQLObjectType, GraphQLBoolean } from 'graphql'
-> import { GraphQLUpload } from 'graphql-upload'
+> const {
+>   GraphQLSchema,
+>   GraphQLObjectType,
+>   GraphQLBoolean
+> } = require('graphql')
+> const { GraphQLUpload } = require('graphql-upload')
 >
-> export const schema = new GraphQLSchema({
+> exports.schema = new GraphQLSchema({
 >   mutation: new GraphQLObjectType({
 >     name: 'Mutation',
 >     fields: {
@@ -154,10 +150,10 @@ Creates [Express](https://expressjs.com) middleware that processes [GraphQL mult
 _Basic [`express-graphql`](https://npm.im/express-graphql) setup._
 
 > ```js
-> import express from 'express'
-> import graphqlHTTP from 'express-graphql'
-> import { graphqlUploadExpress } from 'graphql-upload'
-> import schema from './schema'
+> const express = require('express')
+> const graphqlHTTP = require('express-graphql')
+> const { graphqlUploadExpress } = require('graphql-upload')
+> const schema = require('./schema')
 >
 > express()
 >   .use(
@@ -186,11 +182,11 @@ Creates [Koa](https://koajs.com) middleware that processes [GraphQL multipart re
 _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
 
 > ```js
-> import Koa from 'koa'
-> import bodyParser from 'koa-bodyparser'
-> import { errorHandler, execute } from 'graphql-api-koa'
-> import { graphqlUploadKoa } from 'graphql-upload'
-> import schema from './schema'
+> const Koa = require('koa')
+> const bodyParser = require('koa-bodyparser')
+> const { errorHandler, execute } = require('graphql-api-koa')
+> const { graphqlUploadKoa } = require('graphql-upload')
+> const schema = require('./schema')
 >
 > new Koa()
 >   .use(errorHandler())
@@ -213,7 +209,7 @@ Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-m
 _How to import._
 
 > ```js
-> import { processRequest } from 'graphql-upload'
+> const { processRequest } = require('graphql-upload')
 > ```
 
 ---

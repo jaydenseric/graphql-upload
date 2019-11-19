@@ -1,4 +1,4 @@
-import { processRequest as defaultProcessRequest } from './processRequest'
+const defaultProcessRequest = require('./processRequest')
 
 /**
  * Creates [Koa](https://koajs.com) middleware that processes
@@ -14,11 +14,11 @@ import { processRequest as defaultProcessRequest } from './processRequest'
  * @returns {Function} Koa middleware.
  * @example <caption>Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup.</caption>
  * ```js
- * import Koa from 'koa'
- * import bodyParser from 'koa-bodyparser'
- * import { errorHandler, execute } from 'graphql-api-koa'
- * import { graphqlUploadKoa } from 'graphql-upload'
- * import schema from './schema'
+ * const Koa = require('koa')
+ * const bodyParser = require('koa-bodyparser')
+ * const { errorHandler, execute } = require('graphql-api-koa')
+ * const { graphqlUploadKoa } = require('graphql-upload')
+ * const schema = require('./schema')
  *
  * new Koa()
  *   .use(errorHandler())
@@ -28,22 +28,24 @@ import { processRequest as defaultProcessRequest } from './processRequest'
  *   .listen(3000)
  * ```
  */
-export const graphqlUploadKoa = ({
+module.exports = function graphqlUploadKoa({
   processRequest = defaultProcessRequest,
   ...processRequestOptions
-} = {}) => async (ctx, next) => {
-  if (!ctx.request.is('multipart/form-data')) return next()
+} = {}) {
+  return async function graphqlUploadKoaMiddleware(ctx, next) {
+    if (!ctx.request.is('multipart/form-data')) return next()
 
-  const finished = new Promise(resolve => ctx.req.on('end', resolve))
+    const finished = new Promise(resolve => ctx.req.on('end', resolve))
 
-  try {
-    ctx.request.body = await processRequest(
-      ctx.req,
-      ctx.res,
-      processRequestOptions
-    )
-    await next()
-  } finally {
-    await finished
+    try {
+      ctx.request.body = await processRequest(
+        ctx.req,
+        ctx.res,
+        processRequestOptions
+      )
+      await next()
+    } finally {
+      await finished
+    }
   }
 }

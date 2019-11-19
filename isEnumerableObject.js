@@ -6,5 +6,6 @@
  * @returns {boolean} Is the value an enumerable object.
  * @ignore
  */
-export const isEnumerableObject = value =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
+module.exports = function isEnumerableObject(value) {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}

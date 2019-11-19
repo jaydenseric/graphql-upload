@@ -1,4 +1,4 @@
-import { GraphQLScalarType } from 'graphql'
+const { GraphQLScalarType } = require('graphql')
 
 /**
  * A GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphql.org/graphql-js/type/#graphqlschema).
@@ -8,8 +8,8 @@ import { GraphQLScalarType } from 'graphql'
  * @name GraphQLUpload
  * @example <caption>Setup for a schema built with [`makeExecutableSchema`](https://apollographql.com/docs/graphql-tools/generate-schema#makeExecutableSchema).</caption>
  * ```js
- * import { makeExecutableSchema } from 'graphql-tools'
- * import { GraphQLUpload } from 'graphql-upload'
+ * const { makeExecutableSchema } = require('graphql-tools')
+ * const { GraphQLUpload } = require('graphql-upload')
  *
  * const typeDefs = `
  *   scalar Upload
@@ -19,14 +19,14 @@ import { GraphQLScalarType } from 'graphql'
  *   Upload: GraphQLUpload
  * }
  *
- * export const schema = makeExecutableSchema({ typeDefs, resolvers })
+ * exports.schema = makeExecutableSchema({ typeDefs, resolvers })
  * ```
  * @example <caption>A manually constructed schema with an image upload mutation.</caption>
  * ```js
- * import { GraphQLSchema, GraphQLObjectType, GraphQLBoolean } from 'graphql'
- * import { GraphQLUpload } from 'graphql-upload'
+ * const { GraphQLSchema, GraphQLObjectType, GraphQLBoolean } = require('graphql')
+ * const { GraphQLUpload } = require('graphql-upload')
  *
- * export const schema = new GraphQLSchema({
+ * exports.schema = new GraphQLSchema({
  *   mutation: new GraphQLObjectType({
  *     name: 'Mutation',
  *     fields: {
@@ -51,7 +51,7 @@ import { GraphQLScalarType } from 'graphql'
  * })
  * ```
  */
-export const GraphQLUpload = new GraphQLScalarType({
+exports.GraphQLUpload = new GraphQLScalarType({
   name: 'Upload',
   description: 'The `Upload` scalar type represents a file upload.',
   parseValue: value => value,

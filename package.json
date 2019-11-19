@@ -19,20 +19,22 @@
     "server",
     "koa",
     "express",
-    "apollo",
-    "esm",
-    "mjs"
+    "apollo"
   ],
   "files": [
-    "lib",
-    "!*.test.*",
-    "!test-helpers"
+    "constants.js",
+    "GraphQLUpload.js",
+    "graphqlUploadExpress.js",
+    "graphqlUploadKoa.js",
+    "ignoreStream.js",
+    "index.js",
+    "isEnumerableObject.js",
+    "processRequest.js"
   ],
-  "main": "lib",
+  "main": "index.js",
   "engines": {
     "node": ">=8.10"
   },
-  "browserslist": "node >= 8.10",
   "peerDependencies": {
     "graphql": "0.13.1 - 14"
   },
@@ -43,10 +45,6 @@
     "object-path": "^0.11.4"
   },
   "devDependencies": {
-    "@babel/cli": "^7.6.3",
-    "@babel/core": "^7.6.3",
-    "@babel/preset-env": "^7.6.3",
-    "babel-eslint": "^10.0.3",
     "eslint": "^6.6.0",
     "eslint-config-env": "^11.0.0",
     "eslint-config-prettier": "^6.4.0",
@@ -68,14 +66,11 @@
     "tap": "^14.6.9"
   },
   "scripts": {
-    "prepare": "npm run prepare:clean && npm run prepare:mjs && npm run prepare:js && npm run prepare:jsdoc && npm run prepare:prettier",
-    "prepare:clean": "rm -rf lib",
-    "prepare:mjs": "BABEL_ESM=1 babel src -d lib --keep-file-extension",
-    "prepare:js": "babel src -d lib",
+    "prepare": "npm run prepare:jsdoc && npm run prepare:prettier",
     "prepare:jsdoc": "jsdoc-md",
-    "prepare:prettier": "prettier 'lib/**/*.{mjs,js}' readme.md --write",
+    "prepare:prettier": "prettier readme.md --write",
     "test": "npm run test:eslint && npm run test:prettier && npm run test:tap",
-    "test:eslint": "eslint . --ext mjs,js",
+    "test:eslint": "eslint .",
     "test:prettier": "prettier '**/*.{json,yml,md}' -l",
     "test:tap": "tap --test-ignore=src --100 --nyc-arg=--exclude='**/test-helpers/**'",
     "prepublishOnly": "npm test"

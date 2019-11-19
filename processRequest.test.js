@@ -1,20 +1,18 @@
-import http from 'http'
-import stream from 'stream'
-import express from 'express'
-import expressAsyncHandler from 'express-async-handler'
-import FormData from 'form-data'
-import fsCapacitor from 'fs-capacitor'
-import Koa from 'koa'
-import fetch from 'node-fetch'
-import t from 'tap'
-import { graphqlUploadExpress } from './graphqlUploadExpress'
-import { graphqlUploadKoa } from './graphqlUploadKoa'
-import { processRequest } from './processRequest'
-import { snapshotError } from './test-helpers/snapshotError'
-import { startServer } from './test-helpers/startServer'
-import { streamToString } from './test-helpers/streamToString'
-
-const { ReadStream } = fsCapacitor
+const http = require('http')
+const stream = require('stream')
+const express = require('express')
+const expressAsyncHandler = require('express-async-handler')
+const FormData = require('form-data')
+const { ReadStream } = require('fs-capacitor')
+const Koa = require('koa')
+const fetch = require('node-fetch')
+const t = require('tap')
+const graphqlUploadExpress = require('./graphqlUploadExpress')
+const graphqlUploadKoa = require('./graphqlUploadKoa')
+const processRequest = require('./processRequest')
+const snapshotError = require('./test-helpers/snapshotError')
+const startServer = require('./test-helpers/startServer')
+const streamToString = require('./test-helpers/streamToString')
 
 t.test('Single file.', async t => {
   const sendRequest = async port => {

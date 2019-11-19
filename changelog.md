@@ -6,10 +6,14 @@
 
 - Updated Node.js support from v8.5+ to v8.10+, to match what the [`eslint`](https://npm.im/eslint) dev dependency now supports. This is unlikely to be a breaking change for the published package.
 - Removed the `Upload` scalar promise resolved `stream` property that has been deprecated since v7, along with associated tests.
+- ESM is no longer published, due to CJS/ESM compatibility issues across recent Node.js versions.
+- The file structure and non-index file exports have changed. This should only effect projects using undocumented deep imports.
 
 ### Minor
 
 - Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to v4 to support Node.js v13, making required changes to the source and tests, via [#166](https://github.com/jaydenseric/graphql-upload/pull/166).
+- JSDoc comments are now included in the published code.
+- Several anonymous functions have been named, for better error stack traces.
 
 ### Patch
 

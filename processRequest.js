@@ -1,12 +1,10 @@
-import Busboy from 'busboy'
-import fsCapacitor from 'fs-capacitor'
-import createError from 'http-errors'
-import objectPath from 'object-path'
-import { SPEC_URL } from './constants'
-import { ignoreStream } from './ignoreStream'
-import { isEnumerableObject } from './isEnumerableObject'
-
-const { WriteStream } = fsCapacitor
+const Busboy = require('busboy')
+const { WriteStream } = require('fs-capacitor')
+const createError = require('http-errors')
+const objectPath = require('object-path')
+const { SPEC_URL } = require('./constants')
+const ignoreStream = require('./ignoreStream')
+const isEnumerableObject = require('./isEnumerableObject')
 
 /**
  * An expected file upload.
@@ -64,10 +62,10 @@ class Upload {
  * @type {ProcessRequestFunction}
  * @example <caption>How to import.</caption>
  * ```js
- * import { processRequest } from 'graphql-upload'
+ * const { processRequest } = require('graphql-upload')
  * ```
  */
-export const processRequest = (
+module.exports = function processRequest(
   request,
   response,
   {
@@ -75,8 +73,8 @@ export const processRequest = (
     maxFileSize = Infinity,
     maxFiles = Infinity
   } = {}
-) =>
-  new Promise((resolve, reject) => {
+) {
+  return new Promise((resolve, reject) => {
     let released
     let exitError
     let currentStream
@@ -389,3 +387,4 @@ export const processRequest = (
 
     request.pipe(parser)
   })
+}

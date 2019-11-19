@@ -1,5 +1,5 @@
-import t from 'tap'
-import { isEnumerableObject } from './isEnumerableObject'
+const t = require('tap')
+const isEnumerableObject = require('./isEnumerableObject')
 
 t.test('`isEnumerableObject` with various values.', t => {
   t.equal(isEnumerableObject({}), true, 'Plain object.')
