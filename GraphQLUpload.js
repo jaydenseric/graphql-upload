@@ -51,7 +51,7 @@ const { GraphQLScalarType } = require('graphql')
  * })
  * ```
  */
-exports.GraphQLUpload = new GraphQLScalarType({
+module.exports = new GraphQLScalarType({
   name: 'Upload',
   description: 'The `Upload` scalar type represents a file upload.',
   parseValue: value => value,
