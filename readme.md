@@ -86,15 +86,14 @@ _Setup for a schema built with [`makeExecutableSchema`](https://apollographql.co
 > const { makeExecutableSchema } = require('graphql-tools')
 > const { GraphQLUpload } = require('graphql-upload')
 >
-> const typeDefs = `
->   scalar Upload
-> `
->
-> const resolvers = {
->   Upload: GraphQLUpload
-> }
->
-> exports.schema = makeExecutableSchema({ typeDefs, resolvers })
+> const schema = makeExecutableSchema({
+>   typeDefs: /* GraphQL */ `
+>     scalar Upload
+>   `,
+>   resolvers: {
+>     Upload: GraphQLUpload
+>   }
+> })
 > ```
 
 _A manually constructed schema with an image upload mutation._
@@ -107,7 +106,7 @@ _A manually constructed schema with an image upload mutation._
 > } = require('graphql')
 > const { GraphQLUpload } = require('graphql-upload')
 >
-> exports.schema = new GraphQLSchema({
+> const schema = new GraphQLSchema({
 >   mutation: new GraphQLObjectType({
 >     name: 'Mutation',
 >     fields: {
