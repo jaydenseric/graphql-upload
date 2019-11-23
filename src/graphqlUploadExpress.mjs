@@ -14,10 +14,10 @@ import { processRequest as defaultProcessRequest } from './processRequest'
  * @returns {Function} Express middleware.
  * @example <caption>Basic [`express-graphql`](https://npm.im/express-graphql) setup.</caption>
  * ```js
- * import express from 'express'
- * import graphqlHTTP from 'express-graphql'
- * import { graphqlUploadExpress } from 'graphql-upload'
- * import schema from './schema'
+ * const express = require('express')
+ * const graphqlHTTP = require('express-graphql')
+ * const { graphqlUploadExpress } = require('graphql-upload')
+ * const schema = require('./schema')
  *
  * express()
  *   .use(

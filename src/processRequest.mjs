@@ -64,7 +64,7 @@ class Upload {
  * @type {ProcessRequestFunction}
  * @example <caption>How to import.</caption>
  * ```js
- * import { processRequest } from 'graphql-upload'
+ * const { processRequest } = require('graphql-upload')
  * ```
  */
 export const processRequest = (
