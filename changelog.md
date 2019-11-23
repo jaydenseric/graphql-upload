@@ -18,6 +18,7 @@
   - [`tap`](https://npm.im/tap) now ignores test files by default.
   - The `lib/test-helpers` directory is now ignored using [`tap`](https://npm.im/tap) CLI arguments due to [tapjs/node-tap#612](https://github.com/tapjs/node-tap/issues/612).
 - Updated the “Support” section of the readme to clarify varying native ESM support across Node.js versions, including v13.
+- Removed the `esm` and `mjs` package tags; they will be added back once native ESM is properly supported.
 - Updated JSDoc code examples to use CJS instead of ESM, as native ESM is not yet properly supported.
 - No longer test [`fs-capacitor`](https://npm.im/fs-capacitor) implementation details such as temp file creation and cleanup.
 - Commented the reasons for several `istanbul ignore next` comments.
