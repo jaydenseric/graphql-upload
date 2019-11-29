@@ -6,10 +6,14 @@
 
 - Updated Node.js support from v8.5+ to v8.10+, to match what the [`eslint`](https://npm.im/eslint) dev dependency now supports. This is unlikely to be a breaking change for the published package.
 - Removed the `Upload` scalar promise resolved `stream` property that has been deprecated since v7, along with associated tests.
+- ESM is no longer published, due to CJS/ESM compatibility issues across recent Node.js versions, via [#169](https://github.com/jaydenseric/graphql-upload/pull/169).
+- The file structure and non-index file exports have changed. This should only effect projects using undocumented deep imports.
 
 ### Minor
 
 - Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to v4 to support Node.js v13, making required changes to the source and tests, via [#166](https://github.com/jaydenseric/graphql-upload/pull/166).
+- JSDoc comments are now included in the published code.
+- Several anonymous functions have been named, for better error stack traces.
 
 ### Patch
 
@@ -17,7 +21,6 @@
 - Removed the `.nycrc.json` file:
   - [`tap`](https://npm.im/tap) now ignores test files by default.
   - The `lib/test-helpers` directory is now ignored using [`tap`](https://npm.im/tap) CLI arguments due to [tapjs/node-tap#612](https://github.com/tapjs/node-tap/issues/612).
-- Updated the “Support” section of the readme to clarify varying native ESM support across Node.js versions, including v13.
 - Removed the `esm` and `mjs` package tags; they will be added back once native ESM is properly supported.
 - Updated JSDoc code examples to use CJS instead of ESM, as native ESM is not yet properly supported.
 - No longer test [`fs-capacitor`](https://npm.im/fs-capacitor) implementation details such as temp file creation and cleanup.

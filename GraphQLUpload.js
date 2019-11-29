@@ -1,4 +1,4 @@
-import { GraphQLScalarType } from 'graphql'
+const { GraphQLScalarType } = require('graphql')
 
 /**
  * A GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphql.org/graphql-js/type/#graphqlschema).
@@ -54,7 +54,7 @@ import { GraphQLScalarType } from 'graphql'
  * })
  * ```
  */
-export const GraphQLUpload = new GraphQLScalarType({
+module.exports = new GraphQLScalarType({
   name: 'Upload',
   description: 'The `Upload` scalar type represents a file upload.',
   parseValue: value => value,

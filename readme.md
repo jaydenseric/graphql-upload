@@ -12,15 +12,7 @@ Middleware and an [`Upload` scalar](#class-graphqlupload) to add support for [Gr
 
 The following environments are known to be compatible:
 
-- [Node.js](https://nodejs.org)
-  - v8.10 - v11
-    - CJS
-    - ESM with [`--experimental-modules`](https://nodejs.org/docs/latest-v8.x/api/esm.html#esm_enabling)
-  - v12
-    - CJS
-    - ESM with [`--experimental-modules`](https://nodejs.org/docs/latest-v12.x/api/esm.html#esm_enabling) and [`--es-module-specifier-resolution=node`](https://nodejs.org/docs/latest-v12.x/api/esm.html#esm_customizing_esm_specifier_resolution_algorithm)
-  - v13
-    - CJS
+- [Node.js](https://nodejs.org) >= v8.10
 - [Koa](https://koajs.com)
   - [`graphql-api-koa`](https://npm.im/graphql-api-koa)
   - [`koa-graphql`](https://npm.im/koa-graphql)

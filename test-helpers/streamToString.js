@@ -6,8 +6,8 @@
  * @returns {Promise<string>} A string promise.
  * @ignore
  */
-export const streamToString = stream =>
-  new Promise((resolve, reject) => {
+module.exports = function streamToString(stream) {
+  return new Promise((resolve, reject) => {
     let data = ''
     stream
       .on('error', reject)
@@ -16,3 +16,4 @@ export const streamToString = stream =>
       })
       .on('end', () => resolve(data))
   })
+}

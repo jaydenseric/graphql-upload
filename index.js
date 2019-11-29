@@ -1,7 +1,7 @@
-export { GraphQLUpload } from './GraphQLUpload'
-export { processRequest } from './processRequest'
-export { graphqlUploadKoa } from './graphqlUploadKoa'
-export { graphqlUploadExpress } from './graphqlUploadExpress'
+exports.GraphQLUpload = require('./GraphQLUpload')
+exports.processRequest = require('./processRequest')
+exports.graphqlUploadKoa = require('./graphqlUploadKoa')
+exports.graphqlUploadExpress = require('./graphqlUploadExpress')
 
 /**
  * File upload details, resolved from an [`Upload` scalar]{@link GraphQLUpload}

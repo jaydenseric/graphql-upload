@@ -5,7 +5,7 @@
  * @param {ReadableStream} stream Readable stream.
  * @ignore
  */
-export const ignoreStream = stream => {
+module.exports = function ignoreStream(stream) {
   // Prevent an unhandled error from crashing the process.
   stream.on('error', () => {})
 

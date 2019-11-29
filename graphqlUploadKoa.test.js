@@ -1,10 +1,10 @@
-import Koa from 'koa'
-import fetch from 'node-fetch'
-import t from 'tap'
-import { graphqlUploadKoa } from './graphqlUploadKoa'
-import { processRequest } from './processRequest'
-import { startServer } from './test-helpers/startServer'
-import { testGraphqlMultipartRequest } from './test-helpers/testGraphqlMultipartRequest'
+const Koa = require('koa')
+const fetch = require('node-fetch')
+const t = require('tap')
+const graphqlUploadKoa = require('./graphqlUploadKoa')
+const processRequest = require('./processRequest')
+const startServer = require('./test-helpers/startServer')
+const testGraphqlMultipartRequest = require('./test-helpers/testGraphqlMultipartRequest')
 
 t.test('‘graphqlUploadKoa’ with a non multipart request.', async t => {
   const app = new Koa().use(

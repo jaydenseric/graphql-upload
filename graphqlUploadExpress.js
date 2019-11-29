@@ -1,4 +1,4 @@
-import { processRequest as defaultProcessRequest } from './processRequest'
+const defaultProcessRequest = require('./processRequest')
 
 /**
  * Creates [Express](https://expressjs.com) middleware that processes
@@ -28,29 +28,31 @@ import { processRequest as defaultProcessRequest } from './processRequest'
  *   .listen(3000)
  * ```
  */
-export const graphqlUploadExpress = ({
+module.exports = function graphqlUploadExpress({
   processRequest = defaultProcessRequest,
   ...processRequestOptions
-} = {}) => (request, response, next) => {
-  if (!request.is('multipart/form-data')) return next()
+} = {}) {
+  return function graphqlUploadExpressMiddleware(request, response, next) {
+    if (!request.is('multipart/form-data')) return next()
 
-  const finished = new Promise(resolve => request.on('end', resolve))
+    const finished = new Promise(resolve => request.on('end', resolve))
 
-  const { send } = response
-  response.send = (...args) => {
-    finished.then(() => {
-      response.send = send
-      response.send(...args)
-    })
+    const { send } = response
+    response.send = (...args) => {
+      finished.then(() => {
+        response.send = send
+        response.send(...args)
+      })
+    }
+
+    processRequest(request, response, processRequestOptions)
+      .then(body => {
+        request.body = body
+        next()
+      })
+      .catch(error => {
+        if (error.status && error.expose) response.status(error.status)
+        next(error)
+      })
   }
-
-  processRequest(request, response, processRequestOptions)
-    .then(body => {
-      request.body = body
-      next()
-    })
-    .catch(error => {
-      if (error.status && error.expose) response.status(error.status)
-      next(error)
-    })
 }

@@ -1,12 +1,12 @@
-import FormData from 'form-data'
-import fetch from 'node-fetch'
+const FormData = require('form-data')
+const fetch = require('node-fetch')
 
 /**
  * Sends a test GraphQL multipart request, uploading a single small file.
  * @param {number} port Localhost port to fetch.
  * @returns {Promise<Response>} Fetch response.
  */
-export const testGraphqlMultipartRequest = port => {
+module.exports = function testGraphqlMultipartRequest(port) {
   const body = new FormData()
 
   body.append('operations', '{ "variables": { "file": null } }')

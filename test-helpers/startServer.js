@@ -8,8 +8,8 @@
  * @returns {Promise<number>} The port the server is listening on.
  * @ignore
  */
-export const startServer = (t, app) =>
-  new Promise((resolve, reject) => {
+module.exports = function startServer(t, app) {
+  return new Promise((resolve, reject) => {
     app.listen(undefined, 'localhost', function(error) {
       if (error) reject(error)
       else {
@@ -18,3 +18,4 @@ export const startServer = (t, app) =>
       }
     })
   })
+}
