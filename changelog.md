@@ -7,7 +7,7 @@
 - Updated Node.js support from v8.5+ to v8.10+, to match what the [`eslint`](https://npm.im/eslint) dev dependency now supports. This is unlikely to be a breaking change for the published package.
 - Removed the `Upload` scalar promise resolved `stream` property that has been deprecated since v7, along with associated tests.
 - ESM is no longer published, due to CJS/ESM compatibility issues across recent Node.js versions, via [#169](https://github.com/jaydenseric/graphql-upload/pull/169).
-- The file structure and non-index file exports have changed. This should only effect projects using undocumented deep imports.
+- The file structure and non-index file exports have changed. This should only affect projects using undocumented deep imports.
 
 ### Minor
 
