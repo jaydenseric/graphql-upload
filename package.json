@@ -41,17 +41,17 @@
   },
   "dependencies": {
     "busboy": "^0.3.1",
-    "fs-capacitor": "^4.0.0",
+    "fs-capacitor": "^4.0.1",
     "http-errors": "^1.7.3",
     "object-path": "^0.11.4"
   },
   "devDependencies": {
-    "eslint": "^6.7.1",
+    "eslint": "^6.7.2",
     "eslint-config-env": "^11.0.1",
     "eslint-config-prettier": "^6.4.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-import-order-alphabetical": "^1.0.0",
-    "eslint-plugin-jsdoc": "^18.1.5",
+    "eslint-plugin-jsdoc": "^18.4.1",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-prettier": "^3.1.1",
     "express": "^4.17.1",
