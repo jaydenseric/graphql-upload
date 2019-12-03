@@ -11,6 +11,7 @@
   "repository": "github:jaydenseric/graphql-upload",
   "homepage": "https://github.com/jaydenseric/graphql-upload#readme",
   "bugs": "https://github.com/jaydenseric/graphql-upload/issues",
+  "funding": "https://github.com/sponsors/jaydenseric",
   "keywords": [
     "graphql",
     "upload",

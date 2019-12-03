@@ -14,6 +14,9 @@
 - Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to v4 to support Node.js v13, making required changes to the source and tests, via [#166](https://github.com/jaydenseric/graphql-upload/pull/166).
 - JSDoc comments are now included in the published code.
 - Several anonymous functions have been named, for better error stack traces.
+- Setup [GitHub Sponsors funding](https://github.com/sponsors/jaydenseric):
+  - Added `.github/funding.yml` to display a sponsor button in GitHub.
+  - Added a `package.json` `funding` field to enable npm CLI funding features.
 
 ### Patch
 
