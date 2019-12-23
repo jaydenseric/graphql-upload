@@ -57,7 +57,10 @@ const { GraphQLScalarType } = require('graphql')
 module.exports = new GraphQLScalarType({
   name: 'Upload',
   description: 'The `Upload` scalar type represents a file upload.',
-  parseValue: value => value,
+  parseValue: () =>
+    Promise.reject(
+      new Error('`Upload` scalars must have a corresponding multipart file.')
+    ),
   parseLiteral() {
     throw new Error('‘Upload’ scalar literal unsupported.')
   },
