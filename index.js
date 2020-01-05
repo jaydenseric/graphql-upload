@@ -12,7 +12,7 @@ exports.graphqlUploadExpress = require('./graphqlUploadExpress')
  * @prop {string} filename File name.
  * @prop {string} mimetype File MIME type. Provided by the client and can’t be trusted.
  * @prop {string} encoding File stream transfer encoding.
- * @prop {Function} createReadStream Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request.
+ * @prop {Function} createReadStream Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. This function can be passed an object with fields `encoding` and `highWaterMark` to configure the returned stream accordingly.
  */
 
 /**

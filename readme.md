@@ -224,7 +224,7 @@ File upload details, resolved from an [`Upload` scalar](#class-graphqlupload) pr
 | `filename` | string | File name. |
 | `mimetype` | string | File MIME type. Provided by the client and can’t be trusted. |
 | `encoding` | string | File stream transfer encoding. |
-| `createReadStream` | Function | Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. |
+| `createReadStream` | Function | Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. This function can be passed an object with fields `encoding` and `highWaterMark` to configure the returned stream accordingly. |
 
 ---
 

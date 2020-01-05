@@ -336,10 +336,10 @@ module.exports = function processRequest(
         filename,
         mimetype,
         encoding,
-        createReadStream() {
+        createReadStream(options) {
           const error = fileError || (released ? exitError : null)
           if (error) throw error
-          return capacitor.createReadStream()
+          return capacitor.createReadStream(options)
         }
       }
 
