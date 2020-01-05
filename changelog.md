@@ -1,5 +1,16 @@
 # graphql-upload changelog
 
+## 10.0.0
+
+### Major
+
+- Updated Node.js support to v10.18, in line with node's LTS schedule.
+- Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to version 6.
+
+### Minor
+
+- Added the ability to specify `encoding` and `highWaterMark` in `createReadStream`.
+
 ## 9.0.0
 
 ### Major
