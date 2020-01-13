@@ -58,10 +58,8 @@
     "express-async-handler": "^1.1.4",
     "form-data": "^3.0.0",
     "graphql": "^14.5.8",
-    "husky": "^3.0.8",
     "jsdoc-md": "^4.0.1",
     "koa": "^2.8.2",
-    "lint-staged": "^9.5.0",
     "node-fetch": "^2.6.0",
     "prettier": "^1.18.2",
     "tap": "^14.10.2"
