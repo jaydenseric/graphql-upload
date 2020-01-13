@@ -1,3 +1,5 @@
+'use strict'
+
 /**
  * Asynchronously starts a server and automatically closes it when the given
  * test tears down.

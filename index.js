@@ -1,3 +1,5 @@
+'use strict'
+
 exports.GraphQLUpload = require('./GraphQLUpload')
 exports.processRequest = require('./processRequest')
 exports.graphqlUploadKoa = require('./graphqlUploadKoa')

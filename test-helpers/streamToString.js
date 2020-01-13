@@ -1,3 +1,5 @@
+'use strict'
+
 /**
  * Converts a readable stream to a string.
  * @kind function

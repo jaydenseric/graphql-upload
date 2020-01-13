@@ -1,3 +1,5 @@
+'use strict'
+
 const Koa = require('koa')
 const fetch = require('node-fetch')
 const t = require('tap')

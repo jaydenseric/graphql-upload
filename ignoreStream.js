@@ -1,3 +1,5 @@
+'use strict'
+
 /**
  * Safely ignores a readable stream.
  * @kind function

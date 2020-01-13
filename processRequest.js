@@ -1,3 +1,5 @@
+'use strict'
+
 const Busboy = require('busboy')
 const { WriteStream } = require('fs-capacitor')
 const createError = require('http-errors')

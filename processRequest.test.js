@@ -1,3 +1,5 @@
+'use strict'
+
 const http = require('http')
 const stream = require('stream')
 const express = require('express')

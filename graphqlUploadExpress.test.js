@@ -1,3 +1,5 @@
+'use strict'
+
 const express = require('express')
 const createError = require('http-errors')
 const fetch = require('node-fetch')

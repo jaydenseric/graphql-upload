@@ -1,3 +1,5 @@
+'use strict'
+
 /**
  * Determines if a value is an enumerable object.
  * @kind function

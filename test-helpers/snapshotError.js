@@ -1,3 +1,5 @@
+'use strict'
+
 /**
  * Snapshots an error.
  * @param {object} error An error.
