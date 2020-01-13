@@ -11,7 +11,6 @@ const testGraphqlMultipartRequest = require('./test-helpers/testGraphqlMultipart
 t.test('‘graphqlUploadKoa’ with a non multipart request.', async t => {
   const app = new Koa().use(
     graphqlUploadKoa({
-      // eslint-disable-next-line require-await
       async processRequest() {
         t.fail('‘processRequest’ ran.')
       }

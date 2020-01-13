@@ -12,7 +12,6 @@ const testGraphqlMultipartRequest = require('./test-helpers/testGraphqlMultipart
 t.test('‘graphqlUploadExpress’ with a non multipart request.', async t => {
   const app = express().use(
     graphqlUploadExpress({
-      // eslint-disable-next-line require-await
       async processRequest() {
         t.fail('‘processRequest’ ran.')
       }
