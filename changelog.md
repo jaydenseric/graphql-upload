@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Major
+
+- Updated Node.js support from v8.10+ to v10+, as earlier versions have reached end-of-life.
+
 ## 9.0.0
 
 ### Major

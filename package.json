@@ -34,7 +34,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">=8.10"
+    "node": ">=10"
   },
   "peerDependencies": {
     "graphql": "0.13.1 - 14"
