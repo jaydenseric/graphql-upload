@@ -3,10 +3,10 @@
 const Busboy = require('busboy')
 const { WriteStream } = require('fs-capacitor')
 const createError = require('http-errors')
+const isObject = require('isobject')
 const objectPath = require('object-path')
 const { SPEC_URL } = require('./constants')
 const ignoreStream = require('./ignoreStream')
-const isEnumerableObject = require('./isEnumerableObject')
 
 /**
  * An expected file upload.
@@ -186,7 +186,7 @@ module.exports = function processRequest(
               )
             }
 
-            if (!isEnumerableObject(operations) && !Array.isArray(operations))
+            if (!isObject(operations) && !Array.isArray(operations))
               return exit(
                 createError(
                   400,
@@ -218,7 +218,7 @@ module.exports = function processRequest(
               )
             }
 
-            if (!isEnumerableObject(parsedMap))
+            if (!isObject(parsedMap))
               return exit(
                 createError(
                   400,

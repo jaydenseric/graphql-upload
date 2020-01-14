@@ -11,6 +11,7 @@
 
 - Removed the now redundant [`eslint-plugin-import-order-alphabetical`](https://npm.im/eslint-plugin-import-order-alphabetical) dev dependency.
 - Stop using [`husky`](https://npm.im/husky) and [`lint-staged`](https://npm.im/lint-staged).
+- Use [`isobject`](https://npm.im/isobject) for checking if values are enumerable, non-array objects.
 - Removed now redundant `eslint-disable-next-line` comments.
 - Use strict mode for scripts.
 
