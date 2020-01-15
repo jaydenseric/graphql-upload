@@ -6,6 +6,7 @@
 
 - Updated Node.js support from v8.10+ to v10+, as earlier versions have reached end-of-life.
 - Updated dev dependencies, some of which now require Node.js v10+.
+- Replaced the [`tap`](https://npm.im/tap) dev dependency with [`test-director`](https://npm.im/test-director), [`coverage-node`](https://npm.im/coverage-node), and [`hard-rejection`](https://npm.im/hard-rejection) to improve the dev experience and reduce the dev install size by ~75.7 MB. These new dev dependencies require Node.js v10+.
 - Reorganized files. This is only a breaking change for projects using undocumented deep imports.
 
 ### Patch
@@ -13,9 +14,9 @@
 - Removed the now redundant [`eslint-plugin-import-order-alphabetical`](https://npm.im/eslint-plugin-import-order-alphabetical) dev dependency.
 - Stop using [`husky`](https://npm.im/husky) and [`lint-staged`](https://npm.im/lint-staged).
 - Use [`isobject`](https://npm.im/isobject) for checking if values are enumerable, non-array objects.
+- Tests have been massively reorganized, refactored, and improved.
 - Removed now redundant `eslint-disable-next-line` comments.
 - Use strict mode for scripts.
-- Tidied the package `test:tap` script.
 
 ## 9.0.0
 

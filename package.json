@@ -40,6 +40,7 @@
     "object-path": "^0.11.4"
   },
   "devDependencies": {
+    "coverage-node": "^2.0.2",
     "eslint": "^6.8.0",
     "eslint-config-env": "^13.0.2",
     "eslint-config-prettier": "^6.9.0",
@@ -51,20 +52,21 @@
     "express-async-handler": "^1.1.4",
     "form-data": "^3.0.0",
     "graphql": "^14.5.8",
+    "hard-rejection": "^2.1.0",
     "jsdoc-md": "^5.0.1",
     "koa": "^2.8.2",
     "node-fetch": "^2.6.0",
     "prettier": "^1.18.2",
-    "tap": "^14.10.5"
+    "test-director": "^3.0.0"
   },
   "scripts": {
     "prepare": "npm run prepare:jsdoc && npm run prepare:prettier",
     "prepare:jsdoc": "jsdoc-md",
     "prepare:prettier": "prettier readme.md --write",
-    "test": "npm run test:eslint && npm run test:prettier && npm run test:tap",
+    "test": "npm run test:eslint && npm run test:prettier && npm run test:api",
     "test:eslint": "eslint .",
     "test:prettier": "prettier '**/*.{json,yml,md}' -l",
-    "test:tap": "tap --100 --nyc-arg=--exclude='**/test-helpers/**'",
+    "test:api": "coverage-node -r hard-rejection/register test",
     "prepublishOnly": "npm test"
   }
 }
