@@ -15,6 +15,7 @@
 - Use [`isobject`](https://npm.im/isobject) for checking if values are enumerable, non-array objects.
 - Removed now redundant `eslint-disable-next-line` comments.
 - Use strict mode for scripts.
+- Tidied the package `test:tap` script.
 
 ## 9.0.0
 
