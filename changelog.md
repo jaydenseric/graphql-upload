@@ -1,15 +1,27 @@
 # graphql-upload changelog
 
-## 10.0.0
+## Next
 
 ### Major
 
-- Updated Node.js support to v10.18, in line with node's LTS schedule.
+- Updated Node.js support from v8.10+ to v10+, as earlier versions have reached end-of-life.
 - Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to version 6.
+- Updated dev dependencies, some of which now require Node.js v10+.
+- Replaced the [`tap`](https://npm.im/tap) dev dependency with [`test-director`](https://npm.im/test-director), [`coverage-node`](https://npm.im/coverage-node), and [`hard-rejection`](https://npm.im/hard-rejection) to improve the dev experience and reduce the dev install size by ~75.7 MB. These new dev dependencies require Node.js v10+.
+- Reorganized files. This is only a breaking change for projects using undocumented deep imports.
 
 ### Minor
 
 - Added the ability to specify `encoding` and `highWaterMark` in `createReadStream`.
+
+### Patch
+
+- Removed the now redundant [`eslint-plugin-import-order-alphabetical`](https://npm.im/eslint-plugin-import-order-alphabetical) dev dependency.
+- Stop using [`husky`](https://npm.im/husky) and [`lint-staged`](https://npm.im/lint-staged).
+- Use [`isobject`](https://npm.im/isobject) for checking if values are enumerable, non-array objects.
+- Tests have been massively reorganized, refactored, and improved.
+- Removed now redundant `eslint-disable-next-line` comments.
+- Use strict mode for scripts.
 
 ## 9.0.0
 
