@@ -8,6 +8,7 @@
 - Updated dev dependencies, some of which now require Node.js v10+.
 - Replaced the [`tap`](https://npm.im/tap) dev dependency with [`test-director`](https://npm.im/test-director), [`coverage-node`](https://npm.im/coverage-node), and [`hard-rejection`](https://npm.im/hard-rejection) to improve the dev experience and reduce the dev install size by ~75.7 MB. These new dev dependencies require Node.js v10+.
 - Reorganized files. This is only a breaking change for projects using undocumented deep imports.
+- Removed now redundant Node.js version compatibility logic in the `processRequest` function.
 
 ### Patch
 
