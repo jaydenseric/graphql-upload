@@ -15,6 +15,7 @@
 - Stop using [`husky`](https://npm.im/husky) and [`lint-staged`](https://npm.im/lint-staged).
 - Use [`isobject`](https://npm.im/isobject) for checking if values are enumerable, non-array objects.
 - Tests have been massively reorganized, refactored, and improved.
+- Test the `ignoreStream` function.
 - Removed now redundant `eslint-disable-next-line` comments.
 - Use strict mode for scripts.
 
