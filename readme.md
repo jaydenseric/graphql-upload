@@ -70,6 +70,7 @@ The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-mult
 - [function graphqlUploadKoa](#function-graphqluploadkoa)
 - [function processRequest](#function-processrequest)
 - [type FileUpload](#type-fileupload)
+- [type FileUploadCreateReadStream](#type-fileuploadcreatereadstream)
 - [type GraphQLOperation](#type-graphqloperation)
 - [type ProcessRequestFunction](#type-processrequestfunction)
 - [type ProcessRequestOptions](#type-processrequestoptions)
@@ -224,7 +225,23 @@ File upload details, resolved from an [`Upload` scalar](#class-graphqlupload) pr
 | `filename` | string | File name. |
 | `mimetype` | string | File MIME type. Provided by the client and can’t be trusted. |
 | `encoding` | string | File stream transfer encoding. |
-| `createReadStream` | Function | Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. This function can be passed an object with fields `encoding` and `highWaterMark` to configure the returned stream accordingly. |
+| `createReadStream` | [FileUploadCreateReadStream](#type-fileuploadcreatereadstream) | Creates a [Node.js readable stream](https://nodejs.org/api/stream.html#stream_readable_streams) of the file’s contents, for processing and storage. |
+
+---
+
+### type FileUploadCreateReadStream
+
+Creates a [Node.js readable stream](https://nodejs.org/api/stream.html#stream_readable_streams) of an [uploading file’s](#type-fileupload) contents, for processing and storage. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request.
+
+**Type:** Function
+
+| Parameter               | Type    | Description |
+| :---------------------- | :------ | :---------- |
+| `options`               | object? | Options.    |
+| `options.encoding`      | string? |             |
+| `options.highWaterMark` | number? |             |
+
+**Returns:** Readable — [Node.js readable stream](https://nodejs.org/api/stream.html#stream_readable_streams) of the file’s contents.
 
 ---
 
