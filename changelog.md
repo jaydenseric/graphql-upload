@@ -5,14 +5,14 @@
 ### Major
 
 - Updated Node.js support from v8.10+ to v10+, as earlier versions have reached end-of-life.
-- Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to version 6.
+- Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to v6, which now requires Node.js v10+.
 - Updated dev dependencies, some of which now require Node.js v10+.
 - Replaced the [`tap`](https://npm.im/tap) dev dependency with [`test-director`](https://npm.im/test-director), [`coverage-node`](https://npm.im/coverage-node), and [`hard-rejection`](https://npm.im/hard-rejection) to improve the dev experience and reduce the dev install size by ~75.7 MB. These new dev dependencies require Node.js v10+.
 - Reorganized files. This is only a breaking change for projects using undocumented deep imports.
 
 ### Minor
 
-- Added the ability to specify `encoding` and `highWaterMark` in `createReadStream`.
+- The `createReadStream` function in resolved file uploads now accepts options to configure the encoding and high water mark.
 
 ### Patch
 
