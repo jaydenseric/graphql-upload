@@ -9,12 +9,12 @@ const { ReadStream } = require('fs-capacitor')
 const Koa = require('koa')
 const fetch = require('node-fetch')
 const t = require('tap')
-const graphqlUploadExpress = require('./graphqlUploadExpress')
-const graphqlUploadKoa = require('./graphqlUploadKoa')
-const processRequest = require('./processRequest')
-const snapshotError = require('./test-helpers/snapshotError')
-const startServer = require('./test-helpers/startServer')
-const streamToString = require('./test-helpers/streamToString')
+const graphqlUploadExpress = require('../lib/graphqlUploadExpress')
+const graphqlUploadKoa = require('../lib/graphqlUploadKoa')
+const processRequest = require('../lib/processRequest')
+const snapshotError = require('../test-helpers/snapshotError')
+const startServer = require('../test-helpers/startServer')
+const streamToString = require('../test-helpers/streamToString')
 
 t.test('Single file.', async t => {
   const sendRequest = async port => {

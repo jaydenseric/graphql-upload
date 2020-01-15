@@ -3,10 +3,10 @@
 const Koa = require('koa')
 const fetch = require('node-fetch')
 const t = require('tap')
-const graphqlUploadKoa = require('./graphqlUploadKoa')
-const processRequest = require('./processRequest')
-const startServer = require('./test-helpers/startServer')
-const testGraphqlMultipartRequest = require('./test-helpers/testGraphqlMultipartRequest')
+const graphqlUploadKoa = require('../lib/graphqlUploadKoa')
+const processRequest = require('../lib/processRequest')
+const startServer = require('../test-helpers/startServer')
+const testGraphqlMultipartRequest = require('../test-helpers/testGraphqlMultipartRequest')
 
 t.test('‘graphqlUploadKoa’ with a non multipart request.', async t => {
   const app = new Koa().use(

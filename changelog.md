@@ -6,6 +6,7 @@
 
 - Updated Node.js support from v8.10+ to v10+, as earlier versions have reached end-of-life.
 - Updated dev dependencies, some of which now require Node.js v10+.
+- Reorganized files. This is only a breaking change for projects using undocumented deep imports.
 
 ### Patch
 

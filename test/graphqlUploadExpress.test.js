@@ -4,10 +4,10 @@ const express = require('express')
 const createError = require('http-errors')
 const fetch = require('node-fetch')
 const t = require('tap')
-const graphqlUploadExpress = require('./graphqlUploadExpress')
-const processRequest = require('./processRequest')
-const startServer = require('./test-helpers/startServer')
-const testGraphqlMultipartRequest = require('./test-helpers/testGraphqlMultipartRequest')
+const graphqlUploadExpress = require('../lib/graphqlUploadExpress')
+const processRequest = require('../lib/processRequest')
+const startServer = require('../test-helpers/startServer')
+const testGraphqlMultipartRequest = require('../test-helpers/testGraphqlMultipartRequest')
 
 t.test('‘graphqlUploadExpress’ with a non multipart request.', async t => {
   const app = express().use(

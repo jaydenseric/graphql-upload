@@ -23,15 +23,9 @@
     "apollo"
   ],
   "files": [
-    "constants.js",
-    "GraphQLUpload.js",
-    "graphqlUploadExpress.js",
-    "graphqlUploadKoa.js",
-    "ignoreStream.js",
-    "index.js",
-    "processRequest.js"
+    "lib"
   ],
-  "main": "index.js",
+  "main": "lib",
   "engines": {
     "node": ">=10"
   },
