@@ -191,6 +191,9 @@ module.exports = tests => {
     const server = http.createServer(async (request, response) => {
       try {
         const operation = await processRequest(request, response)
+
+        ok(operation.variables.fileB instanceof Promise)
+
         const uploadB = await operation.variables.fileB
         const streamB = uploadB.createReadStream()
 
@@ -282,6 +285,7 @@ module.exports = tests => {
         try {
           const operation = await processRequest(request, response)
 
+          ok(operation.variables.file instanceof Promise)
           await rejects(() => operation.variables.file, {
             name: 'BadRequestError',
             message: 'File missing in the request.',
