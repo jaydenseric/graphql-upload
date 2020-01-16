@@ -17,14 +17,17 @@ module.exports = tests => {
     const server = http.createServer(async (request, response) => {
       try {
         const operation = await processRequest(request, response)
+
         ok(operation.variables.file instanceof Promise)
 
         const upload = await operation.variables.file
+
         strictEqual(upload.filename, 'a.txt')
         strictEqual(upload.mimetype, 'text/plain')
         strictEqual(upload.encoding, '7bit')
 
         const stream = upload.createReadStream()
+
         ok(stream instanceof ReadStream)
         strictEqual(await streamToString(stream), 'a')
       } catch (error) {
@@ -123,6 +126,7 @@ module.exports = tests => {
     const server = http.createServer(async (request, response) => {
       try {
         const operation = await processRequest(request, response)
+
         ok(operation.variables.files[0] instanceof Promise)
         ok(operation.variables.files[1] instanceof Promise)
         strictEqual(operation.variables.files[0], operation.variables.files[1])
@@ -230,14 +234,17 @@ module.exports = tests => {
       const server = http.createServer(async (request, response) => {
         try {
           const operation = await processRequest(request, response)
+
           ok(operation.variables.file instanceof Promise)
 
           const upload = await operation.variables.file
+
           strictEqual(upload.filename, 'a.txt')
           strictEqual(upload.mimetype, 'text/plain')
           strictEqual(upload.encoding, '7bit')
 
           const stream = upload.createReadStream()
+
           ok(stream instanceof ReadStream)
           strictEqual(await streamToString(stream), 'a')
         } catch (error) {
@@ -274,6 +281,7 @@ module.exports = tests => {
       const server = http.createServer(async (request, response) => {
         try {
           const operation = await processRequest(request, response)
+
           await rejects(() => operation.variables.file, {
             name: 'BadRequestError',
             message: 'File missing in the request.',
@@ -366,16 +374,16 @@ module.exports = tests => {
           ok(operation.variables.files[0] instanceof Promise)
 
           const uploadA = await operation.variables.files[0]
+
           strictEqual(uploadA.filename, 'a.txt')
           strictEqual(uploadA.mimetype, 'text/plain')
           strictEqual(uploadA.encoding, '7bit')
 
           const streamA = uploadA.createReadStream()
+
           ok(streamA instanceof ReadStream)
           strictEqual(await streamToString(streamA), 'a')
-
           ok(operation.variables.files[1] instanceof Promise)
-
           await rejects(() => operation.variables.files[1], {
             name: 'PayloadTooLargeError',
             message: '2 max file uploads exceeded.',
@@ -446,11 +454,13 @@ module.exports = tests => {
         ok(operation.variables.files[0] instanceof Promise)
 
         const uploadB = await operation.variables.files[1]
+
         strictEqual(uploadB.filename, 'b.txt')
         strictEqual(uploadB.mimetype, 'text/plain')
         strictEqual(uploadB.encoding, '7bit')
 
         const streamB = uploadB.createReadStream()
+
         ok(streamB instanceof ReadStream)
         strictEqual(await streamToString(streamB), 'b')
       } catch (error) {
@@ -565,6 +575,7 @@ module.exports = tests => {
             strictEqual(upload.encoding, '7bit')
 
             const stream = upload.createReadStream()
+
             ok(stream instanceof ReadStream)
             strictEqual(await streamToString(stream), 'a')
           }
@@ -579,8 +590,8 @@ module.exports = tests => {
             strictEqual(upload.encoding, '7bit')
 
             const stream = upload.createReadStream()
-            ok(stream instanceof ReadStream)
 
+            ok(stream instanceof ReadStream)
             await rejects(
               () =>
                 new Promise((resolve, reject) => {
@@ -601,7 +612,6 @@ module.exports = tests => {
 
           const testUploadC = async () => {
             ok(operation.variables.fileC instanceof Promise)
-
             await rejects(() => operation.variables.fileC, {
               name: 'BadRequestError',
               message:
@@ -723,7 +733,6 @@ module.exports = tests => {
             strictEqual(upload.filename, 'b.txt')
             strictEqual(upload.mimetype, 'text/plain')
             strictEqual(upload.encoding, '7bit')
-
             throws(() => upload.createReadStream(), {
               name: 'BadRequestError',
               message:
@@ -735,7 +744,6 @@ module.exports = tests => {
 
           const testUploadC = async () => {
             ok(operation.variables.fileC instanceof Promise)
-
             await rejects(() => operation.variables.fileC, {
               name: 'BadRequestError',
               message:
