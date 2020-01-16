@@ -18,6 +18,7 @@
 - Tests have been massively reorganized, refactored, and improved.
 - Test the `ignoreStream` function.
 - Moved the `Upload` class to its own file.
+- Added JSDoc for the `Upload` class instance property `file`.
 - Removed now redundant `eslint-disable-next-line` comments.
 - Use strict mode for scripts.
 
