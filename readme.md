@@ -215,7 +215,7 @@ _How to import._
 
 ### type FileUpload
 
-File upload details, resolved from an [`Upload` scalar](#class-graphqlupload) promise.
+File upload details that are only available after the file’s field in the [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec) has begun streaming in.
 
 **Type:** object
 

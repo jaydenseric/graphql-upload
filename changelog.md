@@ -22,6 +22,7 @@
 - Moved the `Upload` class to its own file.
 - Added JSDoc for the `Upload` class instance property `file`.
 - Test the `Upload` class.
+- Improved JSDoc `FileUpload` typedef description.
 - Removed now redundant `eslint-disable-next-line` comments.
 - Use strict mode for scripts.
 
