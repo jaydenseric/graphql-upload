@@ -2,7 +2,6 @@
 
 const { deepStrictEqual, ok, strictEqual } = require('assert')
 const FormData = require('form-data')
-const createError = require('http-errors')
 const Koa = require('koa')
 const fetch = require('node-fetch')
 const graphqlUploadKoa = require('../../lib/graphqlUploadKoa')
@@ -100,12 +99,12 @@ module.exports = tests => {
   )
 
   tests.add(
-    '`graphqlUploadKoa` with a multipart request and option `processRequest` throwing an exposed error.',
+    '`graphqlUploadKoa` with a multipart request and option `processRequest` throwing an error.',
     async () => {
       let koaError
       let requestCompleted
 
-      const error = createError(400, 'Message.')
+      const error = new Error('Message.')
       const app = new Koa()
         .on('error', error => {
           koaError = error
@@ -135,10 +134,52 @@ module.exports = tests => {
         body.append('map', JSON.stringify({ '1': ['variables.file'] }))
         body.append('1', 'a', { filename: 'a.txt' })
 
-        await fetch(`http://localhost:${port}`, {
-          method: 'POST',
-          body
+        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+
+        deepStrictEqual(koaError, error)
+        ok(
+          requestCompleted,
+          'Response wasn’t delayed until the request completed.'
+        )
+      } finally {
+        close()
+      }
+    }
+  )
+
+  tests.add(
+    '`graphqlUploadKoa` with a multipart request and following middleware throwing an error.',
+    async () => {
+      let koaError
+      let requestCompleted
+
+      const error = new Error('Message.')
+      const app = new Koa()
+        .on('error', error => {
+          koaError = error
         })
+        .use(async (ctx, next) => {
+          try {
+            await next()
+          } finally {
+            requestCompleted = ctx.req.complete
+          }
+        })
+        .use(graphqlUploadKoa())
+        .use(async () => {
+          throw error
+        })
+
+      const { port, close } = await listen(app)
+
+      try {
+        const body = new FormData()
+
+        body.append('operations', JSON.stringify({ variables: { file: null } }))
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
+        body.append('1', 'a', { filename: 'a.txt' })
+
+        await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
         deepStrictEqual(koaError, error)
         ok(
