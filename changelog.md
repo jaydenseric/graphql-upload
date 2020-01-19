@@ -14,7 +14,7 @@
 
 ### Patch
 
-- Removed the now redundant [`eslint-plugin-import-order-alphabetical`](https://npm.im/eslint-plugin-import-order-alphabetical) dev dependency.
+- Removed the now redundant [`eslint-plugin-import-order-alphabetical`](https://npm.im/eslint-plugin-import-order-alphabetical) and [`express-async-handler`](https://npm.im/express-async-handler) dev dependencies.
 - Stop using [`husky`](https://npm.im/husky) and [`lint-staged`](https://npm.im/lint-staged).
 - Use [`isobject`](https://npm.im/isobject) for checking if values are enumerable, non-array objects.
 - Tests have been massively reorganized, refactored, and improved.
