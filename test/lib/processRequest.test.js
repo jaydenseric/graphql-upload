@@ -555,14 +555,16 @@ module.exports = tests => {
       // awaited or else the test will resolve and the process will exit before
       // it’s done.
       let resolveDone
-      const done = new Promise(resolve => (resolveDone = resolve))
+      const done = new Promise(resolve => {
+        resolveDone = resolve
+      })
 
       // The request must be aborted after it has been received by the server
       // request handler, or else Node.js won’t run the handler.
       let resolveRequestReceived
-      const requestReceived = new Promise(
-        resolve => (resolveRequestReceived = resolve)
-      )
+      const requestReceived = new Promise(resolve => {
+        resolveRequestReceived = resolve
+      })
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -692,14 +694,16 @@ module.exports = tests => {
       // awaited or else the test will resolve and the process will exit before
       // it’s done.
       let resolveDone
-      const done = new Promise(resolve => (resolveDone = resolve))
+      const done = new Promise(resolve => {
+        resolveDone = resolve
+      })
 
       // The request must be aborted after it has been received by the server
       // request handler, or else Node.js won’t run the handler.
       let resolveRequestReceived
-      const requestReceived = new Promise(
-        resolve => (resolveRequestReceived = resolve)
-      )
+      const requestReceived = new Promise(resolve => {
+        resolveRequestReceived = resolve
+      })
 
       const server = http.createServer(async (request, response) => {
         try {
