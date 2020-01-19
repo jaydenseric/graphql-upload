@@ -64,7 +64,7 @@ module.exports = tests => {
   })
 
   tests.add(
-    '`graphqlUploadExpress` with option `processRequest` and a multipart request.',
+    '`graphqlUploadExpress` with a multipart request and option `processRequest`.',
     async () => {
       let processRequestRan = false
       let requestBody
@@ -105,7 +105,7 @@ module.exports = tests => {
   )
 
   tests.add(
-    '`graphqlUploadExpress` with option `processRequest`, a multipart request, and an exposed error.',
+    '`graphqlUploadExpress` with a multipart request and option `processRequest` throwing an exposed error.',
     async () => {
       let expressError
       let responseStatusCode

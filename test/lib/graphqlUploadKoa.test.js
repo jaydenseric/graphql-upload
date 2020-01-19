@@ -59,7 +59,7 @@ module.exports = tests => {
   })
 
   tests.add(
-    '`graphqlUploadKoa` with option `processRequest` and a multipart request.',
+    '`graphqlUploadKoa` with a multipart request and option `processRequest`.',
     async () => {
       let processRequestRan = false
       let ctxRequestBody
@@ -100,7 +100,7 @@ module.exports = tests => {
   )
 
   tests.add(
-    '`graphqlUploadKoa` with option `processRequest`, a multipart request, and an exposed error.',
+    '`graphqlUploadKoa` with a multipart request and option `processRequest` throwing an exposed error.',
     async () => {
       let koaError
 
