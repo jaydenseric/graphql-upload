@@ -66,6 +66,11 @@ The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-mult
 ### Table of contents
 
 - [class GraphQLUpload](#class-graphqlupload)
+- [class Upload](#class-upload)
+  - [Upload instance method reject](#upload-instance-method-reject)
+  - [Upload instance method resolve](#upload-instance-method-resolve)
+  - [Upload instance property file](#upload-instance-property-file)
+  - [Upload instance property promise](#upload-instance-property-promise)
 - [function graphqlUploadExpress](#function-graphqluploadexpress)
 - [function graphqlUploadKoa](#function-graphqluploadkoa)
 - [function processRequest](#function-processrequest)
@@ -130,6 +135,40 @@ _A manually constructed schema with an image upload mutation._
 >   })
 > })
 > ```
+
+---
+
+### class Upload
+
+A file expected to be uploaded as it has been declared in the `map` field of a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). The [`processRequest`](#function-processrequest) function places references to an instance of this class wherever the file is expected in the [GraphQL operation](#type-graphqloperation). The [`Upload` scalar](#class-graphqlupload) derives it’s value from the [`promise`](#upload-instance-property-promise) property.
+
+#### Upload instance method reject
+
+Rejects the upload promise with an error. This method should only be utilized by [`processRequest`](#function-processrequest).
+
+| Parameter | Type   | Description     |
+| :-------- | :----- | :-------------- |
+| `error`   | object | Error instance. |
+
+#### Upload instance method resolve
+
+Resolves the upload promise with the file upload details. This should only be utilized by [`processRequest`](#function-processrequest).
+
+| Parameter | Type                           | Description          |
+| :-------- | :----------------------------- | :------------------- |
+| `file`    | [FileUpload](#type-fileupload) | File upload details. |
+
+#### Upload instance property file
+
+The file upload details, available when the [upload promise](#upload-instance-property-promise) resolves. This should only be utilized by [`processRequest`](#function-processrequest).
+
+**Type:** `undefined` | [FileUpload](#type-fileupload)
+
+#### Upload instance property promise
+
+Promise that resolves file upload details. This should only be utilized by [`GraphQLUpload`](#class-graphqlupload).
+
+**Type:** Promise&lt;[FileUpload](#type-fileupload)>
 
 ---
 
@@ -199,7 +238,7 @@ _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
 
 ### function processRequest
 
-Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). Errors are created with [`http-errors`](https://npm.im/http-errors) to assist in sending responses with appropriate HTTP status codes. Used in [`graphqlUploadExpress`](#function-graphqluploadexpress) and [`graphqlUploadKoa`](#function-graphqluploadkoa) and can be used to create custom middleware.
+Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). It parses the `operations` and `map` fields to create an [`Upload`](#class-upload) instance for each expected file upload, placing references wherever the file is expected in the [GraphQL operation](#type-graphqloperation) for the [`Upload` scalar](#class-graphqlupload) to derive it’s value. Errors are created with [`http-errors`](https://npm.im/http-errors) to assist in sending responses with appropriate HTTP status codes. Used in [`graphqlUploadExpress`](#function-graphqluploadexpress) and [`graphqlUploadKoa`](#function-graphqluploadkoa) and can be used to create custom middleware.
 
 **Type:** [ProcessRequestFunction](#type-processrequestfunction)
 
@@ -260,6 +299,10 @@ Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-m
 | `options` | [ProcessRequestOptions](#type-processrequestoptions)? | Options for processing the request. |
 
 **Returns:** Promise&lt;[GraphQLOperation](#type-graphqloperation) | Array&lt;[GraphQLOperation](#type-graphqloperation)>> — GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
+
+#### See
+
+- [`processRequest`](#function-processrequest).
 
 ---
 
