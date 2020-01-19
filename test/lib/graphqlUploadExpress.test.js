@@ -108,10 +108,22 @@ module.exports = tests => {
     '`graphqlUploadExpress` with a multipart request and option `processRequest` throwing an exposed error.',
     async () => {
       let expressError
+      let requestCompleted
       let responseStatusCode
 
       const error = createError(400, 'Message.')
       const app = express()
+        .use((request, response, next) => {
+          const { send } = response
+
+          response.send = (...args) => {
+            requestCompleted = request.complete
+            response.send = send
+            response.send(...args)
+          }
+
+          next()
+        })
         .use(
           graphqlUploadExpress({
             async processRequest(request) {
@@ -146,6 +158,10 @@ module.exports = tests => {
         })
 
         deepStrictEqual(expressError, error)
+        ok(
+          requestCompleted,
+          'Response wasn’t delayed until the request completed.'
+        )
         strictEqual(responseStatusCode, error.status)
       } finally {
         close()

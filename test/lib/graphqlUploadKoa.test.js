@@ -103,11 +103,19 @@ module.exports = tests => {
     '`graphqlUploadKoa` with a multipart request and option `processRequest` throwing an exposed error.',
     async () => {
       let koaError
+      let requestCompleted
 
       const error = createError(400, 'Message.')
       const app = new Koa()
         .on('error', error => {
           koaError = error
+        })
+        .use(async (ctx, next) => {
+          try {
+            await next()
+          } finally {
+            requestCompleted = ctx.req.complete
+          }
         })
         .use(
           graphqlUploadKoa({
@@ -133,6 +141,10 @@ module.exports = tests => {
         })
 
         deepStrictEqual(koaError, error)
+        ok(
+          requestCompleted,
+          'Response wasn’t delayed until the request completed.'
+        )
       } finally {
         close()
       }
