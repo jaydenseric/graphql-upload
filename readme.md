@@ -235,11 +235,11 @@ Creates a [Node.js readable stream](https://nodejs.org/api/stream.html#stream_re
 
 **Type:** Function
 
-| Parameter               | Type    | Description |
-| :---------------------- | :------ | :---------- |
-| `options`               | object? | Options.    |
-| `options.encoding`      | string? |             |
-| `options.highWaterMark` | number? |             |
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| `options` | object? | Options. |
+| `options.encoding` | string? | Optional value to use as the readable stream's highWaterMark, specifying the number of bytes (for binary data) or characters (for strings) that will be bufferred into memory. [See node's docs for `stream.Readable`.](https://nodejs.org/api/stream.html#stream_new_stream_readable_options) |
+| `options.highWaterMark` | number? | Optional value to use as the readable stream's highWaterMark, specifying the number of bytes (for binary data) or characters (for strings) that will be bufferred into memory. [See node's docs for `stream.Readable`.](https://nodejs.org/api/stream.html#stream_new_stream_readable_options) |
 
 **Returns:** Readable — [Node.js readable stream](https://nodejs.org/api/stream.html#stream_readable_streams) of the file’s contents.
 
