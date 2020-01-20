@@ -70,7 +70,10 @@ module.exports = tests => {
         })
         ok(stream instanceof ReadStream)
         ok(stream.readableHighWaterMark, 100)
-        strictEqual(await streamToString(stream), 'a')
+        strictEqual(
+          await streamToString(stream),
+          Buffer.from('a').toString('base64')
+        )
       } catch (error) {
         serverError = error
       } finally {
@@ -85,7 +88,7 @@ module.exports = tests => {
 
       body.append('operations', JSON.stringify({ variables: { file: null } }))
       body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-      body.append('1', 'YQ==', {
+      body.append('1', 'a', {
         filename: 'a.txt'
       })
 
