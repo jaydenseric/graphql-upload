@@ -51,6 +51,52 @@ module.exports = tests => {
     }
   })
 
+  tests.add('`processRequest` with createReadStream options.', async () => {
+    let serverError
+
+    const server = http.createServer(async (request, response) => {
+      try {
+        const operation = await processRequest(request, response)
+        ok(operation.variables.file instanceof Promise)
+
+        const upload = await operation.variables.file
+        strictEqual(upload.filename, 'a.txt')
+        strictEqual(upload.mimetype, 'text/plain')
+        strictEqual(upload.encoding, '7bit')
+
+        const stream = upload.createReadStream({
+          encoding: 'base64',
+          highWaterMark: 100
+        })
+        ok(stream instanceof ReadStream)
+        ok(stream.readableHighWaterMark, 100)
+        strictEqual(await streamToString(stream), 'a')
+      } catch (error) {
+        serverError = error
+      } finally {
+        response.end()
+      }
+    })
+
+    const { port, close } = await listen(server)
+
+    try {
+      const body = new FormData()
+
+      body.append('operations', JSON.stringify({ variables: { file: null } }))
+      body.append('map', JSON.stringify({ '1': ['variables.file'] }))
+      body.append('1', 'YQ==', {
+        filename: 'a.txt'
+      })
+
+      await fetch(`http://localhost:${port}`, { method: 'POST', body })
+
+      if (serverError) throw serverError
+    } finally {
+      close()
+    }
+  })
+
   tests.add('`processRequest` with a single file, batched.', async () => {
     let serverError
 
