@@ -88,12 +88,12 @@ _Setup for a schema built with [`makeExecutableSchema`](https://apollographql.co
 > const { GraphQLUpload } = require('graphql-upload')
 >
 > const schema = makeExecutableSchema({
-> 	typeDefs: /* GraphQL */ `
-> 		scalar Upload
-> 	`,
-> 	resolvers: {
-> 		Upload: GraphQLUpload
-> 	}
+>   typeDefs: /* GraphQL */ `
+>     scalar Upload
+>   `,
+>   resolvers: {
+>     Upload: GraphQLUpload
+>   }
 > })
 > ```
 
@@ -101,34 +101,34 @@ _A manually constructed schema with an image upload mutation._
 
 > ```js
 > const {
-> 	GraphQLSchema,
-> 	GraphQLObjectType,
-> 	GraphQLBoolean
+>   GraphQLSchema,
+>   GraphQLObjectType,
+>   GraphQLBoolean
 > } = require('graphql')
 > const { GraphQLUpload } = require('graphql-upload')
 >
 > const schema = new GraphQLSchema({
-> 	mutation: new GraphQLObjectType({
-> 		name: 'Mutation',
-> 		fields: {
-> 			uploadImage: {
-> 				description: 'Uploads an image.',
-> 				type: GraphQLBoolean,
-> 				args: {
-> 					image: {
-> 						description: 'Image file.',
-> 						type: GraphQLUpload
-> 					}
-> 				},
-> 				async resolve(parent, { image }) {
-> 					const { filename, mimetype, createReadStream } = await image
-> 					const stream = createReadStream()
-> 					// Promisify the stream and store the file, then…
-> 					return true
-> 				}
-> 			}
-> 		}
-> 	})
+>   mutation: new GraphQLObjectType({
+>     name: 'Mutation',
+>     fields: {
+>       uploadImage: {
+>         description: 'Uploads an image.',
+>         type: GraphQLBoolean,
+>         args: {
+>           image: {
+>             description: 'Image file.',
+>             type: GraphQLUpload
+>           }
+>         },
+>         async resolve(parent, { image }) {
+>           const { filename, mimetype, createReadStream } = await image
+>           const stream = createReadStream()
+>           // Promisify the stream and store the file, then…
+>           return true
+>         }
+>       }
+>     }
+>   })
 > })
 > ```
 
@@ -156,12 +156,12 @@ _Basic [`express-graphql`](https://npm.im/express-graphql) setup._
 > const schema = require('./schema')
 >
 > express()
-> 	.use(
-> 		'/graphql',
-> 		graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
-> 		graphqlHTTP({ schema })
-> 	)
-> 	.listen(3000)
+>   .use(
+>     '/graphql',
+>     graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
+>     graphqlHTTP({ schema })
+>   )
+>   .listen(3000)
 > ```
 
 ---
@@ -189,11 +189,11 @@ _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
 > const schema = require('./schema')
 >
 > new Koa()
-> 	.use(errorHandler())
-> 	.use(bodyParser())
-> 	.use(graphqlUploadKoa({ maxFileSize: 10000000, maxFiles: 10 }))
-> 	.use(execute({ schema }))
-> 	.listen(3000)
+>   .use(errorHandler())
+>   .use(bodyParser())
+>   .use(graphqlUploadKoa({ maxFileSize: 10000000, maxFiles: 10 }))
+>   .use(execute({ schema }))
+>   .listen(3000)
 > ```
 
 ---
