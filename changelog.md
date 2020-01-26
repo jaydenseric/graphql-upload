@@ -9,6 +9,9 @@
 - Updated dev dependencies, some of which now require Node.js v10+.
 - Replaced the [`tap`](https://npm.im/tap) dev dependency with [`test-director`](https://npm.im/test-director), [`coverage-node`](https://npm.im/coverage-node), and [`hard-rejection`](https://npm.im/hard-rejection) to improve the dev experience and reduce the dev install size by ~75.7 MB. These new dev dependencies require Node.js v10+.
 - Reorganized files. This is only a breaking change for projects using undocumented deep imports.
+- Removed now redundant Node.js version compatibility logic in the `processRequest` function.
+- The `processRequest` function now places references to instances of the now exported and documented `Upload` class in the GraphQL operation for the `GraphQLUpload` scalar to derive its value, and the `GraphQLUpload` scalar now throws a `GraphQLError` when it parses an invalid value, fixing [#175](https://github.com/jaydenseric/graphql-upload/issues/175) via [#181](https://github.com/jaydenseric/graphql-upload/pull/181).
+- The `GraphQLUpload` scalar `parseLiteral` and `serialize` methods now throw `GraphQLError` (instead of `Error`) instances, with tweaked messages.
 
 ### Minor
 
@@ -16,10 +19,16 @@
 
 ### Patch
 
-- Removed the now redundant [`eslint-plugin-import-order-alphabetical`](https://npm.im/eslint-plugin-import-order-alphabetical) dev dependency.
+- Removed the now redundant [`eslint-plugin-import-order-alphabetical`](https://npm.im/eslint-plugin-import-order-alphabetical) and [`express-async-handler`](https://npm.im/express-async-handler) dev dependencies.
 - Stop using [`husky`](https://npm.im/husky) and [`lint-staged`](https://npm.im/lint-staged).
 - Use [`isobject`](https://npm.im/isobject) for checking if values are enumerable, non-array objects.
 - Tests have been massively reorganized, refactored, and improved.
+- Test the `GraphQLUpload` scalar.
+- Test the `ignoreStream` function.
+- Moved the `Upload` class to its own file.
+- Added JSDoc for the `Upload` class instance property `file`.
+- Test the `Upload` class.
+- Improved JSDoc `FileUpload` typedef description.
 - Removed now redundant `eslint-disable-next-line` comments.
 - Use strict mode for scripts.
 

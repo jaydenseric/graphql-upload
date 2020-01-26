@@ -1,11 +1,11 @@
 'use strict'
 
 /**
- * Converts a readable stream to a string.
+ * Converts a Node.js readable stream to a string.
  * @kind function
  * @name streamToString
- * @param {ReadableStream} stream Readable stream.
- * @returns {Promise<string>} Resolves the string.
+ * @param {ReadableStream} stream Node.js readable stream.
+ * @returns {Promise<string>} Resolves the final string.
  * @ignore
  */
 module.exports = function streamToString(stream) {

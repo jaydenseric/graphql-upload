@@ -5,6 +5,7 @@ const http = require('http')
 const FormData = require('form-data')
 const { ReadStream } = require('fs-capacitor')
 const fetch = require('node-fetch')
+const Upload = require('../../lib/Upload')
 const processRequest = require('../../lib/processRequest')
 const abortingMultipartRequest = require('../abortingMultipartRequest')
 const listen = require('../listen')
@@ -17,14 +18,17 @@ module.exports = tests => {
     const server = http.createServer(async (request, response) => {
       try {
         const operation = await processRequest(request, response)
-        ok(operation.variables.file instanceof Promise)
 
-        const upload = await operation.variables.file
+        ok(operation.variables.file instanceof Upload)
+
+        const upload = await operation.variables.file.promise
+
         strictEqual(upload.filename, 'a.txt')
         strictEqual(upload.mimetype, 'text/plain')
         strictEqual(upload.encoding, '7bit')
 
         const stream = upload.createReadStream()
+
         ok(stream instanceof ReadStream)
         strictEqual(await streamToString(stream), 'a')
       } catch (error) {
@@ -107,9 +111,9 @@ module.exports = tests => {
       try {
         const operations = await processRequest(request, response)
 
-        ok(operations[0].variables.file instanceof Promise)
+        ok(operations[0].variables.file instanceof Upload)
 
-        const uploadA = await operations[0].variables.file
+        const uploadA = await operations[0].variables.file.promise
 
         strictEqual(uploadA.filename, 'a.txt')
         strictEqual(uploadA.mimetype, 'text/plain')
@@ -120,9 +124,9 @@ module.exports = tests => {
         ok(streamA instanceof ReadStream)
         strictEqual(await streamToString(streamA), 'a')
 
-        ok(operations[1].variables.file instanceof Promise)
+        ok(operations[1].variables.file instanceof Upload)
 
-        const uploadB = await operations[1].variables.file
+        const uploadB = await operations[1].variables.file.promise
 
         strictEqual(uploadB.filename, 'b.txt')
         strictEqual(uploadB.mimetype, 'text/plain')
@@ -172,13 +176,14 @@ module.exports = tests => {
     const server = http.createServer(async (request, response) => {
       try {
         const operation = await processRequest(request, response)
-        ok(operation.variables.files[0] instanceof Promise)
-        ok(operation.variables.files[1] instanceof Promise)
+
+        ok(operation.variables.files[0] instanceof Upload)
+        ok(operation.variables.files[1] instanceof Upload)
         strictEqual(operation.variables.files[0], operation.variables.files[1])
 
         const [upload1, upload2] = await Promise.all([
-          operation.variables.files[0],
-          operation.variables.files[1]
+          operation.variables.files[0].promise,
+          operation.variables.files[1].promise
         ])
 
         strictEqual(upload1, upload2)
@@ -236,7 +241,10 @@ module.exports = tests => {
     const server = http.createServer(async (request, response) => {
       try {
         const operation = await processRequest(request, response)
-        const uploadB = await operation.variables.fileB
+
+        ok(operation.variables.fileB instanceof Upload)
+
+        const uploadB = await operation.variables.fileB.promise
         const streamB = uploadB.createReadStream()
 
         await streamToString(streamB)
@@ -279,14 +287,17 @@ module.exports = tests => {
       const server = http.createServer(async (request, response) => {
         try {
           const operation = await processRequest(request, response)
-          ok(operation.variables.file instanceof Promise)
 
-          const upload = await operation.variables.file
+          ok(operation.variables.file instanceof Upload)
+
+          const upload = await operation.variables.file.promise
+
           strictEqual(upload.filename, 'a.txt')
           strictEqual(upload.mimetype, 'text/plain')
           strictEqual(upload.encoding, '7bit')
 
           const stream = upload.createReadStream()
+
           ok(stream instanceof ReadStream)
           strictEqual(await streamToString(stream), 'a')
         } catch (error) {
@@ -323,7 +334,9 @@ module.exports = tests => {
       const server = http.createServer(async (request, response) => {
         try {
           const operation = await processRequest(request, response)
-          await rejects(() => operation.variables.file, {
+
+          ok(operation.variables.file instanceof Upload)
+          await rejects(operation.variables.file.promise, {
             name: 'BadRequestError',
             message: 'File missing in the request.',
             status: 400,
@@ -358,15 +371,12 @@ module.exports = tests => {
 
     const server = http.createServer(async (request, response) => {
       try {
-        await rejects(
-          () => processRequest(request, response, { maxFiles: 1 }),
-          {
-            name: 'PayloadTooLargeError',
-            message: '1 max file uploads exceeded.',
-            status: 413,
-            expose: true
-          }
-        )
+        await rejects(processRequest(request, response, { maxFiles: 1 }), {
+          name: 'PayloadTooLargeError',
+          message: '1 max file uploads exceeded.',
+          status: 413,
+          expose: true
+        })
       } catch (error) {
         serverError = error
       } finally {
@@ -412,20 +422,20 @@ module.exports = tests => {
             maxFiles: 2
           })
 
-          ok(operation.variables.files[0] instanceof Promise)
+          ok(operation.variables.files[0] instanceof Upload)
 
-          const uploadA = await operation.variables.files[0]
+          const uploadA = await operation.variables.files[0].promise
+
           strictEqual(uploadA.filename, 'a.txt')
           strictEqual(uploadA.mimetype, 'text/plain')
           strictEqual(uploadA.encoding, '7bit')
 
           const streamA = uploadA.createReadStream()
+
           ok(streamA instanceof ReadStream)
           strictEqual(await streamToString(streamA), 'a')
-
-          ok(operation.variables.files[1] instanceof Promise)
-
-          await rejects(() => operation.variables.files[1], {
+          ok(operation.variables.files[1] instanceof Upload)
+          await rejects(operation.variables.files[1].promise, {
             name: 'PayloadTooLargeError',
             message: '2 max file uploads exceeded.',
             status: 413,
@@ -476,9 +486,9 @@ module.exports = tests => {
           maxFileSize: 1
         })
 
-        ok(operation.variables.files[0] instanceof Promise)
+        ok(operation.variables.files[0] instanceof Upload)
 
-        const { createReadStream } = await operation.variables.files[0]
+        const { createReadStream } = await operation.variables.files[0].promise
 
         await throws(
           () => {
@@ -492,14 +502,16 @@ module.exports = tests => {
           }
         )
 
-        ok(operation.variables.files[0] instanceof Promise)
+        ok(operation.variables.files[0] instanceof Upload)
 
-        const uploadB = await operation.variables.files[1]
+        const uploadB = await operation.variables.files[1].promise
+
         strictEqual(uploadB.filename, 'b.txt')
         strictEqual(uploadB.mimetype, 'text/plain')
         strictEqual(uploadB.encoding, '7bit')
 
         const streamB = uploadB.createReadStream()
+
         ok(streamB instanceof ReadStream)
         strictEqual(await streamToString(streamB), 'b')
       } catch (error) {
@@ -541,19 +553,13 @@ module.exports = tests => {
 
     const server = http.createServer(async (request, response) => {
       try {
-        await rejects(
-          () =>
-            processRequest(request, response, {
-              maxFieldSize: 1
-            }),
-          {
-            name: 'PayloadTooLargeError',
-            message:
-              'The ‘operations’ multipart field value exceeds the 1 byte size limit.',
-            status: 413,
-            expose: true
-          }
-        )
+        await rejects(processRequest(request, response, { maxFieldSize: 1 }), {
+          name: 'PayloadTooLargeError',
+          message:
+            'The ‘operations’ multipart field value exceeds the 1 byte size limit.',
+          status: 413,
+          expose: true
+        })
       } catch (error) {
         serverError = error
       } finally {
@@ -589,14 +595,16 @@ module.exports = tests => {
       // awaited or else the test will resolve and the process will exit before
       // it’s done.
       let resolveDone
-      const done = new Promise(resolve => (resolveDone = resolve))
+      const done = new Promise(resolve => {
+        resolveDone = resolve
+      })
 
       // The request must be aborted after it has been received by the server
       // request handler, or else Node.js won’t run the handler.
       let resolveRequestReceived
-      const requestReceived = new Promise(
-        resolve => (resolveRequestReceived = resolve)
-      )
+      const requestReceived = new Promise(resolve => {
+        resolveRequestReceived = resolve
+      })
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -605,39 +613,39 @@ module.exports = tests => {
           const operation = await processRequest(request, response)
 
           const testUploadA = async () => {
-            ok(operation.variables.fileA instanceof Promise)
+            ok(operation.variables.fileA instanceof Upload)
 
-            const upload = await operation.variables.fileA
+            const upload = await operation.variables.fileA.promise
 
             strictEqual(upload.filename, 'a.txt')
             strictEqual(upload.mimetype, 'text/plain')
             strictEqual(upload.encoding, '7bit')
 
             const stream = upload.createReadStream()
+
             ok(stream instanceof ReadStream)
             strictEqual(await streamToString(stream), 'a')
           }
 
           const testUploadB = async () => {
-            ok(operation.variables.fileB instanceof Promise)
+            ok(operation.variables.fileB instanceof Upload)
 
-            const upload = await operation.variables.fileB
+            const upload = await operation.variables.fileB.promise
 
             strictEqual(upload.filename, 'b.txt')
             strictEqual(upload.mimetype, 'text/plain')
             strictEqual(upload.encoding, '7bit')
 
             const stream = upload.createReadStream()
-            ok(stream instanceof ReadStream)
 
+            ok(stream instanceof ReadStream)
             await rejects(
-              () =>
-                new Promise((resolve, reject) => {
-                  stream
-                    .once('error', reject)
-                    .once('end', resolve)
-                    .resume()
-                }),
+              new Promise((resolve, reject) => {
+                stream
+                  .once('error', reject)
+                  .once('end', resolve)
+                  .resume()
+              }),
               {
                 name: 'BadRequestError',
                 message:
@@ -649,9 +657,8 @@ module.exports = tests => {
           }
 
           const testUploadC = async () => {
-            ok(operation.variables.fileC instanceof Promise)
-
-            await rejects(() => operation.variables.fileC, {
+            ok(operation.variables.fileC instanceof Upload)
+            await rejects(operation.variables.fileC.promise, {
               name: 'BadRequestError',
               message:
                 'Request disconnected during file upload stream parsing.',
@@ -726,14 +733,16 @@ module.exports = tests => {
       // awaited or else the test will resolve and the process will exit before
       // it’s done.
       let resolveDone
-      const done = new Promise(resolve => (resolveDone = resolve))
+      const done = new Promise(resolve => {
+        resolveDone = resolve
+      })
 
       // The request must be aborted after it has been received by the server
       // request handler, or else Node.js won’t run the handler.
       let resolveRequestReceived
-      const requestReceived = new Promise(
-        resolve => (resolveRequestReceived = resolve)
-      )
+      const requestReceived = new Promise(resolve => {
+        resolveRequestReceived = resolve
+      })
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -747,9 +756,9 @@ module.exports = tests => {
           })
 
           const testUploadA = async () => {
-            ok(operation.variables.fileA instanceof Promise)
+            ok(operation.variables.fileA instanceof Upload)
 
-            const upload = await operation.variables.fileA
+            const upload = await operation.variables.fileA.promise
 
             strictEqual(upload.filename, 'a.txt')
             strictEqual(upload.mimetype, 'text/plain')
@@ -765,14 +774,13 @@ module.exports = tests => {
           }
 
           const testUploadB = async () => {
-            ok(operation.variables.fileB instanceof Promise)
+            ok(operation.variables.fileB instanceof Upload)
 
-            const upload = await operation.variables.fileB
+            const upload = await operation.variables.fileB.promise
 
             strictEqual(upload.filename, 'b.txt')
             strictEqual(upload.mimetype, 'text/plain')
             strictEqual(upload.encoding, '7bit')
-
             throws(() => upload.createReadStream(), {
               name: 'BadRequestError',
               message:
@@ -783,9 +791,8 @@ module.exports = tests => {
           }
 
           const testUploadC = async () => {
-            ok(operation.variables.fileC instanceof Promise)
-
-            await rejects(() => operation.variables.fileC, {
+            ok(operation.variables.fileC instanceof Upload)
+            await rejects(operation.variables.fileC.promise, {
               name: 'BadRequestError',
               message:
                 'Request disconnected during file upload stream parsing.',
@@ -856,7 +863,7 @@ module.exports = tests => {
 
       const server = http.createServer(async (request, response) => {
         try {
-          await rejects(() => processRequest(request, response), {
+          await rejects(processRequest(request, response), {
             name: 'BadRequestError',
             message:
               'Misordered multipart fields; ‘map’ should follow ‘operations’ (https://github.com/jaydenseric/graphql-multipart-request-spec).',
@@ -895,7 +902,7 @@ module.exports = tests => {
 
       const server = http.createServer(async (request, response) => {
         try {
-          await rejects(() => processRequest(request, response), {
+          await rejects(processRequest(request, response), {
             name: 'BadRequestError',
             message:
               'Misordered multipart fields; files should follow ‘map’ (https://github.com/jaydenseric/graphql-multipart-request-spec).',
@@ -934,7 +941,7 @@ module.exports = tests => {
 
       const server = http.createServer(async (request, response) => {
         try {
-          await rejects(() => processRequest(request, response), {
+          await rejects(processRequest(request, response), {
             name: 'BadRequestError',
             message:
               'Missing multipart field ‘map’ (https://github.com/jaydenseric/graphql-multipart-request-spec).',
@@ -971,7 +978,7 @@ module.exports = tests => {
 
       const server = http.createServer(async (request, response) => {
         try {
-          await rejects(() => processRequest(request, response), {
+          await rejects(processRequest(request, response), {
             name: 'BadRequestError',
             message:
               'Missing multipart field ‘operations’ (https://github.com/jaydenseric/graphql-multipart-request-spec).',
@@ -1007,7 +1014,7 @@ module.exports = tests => {
 
       const server = http.createServer(async (request, response) => {
         try {
-          await rejects(() => processRequest(request, response), {
+          await rejects(processRequest(request, response), {
             name: 'BadRequestError',
             message:
               'Invalid JSON in the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).',
@@ -1046,7 +1053,7 @@ module.exports = tests => {
 
       const server = http.createServer(async (request, response) => {
         try {
-          await rejects(() => processRequest(request, response), {
+          await rejects(processRequest(request, response), {
             name: 'BadRequestError',
             message:
               'Invalid JSON in the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).',
@@ -1091,7 +1098,7 @@ module.exports = tests => {
 
       const server = http.createServer(async (request, response) => {
         try {
-          await rejects(() => processRequest(request, response), {
+          await rejects(processRequest(request, response), {
             name: 'BadRequestError',
             message:
               'Invalid type for the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).',
@@ -1130,7 +1137,7 @@ module.exports = tests => {
 
       const server = http.createServer(async (request, response) => {
         try {
-          await rejects(() => processRequest(request, response), {
+          await rejects(processRequest(request, response), {
             name: 'BadRequestError',
             message:
               'Invalid JSON in the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).',
@@ -1169,7 +1176,7 @@ module.exports = tests => {
 
       const server = http.createServer(async (request, response) => {
         try {
-          await rejects(() => processRequest(request, response), {
+          await rejects(processRequest(request, response), {
             name: 'BadRequestError',
             message:
               'Invalid type for the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).',
@@ -1208,7 +1215,7 @@ module.exports = tests => {
 
       const server = http.createServer(async (request, response) => {
         try {
-          await rejects(() => processRequest(request, response), {
+          await rejects(processRequest(request, response), {
             name: 'BadRequestError',
             message:
               'Invalid type for the ‘map’ multipart field entry key ‘1’ array (https://github.com/jaydenseric/graphql-multipart-request-spec).',
@@ -1247,7 +1254,7 @@ module.exports = tests => {
 
       const server = http.createServer(async (request, response) => {
         try {
-          await rejects(() => processRequest(request, response), {
+          await rejects(processRequest(request, response), {
             name: 'BadRequestError',
             message:
               'Invalid type for the ‘map’ multipart field entry key ‘1’ array index ‘0’ value (https://github.com/jaydenseric/graphql-multipart-request-spec).',
@@ -1286,7 +1293,7 @@ module.exports = tests => {
 
       const server = http.createServer(async (request, response) => {
         try {
-          await rejects(() => processRequest(request, response), {
+          await rejects(processRequest(request, response), {
             name: 'BadRequestError',
             message:
               'Invalid object path for the ‘map’ multipart field entry key ‘1’ array index ‘0’ value ‘variables.file’ (https://github.com/jaydenseric/graphql-multipart-request-spec).',

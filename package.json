@@ -49,7 +49,6 @@
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.2",
     "express": "^4.17.1",
-    "express-async-handler": "^1.1.4",
     "form-data": "^3.0.0",
     "graphql": "^14.5.8",
     "hard-rejection": "^2.1.0",
