@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "busboy": "^0.3.1",
-    "fs-capacitor": "^4.0.1",
+    "fs-capacitor": "^6.0.0",
     "http-errors": "^1.7.3",
     "isobject": "^4.0.0",
     "object-path": "^0.11.4"

@@ -5,12 +5,17 @@
 ### Major
 
 - Updated Node.js support from v8.10+ to v10+, as earlier versions have reached end-of-life.
+- Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to v6, which now requires Node.js v10+, via [#179](https://github.com/jaydenseric/graphql-upload/pull/179).
 - Updated dev dependencies, some of which now require Node.js v10+.
 - Replaced the [`tap`](https://npm.im/tap) dev dependency with [`test-director`](https://npm.im/test-director), [`coverage-node`](https://npm.im/coverage-node), and [`hard-rejection`](https://npm.im/hard-rejection) to improve the dev experience and reduce the dev install size by ~75.7 MB. These new dev dependencies require Node.js v10+.
 - Reorganized files. This is only a breaking change for projects using undocumented deep imports.
 - Removed now redundant Node.js version compatibility logic in the `processRequest` function.
 - The `processRequest` function now places references to instances of the now exported and documented `Upload` class in the GraphQL operation for the `GraphQLUpload` scalar to derive its value, and the `GraphQLUpload` scalar now throws a `GraphQLError` when it parses an invalid value, fixing [#175](https://github.com/jaydenseric/graphql-upload/issues/175) via [#181](https://github.com/jaydenseric/graphql-upload/pull/181).
 - The `GraphQLUpload` scalar `parseLiteral` and `serialize` methods now throw `GraphQLError` (instead of `Error`) instances, with tweaked messages.
+
+### Minor
+
+- The `createReadStream` function in resolved file uploads now accepts options to configure the encoding and high water mark, fixing [#177](https://github.com/jaydenseric/graphql-upload/issues/177) via [#179](https://github.com/jaydenseric/graphql-upload/pull/179).
 
 ### Patch
 

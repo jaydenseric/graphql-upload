@@ -75,6 +75,7 @@ The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-mult
 - [function graphqlUploadKoa](#function-graphqluploadkoa)
 - [function processRequest](#function-processrequest)
 - [type FileUpload](#type-fileupload)
+- [type FileUploadCreateReadStream](#type-fileuploadcreatereadstream)
 - [type GraphQLOperation](#type-graphqloperation)
 - [type ProcessRequestFunction](#type-processrequestfunction)
 - [type ProcessRequestOptions](#type-processrequestoptions)
@@ -263,7 +264,28 @@ File upload details that are only available after the file’s field in the [Gra
 | `filename` | string | File name. |
 | `mimetype` | string | File MIME type. Provided by the client and can’t be trusted. |
 | `encoding` | string | File stream transfer encoding. |
-| `createReadStream` | Function | Returns a Node.js readable stream of the file contents, for processing and storing the file. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request. |
+| `createReadStream` | [FileUploadCreateReadStream](#type-fileuploadcreatereadstream) | Creates a [Node.js readable stream](https://nodejs.org/api/stream.html#stream_readable_streams) of the file’s contents, for processing and storage. |
+
+---
+
+### type FileUploadCreateReadStream
+
+Creates a [Node.js readable stream](https://nodejs.org/api/stream.html#stream_readable_streams) of an [uploading file’s](#type-fileupload) contents, for processing and storage. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request.
+
+**Type:** Function
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| `options` | object? | [`fs-capacitor`](https://npm.im/fs-capacitor) [`ReadStreamOptions`](https://github.com/mike-marcacci/fs-capacitor#readstreamoptions). |
+| `options.encoding` | string? = `null` | Specify an encoding for the [`data`](https://nodejs.org/api/stream.html#stream_event_data) chunks to be strings (without splitting multi-byte characters across chunks) instead of Node.js [`Buffer`](https://nodejs.org/api/buffer.html#buffer_buffer) instances. Supported values depend on the [`Buffer` implementation](https://github.com/nodejs/node/blob/v13.7.0/lib/buffer.js#L587-L663) and include `utf8`, `ucs2`, `utf16le`, `latin1`, `ascii`, `base64`, or `hex`. |
+| `options.highWaterMark` | number? = `16384` | Maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource. |
+
+**Returns:** Readable — [Node.js readable stream](https://nodejs.org/api/stream.html#stream_readable_streams) of the file’s contents.
+
+#### See
+
+- [Node.js `Readable` stream constructor docs](https://nodejs.org/api/stream.html#stream_new_stream_readable_options).
+- [Node.js stream backpressure guide](https://nodejs.org/es/docs/guides/backpressuring-in-streams).
 
 ---
 

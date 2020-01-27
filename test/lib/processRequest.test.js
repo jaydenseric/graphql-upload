@@ -12,48 +12,106 @@ const listen = require('../listen')
 const streamToString = require('../streamToString')
 
 module.exports = tests => {
-  tests.add('`processRequest` with a single file.', async () => {
-    let serverError
+  tests.add(
+    '`processRequest` with a single file and default `createReadStream` options.',
+    async () => {
+      let serverError
 
-    const server = http.createServer(async (request, response) => {
+      const server = http.createServer(async (request, response) => {
+        try {
+          const operation = await processRequest(request, response)
+
+          ok(operation.variables.file instanceof Upload)
+
+          const upload = await operation.variables.file.promise
+
+          strictEqual(upload.filename, 'a.txt')
+          strictEqual(upload.mimetype, 'text/plain')
+          strictEqual(upload.encoding, '7bit')
+
+          const stream = upload.createReadStream()
+
+          ok(stream instanceof ReadStream)
+          strictEqual(stream._readableState.encoding, null)
+          strictEqual(stream.readableHighWaterMark, 16384)
+          strictEqual(await streamToString(stream), 'a')
+        } catch (error) {
+          serverError = error
+        } finally {
+          response.end()
+        }
+      })
+
+      const { port, close } = await listen(server)
+
       try {
-        const operation = await processRequest(request, response)
+        const body = new FormData()
 
-        ok(operation.variables.file instanceof Upload)
+        body.append('operations', JSON.stringify({ variables: { file: null } }))
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
+        body.append('1', 'a', { filename: 'a.txt' })
 
-        const upload = await operation.variables.file.promise
+        await fetch(`http://localhost:${port}`, { method: 'POST', body })
 
-        strictEqual(upload.filename, 'a.txt')
-        strictEqual(upload.mimetype, 'text/plain')
-        strictEqual(upload.encoding, '7bit')
-
-        const stream = upload.createReadStream()
-
-        ok(stream instanceof ReadStream)
-        strictEqual(await streamToString(stream), 'a')
-      } catch (error) {
-        serverError = error
+        if (serverError) throw serverError
       } finally {
-        response.end()
+        close()
       }
-    })
-
-    const { port, close } = await listen(server)
-
-    try {
-      const body = new FormData()
-
-      body.append('operations', JSON.stringify({ variables: { file: null } }))
-      body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-      body.append('1', 'a', { filename: 'a.txt' })
-
-      await fetch(`http://localhost:${port}`, { method: 'POST', body })
-
-      if (serverError) throw serverError
-    } finally {
-      close()
     }
-  })
+  )
+
+  tests.add(
+    '`processRequest` with a single file and custom `createReadStream` options.',
+    async () => {
+      let serverError
+
+      const server = http.createServer(async (request, response) => {
+        try {
+          const operation = await processRequest(request, response)
+
+          ok(operation.variables.file instanceof Upload)
+
+          const upload = await operation.variables.file.promise
+
+          strictEqual(upload.filename, 'a.txt')
+          strictEqual(upload.mimetype, 'text/plain')
+          strictEqual(upload.encoding, '7bit')
+
+          const encoding = 'base64'
+          const highWaterMark = 100
+          const stream = upload.createReadStream({ encoding, highWaterMark })
+
+          ok(stream instanceof ReadStream)
+          strictEqual(stream._readableState.encoding, encoding)
+          strictEqual(stream.readableHighWaterMark, highWaterMark)
+          strictEqual(
+            await streamToString(stream),
+            Buffer.from('a').toString(encoding)
+          )
+        } catch (error) {
+          serverError = error
+        } finally {
+          response.end()
+        }
+      })
+
+      const { port, close } = await listen(server)
+
+      try {
+        const body = new FormData()
+
+        body.append('operations', JSON.stringify({ variables: { file: null } }))
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
+        body.append('1', 'a', { filename: 'a.txt' })
+
+        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+
+        if (serverError) throw serverError
+      } finally {
+        close()
+      }
+    }
+  )
 
   tests.add('`processRequest` with a single file, batched.', async () => {
     let serverError
