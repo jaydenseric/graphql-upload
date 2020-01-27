@@ -78,7 +78,7 @@ module.exports = tests => {
           })
 
           ok(stream instanceof ReadStream)
-          ok(stream.readableHighWaterMark, 100)
+          strictEqual(stream.readableHighWaterMark, 100)
           strictEqual(
             await streamToString(stream),
             Buffer.from('a').toString('base64')
