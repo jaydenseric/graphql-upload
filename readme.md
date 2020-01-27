@@ -145,7 +145,7 @@ A file expected to be uploaded as it has been declared in the `map` field of a [
 
 #### Upload instance method reject
 
-Rejects the upload promise with an error. This method should only be utilized by [`processRequest`](#function-processrequest).
+Rejects the upload promise with an error. This should only be utilized by [`processRequest`](#function-processrequest).
 
 | Parameter | Type   | Description     |
 | :-------- | :----- | :-------------- |

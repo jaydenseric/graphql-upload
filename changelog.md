@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Minor JSDoc wording tweak for consistency.
+
 ## 10.0.0
 
 ### Major
