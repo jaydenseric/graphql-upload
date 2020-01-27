@@ -277,7 +277,7 @@ Creates a [Node.js readable stream](https://nodejs.org/api/stream.html#stream_re
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | `options` | object? | [`fs-capacitor`](https://npm.im/fs-capacitor) [`ReadStreamOptions`](https://github.com/mike-marcacci/fs-capacitor#readstreamoptions). |
-| `options.encoding` | string? = `utf8` | Encoding for buffers to use to decode strings. Valid values depend on the [Node.js `Buffer` implementation](https://github.com/nodejs/node/blob/v13.7.0/lib/buffer.js#L587-L663). |
+| `options.encoding` | string? = `null` | Specify an encoding for the [`data`](https://nodejs.org/api/stream.html#stream_event_data) chunks to be strings (without splitting multi-byte characters across chunks) instead of Node.js [`Buffer`](https://nodejs.org/api/buffer.html#buffer_buffer) instances. Supported values depend on the [`Buffer` implementation](https://github.com/nodejs/node/blob/v13.7.0/lib/buffer.js#L587-L663) and include `utf8`, `ucs2`, `utf16le`, `latin1`, `ascii`, `base64`, or `hex`. |
 | `options.highWaterMark` | number? = `16384` | Maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource. |
 
 **Returns:** Readable — [Node.js readable stream](https://nodejs.org/api/stream.html#stream_readable_streams) of the file’s contents.
