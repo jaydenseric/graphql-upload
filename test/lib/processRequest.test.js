@@ -77,6 +77,7 @@ module.exports = tests => {
           const stream = upload.createReadStream({ encoding, highWaterMark })
 
           ok(stream instanceof ReadStream)
+          strictEqual(stream.readableEncoding, encoding)
           strictEqual(stream.readableHighWaterMark, highWaterMark)
           strictEqual(
             await streamToString(stream),
