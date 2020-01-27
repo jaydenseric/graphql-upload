@@ -276,11 +276,16 @@ Creates a [Node.js readable stream](https://nodejs.org/api/stream.html#stream_re
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| `options` | object? | [`ReadStreamOptions`](https://github.com/mike-marcacci/fs-capacitor#readstreamoptions) for `fs-capacitor`. |
-| `options.encoding` | string? | Optional value to use as the readable stream's highWaterMark, specifying the number of bytes (for binary data) or characters (for strings) that will be bufferred into memory. [See node's docs for `stream.Readable`.](https://nodejs.org/api/stream.html#stream_new_stream_readable_options) |
-| `options.highWaterMark` | number? | Optional value to use as the readable stream's highWaterMark, specifying the number of bytes (for binary data) or characters (for strings) that will be bufferred into memory. [See node's docs for `stream.Readable`.](https://nodejs.org/api/stream.html#stream_new_stream_readable_options) |
+| `options` | object? | [`fs-capacitor`](https://npm.im/fs-capacitor) [`ReadStreamOptions`](https://github.com/mike-marcacci/fs-capacitor#readstreamoptions). |
+| `options.encoding` | string? = `utf8` | Encoding for buffers to use to decode strings. Valid values depend on the [Node.js `Buffer` implementation](https://github.com/nodejs/node/blob/v13.7.0/lib/buffer.js#L587-L663). |
+| `options.highWaterMark` | number? = `16384` | Maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource. |
 
 **Returns:** Readable — [Node.js readable stream](https://nodejs.org/api/stream.html#stream_readable_streams) of the file’s contents.
+
+#### See
+
+- [Node.js `Readable` stream constructor docs](https://nodejs.org/api/stream.html#stream_new_stream_readable_options).
+- [Node.js stream backpressure guide](https://nodejs.org/es/docs/guides/backpressuring-in-streams).
 
 ---
 
