@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "busboy": "^0.3.1",
-    "fs-capacitor": "^6.0.0",
+    "fs-capacitor": "^6.1.0",
     "http-errors": "^1.7.3",
     "isobject": "^4.0.0",
     "object-path": "^0.11.4"
@@ -42,10 +42,10 @@
   "devDependencies": {
     "coverage-node": "^2.0.2",
     "eslint": "^6.8.0",
-    "eslint-config-env": "^13.0.2",
+    "eslint-config-env": "^13.0.3",
     "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-import": "^2.20.0",
-    "eslint-plugin-jsdoc": "^20.3.0",
+    "eslint-plugin-jsdoc": "^21.0.0",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.2",
     "express": "^4.17.1",
@@ -53,10 +53,10 @@
     "graphql": "^14.5.8",
     "hard-rejection": "^2.1.0",
     "jsdoc-md": "^5.0.1",
-    "koa": "^2.8.2",
+    "koa": "^2.11.0",
     "node-fetch": "^2.6.0",
-    "prettier": "^1.18.2",
-    "test-director": "^3.0.0"
+    "prettier": "^1.19.1",
+    "test-director": "^3.0.1"
   },
   "scripts": {
     "prepare": "npm run prepare:jsdoc && npm run prepare:prettier",
