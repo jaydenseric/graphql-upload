@@ -12,49 +12,6 @@ const listen = require('../listen')
 const streamToString = require('../streamToString')
 
 module.exports = tests => {
-  tests.add('`processRequest` with a single file.', async () => {
-    let serverError
-
-    const server = http.createServer(async (request, response) => {
-      try {
-        const operation = await processRequest(request, response)
-
-        ok(operation.variables.file instanceof Upload)
-
-        const upload = await operation.variables.file.promise
-
-        strictEqual(upload.filename, 'a.txt')
-        strictEqual(upload.mimetype, 'text/plain')
-        strictEqual(upload.encoding, '7bit')
-
-        const stream = upload.createReadStream()
-
-        ok(stream instanceof ReadStream)
-        strictEqual(await streamToString(stream), 'a')
-      } catch (error) {
-        serverError = error
-      } finally {
-        response.end()
-      }
-    })
-
-    const { port, close } = await listen(server)
-
-    try {
-      const body = new FormData()
-
-      body.append('operations', JSON.stringify({ variables: { file: null } }))
-      body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-      body.append('1', 'a', { filename: 'a.txt' })
-
-      await fetch(`http://localhost:${port}`, { method: 'POST', body })
-
-      if (serverError) throw serverError
-    } finally {
-      close()
-    }
-  })
-
   tests.add(
     '`processRequest` with a single file and default `createReadStream` options.',
     async () => {
