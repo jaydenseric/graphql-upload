@@ -72,16 +72,15 @@ module.exports = tests => {
           strictEqual(upload.mimetype, 'text/plain')
           strictEqual(upload.encoding, '7bit')
 
-          const stream = upload.createReadStream({
-            encoding: 'base64',
-            highWaterMark: 100
-          })
+          const encoding = 'base64'
+          const highWaterMark = 100
+          const stream = upload.createReadStream({ encoding, highWaterMark })
 
           ok(stream instanceof ReadStream)
-          strictEqual(stream.readableHighWaterMark, 100)
+          strictEqual(stream.readableHighWaterMark, highWaterMark)
           strictEqual(
             await streamToString(stream),
-            Buffer.from('a').toString('base64')
+            Buffer.from('a').toString(encoding)
           )
         } catch (error) {
           serverError = error
