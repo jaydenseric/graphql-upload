@@ -10,5 +10,6 @@ require('./lib/graphqlUploadKoa.test')(tests)
 require('./lib/ignoreStream.test')(tests)
 require('./lib/processRequest.test')(tests)
 require('./lib/Upload.test')(tests)
+require('./lib/processRequestLambda.test')(tests)
 
 tests.run()
