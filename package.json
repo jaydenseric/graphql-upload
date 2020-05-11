@@ -30,7 +30,7 @@
     "node": ">=10"
   },
   "peerDependencies": {
-    "graphql": "0.13.1 - 14"
+    "graphql": "0.13.1 - 15"
   },
   "dependencies": {
     "busboy": "^0.3.1",
@@ -50,7 +50,7 @@
     "eslint-plugin-prettier": "^3.1.2",
     "express": "^4.17.1",
     "form-data": "^3.0.0",
-    "graphql": "^14.5.8",
+    "graphql": "^15.0.0",
     "hard-rejection": "^2.1.0",
     "jsdoc-md": "^5.0.1",
     "koa": "^2.11.0",
