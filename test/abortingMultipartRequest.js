@@ -1,7 +1,7 @@
-'use strict'
+'use strict';
 
-const http = require('http')
-const { Transform } = require('stream')
+const http = require('http');
+const { Transform } = require('stream');
 
 /**
  * Sends a multipart request that deliberately aborts after a certain amount of
@@ -24,42 +24,42 @@ module.exports = function abortingMultipartRequest(
   return new Promise((resolve, reject) => {
     const request = http.request(url, {
       method: 'POST',
-      headers: formData.getHeaders()
-    })
+      headers: formData.getHeaders(),
+    });
 
-    request.on('error', error => {
+    request.on('error', (error) => {
       // Error expected when the connection is aborted.
-      if (error.code !== 'ECONNRESET') reject(error)
-    })
+      if (error.code !== 'ECONNRESET') reject(error);
+    });
 
-    request.on('close', resolve)
+    request.on('close', resolve);
 
     const transform = new Transform({
       transform(chunk, encoding, callback) {
-        if (this._aborted) return
+        if (this._aborted) return;
 
-        const chunkString = chunk.toString('utf8')
-        const chunkAbortIndex = chunkString.indexOf(abortMarker)
+        const chunkString = chunk.toString('utf8');
+        const chunkAbortIndex = chunkString.indexOf(abortMarker);
 
         // Check if the chunk has the abort marker character in it.
         if (chunkAbortIndex !== -1) {
-          this._aborted = true
+          this._aborted = true;
 
           if (chunkAbortIndex !== 0)
             // Send partial chunk before abort.
-            callback(null, chunkString.substr(0, chunkAbortIndex))
+            callback(null, chunkString.substr(0, chunkAbortIndex));
 
           // Abort the request after it has been received by the server request
           // handler, or else Node.js won’t run the handler.
-          requestReceived.then(() => request.abort())
+          requestReceived.then(() => request.abort());
 
-          return
+          return;
         }
 
-        callback(null, chunk)
-      }
-    })
+        callback(null, chunk);
+      },
+    });
 
-    formData.pipe(transform).pipe(request)
-  })
-}
+    formData.pipe(transform).pipe(request);
+  });
+};

@@ -1,382 +1,394 @@
-'use strict'
+'use strict';
 
-const { notStrictEqual, ok, strictEqual, rejects, throws } = require('assert')
-const http = require('http')
-const FormData = require('form-data')
-const { ReadStream } = require('fs-capacitor')
-const fetch = require('node-fetch')
-const Upload = require('../../lib/Upload')
-const processRequest = require('../../lib/processRequest')
-const abortingMultipartRequest = require('../abortingMultipartRequest')
-const listen = require('../listen')
-const streamToString = require('../streamToString')
+const { notStrictEqual, ok, strictEqual, rejects, throws } = require('assert');
+const http = require('http');
+const FormData = require('form-data');
+const { ReadStream } = require('fs-capacitor');
+const fetch = require('node-fetch');
+const Upload = require('../../lib/Upload');
+const processRequest = require('../../lib/processRequest');
+const abortingMultipartRequest = require('../abortingMultipartRequest');
+const listen = require('../listen');
+const streamToString = require('../streamToString');
 
-module.exports = tests => {
+module.exports = (tests) => {
   tests.add(
     '`processRequest` with a single file and default `createReadStream` options.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
-          const operation = await processRequest(request, response)
+          const operation = await processRequest(request, response);
 
-          ok(operation.variables.file instanceof Upload)
+          ok(operation.variables.file instanceof Upload);
 
-          const upload = await operation.variables.file.promise
+          const upload = await operation.variables.file.promise;
 
-          strictEqual(upload.filename, 'a.txt')
-          strictEqual(upload.mimetype, 'text/plain')
-          strictEqual(upload.encoding, '7bit')
+          strictEqual(upload.filename, 'a.txt');
+          strictEqual(upload.mimetype, 'text/plain');
+          strictEqual(upload.encoding, '7bit');
 
-          const stream = upload.createReadStream()
+          const stream = upload.createReadStream();
 
-          ok(stream instanceof ReadStream)
-          strictEqual(stream._readableState.encoding, null)
-          strictEqual(stream.readableHighWaterMark, 16384)
-          strictEqual(await streamToString(stream), 'a')
+          ok(stream instanceof ReadStream);
+          strictEqual(stream._readableState.encoding, null);
+          strictEqual(stream.readableHighWaterMark, 16384);
+          strictEqual(await streamToString(stream), 'a');
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-        body.append('1', 'a', { filename: 'a.txt' })
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('1', 'a', { filename: 'a.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with a single file and custom `createReadStream` options.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
-          const operation = await processRequest(request, response)
+          const operation = await processRequest(request, response);
 
-          ok(operation.variables.file instanceof Upload)
+          ok(operation.variables.file instanceof Upload);
 
-          const upload = await operation.variables.file.promise
+          const upload = await operation.variables.file.promise;
 
-          strictEqual(upload.filename, 'a.txt')
-          strictEqual(upload.mimetype, 'text/plain')
-          strictEqual(upload.encoding, '7bit')
+          strictEqual(upload.filename, 'a.txt');
+          strictEqual(upload.mimetype, 'text/plain');
+          strictEqual(upload.encoding, '7bit');
 
-          const encoding = 'base64'
-          const highWaterMark = 100
-          const stream = upload.createReadStream({ encoding, highWaterMark })
+          const encoding = 'base64';
+          const highWaterMark = 100;
+          const stream = upload.createReadStream({ encoding, highWaterMark });
 
-          ok(stream instanceof ReadStream)
-          strictEqual(stream._readableState.encoding, encoding)
-          strictEqual(stream.readableHighWaterMark, highWaterMark)
+          ok(stream instanceof ReadStream);
+          strictEqual(stream._readableState.encoding, encoding);
+          strictEqual(stream.readableHighWaterMark, highWaterMark);
           strictEqual(
             await streamToString(stream),
             Buffer.from('a').toString(encoding)
-          )
+          );
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-        body.append('1', 'a', { filename: 'a.txt' })
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('1', 'a', { filename: 'a.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add('`processRequest` with a single file, batched.', async () => {
-    let serverError
+    let serverError;
 
     const server = http.createServer(async (request, response) => {
       try {
-        const operations = await processRequest(request, response)
+        const operations = await processRequest(request, response);
 
-        ok(operations[0].variables.file instanceof Upload)
+        ok(operations[0].variables.file instanceof Upload);
 
-        const uploadA = await operations[0].variables.file.promise
+        const uploadA = await operations[0].variables.file.promise;
 
-        strictEqual(uploadA.filename, 'a.txt')
-        strictEqual(uploadA.mimetype, 'text/plain')
-        strictEqual(uploadA.encoding, '7bit')
+        strictEqual(uploadA.filename, 'a.txt');
+        strictEqual(uploadA.mimetype, 'text/plain');
+        strictEqual(uploadA.encoding, '7bit');
 
-        const streamA = uploadA.createReadStream()
+        const streamA = uploadA.createReadStream();
 
-        ok(streamA instanceof ReadStream)
-        strictEqual(await streamToString(streamA), 'a')
+        ok(streamA instanceof ReadStream);
+        strictEqual(await streamToString(streamA), 'a');
 
-        ok(operations[1].variables.file instanceof Upload)
+        ok(operations[1].variables.file instanceof Upload);
 
-        const uploadB = await operations[1].variables.file.promise
+        const uploadB = await operations[1].variables.file.promise;
 
-        strictEqual(uploadB.filename, 'b.txt')
-        strictEqual(uploadB.mimetype, 'text/plain')
-        strictEqual(uploadB.encoding, '7bit')
+        strictEqual(uploadB.filename, 'b.txt');
+        strictEqual(uploadB.mimetype, 'text/plain');
+        strictEqual(uploadB.encoding, '7bit');
 
-        const streamB = uploadB.createReadStream()
+        const streamB = uploadB.createReadStream();
 
-        ok(streamB instanceof ReadStream)
-        strictEqual(await streamToString(streamB), 'b')
+        ok(streamB instanceof ReadStream);
+        strictEqual(await streamToString(streamB), 'b');
       } catch (error) {
-        serverError = error
+        serverError = error;
       } finally {
-        response.end()
+        response.end();
       }
-    })
+    });
 
-    const { port, close } = await listen(server)
+    const { port, close } = await listen(server);
 
     try {
-      const body = new FormData()
+      const body = new FormData();
 
       body.append(
         'operations',
         JSON.stringify([
           { variables: { file: null } },
-          { variables: { file: null } }
+          { variables: { file: null } },
         ])
-      )
+      );
       body.append(
         'map',
         JSON.stringify({ '1': ['0.variables.file'], '2': ['1.variables.file'] })
-      )
-      body.append('1', 'a', { filename: 'a.txt' })
-      body.append('2', 'b', { filename: 'b.txt' })
+      );
+      body.append('1', 'a', { filename: 'a.txt' });
+      body.append('2', 'b', { filename: 'b.txt' });
 
-      await fetch(`http://localhost:${port}`, { method: 'POST', body })
+      await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-      if (serverError) throw serverError
+      if (serverError) throw serverError;
     } finally {
-      close()
+      close();
     }
-  })
+  });
 
   tests.add('`processRequest` with deduped files.', async () => {
-    let serverError
+    let serverError;
 
     const server = http.createServer(async (request, response) => {
       try {
-        const operation = await processRequest(request, response)
+        const operation = await processRequest(request, response);
 
-        ok(operation.variables.files[0] instanceof Upload)
-        ok(operation.variables.files[1] instanceof Upload)
-        strictEqual(operation.variables.files[0], operation.variables.files[1])
+        ok(operation.variables.files[0] instanceof Upload);
+        ok(operation.variables.files[1] instanceof Upload);
+        strictEqual(operation.variables.files[0], operation.variables.files[1]);
 
         const [upload1, upload2] = await Promise.all([
           operation.variables.files[0].promise,
-          operation.variables.files[1].promise
-        ])
+          operation.variables.files[1].promise,
+        ]);
 
-        strictEqual(upload1, upload2)
-        strictEqual(upload1.filename, 'a.txt')
-        strictEqual(upload1.mimetype, 'text/plain')
-        strictEqual(upload1.encoding, '7bit')
+        strictEqual(upload1, upload2);
+        strictEqual(upload1.filename, 'a.txt');
+        strictEqual(upload1.mimetype, 'text/plain');
+        strictEqual(upload1.encoding, '7bit');
 
-        const stream1 = upload1.createReadStream()
-        const stream2 = upload2.createReadStream()
+        const stream1 = upload1.createReadStream();
+        const stream2 = upload2.createReadStream();
 
-        notStrictEqual(stream1, stream2)
-        ok(stream1 instanceof ReadStream)
-        ok(stream2 instanceof ReadStream)
+        notStrictEqual(stream1, stream2);
+        ok(stream1 instanceof ReadStream);
+        ok(stream2 instanceof ReadStream);
 
         const [content1, content2] = await Promise.all([
           streamToString(stream1),
-          streamToString(stream2)
-        ])
+          streamToString(stream2),
+        ]);
 
-        strictEqual(content1, 'a')
-        strictEqual(content2, 'a')
+        strictEqual(content1, 'a');
+        strictEqual(content2, 'a');
       } catch (error) {
-        serverError = error
+        serverError = error;
       } finally {
-        response.end()
+        response.end();
       }
-    })
+    });
 
-    const { port, close } = await listen(server)
+    const { port, close } = await listen(server);
 
     try {
-      const body = new FormData()
+      const body = new FormData();
 
       body.append(
         'operations',
         JSON.stringify({ variables: { files: [null, null] } })
-      )
+      );
       body.append(
         'map',
         JSON.stringify({ '1': ['variables.files.0', 'variables.files.1'] })
-      )
-      body.append('1', 'a', { filename: 'a.txt' })
+      );
+      body.append('1', 'a', { filename: 'a.txt' });
 
-      await fetch(`http://localhost:${port}`, { method: 'POST', body })
+      await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-      if (serverError) throw serverError
+      if (serverError) throw serverError;
     } finally {
-      close()
+      close();
     }
-  })
+  });
 
   tests.add('`processRequest` with unconsumed uploads.', async () => {
-    let serverError
+    let serverError;
 
     const server = http.createServer(async (request, response) => {
       try {
-        const operation = await processRequest(request, response)
+        const operation = await processRequest(request, response);
 
-        ok(operation.variables.fileB instanceof Upload)
+        ok(operation.variables.fileB instanceof Upload);
 
-        const uploadB = await operation.variables.fileB.promise
-        const streamB = uploadB.createReadStream()
+        const uploadB = await operation.variables.fileB.promise;
+        const streamB = uploadB.createReadStream();
 
-        await streamToString(streamB)
+        await streamToString(streamB);
       } catch (error) {
-        serverError = error
+        serverError = error;
       } finally {
-        response.end()
+        response.end();
       }
-    })
+    });
 
-    const { port, close } = await listen(server)
+    const { port, close } = await listen(server);
 
     try {
-      const body = new FormData()
+      const body = new FormData();
 
       body.append(
         'operations',
         JSON.stringify({ variables: { fileA: null, fileB: null } })
-      )
+      );
       body.append(
         'map',
         JSON.stringify({ '1': ['variables.fileA'], '2': ['variables.fileB'] })
-      )
-      body.append('1', 'a', { filename: 'a.txt' })
-      body.append('2', 'b', { filename: 'b.txt' })
+      );
+      body.append('1', 'a', { filename: 'a.txt' });
+      body.append('2', 'b', { filename: 'b.txt' });
 
-      await fetch(`http://localhost:${port}`, { method: 'POST', body })
+      await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-      if (serverError) throw serverError
+      if (serverError) throw serverError;
     } finally {
-      close()
+      close();
     }
-  })
+  });
 
   tests.add(
     '`processRequest` with an extraneous multipart form field file.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
-          const operation = await processRequest(request, response)
+          const operation = await processRequest(request, response);
 
-          ok(operation.variables.file instanceof Upload)
+          ok(operation.variables.file instanceof Upload);
 
-          const upload = await operation.variables.file.promise
+          const upload = await operation.variables.file.promise;
 
-          strictEqual(upload.filename, 'a.txt')
-          strictEqual(upload.mimetype, 'text/plain')
-          strictEqual(upload.encoding, '7bit')
+          strictEqual(upload.filename, 'a.txt');
+          strictEqual(upload.mimetype, 'text/plain');
+          strictEqual(upload.encoding, '7bit');
 
-          const stream = upload.createReadStream()
+          const stream = upload.createReadStream();
 
-          ok(stream instanceof ReadStream)
-          strictEqual(await streamToString(stream), 'a')
+          ok(stream instanceof ReadStream);
+          strictEqual(await streamToString(stream), 'a');
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-        body.append('1', 'a', { filename: 'a.txt' })
-        body.append('2', 'b', { filename: 'b.txt' })
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('2', 'b', { filename: 'b.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with a missing multipart form field file.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
-          const operation = await processRequest(request, response)
+          const operation = await processRequest(request, response);
 
-          ok(operation.variables.file instanceof Upload)
+          ok(operation.variables.file instanceof Upload);
           await rejects(operation.variables.file.promise, {
             name: 'BadRequestError',
             message: 'File missing in the request.',
             status: 400,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add('`processRequest` with option `maxFiles`.', async () => {
-    let serverError
+    let serverError;
 
     const server = http.createServer(async (request, response) => {
       try {
@@ -384,181 +396,181 @@ module.exports = tests => {
           name: 'PayloadTooLargeError',
           message: '1 max file uploads exceeded.',
           status: 413,
-          expose: true
-        })
+          expose: true,
+        });
       } catch (error) {
-        serverError = error
+        serverError = error;
       } finally {
-        response.end()
+        response.end();
       }
-    })
+    });
 
-    const { port, close } = await listen(server)
+    const { port, close } = await listen(server);
 
     try {
-      const body = new FormData()
+      const body = new FormData();
 
       body.append(
         'operations',
         JSON.stringify({ variables: { files: [null, null] } })
-      )
+      );
       body.append(
         'map',
         JSON.stringify({
           '1': ['variables.files.0'],
-          '2': ['variables.files.1']
+          '2': ['variables.files.1'],
         })
-      )
-      body.append('1', 'a', { filename: 'a.txt' })
-      body.append('2', 'b', { filename: 'b.txt' })
+      );
+      body.append('1', 'a', { filename: 'a.txt' });
+      body.append('2', 'b', { filename: 'b.txt' });
 
-      await fetch(`http://localhost:${port}`, { method: 'POST', body })
+      await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-      if (serverError) throw serverError
+      if (serverError) throw serverError;
     } finally {
-      close()
+      close();
     }
-  })
+  });
 
   tests.add(
     '`processRequest` with option `maxFiles` and an interspersed extraneous file.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
           const operation = await processRequest(request, response, {
-            maxFiles: 2
-          })
+            maxFiles: 2,
+          });
 
-          ok(operation.variables.files[0] instanceof Upload)
+          ok(operation.variables.files[0] instanceof Upload);
 
-          const uploadA = await operation.variables.files[0].promise
+          const uploadA = await operation.variables.files[0].promise;
 
-          strictEqual(uploadA.filename, 'a.txt')
-          strictEqual(uploadA.mimetype, 'text/plain')
-          strictEqual(uploadA.encoding, '7bit')
+          strictEqual(uploadA.filename, 'a.txt');
+          strictEqual(uploadA.mimetype, 'text/plain');
+          strictEqual(uploadA.encoding, '7bit');
 
-          const streamA = uploadA.createReadStream()
+          const streamA = uploadA.createReadStream();
 
-          ok(streamA instanceof ReadStream)
-          strictEqual(await streamToString(streamA), 'a')
-          ok(operation.variables.files[1] instanceof Upload)
+          ok(streamA instanceof ReadStream);
+          strictEqual(await streamToString(streamA), 'a');
+          ok(operation.variables.files[1] instanceof Upload);
           await rejects(operation.variables.files[1].promise, {
             name: 'PayloadTooLargeError',
             message: '2 max file uploads exceeded.',
             status: 413,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
         body.append(
           'operations',
           JSON.stringify({ variables: { files: [null, null] } })
-        )
+        );
         body.append(
           'map',
           JSON.stringify({
             '1': ['variables.files.0'],
-            '2': ['variables.files.1']
+            '2': ['variables.files.1'],
           })
-        )
-        body.append('1', 'a', { filename: 'a.txt' })
-        body.append('extraneous', 'c', { filename: 'c.txt' })
-        body.append('2', 'b', { filename: 'b.txt' })
+        );
+        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('extraneous', 'c', { filename: 'c.txt' });
+        body.append('2', 'b', { filename: 'b.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add('`processRequest` with option `maxFileSize`.', async () => {
-    let serverError
+    let serverError;
 
     const server = http.createServer(async (request, response) => {
       try {
         const operation = await processRequest(request, response, {
-          maxFileSize: 1
-        })
+          maxFileSize: 1,
+        });
 
-        ok(operation.variables.files[0] instanceof Upload)
+        ok(operation.variables.files[0] instanceof Upload);
 
-        const { createReadStream } = await operation.variables.files[0].promise
+        const { createReadStream } = await operation.variables.files[0].promise;
 
         await throws(
           () => {
-            createReadStream()
+            createReadStream();
           },
           {
             name: 'PayloadTooLargeError',
             message: 'File truncated as it exceeds the 1 byte size limit.',
             status: 413,
-            expose: true
+            expose: true,
           }
-        )
+        );
 
-        ok(operation.variables.files[0] instanceof Upload)
+        ok(operation.variables.files[0] instanceof Upload);
 
-        const uploadB = await operation.variables.files[1].promise
+        const uploadB = await operation.variables.files[1].promise;
 
-        strictEqual(uploadB.filename, 'b.txt')
-        strictEqual(uploadB.mimetype, 'text/plain')
-        strictEqual(uploadB.encoding, '7bit')
+        strictEqual(uploadB.filename, 'b.txt');
+        strictEqual(uploadB.mimetype, 'text/plain');
+        strictEqual(uploadB.encoding, '7bit');
 
-        const streamB = uploadB.createReadStream()
+        const streamB = uploadB.createReadStream();
 
-        ok(streamB instanceof ReadStream)
-        strictEqual(await streamToString(streamB), 'b')
+        ok(streamB instanceof ReadStream);
+        strictEqual(await streamToString(streamB), 'b');
       } catch (error) {
-        serverError = error
+        serverError = error;
       } finally {
-        response.end()
+        response.end();
       }
-    })
+    });
 
-    const { port, close } = await listen(server)
+    const { port, close } = await listen(server);
 
     try {
-      const body = new FormData()
+      const body = new FormData();
 
       body.append(
         'operations',
         JSON.stringify({ variables: { files: [null, null] } })
-      )
+      );
       body.append(
         'map',
         JSON.stringify({
           '1': ['variables.files.0'],
-          '2': ['variables.files.1']
+          '2': ['variables.files.1'],
         })
-      )
-      body.append('1', 'aa', { filename: 'a.txt' })
-      body.append('2', 'b', { filename: 'b.txt' })
+      );
+      body.append('1', 'aa', { filename: 'a.txt' });
+      body.append('2', 'b', { filename: 'b.txt' });
 
-      await fetch(`http://localhost:${port}`, { method: 'POST', body })
+      await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-      if (serverError) throw serverError
+      if (serverError) throw serverError;
     } finally {
-      close()
+      close();
     }
-  })
+  });
 
   tests.add('`processRequest` with option `maxFieldSize`.', async () => {
-    let serverError
+    let serverError;
 
     const server = http.createServer(async (request, response) => {
       try {
@@ -567,308 +579,305 @@ module.exports = tests => {
           message:
             'The ‘operations’ multipart field value exceeds the 1 byte size limit.',
           status: 413,
-          expose: true
-        })
+          expose: true,
+        });
       } catch (error) {
-        serverError = error
+        serverError = error;
       } finally {
-        response.end()
+        response.end();
       }
-    })
+    });
 
-    const { port, close } = await listen(server)
+    const { port, close } = await listen(server);
 
     try {
-      const body = new FormData()
+      const body = new FormData();
 
-      body.append('operations', JSON.stringify({ variables: { file: null } }))
-      body.append('map', JSON.stringify({ 1: ['variables.file'] }))
-      body.append('1', 'a', { filename: 'a.txt' })
+      body.append('operations', JSON.stringify({ variables: { file: null } }));
+      body.append('map', JSON.stringify({ 1: ['variables.file'] }));
+      body.append('1', 'a', { filename: 'a.txt' });
 
-      await fetch(`http://localhost:${port}`, { method: 'POST', body })
+      await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-      if (serverError) throw serverError
+      if (serverError) throw serverError;
     } finally {
-      close()
+      close();
     }
-  })
+  });
 
   tests.add(
     '`processRequest` with an aborted request and immediate stream creation.',
     async () => {
-      let serverError
+      let serverError;
 
       // In other tests a fetch request can be awaited that resolves once the
       // request, tests and response are done. Because this test aborts a
       // request part way through, the server request handler must be manually
       // awaited or else the test will resolve and the process will exit before
       // it’s done.
-      let resolveDone
-      const done = new Promise(resolve => {
-        resolveDone = resolve
-      })
+      let resolveDone;
+      const done = new Promise((resolve) => {
+        resolveDone = resolve;
+      });
 
       // The request must be aborted after it has been received by the server
       // request handler, or else Node.js won’t run the handler.
-      let resolveRequestReceived
-      const requestReceived = new Promise(resolve => {
-        resolveRequestReceived = resolve
-      })
+      let resolveRequestReceived;
+      const requestReceived = new Promise((resolve) => {
+        resolveRequestReceived = resolve;
+      });
 
       const server = http.createServer(async (request, response) => {
         try {
-          resolveRequestReceived()
+          resolveRequestReceived();
 
-          const operation = await processRequest(request, response)
+          const operation = await processRequest(request, response);
 
           const testUploadA = async () => {
-            ok(operation.variables.fileA instanceof Upload)
+            ok(operation.variables.fileA instanceof Upload);
 
-            const upload = await operation.variables.fileA.promise
+            const upload = await operation.variables.fileA.promise;
 
-            strictEqual(upload.filename, 'a.txt')
-            strictEqual(upload.mimetype, 'text/plain')
-            strictEqual(upload.encoding, '7bit')
+            strictEqual(upload.filename, 'a.txt');
+            strictEqual(upload.mimetype, 'text/plain');
+            strictEqual(upload.encoding, '7bit');
 
-            const stream = upload.createReadStream()
+            const stream = upload.createReadStream();
 
-            ok(stream instanceof ReadStream)
-            strictEqual(await streamToString(stream), 'a')
-          }
+            ok(stream instanceof ReadStream);
+            strictEqual(await streamToString(stream), 'a');
+          };
 
           const testUploadB = async () => {
-            ok(operation.variables.fileB instanceof Upload)
+            ok(operation.variables.fileB instanceof Upload);
 
-            const upload = await operation.variables.fileB.promise
+            const upload = await operation.variables.fileB.promise;
 
-            strictEqual(upload.filename, 'b.txt')
-            strictEqual(upload.mimetype, 'text/plain')
-            strictEqual(upload.encoding, '7bit')
+            strictEqual(upload.filename, 'b.txt');
+            strictEqual(upload.mimetype, 'text/plain');
+            strictEqual(upload.encoding, '7bit');
 
-            const stream = upload.createReadStream()
+            const stream = upload.createReadStream();
 
-            ok(stream instanceof ReadStream)
+            ok(stream instanceof ReadStream);
             await rejects(
               new Promise((resolve, reject) => {
-                stream
-                  .once('error', reject)
-                  .once('end', resolve)
-                  .resume()
+                stream.once('error', reject).once('end', resolve).resume();
               }),
               {
                 name: 'BadRequestError',
                 message:
                   'Request disconnected during file upload stream parsing.',
                 status: 499,
-                expose: true
+                expose: true,
               }
-            )
-          }
+            );
+          };
 
           const testUploadC = async () => {
-            ok(operation.variables.fileC instanceof Upload)
+            ok(operation.variables.fileC instanceof Upload);
             await rejects(operation.variables.fileC.promise, {
               name: 'BadRequestError',
               message:
                 'Request disconnected during file upload stream parsing.',
               status: 499,
-              expose: true
-            })
-          }
+              expose: true,
+            });
+          };
 
-          await Promise.all([testUploadA(), testUploadB(), testUploadC()])
+          await Promise.all([testUploadA(), testUploadB(), testUploadC()]);
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
-          resolveDone()
+          response.end();
+          resolveDone();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const abortMarker = '⛔'
-        const formData = new FormData()
+        const abortMarker = '⛔';
+        const formData = new FormData();
 
         formData.append(
           'operations',
           JSON.stringify({
-            variables: { fileA: null, fileB: null, fileC: null }
+            variables: { fileA: null, fileB: null, fileC: null },
           })
-        )
+        );
         formData.append(
           'map',
           JSON.stringify({
             '1': ['variables.fileA'],
             '2': ['variables.fileB'],
-            '3': ['variables.fileC']
+            '3': ['variables.fileC'],
           })
-        )
-        formData.append('1', 'a', { filename: 'a.txt' })
+        );
+        formData.append('1', 'a', { filename: 'a.txt' });
         formData.append(
           '2',
           // Will arrive in multiple chunks as the TCP max packet size is 64000
           // bytes and the default Node.js fs stream buffer is 65536 bytes.
           `${'b'.repeat(70000)}${abortMarker}${'b'.repeat(10)}`,
           { filename: 'b.txt' }
-        )
-        formData.append('3', 'c', { filename: 'c.txt' })
+        );
+        formData.append('3', 'c', { filename: 'c.txt' });
 
         await abortingMultipartRequest(
           `http://localhost:${port}`,
           formData,
           abortMarker,
           requestReceived
-        )
+        );
 
-        await done
+        await done;
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with an aborted request and delayed stream creation.',
     async () => {
-      let serverError
+      let serverError;
 
       // In other tests a fetch request can be awaited that resolves once the
       // request, tests and response are done. Because this test aborts a
       // request part way through, the server request handler must be manually
       // awaited or else the test will resolve and the process will exit before
       // it’s done.
-      let resolveDone
-      const done = new Promise(resolve => {
-        resolveDone = resolve
-      })
+      let resolveDone;
+      const done = new Promise((resolve) => {
+        resolveDone = resolve;
+      });
 
       // The request must be aborted after it has been received by the server
       // request handler, or else Node.js won’t run the handler.
-      let resolveRequestReceived
-      const requestReceived = new Promise(resolve => {
-        resolveRequestReceived = resolve
-      })
+      let resolveRequestReceived;
+      const requestReceived = new Promise((resolve) => {
+        resolveRequestReceived = resolve;
+      });
 
       const server = http.createServer(async (request, response) => {
         try {
-          resolveRequestReceived()
+          resolveRequestReceived();
 
-          const operation = await processRequest(request, response)
+          const operation = await processRequest(request, response);
 
           // Wait for the request parsing to finish.
-          await new Promise(resolve => {
-            request.once('close', resolve)
-          })
+          await new Promise((resolve) => {
+            request.once('close', resolve);
+          });
 
           const testUploadA = async () => {
-            ok(operation.variables.fileA instanceof Upload)
+            ok(operation.variables.fileA instanceof Upload);
 
-            const upload = await operation.variables.fileA.promise
+            const upload = await operation.variables.fileA.promise;
 
-            strictEqual(upload.filename, 'a.txt')
-            strictEqual(upload.mimetype, 'text/plain')
-            strictEqual(upload.encoding, '7bit')
+            strictEqual(upload.filename, 'a.txt');
+            strictEqual(upload.mimetype, 'text/plain');
+            strictEqual(upload.encoding, '7bit');
 
             throws(() => upload.createReadStream(), {
               name: 'BadRequestError',
               message:
                 'Request disconnected during file upload stream parsing.',
               status: 499,
-              expose: true
-            })
-          }
+              expose: true,
+            });
+          };
 
           const testUploadB = async () => {
-            ok(operation.variables.fileB instanceof Upload)
+            ok(operation.variables.fileB instanceof Upload);
 
-            const upload = await operation.variables.fileB.promise
+            const upload = await operation.variables.fileB.promise;
 
-            strictEqual(upload.filename, 'b.txt')
-            strictEqual(upload.mimetype, 'text/plain')
-            strictEqual(upload.encoding, '7bit')
+            strictEqual(upload.filename, 'b.txt');
+            strictEqual(upload.mimetype, 'text/plain');
+            strictEqual(upload.encoding, '7bit');
             throws(() => upload.createReadStream(), {
               name: 'BadRequestError',
               message:
                 'Request disconnected during file upload stream parsing.',
               status: 499,
-              expose: true
-            })
-          }
+              expose: true,
+            });
+          };
 
           const testUploadC = async () => {
-            ok(operation.variables.fileC instanceof Upload)
+            ok(operation.variables.fileC instanceof Upload);
             await rejects(operation.variables.fileC.promise, {
               name: 'BadRequestError',
               message:
                 'Request disconnected during file upload stream parsing.',
               status: 499,
-              expose: true
-            })
-          }
+              expose: true,
+            });
+          };
 
-          await Promise.all([testUploadA(), testUploadB(), testUploadC()])
+          await Promise.all([testUploadA(), testUploadB(), testUploadC()]);
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
-          resolveDone()
+          response.end();
+          resolveDone();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const abortMarker = '⛔'
-        const formData = new FormData()
+        const abortMarker = '⛔';
+        const formData = new FormData();
 
         formData.append(
           'operations',
           JSON.stringify({
-            variables: { fileA: null, fileB: null, fileC: null }
+            variables: { fileA: null, fileB: null, fileC: null },
           })
-        )
+        );
         formData.append(
           'map',
           JSON.stringify({
             '1': ['variables.fileA'],
             '2': ['variables.fileB'],
-            '3': ['variables.fileC']
+            '3': ['variables.fileC'],
           })
-        )
-        formData.append('1', 'a', { filename: 'a.txt' })
+        );
+        formData.append('1', 'a', { filename: 'a.txt' });
         formData.append(
           '2',
           // Will arrive in multiple chunks as the TCP max packet size is 64000
           // bytes and the default Node.js fs stream buffer is 65536 bytes.
           `${'b'.repeat(70000)}${abortMarker}${'b'.repeat(10)}`,
           { filename: 'b.txt' }
-        )
-        formData.append('3', 'c', { filename: 'c.txt' })
+        );
+        formData.append('3', 'c', { filename: 'c.txt' });
 
         await abortingMultipartRequest(
           `http://localhost:${port}`,
           formData,
           abortMarker,
           requestReceived
-        )
+        );
 
-        await done
+        await done;
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with multipart form field `map` misordered before `operations`.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -877,37 +886,40 @@ module.exports = tests => {
             message:
               'Misordered multipart fields; ‘map’ should follow ‘operations’ (https://github.com/jaydenseric/graphql-multipart-request-spec).',
             status: 400,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
-        body.append('1', 'a', { filename: 'a.txt' })
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append('1', 'a', { filename: 'a.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with multipart form field file misordered before `map`.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -916,37 +928,40 @@ module.exports = tests => {
             message:
               'Misordered multipart fields; files should follow ‘map’ (https://github.com/jaydenseric/graphql-multipart-request-spec).',
             status: 400,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
-        body.append('1', 'a', { filename: 'a.txt' })
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with multipart form fields `map` and file missing.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -955,35 +970,38 @@ module.exports = tests => {
             message:
               'Missing multipart field ‘map’ (https://github.com/jaydenseric/graphql-multipart-request-spec).',
             status: 400,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with multipart form fields `‘operations’`, `map` and file missing.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -992,34 +1010,34 @@ module.exports = tests => {
             message:
               'Missing multipart field ‘operations’ (https://github.com/jaydenseric/graphql-multipart-request-spec).',
             status: 400,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
         await fetch(`http://localhost:${port}`, {
           method: 'POST',
-          body: new FormData()
-        })
+          body: new FormData(),
+        });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with invalid multipart form field `operations` JSON and a small file.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -1028,37 +1046,37 @@ module.exports = tests => {
             message:
               'Invalid JSON in the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).',
             status: 400,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', '{ x }')
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-        body.append('1', 'a', { filename: 'a.txt' })
+        body.append('operations', '{ x }');
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('1', 'a', { filename: 'a.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with invalid multipart form field `operations` JSON and a large file.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -1067,43 +1085,43 @@ module.exports = tests => {
             message:
               'Invalid JSON in the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).',
             status: 400,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', '{ x }')
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
+        body.append('operations', '{ x }');
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
         body.append(
           '1',
           // Will arrive in multiple chunks as the TCP max packet size is 64000
           // bytes and the default Node.js fs stream buffer is 65536 bytes.
           'a'.repeat(70000),
           { filename: 'a.txt' }
-        )
+        );
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with invalid multipart form field `operations` type.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -1112,37 +1130,37 @@ module.exports = tests => {
             message:
               'Invalid type for the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).',
             status: 400,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', 'null')
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-        body.append('1', 'a', { filename: 'a.txt' })
+        body.append('operations', 'null');
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('1', 'a', { filename: 'a.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with invalid multipart form field `map` JSON.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -1151,37 +1169,40 @@ module.exports = tests => {
             message:
               'Invalid JSON in the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).',
             status: 400,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
-        body.append('map', '{ x }')
-        body.append('1', 'a', { filename: 'a.txt' })
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append('map', '{ x }');
+        body.append('1', 'a', { filename: 'a.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with invalid multipart form field `map` type.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -1190,37 +1211,40 @@ module.exports = tests => {
             message:
               'Invalid type for the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).',
             status: 400,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
-        body.append('map', 'null')
-        body.append('1', 'a', { filename: 'a.txt' })
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append('map', 'null');
+        body.append('1', 'a', { filename: 'a.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with invalid multipart form field `map` entry type.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -1229,37 +1253,40 @@ module.exports = tests => {
             message:
               'Invalid type for the ‘map’ multipart field entry key ‘1’ array (https://github.com/jaydenseric/graphql-multipart-request-spec).',
             status: 400,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
-        body.append('map', JSON.stringify({ '1': null }))
-        body.append('1', 'a', { filename: 'a.txt' })
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append('map', JSON.stringify({ '1': null }));
+        body.append('1', 'a', { filename: 'a.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with invalid multipart form field `map` entry array item type.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -1268,37 +1295,40 @@ module.exports = tests => {
             message:
               'Invalid type for the ‘map’ multipart field entry key ‘1’ array index ‘0’ value (https://github.com/jaydenseric/graphql-multipart-request-spec).',
             status: 400,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
-        body.append('map', JSON.stringify({ '1': [null] }))
-        body.append('1', 'a', { filename: 'a.txt' })
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append('map', JSON.stringify({ '1': [null] }));
+        body.append('1', 'a', { filename: 'a.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`processRequest` with invalid multipart form field `map` entry array item object path.',
     async () => {
-      let serverError
+      let serverError;
 
       const server = http.createServer(async (request, response) => {
         try {
@@ -1307,30 +1337,30 @@ module.exports = tests => {
             message:
               'Invalid object path for the ‘map’ multipart field entry key ‘1’ array index ‘0’ value ‘variables.file’ (https://github.com/jaydenseric/graphql-multipart-request-spec).',
             status: 400,
-            expose: true
-          })
+            expose: true,
+          });
         } catch (error) {
-          serverError = error
+          serverError = error;
         } finally {
-          response.end()
+          response.end();
         }
-      })
+      });
 
-      const { port, close } = await listen(server)
+      const { port, close } = await listen(server);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: '' }))
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-        body.append('1', 'a', { filename: 'a.txt' })
+        body.append('operations', JSON.stringify({ variables: '' }));
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('1', 'a', { filename: 'a.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        if (serverError) throw serverError
+        if (serverError) throw serverError;
       } finally {
-        close()
+        close();
       }
     }
-  )
-}
+  );
+};

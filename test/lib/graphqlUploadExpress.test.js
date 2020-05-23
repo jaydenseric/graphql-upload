@@ -1,223 +1,232 @@
-'use strict'
+'use strict';
 
-const { deepStrictEqual, ok, strictEqual } = require('assert')
-const express = require('express')
-const FormData = require('form-data')
-const createError = require('http-errors')
-const fetch = require('node-fetch')
-const graphqlUploadExpress = require('../../lib/graphqlUploadExpress')
-const processRequest = require('../../lib/processRequest')
-const listen = require('../listen')
+const { deepStrictEqual, ok, strictEqual } = require('assert');
+const express = require('express');
+const FormData = require('form-data');
+const createError = require('http-errors');
+const fetch = require('node-fetch');
+const graphqlUploadExpress = require('../../lib/graphqlUploadExpress');
+const processRequest = require('../../lib/processRequest');
+const listen = require('../listen');
 
-module.exports = tests => {
+module.exports = (tests) => {
   tests.add(
     '`graphqlUploadExpress` with a non multipart request.',
     async () => {
-      let processRequestRan = false
+      let processRequestRan = false;
 
       const app = express().use(
         graphqlUploadExpress({
           async processRequest() {
-            processRequestRan = true
-          }
+            processRequestRan = true;
+          },
         })
-      )
+      );
 
-      const { port, close } = await listen(app)
+      const { port, close } = await listen(app);
 
       try {
-        await fetch(`http://localhost:${port}`, { method: 'POST' })
-        strictEqual(processRequestRan, false)
+        await fetch(`http://localhost:${port}`, { method: 'POST' });
+        strictEqual(processRequestRan, false);
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add('`graphqlUploadExpress` with a multipart request.', async () => {
-    let requestBody
+    let requestBody;
 
     const app = express()
       .use(graphqlUploadExpress())
       .use((request, response, next) => {
-        requestBody = request.body
-        next()
-      })
+        requestBody = request.body;
+        next();
+      });
 
-    const { port, close } = await listen(app)
+    const { port, close } = await listen(app);
 
     try {
-      const body = new FormData()
+      const body = new FormData();
 
-      body.append('operations', JSON.stringify({ variables: { file: null } }))
-      body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-      body.append('1', 'a', { filename: 'a.txt' })
+      body.append('operations', JSON.stringify({ variables: { file: null } }));
+      body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+      body.append('1', 'a', { filename: 'a.txt' });
 
-      await fetch(`http://localhost:${port}`, { method: 'POST', body })
+      await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-      ok(requestBody)
-      ok(requestBody.variables)
-      ok(requestBody.variables.file)
+      ok(requestBody);
+      ok(requestBody.variables);
+      ok(requestBody.variables.file);
     } finally {
-      close()
+      close();
     }
-  })
+  });
 
   tests.add(
     '`graphqlUploadExpress` with a multipart request and option `processRequest`.',
     async () => {
-      let processRequestRan = false
-      let requestBody
+      let processRequestRan = false;
+      let requestBody;
 
       const app = express()
         .use(
           graphqlUploadExpress({
             processRequest(...args) {
-              processRequestRan = true
-              return processRequest(...args)
-            }
+              processRequestRan = true;
+              return processRequest(...args);
+            },
           })
         )
         .use((request, response, next) => {
-          requestBody = request.body
-          next()
-        })
+          requestBody = request.body;
+          next();
+        });
 
-      const { port, close } = await listen(app)
+      const { port, close } = await listen(app);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-        body.append('1', 'a', { filename: 'a.txt' })
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('1', 'a', { filename: 'a.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        strictEqual(processRequestRan, true)
-        ok(requestBody)
-        ok(requestBody.variables)
-        ok(requestBody.variables.file)
+        strictEqual(processRequestRan, true);
+        ok(requestBody);
+        ok(requestBody.variables);
+        ok(requestBody.variables.file);
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`graphqlUploadExpress` with a multipart request and option `processRequest` throwing an exposed HTTP error.',
     async () => {
-      let expressError
-      let requestCompleted
-      let responseStatusCode
+      let expressError;
+      let requestCompleted;
+      let responseStatusCode;
 
-      const error = createError(400, 'Message.')
+      const error = createError(400, 'Message.');
       const app = express()
         .use((request, response, next) => {
-          const { send } = response
+          const { send } = response;
 
           response.send = (...args) => {
-            requestCompleted = request.complete
-            response.send = send
-            response.send(...args)
-          }
+            requestCompleted = request.complete;
+            response.send = send;
+            response.send(...args);
+          };
 
-          next()
+          next();
         })
         .use(
           graphqlUploadExpress({
             async processRequest(request) {
-              request.resume()
-              throw error
-            }
+              request.resume();
+              throw error;
+            },
           })
         )
         .use((error, request, response, next) => {
-          expressError = error
-          responseStatusCode = response.statusCode
+          expressError = error;
+          responseStatusCode = response.statusCode;
 
           // Sending a response here prevents the default Express error handler
           // from running, which would undesirably (in this case) display the
           // error in the console.
-          if (response.headersSent) next(error)
-          else response.send()
-        })
+          if (response.headersSent) next(error);
+          else response.send();
+        });
 
-      const { port, close } = await listen(app)
+      const { port, close } = await listen(app);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-        body.append('1', 'a', { filename: 'a.txt' })
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('1', 'a', { filename: 'a.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        deepStrictEqual(expressError, error)
+        deepStrictEqual(expressError, error);
         ok(
           requestCompleted,
           'Response wasn’t delayed until the request completed.'
-        )
-        strictEqual(responseStatusCode, error.status)
+        );
+        strictEqual(responseStatusCode, error.status);
       } finally {
-        close()
+        close();
       }
     }
-  )
+  );
 
   tests.add(
     '`graphqlUploadExpress` with a multipart request following middleware throwing an error.',
     async () => {
-      let expressError
-      let requestCompleted
+      let expressError;
+      let requestCompleted;
 
-      const error = new Error('Message.')
+      const error = new Error('Message.');
       const app = express()
         .use((request, response, next) => {
-          const { send } = response
+          const { send } = response;
 
           response.send = (...args) => {
-            requestCompleted = request.complete
-            response.send = send
-            response.send(...args)
-          }
+            requestCompleted = request.complete;
+            response.send = send;
+            response.send(...args);
+          };
 
-          next()
+          next();
         })
         .use(graphqlUploadExpress())
         .use(() => {
-          throw error
+          throw error;
         })
         .use((error, request, response, next) => {
-          expressError = error
+          expressError = error;
 
           // Sending a response here prevents the default Express error handler
           // from running, which would undesirably (in this case) display the
           // error in the console.
-          if (response.headersSent) next(error)
-          else response.send()
-        })
+          if (response.headersSent) next(error);
+          else response.send();
+        });
 
-      const { port, close } = await listen(app)
+      const { port, close } = await listen(app);
 
       try {
-        const body = new FormData()
+        const body = new FormData();
 
-        body.append('operations', JSON.stringify({ variables: { file: null } }))
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }))
-        body.append('1', 'a', { filename: 'a.txt' })
+        body.append(
+          'operations',
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('1', 'a', { filename: 'a.txt' });
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body })
+        await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
-        deepStrictEqual(expressError, error)
+        deepStrictEqual(expressError, error);
         ok(
           requestCompleted,
           'Response wasn’t delayed until the request completed.'
-        )
+        );
       } finally {
-        close()
+        close();
       }
     }
-  )
-}
+  );
+};
