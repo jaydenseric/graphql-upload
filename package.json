@@ -55,16 +55,16 @@
     "jsdoc-md": "^6.0.0",
     "koa": "^2.12.0",
     "node-fetch": "^2.6.0",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.5",
     "test-director": "^4.0.1"
   },
   "scripts": {
     "prepare": "npm run prepare:jsdoc && npm run prepare:prettier",
     "prepare:jsdoc": "jsdoc-md",
-    "prepare:prettier": "prettier readme.md --write",
+    "prepare:prettier": "prettier --write readme.md",
     "test": "npm run test:eslint && npm run test:prettier && npm run test:api",
     "test:eslint": "eslint .",
-    "test:prettier": "prettier '**/*.{json,yml,md}' -l",
+    "test:prettier": "prettier -c .",
     "test:api": "coverage-node -r hard-rejection/register test",
     "prepublishOnly": "npm test"
   }

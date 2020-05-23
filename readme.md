@@ -89,17 +89,17 @@ A GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphq
 _Setup for a schema built with [`makeExecutableSchema`](https://apollographql.com/docs/graphql-tools/generate-schema#makeExecutableSchema)._
 
 > ```js
-> const { makeExecutableSchema } = require('graphql-tools')
-> const { GraphQLUpload } = require('graphql-upload')
+> const { makeExecutableSchema } = require('graphql-tools');
+> const { GraphQLUpload } = require('graphql-upload');
 >
 > const schema = makeExecutableSchema({
 >   typeDefs: /* GraphQL */ `
 >     scalar Upload
 >   `,
 >   resolvers: {
->     Upload: GraphQLUpload
->   }
-> })
+>     Upload: GraphQLUpload,
+>   },
+> });
 > ```
 
 _A manually constructed schema with an image upload mutation._
@@ -108,9 +108,9 @@ _A manually constructed schema with an image upload mutation._
 > const {
 >   GraphQLSchema,
 >   GraphQLObjectType,
->   GraphQLBoolean
-> } = require('graphql')
-> const { GraphQLUpload } = require('graphql-upload')
+>   GraphQLBoolean,
+> } = require('graphql');
+> const { GraphQLUpload } = require('graphql-upload');
 >
 > const schema = new GraphQLSchema({
 >   mutation: new GraphQLObjectType({
@@ -122,19 +122,19 @@ _A manually constructed schema with an image upload mutation._
 >         args: {
 >           image: {
 >             description: 'Image file.',
->             type: GraphQLUpload
->           }
+>             type: GraphQLUpload,
+>           },
 >         },
 >         async resolve(parent, { image }) {
->           const { filename, mimetype, createReadStream } = await image
->           const stream = createReadStream()
+>           const { filename, mimetype, createReadStream } = await image;
+>           const stream = createReadStream();
 >           // Promisify the stream and store the file, then…
->           return true
->         }
->       }
->     }
->   })
-> })
+>           return true;
+>         },
+>       },
+>     },
+>   }),
+> });
 > ```
 
 ---
@@ -189,10 +189,10 @@ Creates [Express](https://expressjs.com) middleware that processes [GraphQL mult
 _Basic [`express-graphql`](https://npm.im/express-graphql) setup._
 
 > ```js
-> const express = require('express')
-> const graphqlHTTP = require('express-graphql')
-> const { graphqlUploadExpress } = require('graphql-upload')
-> const schema = require('./schema')
+> const express = require('express');
+> const graphqlHTTP = require('express-graphql');
+> const { graphqlUploadExpress } = require('graphql-upload');
+> const schema = require('./schema');
 >
 > express()
 >   .use(
@@ -200,7 +200,7 @@ _Basic [`express-graphql`](https://npm.im/express-graphql) setup._
 >     graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
 >     graphqlHTTP({ schema })
 >   )
->   .listen(3000)
+>   .listen(3000);
 > ```
 
 ---
@@ -221,18 +221,18 @@ Creates [Koa](https://koajs.com) middleware that processes [GraphQL multipart re
 _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
 
 > ```js
-> const Koa = require('koa')
-> const bodyParser = require('koa-bodyparser')
-> const { errorHandler, execute } = require('graphql-api-koa')
-> const { graphqlUploadKoa } = require('graphql-upload')
-> const schema = require('./schema')
+> const Koa = require('koa');
+> const bodyParser = require('koa-bodyparser');
+> const { errorHandler, execute } = require('graphql-api-koa');
+> const { graphqlUploadKoa } = require('graphql-upload');
+> const schema = require('./schema');
 >
 > new Koa()
 >   .use(errorHandler())
 >   .use(bodyParser())
 >   .use(graphqlUploadKoa({ maxFileSize: 10000000, maxFiles: 10 }))
 >   .use(execute({ schema }))
->   .listen(3000)
+>   .listen(3000);
 > ```
 
 ---
@@ -248,7 +248,7 @@ Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-m
 _How to import._
 
 > ```js
-> const { processRequest } = require('graphql-upload')
+> const { processRequest } = require('graphql-upload');
 > ```
 
 ---

@@ -9,6 +9,8 @@
 
 ### Patch
 
+- Updated Prettier related package scripts.
+- Configured Prettier option `semi` to the default, `true`.
 - Ensure GitHub Actions run on pull request.
 - Minor JSDoc wording tweak for consistency.
 

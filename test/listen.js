@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /**
  * Starts a Node.js HTTP server.
@@ -10,13 +10,13 @@
  */
 module.exports = function listen(server) {
   return new Promise((resolve, reject) => {
-    server.listen(function(error) {
-      if (error) reject(error)
+    server.listen(function (error) {
+      if (error) reject(error);
       else
         resolve({
           port: this.address().port,
-          close: () => this.close()
-        })
-    })
-  })
-}
+          close: () => this.close(),
+        });
+    });
+  });
+};
