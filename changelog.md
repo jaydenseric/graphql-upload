@@ -9,6 +9,7 @@
 
 ### Patch
 
+- Ensure GitHub Actions run on pull request.
 - Minor JSDoc wording tweak for consistency.
 
 ## 10.0.0
