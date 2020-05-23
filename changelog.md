@@ -13,6 +13,7 @@
 - Updated Prettier related package scripts.
 - Configured Prettier option `semi` to the default, `true`.
 - Ensure GitHub Actions run on pull request.
+- Also run GitHub Actions with Node.js v14.
 - Minor JSDoc wording tweak for consistency.
 
 ## 10.0.0
