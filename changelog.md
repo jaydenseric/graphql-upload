@@ -9,7 +9,7 @@
 
 ### Patch
 
-- Updated the [`graphql`](https://npm.im/graphql) peer dependency to `0.13.1 - 15`, via [#201](https://github.com/jaydenseric/graphql-upload/pull/201).
+- Updated the [`graphql`](https://npm.im/graphql) peer dependency to `0.13.1 - 15`, fixing [#200](https://github.com/jaydenseric/graphql-upload/issues/200) via [#201](https://github.com/jaydenseric/graphql-upload/pull/201).
 - Updated Prettier related package scripts.
 - Configured Prettier option `semi` to the default, `true`.
 - Ensure GitHub Actions run on pull request.
