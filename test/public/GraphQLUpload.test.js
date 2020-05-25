@@ -2,8 +2,8 @@
 
 const { doesNotThrow, throws } = require('assert');
 const { parseValue } = require('graphql');
-const GraphQLUpload = require('../../lib/GraphQLUpload');
-const Upload = require('../../lib/Upload');
+const GraphQLUpload = require('../../public/GraphQLUpload');
+const Upload = require('../../public/Upload');
 
 module.exports = (tests) => {
   tests.add('`GraphQLUpload` scalar `parseValue` with a valid value.', () => {

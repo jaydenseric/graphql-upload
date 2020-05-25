@@ -4,8 +4,8 @@ const { deepStrictEqual, ok, strictEqual } = require('assert');
 const FormData = require('form-data');
 const Koa = require('koa');
 const fetch = require('node-fetch');
-const graphqlUploadKoa = require('../../lib/graphqlUploadKoa');
-const processRequest = require('../../lib/processRequest');
+const graphqlUploadKoa = require('../../public/graphqlUploadKoa');
+const processRequest = require('../../public/processRequest');
 const listen = require('../listen');
 
 module.exports = (tests) => {

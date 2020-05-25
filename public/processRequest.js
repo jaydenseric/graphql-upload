@@ -5,9 +5,9 @@ const { WriteStream } = require('fs-capacitor');
 const createError = require('http-errors');
 const isObject = require('isobject');
 const objectPath = require('object-path');
+const { SPEC_URL } = require('../private/constants');
+const ignoreStream = require('../private/ignoreStream');
 const Upload = require('./Upload');
-const { SPEC_URL } = require('./constants');
-const ignoreStream = require('./ignoreStream');
 
 /**
  * Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
@@ -24,9 +24,21 @@ const ignoreStream = require('./ignoreStream');
  * @kind function
  * @name processRequest
  * @type {ProcessRequestFunction}
- * @example <caption>How to import.</caption>
+ * @example <caption>Ways to `import`.</caption>
+ * ```js
+ * import { processRequest } from 'graphql-upload';
+ * ```
+ *
+ * ```js
+ * import processRequest from 'graphql-upload/public/processRequest.js';
+ * ```
+ * @example <caption>Ways to `require`.</caption>
  * ```js
  * const { processRequest } = require('graphql-upload');
+ * ```
+ *
+ * ```js
+ * const processRequest = require('graphql-upload/public/processRequest');
  * ```
  */
 module.exports = function processRequest(

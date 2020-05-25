@@ -20,12 +20,24 @@
     "server",
     "koa",
     "express",
-    "apollo"
+    "apollo",
+    "esm",
+    "mjs"
   ],
   "files": [
-    "lib"
+    "private",
+    "public"
   ],
-  "main": "lib",
+  "main": "public",
+  "exports": {
+    ".": {
+      "import": "./public/index.mjs",
+      "require": "./public/index.js"
+    },
+    "./public/": "./public/",
+    "./package": "./package.json",
+    "./package.json": "./package.json"
+  },
   "engines": {
     "node": "^10.13.0 || ^12.0.0 || >= 13.7.0"
   },

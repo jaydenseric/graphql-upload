@@ -10,6 +10,22 @@ const Upload = require('./Upload');
  * [file upload details]{@link FileUpload} for processing and storage.
  * @kind class
  * @name GraphQLUpload
+ * @example <caption>Ways to `import`.</caption>
+ * ```js
+ * import { GraphQLUpload } from 'graphql-upload';
+ * ```
+ *
+ * ```js
+ * import GraphQLUpload from 'graphql-upload/public/GraphQLUpload.js';
+ * ```
+ * @example <caption>Ways to `require`.</caption>
+ * ```js
+ * const { GraphQLUpload } = require('graphql-upload');
+ * ```
+ *
+ * ```js
+ * const GraphQLUpload = require('graphql-upload/public/GraphQLUpload');
+ * ```
  * @example <caption>Setup for a schema built with [`makeExecutableSchema`](https://apollographql.com/docs/graphql-tools/generate-schema#makeExecutableSchema).</caption>
  * ```js
  * const { makeExecutableSchema } = require('graphql-tools');

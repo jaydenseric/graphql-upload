@@ -10,6 +10,22 @@
  * [`promise`]{@link Upload#promise} property.
  * @kind class
  * @name Upload
+ * @example <caption>Ways to `import`.</caption>
+ * ```js
+ * import { Upload } from 'graphql-upload';
+ * ```
+ *
+ * ```js
+ * import Upload from 'graphql-upload/public/Upload.js';
+ * ```
+ * @example <caption>Ways to `require`.</caption>
+ * ```js
+ * const { Upload } = require('graphql-upload');
+ * ```
+ *
+ * ```js
+ * const Upload = require('graphql-upload/public/Upload');
+ * ```
  */
 module.exports = class Upload {
   constructor() {

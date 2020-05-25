@@ -1,7 +1,7 @@
 'use strict';
 
 const { ok, rejects, strictEqual } = require('assert');
-const Upload = require('../../lib/Upload');
+const Upload = require('../../public/Upload');
 
 module.exports = (tests) => {
   tests.add('`Upload` class resolving a file.', async () => {

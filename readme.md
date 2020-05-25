@@ -86,6 +86,26 @@ A GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphq
 
 #### Examples
 
+_Ways to `import`._
+
+> ```js
+> import { GraphQLUpload } from 'graphql-upload';
+> ```
+>
+> ```js
+> import GraphQLUpload from 'graphql-upload/public/GraphQLUpload.js';
+> ```
+
+_Ways to `require`._
+
+> ```js
+> const { GraphQLUpload } = require('graphql-upload');
+> ```
+>
+> ```js
+> const GraphQLUpload = require('graphql-upload/public/GraphQLUpload');
+> ```
+
 _Setup for a schema built with [`makeExecutableSchema`](https://apollographql.com/docs/graphql-tools/generate-schema#makeExecutableSchema)._
 
 > ```js
@@ -143,6 +163,28 @@ _A manually constructed schema with an image upload mutation._
 
 A file expected to be uploaded as it has been declared in the `map` field of a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). The [`processRequest`](#function-processrequest) function places references to an instance of this class wherever the file is expected in the [GraphQL operation](#type-graphqloperation). The [`Upload` scalar](#class-graphqlupload) derives it’s value from the [`promise`](#upload-instance-property-promise) property.
 
+#### Examples
+
+_Ways to `import`._
+
+> ```js
+> import { Upload } from 'graphql-upload';
+> ```
+>
+> ```js
+> import Upload from 'graphql-upload/public/Upload.js';
+> ```
+
+_Ways to `require`._
+
+> ```js
+> const { Upload } = require('graphql-upload');
+> ```
+>
+> ```js
+> const Upload = require('graphql-upload/public/Upload');
+> ```
+
 #### Upload instance method reject
 
 Rejects the upload promise with an error. This should only be utilized by [`processRequest`](#function-processrequest).
@@ -186,6 +228,26 @@ Creates [Express](https://expressjs.com) middleware that processes [GraphQL mult
 
 #### Examples
 
+_Ways to `import`._
+
+> ```js
+> import { graphqlUploadExpress } from 'graphql-upload';
+> ```
+>
+> ```js
+> import graphqlUploadExpress from 'graphql-upload/public/graphqlUploadExpress.js';
+> ```
+
+_Ways to `require`._
+
+> ```js
+> const { graphqlUploadExpress } = require('graphql-upload');
+> ```
+>
+> ```js
+> const graphqlUploadExpress = require('graphql-upload/public/graphqlUploadExpress');
+> ```
+
 _Basic [`express-graphql`](https://npm.im/express-graphql) setup._
 
 > ```js
@@ -218,6 +280,26 @@ Creates [Koa](https://koajs.com) middleware that processes [GraphQL multipart re
 
 #### Examples
 
+_Ways to `import`._
+
+> ```js
+> import { graphqlUploadKoa } from 'graphql-upload';
+> ```
+>
+> ```js
+> import graphqlUploadKoa from 'graphql-upload/public/graphqlUploadKoa.js';
+> ```
+
+_Ways to `require`._
+
+> ```js
+> const { graphqlUploadKoa } = require('graphql-upload');
+> ```
+>
+> ```js
+> const graphqlUploadKoa = require('graphql-upload/public/graphqlUploadKoa');
+> ```
+
 _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
 
 > ```js
@@ -245,10 +327,24 @@ Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-m
 
 #### Examples
 
-_How to import._
+_Ways to `import`._
+
+> ```js
+> import { processRequest } from 'graphql-upload';
+> ```
+>
+> ```js
+> import processRequest from 'graphql-upload/public/processRequest.js';
+> ```
+
+_Ways to `require`._
 
 > ```js
 > const { processRequest } = require('graphql-upload');
+> ```
+>
+> ```js
+> const processRequest = require('graphql-upload/public/processRequest');
 > ```
 
 ---

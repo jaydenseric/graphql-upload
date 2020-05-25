@@ -1,7 +1,7 @@
 'use strict';
 
 const { doesNotThrow, strictEqual } = require('assert');
-const ignoreStream = require('../../lib/ignoreStream');
+const ignoreStream = require('../../private/ignoreStream');
 const CountReadableStream = require('../CountReadableStream');
 
 module.exports = (tests) => {
