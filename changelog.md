@@ -14,6 +14,7 @@
 - Configured Prettier option `semi` to the default, `true`.
 - Ensure GitHub Actions run on pull request.
 - Also run GitHub Actions with Node.js v14.
+- Fixed the `ignoreStream` function tests for Node.js v14 with a new `CountReadableStream` test helper, fixing [#209](https://github.com/jaydenseric/graphql-upload/issues/209).
 - Minor JSDoc wording tweak for consistency.
 
 ## 10.0.0
