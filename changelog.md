@@ -17,6 +17,8 @@
 - Also run GitHub Actions with Node.js v14.
 - Fixed the `ignoreStream` function tests for Node.js v14 with a new `CountReadableStream` test helper, fixing [#209](https://github.com/jaydenseric/graphql-upload/issues/209).
 - Minor JSDoc wording tweak for consistency.
+- Mention [`Promise.allSettled`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled) in the readme “Tips” section.
+- Updated MDN Web Docs links.
 
 ## 10.0.0
 
@@ -324,7 +326,7 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 - Updated dependencies.
 - Simplified npm scripts.
 - Readme updates:
-  - Documented [`Blob`](https://developer.mozilla.org/en/docs/Web/API/Blob) types, via [#39](https://github.com/jaydenseric/apollo-upload-server/pull/39).
+  - Documented [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) types, via [#39](https://github.com/jaydenseric/apollo-upload-server/pull/39).
   - Explained how to use `processRequest` for custom middleware.
   - Improved usage instructions.
   - Display oldest supported Node.js version.

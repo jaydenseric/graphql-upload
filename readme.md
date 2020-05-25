@@ -49,7 +49,7 @@ See the [example API and client](https://github.com/jaydenseric/apollo-upload-ex
 - The device requires sufficient disk space to buffer the expected number of concurrent upload requests.
 - Promisify and await file upload streams in resolvers or the server will send a response to the client before uploads are complete, causing a disconnect.
 - Handle file upload promise rejection and stream errors; uploads sometimes fail due to network connectivity issues or impatient users disconnecting.
-- Process multiple uploads asynchronously with [`Promise.all`](https://developer.mozilla.org/docs/web/javascript/reference/global_objects/promise/all) or a more flexible solution where an error in one does not reject them all.
+- Process multiple uploads asynchronously with [`Promise.all`](https://developer.mozilla.org/en-US/docs/web/javascript/reference/global_objects/promise/all) or a more flexible solution such as [`Promise.allSettled`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled) where an error in one does not reject them all.
 - Only use [`createReadStream()`](#type-fileupload) _before_ the resolver returns; late calls (e.g. in an unawaited async function or callback) throw an error. Existing streams can still be used after a response is sent, although there are few valid reasons for not awaiting their completion.
 - Use [`stream.destroy()`](https://nodejs.org/api/stream.html#stream_readable_destroy_error) when an incomplete stream is no longer needed, or temporary files may not get cleaned up.
 
