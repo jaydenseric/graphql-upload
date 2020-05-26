@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Updated the EditorConfig URL.
+
 ## 11.0.0
 
 ### Major
