@@ -2,8 +2,14 @@
 
 ## Next
 
+### Major
+
+- Updated Node.js support to `^10.17.0 || ^12.0.0 || >= 13.7.0`, to meet the requirements for updated dev dependencies.
+- Updated dev dependencies, some of which require newer Node.js versions than previously supported.
+
 ### Patch
 
+- Updated dependencies.
 - Updated the EditorConfig URL.
 
 ## 11.0.0
