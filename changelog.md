@@ -10,6 +10,7 @@
 ### Patch
 
 - Updated dependencies.
+- Lint fixes for the updated Prettier version.
 - Updated the EditorConfig URL.
 
 ## 11.0.0

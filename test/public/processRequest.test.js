@@ -51,7 +51,7 @@ module.exports = (tests) => {
           'operations',
           JSON.stringify({ variables: { file: null } })
         );
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('map', JSON.stringify({ 1: ['variables.file'] }));
         body.append('1', 'a', { filename: 'a.txt' });
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
@@ -107,7 +107,7 @@ module.exports = (tests) => {
           'operations',
           JSON.stringify({ variables: { file: null } })
         );
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('map', JSON.stringify({ 1: ['variables.file'] }));
         body.append('1', 'a', { filename: 'a.txt' });
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
@@ -172,7 +172,7 @@ module.exports = (tests) => {
       );
       body.append(
         'map',
-        JSON.stringify({ '1': ['0.variables.file'], '2': ['1.variables.file'] })
+        JSON.stringify({ 1: ['0.variables.file'], 2: ['1.variables.file'] })
       );
       body.append('1', 'a', { filename: 'a.txt' });
       body.append('2', 'b', { filename: 'b.txt' });
@@ -238,7 +238,7 @@ module.exports = (tests) => {
       );
       body.append(
         'map',
-        JSON.stringify({ '1': ['variables.files.0', 'variables.files.1'] })
+        JSON.stringify({ 1: ['variables.files.0', 'variables.files.1'] })
       );
       body.append('1', 'a', { filename: 'a.txt' });
 
@@ -281,7 +281,7 @@ module.exports = (tests) => {
       );
       body.append(
         'map',
-        JSON.stringify({ '1': ['variables.fileA'], '2': ['variables.fileB'] })
+        JSON.stringify({ 1: ['variables.fileA'], 2: ['variables.fileB'] })
       );
       body.append('1', 'a', { filename: 'a.txt' });
       body.append('2', 'b', { filename: 'b.txt' });
@@ -331,7 +331,7 @@ module.exports = (tests) => {
           'operations',
           JSON.stringify({ variables: { file: null } })
         );
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('map', JSON.stringify({ 1: ['variables.file'] }));
         body.append('1', 'a', { filename: 'a.txt' });
         body.append('2', 'b', { filename: 'b.txt' });
 
@@ -376,7 +376,7 @@ module.exports = (tests) => {
           'operations',
           JSON.stringify({ variables: { file: null } })
         );
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('map', JSON.stringify({ 1: ['variables.file'] }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -417,8 +417,8 @@ module.exports = (tests) => {
       body.append(
         'map',
         JSON.stringify({
-          '1': ['variables.files.0'],
-          '2': ['variables.files.1'],
+          1: ['variables.files.0'],
+          2: ['variables.files.1'],
         })
       );
       body.append('1', 'a', { filename: 'a.txt' });
@@ -481,8 +481,8 @@ module.exports = (tests) => {
         body.append(
           'map',
           JSON.stringify({
-            '1': ['variables.files.0'],
-            '2': ['variables.files.1'],
+            1: ['variables.files.0'],
+            2: ['variables.files.1'],
           })
         );
         body.append('1', 'a', { filename: 'a.txt' });
@@ -554,8 +554,8 @@ module.exports = (tests) => {
       body.append(
         'map',
         JSON.stringify({
-          '1': ['variables.files.0'],
-          '2': ['variables.files.1'],
+          1: ['variables.files.0'],
+          2: ['variables.files.1'],
         })
       );
       body.append('1', 'aa', { filename: 'a.txt' });
@@ -709,9 +709,9 @@ module.exports = (tests) => {
         formData.append(
           'map',
           JSON.stringify({
-            '1': ['variables.fileA'],
-            '2': ['variables.fileB'],
-            '3': ['variables.fileC'],
+            1: ['variables.fileA'],
+            2: ['variables.fileB'],
+            3: ['variables.fileC'],
           })
         );
         formData.append('1', 'a', { filename: 'a.txt' });
@@ -843,9 +843,9 @@ module.exports = (tests) => {
         formData.append(
           'map',
           JSON.stringify({
-            '1': ['variables.fileA'],
-            '2': ['variables.fileB'],
-            '3': ['variables.fileC'],
+            1: ['variables.fileA'],
+            2: ['variables.fileB'],
+            3: ['variables.fileC'],
           })
         );
         formData.append('1', 'a', { filename: 'a.txt' });
@@ -900,7 +900,7 @@ module.exports = (tests) => {
       try {
         const body = new FormData();
 
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('map', JSON.stringify({ 1: ['variables.file'] }));
         body.append(
           'operations',
           JSON.stringify({ variables: { file: null } })
@@ -947,7 +947,7 @@ module.exports = (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('1', 'a', { filename: 'a.txt' });
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('map', JSON.stringify({ 1: ['variables.file'] }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -1061,7 +1061,7 @@ module.exports = (tests) => {
         const body = new FormData();
 
         body.append('operations', '{ x }');
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('map', JSON.stringify({ 1: ['variables.file'] }));
         body.append('1', 'a', { filename: 'a.txt' });
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
@@ -1100,7 +1100,7 @@ module.exports = (tests) => {
         const body = new FormData();
 
         body.append('operations', '{ x }');
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('map', JSON.stringify({ 1: ['variables.file'] }));
         body.append(
           '1',
           // Will arrive in multiple chunks as the TCP max packet size is 64000
@@ -1145,7 +1145,7 @@ module.exports = (tests) => {
         const body = new FormData();
 
         body.append('operations', 'null');
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('map', JSON.stringify({ 1: ['variables.file'] }));
         body.append('1', 'a', { filename: 'a.txt' });
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
@@ -1271,7 +1271,7 @@ module.exports = (tests) => {
           'operations',
           JSON.stringify({ variables: { file: null } })
         );
-        body.append('map', JSON.stringify({ '1': null }));
+        body.append('map', JSON.stringify({ 1: null }));
         body.append('1', 'a', { filename: 'a.txt' });
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
@@ -1313,7 +1313,7 @@ module.exports = (tests) => {
           'operations',
           JSON.stringify({ variables: { file: null } })
         );
-        body.append('map', JSON.stringify({ '1': [null] }));
+        body.append('map', JSON.stringify({ 1: [null] }));
         body.append('1', 'a', { filename: 'a.txt' });
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
@@ -1352,7 +1352,7 @@ module.exports = (tests) => {
         const body = new FormData();
 
         body.append('operations', JSON.stringify({ variables: '' }));
-        body.append('map', JSON.stringify({ '1': ['variables.file'] }));
+        body.append('map', JSON.stringify({ 1: ['variables.file'] }));
         body.append('1', 'a', { filename: 'a.txt' });
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
