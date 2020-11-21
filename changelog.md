@@ -11,6 +11,7 @@
 
 - Updated dependencies.
 - Lint fixes for the updated Prettier version.
+- Simplified the GitHub Actions CI config with the [`npm install-test`](https://docs.npmjs.com/cli/v7/commands/npm-install-test) command.
 - Removed `npm-debug.log` from the `.gitignore` file as npm [v4.2.0](https://github.com/npm/npm/releases/tag/v4.2.0)+ doesn’t create it in the current working directory.
 - Updated the EditorConfig URL.
 
