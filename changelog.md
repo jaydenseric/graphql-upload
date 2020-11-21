@@ -11,6 +11,7 @@
 
 - Updated dependencies.
 - Lint fixes for the updated Prettier version.
+- Removed `npm-debug.log` from the `.gitignore` file as npm [v4.2.0](https://github.com/npm/npm/releases/tag/v4.2.0)+ doesn’t create it in the current working directory.
 - Updated the EditorConfig URL.
 
 ## 11.0.0
