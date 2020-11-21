@@ -9,7 +9,9 @@ const { Readable } = require('stream');
  * @see [Example counting stream in the Node.js docs](https://nodejs.org/api/stream.html#stream_an_example_counting_stream).
  * @ignore
  */
-module.exports = class CountReadableStream extends Readable {
+module.exports = class CountReadableStream extends (
+  Readable
+) {
   constructor(options) {
     super(options);
     this._max = 1000000;
