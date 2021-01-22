@@ -54,7 +54,7 @@
   "devDependencies": {
     "coverage-node": "^4.0.0",
     "eslint": "^7.18.0",
-    "eslint-config-env": "^16.0.0",
+    "eslint-config-env": "^17.0.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsdoc": "^31.0.8",
@@ -64,7 +64,7 @@
     "form-data": "^3.0.0",
     "graphql": "^15.0.0",
     "hard-rejection": "^2.1.0",
-    "jsdoc-md": "^8.0.0",
+    "jsdoc-md": "^9.0.0",
     "koa": "^2.13.1",
     "node-fetch": "^2.6.1",
     "prettier": "^2.2.1",
