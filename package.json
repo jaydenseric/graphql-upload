@@ -52,23 +52,23 @@
     "object-path": "^0.11.5"
   },
   "devDependencies": {
-    "coverage-node": "^3.0.0",
-    "eslint": "^7.14.0",
-    "eslint-config-env": "^15.0.1",
-    "eslint-config-prettier": "^6.15.0",
+    "coverage-node": "^4.0.0",
+    "eslint": "^7.18.0",
+    "eslint-config-env": "^16.0.0",
+    "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsdoc": "^30.7.8",
+    "eslint-plugin-jsdoc": "^31.0.8",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-prettier": "^3.3.1",
     "express": "^4.17.1",
     "form-data": "^3.0.0",
     "graphql": "^15.0.0",
     "hard-rejection": "^2.1.0",
-    "jsdoc-md": "^7.0.0",
-    "koa": "^2.13.0",
+    "jsdoc-md": "^8.0.0",
+    "koa": "^2.13.1",
     "node-fetch": "^2.6.1",
-    "prettier": "^2.2.0",
-    "test-director": "^4.0.1"
+    "prettier": "^2.2.1",
+    "test-director": "^5.0.0"
   },
   "scripts": {
     "prepare": "npm run prepare:jsdoc && npm run prepare:prettier",

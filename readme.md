@@ -211,7 +211,7 @@ The file upload details, available when the [upload promise](#upload-instance-pr
 
 Promise that resolves file upload details. This should only be utilized by [`GraphQLUpload`](#class-graphqlupload).
 
-**Type:** Promise&lt;[FileUpload](#type-fileupload)>
+**Type:** Promise<[FileUpload](#type-fileupload)>
 
 ---
 
@@ -416,7 +416,7 @@ Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-m
 | `response` | ServerResponse | [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse). |
 | `options` | [ProcessRequestOptions](#type-processrequestoptions)? | Options for processing the request. |
 
-**Returns:** Promise&lt;[GraphQLOperation](#type-graphqloperation) | Array&lt;[GraphQLOperation](#type-graphqloperation)>> — GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
+**Returns:** Promise<[GraphQLOperation](#type-graphqloperation) | Array<[GraphQLOperation](#type-graphqloperation)>> — GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
 
 #### See
 
