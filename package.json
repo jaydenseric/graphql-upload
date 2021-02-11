@@ -20,10 +20,12 @@
   ],
   "files": [
     "lib",
+    "index.d.ts",
     "!*.test.*",
     "!test-helpers"
   ],
   "main": "lib",
+  "types": "index.d.ts",
   "engines": {
     "node": ">=8.5"
   },
