@@ -1,16 +1,11 @@
 {
-  "name": "graphql-upload",
-  "version": "8.1.0",
-  "description": "Middleware and an Upload scalar to add support for GraphQL multipart requests (file uploads via queries and mutations) to various Node.js GraphQL servers.",
+  "name": "@apollographql/graphql-upload-8-fork",
+  "version": "8.1.1",
+  "description": "Fork of graphql-upload@8 that works with graphql@15 for compatibility with apollo-server@2",
   "license": "MIT",
-  "author": {
-    "name": "Jayden Seric",
-    "email": "me@jaydenseric.com",
-    "url": "https://jaydenseric.com"
-  },
-  "repository": "github:jaydenseric/graphql-upload",
-  "homepage": "https://github.com/jaydenseric/graphql-upload#readme",
-  "bugs": "https://github.com/jaydenseric/graphql-upload/issues",
+  "author": "Apollo <opensource@apollographql.com>",
+  "repository": "github:apollographql/graphql-upload",
+  "homepage": "https://github.com/apollographql/graphql-upload#readme",
   "keywords": [
     "graphql",
     "upload",
@@ -34,7 +29,7 @@
   },
   "browserslist": "node >= 8.5",
   "peerDependencies": {
-    "graphql": "0.13.1 - 14"
+    "graphql": "0.13.1 - 15"
   },
   "dependencies": {
     "busboy": "^0.3.1",
@@ -60,7 +55,6 @@
     "form-data": "^2.5.1",
     "graphql": "^14.5.8",
     "husky": "^3.0.8",
-    "jsdoc-md": "^4.0.1",
     "koa": "^2.8.2",
     "lint-staged": "^9.4.2",
     "node-fetch": "^2.6.0",
@@ -68,16 +62,15 @@
     "tap": "^14.6.9"
   },
   "scripts": {
-    "prepare": "npm run prepare:clean && npm run prepare:mjs && npm run prepare:js && npm run prepare:jsdoc && npm run prepare:prettier",
+    "prepare": "npm run prepare:clean && npm run prepare:mjs && npm run prepare:js && npm run prepare:prettier",
     "prepare:clean": "rm -rf lib",
     "prepare:mjs": "BABEL_ESM=1 babel src -d lib --keep-file-extension",
     "prepare:js": "babel src -d lib",
-    "prepare:jsdoc": "jsdoc-md",
     "prepare:prettier": "prettier 'lib/**/*.{mjs,js}' readme.md --write",
     "test": "npm run test:eslint && npm run test:prettier && npm run test:tap",
     "test:eslint": "eslint . --ext mjs,js",
     "test:prettier": "prettier '**/*.{json,yml,md}' -l",
-    "test:tap": "tap --test-ignore=src --100",
+    "test:tap": "tap --test-ignore=src",
     "prepublishOnly": "npm test"
   }
 }
