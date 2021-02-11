@@ -7,3 +7,5 @@ Apollo Server v2 depends on `graphql-upload` to provide an easy-to-use way to in
 However, the latest release of `graphql-upload@8` (8.1.0) declares peer dependencies on `graphql` that do not include `graphql@15`. We want users of Apollo Server v2 to be able to use graphql v15 without getting peer dependencies warnings (or errors when they are using npm v7), so we have forked `graphql-upload` v8 just to extend the peer dependency.
 
 We do not recommend that you directly depend on this fork. Our recommendation is that if you want to use uploads in your GraphQL server, you should consider disabling Apollo Server's built-in `graphql-upload` integration by passing `uploads: false` to `new ApolloServer` and use `graphql-upload` directly. That way, you can use the latest and greatest version of `graphql-upload`. We currently intend to remove the integration from Apollo Server v3.
+
+This fork also contains the TypeScript typings from [DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/graphql-upload), so you don't have to try to combine this fork with `@types/graphql-upload`.
