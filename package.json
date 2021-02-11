@@ -34,6 +34,9 @@
     "graphql": "0.13.1 - 15"
   },
   "dependencies": {
+    "@types/express": "*",
+    "@types/fs-capacitor": "*",
+    "@types/koa": "*",
     "busboy": "^0.3.1",
     "fs-capacitor": "^2.0.4",
     "http-errors": "^1.7.3",

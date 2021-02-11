@@ -2,6 +2,10 @@
 
 See [the upstream changelog](https://github.com/jaydenseric/graphql-upload/blob/master/changelog.md) for more details.
 
+## 8.1.3
+
+Depend on the `@types` packages required to use the typings from this package. (Because this fork is intended only for use by the TypeScript project Apollo Server, this seems reasonable.)
+
 ## 8.1.2
 
 Incorporate typings from DefinitelyTyped.
