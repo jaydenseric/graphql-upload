@@ -199,8 +199,8 @@ module.exports = function processRequest(
 
             const mapEntries = Object.entries(parsedMap);
 
-            // Check max files is not exceeded, even though the number of files to
-            // parse might not match th(e map provided by the client.
+            // Check max files is not exceeded, even though the number of files
+            // to parse might not match the map provided by the client.
             if (mapEntries.length > maxFiles)
               return exit(
                 createError(413, `${maxFiles} max file uploads exceeded.`)
