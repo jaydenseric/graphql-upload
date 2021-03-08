@@ -999,7 +999,7 @@ module.exports = (tests) => {
   );
 
   tests.add(
-    '`processRequest` with multipart form fields `‘operations’`, `map` and file missing.',
+    '`processRequest` with multipart form fields `operations`, `map` and file missing.',
     async () => {
       let serverError;
 
