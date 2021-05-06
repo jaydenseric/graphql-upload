@@ -52,31 +52,30 @@
     "object-path": "^0.11.5"
   },
   "devDependencies": {
-    "coverage-node": "^4.0.0",
-    "eslint": "^7.23.0",
-    "eslint-config-env": "^18.0.1",
-    "eslint-config-prettier": "^7.2.0",
+    "coverage-node": "^5.0.1",
+    "eslint": "^7.25.0",
+    "eslint-config-env": "^19.0.2",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsdoc": "^31.6.1",
+    "eslint-plugin-jsdoc": "^33.1.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-prettier": "^3.4.0",
     "express": "^4.17.1",
     "form-data": "^4.0.0",
     "graphql": "^15.5.0",
     "hard-rejection": "^2.1.0",
-    "jsdoc-md": "^9.1.1",
+    "jsdoc-md": "^10.1.0",
     "koa": "^2.13.1",
     "node-fetch": "^2.6.1",
     "prettier": "^2.2.1",
-    "test-director": "^5.0.0"
+    "test-director": "^6.0.0"
   },
   "scripts": {
-    "prepare": "npm run prepare:jsdoc && npm run prepare:prettier",
-    "prepare:jsdoc": "jsdoc-md",
-    "prepare:prettier": "prettier --write readme.md",
-    "test": "npm run test:eslint && npm run test:prettier && npm run test:api",
+    "jsdoc": "jsdoc-md",
+    "test": "npm run test:eslint && npm run test:prettier && npm run test:jsdoc && npm run test:api",
     "test:eslint": "eslint .",
     "test:prettier": "prettier -c .",
+    "test:jsdoc": "jsdoc-md -c",
     "test:api": "coverage-node -r hard-rejection/register test/index.mjs",
     "prepublishOnly": "npm test"
   }

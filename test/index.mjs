@@ -1,4 +1,4 @@
-import { TestDirector } from 'test-director';
+import TestDirector from 'test-director';
 import testIgnoreStream from './private/ignoreStream.test.mjs';
 import testGraphQLUpload from './public/GraphQLUpload.test.mjs';
 import testUpload from './public/Upload.test.mjs';
