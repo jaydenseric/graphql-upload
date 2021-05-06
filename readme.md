@@ -6,8 +6,6 @@
 
 Middleware and an [`Upload` scalar](#class-graphqlupload) to add support for [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec) (file uploads via queries and mutations) to various Node.js GraphQL servers.
 
-⚠️ Previously published as [`apollo-upload-server`](https://npm.im/apollo-upload-server).
-
 ## Support
 
 The following environments are known to be compatible:

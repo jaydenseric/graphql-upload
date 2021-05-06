@@ -25,6 +25,7 @@
 - Fixed a comment typo.
 - Fixed a test name typo.
 - Prettier format for a JSDoc code example.
+- Removed from the readme the notice that the package was previously published as [`apollo-upload-server`](https://npm.im/apollo-upload-server).
 
 ## 11.0.0
 
