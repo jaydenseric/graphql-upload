@@ -9,6 +9,10 @@
 - The tests are now ESM in `.mjs` files instead of CJS in `.js` files.
 - Replaced the the `package.json` `exports` field public [subpath folder mapping](https://nodejs.org/api/packages.html#packages_subpath_folder_mappings) (deprecated by Node.js) with a [subpath pattern](https://nodejs.org/api/packages.html#packages_subpath_patterns). Deep `require` paths must now include the `.js` file extension.
 
+### Minor
+
+- Added a package `sideEffects` field.
+
 ### Patch
 
 - Updated dependencies.
