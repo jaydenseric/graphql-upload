@@ -6,28 +6,13 @@
 
 Middleware and an [`Upload` scalar](#class-graphqlupload) to add support for [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec) (file uploads via queries and mutations) to various Node.js GraphQL servers.
 
-## Support
-
-The following environments are known to be compatible:
-
-- [Node.js](https://nodejs.org) `^12.20 || >= 14.13`
-- [Koa](https://koajs.com)
-  - [`graphql-api-koa`](https://npm.im/graphql-api-koa)
-  - [`koa-graphql`](https://npm.im/koa-graphql)
-  - [`apollo-server-koa`](https://npm.im/apollo-server-koa) (inbuilt)
-- [Express](https://expressjs.com)
-  - [`express-graphql`](https://npm.im/express-graphql)
-  - [`apollo-server-express`](https://npm.im/apollo-server-express) (inbuilt)
-
-See also [GraphQL multipart request spec server implementations](https://github.com/jaydenseric/graphql-multipart-request-spec#server).
-
 ## Setup
 
-Setup is necessary if your environment doesn’t feature this package inbuilt (see **_[Support](#support)_**).
+First, check if there are [GraphQL multipart request spec server implementations](https://github.com/jaydenseric/graphql-multipart-request-spec#server) (most for Node.js integrate [`graphql-upload`](https://npm.im/graphql-upload)) that are more suitable for your environment than a manual setup.
 
-To install [`graphql-upload`](https://npm.im/graphql-upload) and the [`graphql`](https://npm.im/graphql) peer dependency from [npm](https://npmjs.com) run:
+To install [`graphql-upload`](https://npm.im/graphql-upload) and the [`graphql`](https://npm.im/graphql) peer dependency with [npm](https://npmjs.com/get-npm), run:
 
-```shell
+```sh
 npm install graphql-upload graphql
 ```
 
@@ -58,6 +43,10 @@ The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-mult
 [`busboy`](https://npm.im/busboy) parses multipart request streams. Once the `operations` and `map` fields have been parsed, [`Upload` scalar](#class-graphqlupload) values in the GraphQL operations are populated with promises, and the operations are passed down the middleware chain to GraphQL resolvers.
 
 [`fs-capacitor`](https://npm.im/fs-capacitor) is used to buffer file uploads to the filesystem and coordinate simultaneous reading and writing. As soon as a file upload’s contents begins streaming, its data begins buffering to the filesystem and its associated promise resolves. GraphQL resolvers can then create new streams from the buffer by calling [`createReadStream()`](#type-fileupload). The buffer is destroyed once all streams have ended or closed and the server has responded to the request. Any remaining buffer files will be cleaned when the process exits.
+
+## Support
+
+- [Node.js](https://nodejs.org): `^12.20 || >= 14.13`
 
 ## API
 
