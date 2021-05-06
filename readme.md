@@ -4,7 +4,7 @@
 
 [![npm version](https://badgen.net/npm/v/graphql-upload)](https://npm.im/graphql-upload) [![CI status](https://github.com/jaydenseric/graphql-upload/workflows/CI/badge.svg)](https://github.com/jaydenseric/graphql-upload/actions)
 
-Middleware and an [`Upload` scalar](#class-graphqlupload) to add support for [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec) (file uploads via queries and mutations) to various Node.js GraphQL servers.
+Middleware and an [`Upload`](#class-graphqlupload) scalar to add support for [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec) (file uploads via queries and mutations) to various Node.js GraphQL servers.
 
 ## Setup
 
@@ -18,11 +18,11 @@ npm install graphql-upload graphql
 
 Use the [`graphqlUploadKoa`](#function-graphqluploadkoa) or [`graphqlUploadExpress`](#function-graphqluploadexpress) middleware just before GraphQL middleware. Alternatively, use [`processRequest`](#function-processrequest) to create custom middleware.
 
-A schema built with separate SDL and resolvers (e.g. using [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)) requires the [`Upload` scalar](#class-graphqlupload) to be setup.
+A schema built with separate SDL and resolvers (e.g. using [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)) requires the [`Upload`](#class-graphqlupload) scalar to be setup.
 
 ## Usage
 
-[Clients implementing the GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec#client) upload files as [`Upload` scalar](#class-graphqlupload) query or mutation variables. Their resolver values are promises that resolve [file upload details](#type-fileupload) for processing and storage. Files are typically streamed into cloud storage but may also be stored in the filesystem.
+[Clients implementing the GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec#client) upload files as [`Upload`](#class-graphqlupload) scalar query or mutation variables. Their resolver values are promises that resolve [file upload details](#type-fileupload) for processing and storage. Files are typically streamed into cloud storage but may also be stored in the filesystem.
 
 See the [example API and client](https://github.com/jaydenseric/apollo-upload-examples).
 
@@ -40,7 +40,7 @@ See the [example API and client](https://github.com/jaydenseric/apollo-upload-ex
 
 The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec) allows a file to be used for multiple query or mutation variables (file deduplication), and for variables to be used in multiple places. GraphQL resolvers need to be able to manage independent file streams. As resolvers are executed asynchronously, it’s possible they will try to process files in a different order than received in the multipart request.
 
-[`busboy`](https://npm.im/busboy) parses multipart request streams. Once the `operations` and `map` fields have been parsed, [`Upload` scalar](#class-graphqlupload) values in the GraphQL operations are populated with promises, and the operations are passed down the middleware chain to GraphQL resolvers.
+[`busboy`](https://npm.im/busboy) parses multipart request streams. Once the `operations` and `map` fields have been parsed, [`Upload`](#class-graphqlupload) scalar values in the GraphQL operations are populated with promises, and the operations are passed down the middleware chain to GraphQL resolvers.
 
 [`fs-capacitor`](https://npm.im/fs-capacitor) is used to buffer file uploads to the filesystem and coordinate simultaneous reading and writing. As soon as a file upload’s contents begins streaming, its data begins buffering to the filesystem and its associated promise resolves. GraphQL resolvers can then create new streams from the buffer by calling [`createReadStream()`](#type-fileupload). The buffer is destroyed once all streams have ended or closed and the server has responded to the request. Any remaining buffer files will be cleaned when the process exits.
 
@@ -148,7 +148,7 @@ _A manually constructed schema with an image upload mutation._
 
 ### class Upload
 
-A file expected to be uploaded as it has been declared in the `map` field of a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). The [`processRequest`](#function-processrequest) function places references to an instance of this class wherever the file is expected in the [GraphQL operation](#type-graphqloperation). The [`Upload` scalar](#class-graphqlupload) derives it’s value from the [`promise`](#upload-instance-property-promise) property.
+A file expected to be uploaded as it has been declared in the `map` field of a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). The [`processRequest`](#function-processrequest) function places references to an instance of this class wherever the file is expected in the [GraphQL operation](#type-graphqloperation). The [`Upload`](#class-graphqlupload) scalar derives it’s value from the [`promise`](#upload-instance-property-promise) property.
 
 #### Examples
 
@@ -308,7 +308,7 @@ _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
 
 ### function processRequest
 
-Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). It parses the `operations` and `map` fields to create an [`Upload`](#class-upload) instance for each expected file upload, placing references wherever the file is expected in the [GraphQL operation](#type-graphqloperation) for the [`Upload` scalar](#class-graphqlupload) to derive it’s value. Errors are created with [`http-errors`](https://npm.im/http-errors) to assist in sending responses with appropriate HTTP status codes. Used in [`graphqlUploadExpress`](#function-graphqluploadexpress) and [`graphqlUploadKoa`](#function-graphqluploadkoa) and can be used to create custom middleware.
+Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec). It parses the `operations` and `map` fields to create an [`Upload`](#class-upload) instance for each expected file upload, placing references wherever the file is expected in the [GraphQL operation](#type-graphqloperation) for the [`Upload`](#class-graphqlupload) scalar to derive it’s value. Errors are created with [`http-errors`](https://npm.im/http-errors) to assist in sending responses with appropriate HTTP status codes. Used in [`graphqlUploadExpress`](#function-graphqluploadexpress) and [`graphqlUploadKoa`](#function-graphqluploadkoa) and can be used to create custom middleware.
 
 **Type:** [ProcessRequestFunction](#type-processrequestfunction)
 

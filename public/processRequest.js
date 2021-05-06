@@ -16,7 +16,7 @@ const Upload = require('./Upload');
  * [`Upload`]{@link Upload} instance for each expected file upload, placing
  * references wherever the file is expected in the
  * [GraphQL operation]{@link GraphQLOperation} for the
- * [`Upload` scalar]{@link GraphQLUpload} to derive it’s value. Errors are
+ * [`Upload`]{@link GraphQLUpload} scalar to derive it’s value. Errors are
  * created with [`http-errors`](https://npm.im/http-errors) to assist in sending
  * responses with appropriate HTTP status codes. Used in
  * [`graphqlUploadExpress`]{@link graphqlUploadExpress} and

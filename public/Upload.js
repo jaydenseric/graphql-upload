@@ -6,7 +6,7 @@
  * The [`processRequest`]{@link processRequest} function places references to an
  * instance of this class wherever the file is expected in the
  * [GraphQL operation]{@link GraphQLOperation}. The
- * [`Upload` scalar]{@link GraphQLUpload} derives it’s value from the
+ * [`Upload`]{@link GraphQLUpload} scalar derives it’s value from the
  * [`promise`]{@link Upload#promise} property.
  * @kind class
  * @name Upload
