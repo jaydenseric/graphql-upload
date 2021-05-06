@@ -28,6 +28,7 @@
 - More specific package `main` field path.
 - Simplified JSDoc related package scripts now that [`jsdoc-md`](https://npm.im/jsdoc-md) v10 automatically generates a Prettier formatted readme.
 - Added a package `test:jsdoc` script that checks the readme API docs are up to date with the source JSDoc.
+- Refactored private constants from exports of a single module to individual modules.
 - Fixed a comment typo.
 - Fixed a test name typo.
 - Prettier format for a JSDoc code example.

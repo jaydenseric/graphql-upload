@@ -5,7 +5,7 @@ const { WriteStream } = require('fs-capacitor');
 const createError = require('http-errors');
 const isObject = require('isobject');
 const objectPath = require('object-path');
-const { SPEC_URL } = require('../private/constants');
+const GRAPHQL_MULTIPART_REQUEST_SPEC_URL = require('../private/GRAPHQL_MULTIPART_REQUEST_SPEC_URL');
 const ignoreStream = require('../private/ignoreStream');
 const Upload = require('./Upload');
 
@@ -152,7 +152,7 @@ module.exports = function processRequest(
               return exit(
                 createError(
                   400,
-                  `Invalid JSON in the ‘operations’ multipart field (${SPEC_URL}).`
+                  `Invalid JSON in the ‘operations’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
                 )
               );
             }
@@ -161,7 +161,7 @@ module.exports = function processRequest(
               return exit(
                 createError(
                   400,
-                  `Invalid type for the ‘operations’ multipart field (${SPEC_URL}).`
+                  `Invalid type for the ‘operations’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
                 )
               );
 
@@ -173,7 +173,7 @@ module.exports = function processRequest(
               return exit(
                 createError(
                   400,
-                  `Misordered multipart fields; ‘map’ should follow ‘operations’ (${SPEC_URL}).`
+                  `Misordered multipart fields; ‘map’ should follow ‘operations’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
                 )
               );
 
@@ -184,7 +184,7 @@ module.exports = function processRequest(
               return exit(
                 createError(
                   400,
-                  `Invalid JSON in the ‘map’ multipart field (${SPEC_URL}).`
+                  `Invalid JSON in the ‘map’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
                 )
               );
             }
@@ -193,7 +193,7 @@ module.exports = function processRequest(
               return exit(
                 createError(
                   400,
-                  `Invalid type for the ‘map’ multipart field (${SPEC_URL}).`
+                  `Invalid type for the ‘map’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
                 )
               );
 
@@ -212,7 +212,7 @@ module.exports = function processRequest(
                 return exit(
                   createError(
                     400,
-                    `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array (${SPEC_URL}).`
+                    `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
                   )
                 );
 
@@ -223,7 +223,7 @@ module.exports = function processRequest(
                   return exit(
                     createError(
                       400,
-                      `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value (${SPEC_URL}).`
+                      `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
                     )
                   );
 
@@ -233,7 +233,7 @@ module.exports = function processRequest(
                   return exit(
                     createError(
                       400,
-                      `Invalid object path for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value ‘${path}’ (${SPEC_URL}).`
+                      `Invalid object path for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value ‘${path}’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
                     )
                   );
                 }
@@ -257,7 +257,7 @@ module.exports = function processRequest(
         return exit(
           createError(
             400,
-            `Misordered multipart fields; files should follow ‘map’ (${SPEC_URL}).`
+            `Misordered multipart fields; files should follow ‘map’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
           )
         );
       }
@@ -328,13 +328,16 @@ module.exports = function processRequest(
         return exit(
           createError(
             400,
-            `Missing multipart field ‘operations’ (${SPEC_URL}).`
+            `Missing multipart field ‘operations’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
           )
         );
 
       if (!map)
         return exit(
-          createError(400, `Missing multipart field ‘map’ (${SPEC_URL}).`)
+          createError(
+            400,
+            `Missing multipart field ‘map’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
+          )
         );
 
       for (const upload of map.values())
