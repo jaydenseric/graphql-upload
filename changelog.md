@@ -22,6 +22,7 @@
 - Updated the EditorConfig URL.
 - Fixed a comment typo.
 - Fixed a test name typo.
+- Prettier format for a JSDoc code example.
 
 ## 11.0.0
 

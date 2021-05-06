@@ -42,11 +42,7 @@ const Upload = require('./Upload');
  * ```
  * @example <caption>A manually constructed schema with an image upload mutation.</caption>
  * ```js
- * const {
- *   GraphQLSchema,
- *   GraphQLObjectType,
- *   GraphQLBoolean,
- * } = require('graphql');
+ * const { GraphQLSchema, GraphQLObjectType, GraphQLBoolean } = require('graphql');
  * const { GraphQLUpload } = require('graphql-upload');
  *
  * const schema = new GraphQLSchema({
