@@ -4,15 +4,15 @@
 
 ### Major
 
-- Updated Node.js support to `^10.17.0 || ^12.0.0 || >= 13.7.0`, to meet the requirements for updated dev dependencies.
+- Updated Node.js support to `^12.20 || >= 14.13`.
 - Updated dev dependencies, some of which require newer Node.js versions than previously supported.
 
 ### Patch
 
 - Updated dependencies.
 - Lint fixes for the updated Prettier version.
-- Removed Node.js v13 and added v15 to the versions tested in GitHub Actions CI.
 - Updated GitHub Actions CI config:
+  - Updated the tested Node.js versions to v12, v14, v16.
   - Updated `actions/checkout` to v2.
   - Updated `actions/setup-node` to v2.
   - Simplify config with the [`npm install-test`](https://docs.npmjs.com/cli/v7/commands/npm-install-test) command.

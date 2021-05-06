@@ -12,7 +12,7 @@ Middleware and an [`Upload` scalar](#class-graphqlupload) to add support for [Gr
 
 The following environments are known to be compatible:
 
-- [Node.js](https://nodejs.org) `^10.17.0 || ^12.0.0 || >= 13.7.0`
+- [Node.js](https://nodejs.org) `^12.20 || >= 14.13`
 - [Koa](https://koajs.com)
   - [`graphql-api-koa`](https://npm.im/graphql-api-koa)
   - [`koa-graphql`](https://npm.im/koa-graphql)
