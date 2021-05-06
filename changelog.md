@@ -30,7 +30,9 @@
 - Added a package `test:jsdoc` script that checks the readme API docs are up to date with the source JSDoc.
 - Refactored private constants from exports of a single module to individual modules.
 - Fixed test name and comment typos.
+- Updated external URLs in docs.
 - Prettier format for a JSDoc code example.
+- Updated a `GraphQLUpload` code example to use [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema) instead of [`graphql-tools`](https://npm.im/graphql-tools).
 - Removed from the readme the notice that the package was previously published as [`apollo-upload-server`](https://npm.im/apollo-upload-server).
 - Simplified the readme “Setup” and “Support” sections.
 

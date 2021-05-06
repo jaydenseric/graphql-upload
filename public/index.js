@@ -20,7 +20,11 @@ exports.Upload = require('./Upload');
  */
 
 /**
- * Creates a [Node.js readable stream](https://nodejs.org/api/stream.html#stream_readable_streams) of an [uploading file’s]{@link FileUpload} contents, for processing and storage. Multiple calls create independent streams. Throws if called after all resolvers have resolved, or after an error has interrupted the request.
+ * Creates a
+ * [Node.js readable stream](https://nodejs.org/api/stream.html#stream_readable_streams)
+ * of an [uploading file’s]{@link FileUpload} contents, for processing and
+ * storage. Multiple calls create independent streams. Throws if called after
+ * all resolvers have resolved, or after an error has interrupted the request.
  * @kind typedef
  * @name FileUploadCreateReadStream
  * @type {Function}
@@ -29,7 +33,7 @@ exports.Upload = require('./Upload');
  * @param {number} [options.highWaterMark=16384] Maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource.
  * @returns {Readable} [Node.js readable stream](https://nodejs.org/api/stream.html#stream_readable_streams) of the file’s contents.
  * @see [Node.js `Readable` stream constructor docs](https://nodejs.org/api/stream.html#stream_new_stream_readable_options).
- * @see [Node.js stream backpressure guide](https://nodejs.org/es/docs/guides/backpressuring-in-streams).
+ * @see [Node.js stream backpressure guide](https://nodejs.org/en/docs/guides/backpressuring-in-streams).
  */
 
 /**
@@ -41,12 +45,13 @@ exports.Upload = require('./Upload');
  * @prop {string} query GraphQL document containing queries and fragments.
  * @prop {string|null} [operationName] GraphQL document operation name to execute.
  * @prop {object|null} [variables] GraphQL document operation variables and values map.
- * @see [GraphQL over HTTP spec](https://github.com/APIs-guru/graphql-over-http#request-parameters).
- * @see [Apollo Server POST requests](https://www.apollographql.com/docs/apollo-server/requests#postRequests).
+ * @see [GraphQL over HTTP spec](https://github.com/graphql/graphql-over-http).
+ * @see [Apollo Server POST requests](https://www.apollographql.com/docs/apollo-server/requests/#post-requests).
  */
 
 /**
- * Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
+ * Processes a
+ * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
  * @kind typedef
  * @name ProcessRequestFunction
  * @type {Function}
@@ -58,7 +63,8 @@ exports.Upload = require('./Upload');
  */
 
 /**
- * Options for processing a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec);
+ * Options for processing a
+ * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec);
  * mostly relating to security, performance and limits.
  * @kind typedef
  * @name ProcessRequestOptions

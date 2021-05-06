@@ -93,10 +93,10 @@ _Ways to `require`._
 > const GraphQLUpload = require('graphql-upload/public/GraphQLUpload.js');
 > ```
 
-_Setup for a schema built with [`makeExecutableSchema`](https://apollographql.com/docs/graphql-tools/generate-schema#makeExecutableSchema)._
+_A schema built with [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)._
 
 > ```js
-> const { makeExecutableSchema } = require('graphql-tools');
+> const { makeExecutableSchema } = require('@graphql-tools/schema');
 > const { GraphQLUpload } = require('graphql-upload');
 >
 > const schema = makeExecutableSchema({
@@ -368,7 +368,7 @@ Creates a [Node.js readable stream](https://nodejs.org/api/stream.html#stream_re
 #### See
 
 - [Node.js `Readable` stream constructor docs](https://nodejs.org/api/stream.html#stream_new_stream_readable_options).
-- [Node.js stream backpressure guide](https://nodejs.org/es/docs/guides/backpressuring-in-streams).
+- [Node.js stream backpressure guide](https://nodejs.org/en/docs/guides/backpressuring-in-streams).
 
 ---
 
@@ -386,8 +386,8 @@ A GraphQL operation object in a shape that can be consumed and executed by most 
 
 #### See
 
-- [GraphQL over HTTP spec](https://github.com/APIs-guru/graphql-over-http#request-parameters).
-- [Apollo Server POST requests](https://www.apollographql.com/docs/apollo-server/requests#postRequests).
+- [GraphQL over HTTP spec](https://github.com/graphql/graphql-over-http).
+- [Apollo Server POST requests](https://www.apollographql.com/docs/apollo-server/requests/#post-requests).
 
 ---
 
