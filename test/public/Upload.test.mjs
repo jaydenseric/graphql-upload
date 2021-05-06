@@ -1,9 +1,7 @@
-'use strict';
+import { ok, rejects, strictEqual } from 'assert';
+import Upload from '../../public/Upload.js';
 
-const { ok, rejects, strictEqual } = require('assert');
-const Upload = require('../../public/Upload');
-
-module.exports = (tests) => {
+export default (tests) => {
   tests.add('`Upload` class resolving a file.', async () => {
     const upload = new Upload();
 

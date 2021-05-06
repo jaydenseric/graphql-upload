@@ -1,7 +1,5 @@
-'use strict';
-
-const http = require('http');
-const { Transform } = require('stream');
+import { request as httpRequest } from 'http';
+import { Transform } from 'stream';
 
 /**
  * Sends a multipart request that deliberately aborts after a certain amount of
@@ -15,14 +13,14 @@ const { Transform } = require('stream');
  * @returns {Promise<void>} Resolves once the aborted request closes.
  * @ignore
  */
-module.exports = function abortingMultipartRequest(
+export default function abortingMultipartRequest(
   url,
   formData,
   abortMarker,
   requestReceived
 ) {
   return new Promise((resolve, reject) => {
-    const request = http.request(url, {
+    const request = httpRequest(url, {
       method: 'POST',
       headers: formData.getHeaders(),
     });
@@ -62,4 +60,4 @@ module.exports = function abortingMultipartRequest(
 
     formData.pipe(transform).pipe(request);
   });
-};
+}

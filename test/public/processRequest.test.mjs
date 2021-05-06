@@ -1,23 +1,21 @@
-'use strict';
+import { notStrictEqual, ok, rejects, strictEqual, throws } from 'assert';
+import { createServer } from 'http';
+import FormData from 'form-data';
+import { ReadStream } from 'fs-capacitor';
+import fetch from 'node-fetch';
+import Upload from '../../public/Upload.js';
+import processRequest from '../../public/processRequest.js';
+import abortingMultipartRequest from '../abortingMultipartRequest.mjs';
+import listen from '../listen.mjs';
+import streamToString from '../streamToString.mjs';
 
-const { notStrictEqual, ok, strictEqual, rejects, throws } = require('assert');
-const http = require('http');
-const FormData = require('form-data');
-const { ReadStream } = require('fs-capacitor');
-const fetch = require('node-fetch');
-const Upload = require('../../public/Upload');
-const processRequest = require('../../public/processRequest');
-const abortingMultipartRequest = require('../abortingMultipartRequest');
-const listen = require('../listen');
-const streamToString = require('../streamToString');
-
-module.exports = (tests) => {
+export default (tests) => {
   tests.add(
     '`processRequest` with a single file and default `createReadStream` options.',
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           const operation = await processRequest(request, response);
 
@@ -68,7 +66,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           const operation = await processRequest(request, response);
 
@@ -122,7 +120,7 @@ module.exports = (tests) => {
   tests.add('`processRequest` with a single file, batched.', async () => {
     let serverError;
 
-    const server = http.createServer(async (request, response) => {
+    const server = createServer(async (request, response) => {
       try {
         const operations = await processRequest(request, response);
 
@@ -188,7 +186,7 @@ module.exports = (tests) => {
   tests.add('`processRequest` with deduped files.', async () => {
     let serverError;
 
-    const server = http.createServer(async (request, response) => {
+    const server = createServer(async (request, response) => {
       try {
         const operation = await processRequest(request, response);
 
@@ -253,7 +251,7 @@ module.exports = (tests) => {
   tests.add('`processRequest` with unconsumed uploads.', async () => {
     let serverError;
 
-    const server = http.createServer(async (request, response) => {
+    const server = createServer(async (request, response) => {
       try {
         const operation = await processRequest(request, response);
 
@@ -299,7 +297,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           const operation = await processRequest(request, response);
 
@@ -349,7 +347,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           const operation = await processRequest(request, response);
 
@@ -390,7 +388,7 @@ module.exports = (tests) => {
   tests.add('`processRequest` with option `maxFiles`.', async () => {
     let serverError;
 
-    const server = http.createServer(async (request, response) => {
+    const server = createServer(async (request, response) => {
       try {
         await rejects(processRequest(request, response, { maxFiles: 1 }), {
           name: 'PayloadTooLargeError',
@@ -437,7 +435,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           const operation = await processRequest(request, response, {
             maxFiles: 2,
@@ -501,7 +499,7 @@ module.exports = (tests) => {
   tests.add('`processRequest` with option `maxFileSize`.', async () => {
     let serverError;
 
-    const server = http.createServer(async (request, response) => {
+    const server = createServer(async (request, response) => {
       try {
         const operation = await processRequest(request, response, {
           maxFileSize: 1,
@@ -572,7 +570,7 @@ module.exports = (tests) => {
   tests.add('`processRequest` with option `maxFieldSize`.', async () => {
     let serverError;
 
-    const server = http.createServer(async (request, response) => {
+    const server = createServer(async (request, response) => {
       try {
         await rejects(processRequest(request, response, { maxFieldSize: 1 }), {
           name: 'PayloadTooLargeError',
@@ -627,7 +625,7 @@ module.exports = (tests) => {
         resolveRequestReceived = resolve;
       });
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           resolveRequestReceived();
 
@@ -762,7 +760,7 @@ module.exports = (tests) => {
         resolveRequestReceived = resolve;
       });
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           resolveRequestReceived();
 
@@ -879,7 +877,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           await rejects(processRequest(request, response), {
             name: 'BadRequestError',
@@ -921,7 +919,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           await rejects(processRequest(request, response), {
             name: 'BadRequestError',
@@ -963,7 +961,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           await rejects(processRequest(request, response), {
             name: 'BadRequestError',
@@ -1003,7 +1001,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           await rejects(processRequest(request, response), {
             name: 'BadRequestError',
@@ -1039,7 +1037,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           await rejects(processRequest(request, response), {
             name: 'BadRequestError',
@@ -1078,7 +1076,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           await rejects(processRequest(request, response), {
             name: 'BadRequestError',
@@ -1123,7 +1121,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           await rejects(processRequest(request, response), {
             name: 'BadRequestError',
@@ -1162,7 +1160,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           await rejects(processRequest(request, response), {
             name: 'BadRequestError',
@@ -1204,7 +1202,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           await rejects(processRequest(request, response), {
             name: 'BadRequestError',
@@ -1246,7 +1244,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           await rejects(processRequest(request, response), {
             name: 'BadRequestError',
@@ -1288,7 +1286,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           await rejects(processRequest(request, response), {
             name: 'BadRequestError',
@@ -1330,7 +1328,7 @@ module.exports = (tests) => {
     async () => {
       let serverError;
 
-      const server = http.createServer(async (request, response) => {
+      const server = createServer(async (request, response) => {
         try {
           await rejects(processRequest(request, response), {
             name: 'BadRequestError',

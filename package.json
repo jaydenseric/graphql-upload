@@ -77,7 +77,7 @@
     "test": "npm run test:eslint && npm run test:prettier && npm run test:api",
     "test:eslint": "eslint .",
     "test:prettier": "prettier -c .",
-    "test:api": "coverage-node -r hard-rejection/register test",
+    "test:api": "coverage-node -r hard-rejection/register test/index.mjs",
     "prepublishOnly": "npm test"
   }
 }

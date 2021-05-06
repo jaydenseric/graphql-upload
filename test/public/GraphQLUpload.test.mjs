@@ -1,11 +1,9 @@
-'use strict';
+import { doesNotThrow, throws } from 'assert';
+import { parseValue } from 'graphql';
+import GraphQLUpload from '../../public/GraphQLUpload.js';
+import Upload from '../../public/Upload.js';
 
-const { doesNotThrow, throws } = require('assert');
-const { parseValue } = require('graphql');
-const GraphQLUpload = require('../../public/GraphQLUpload');
-const Upload = require('../../public/Upload');
-
-module.exports = (tests) => {
+export default (tests) => {
   tests.add('`GraphQLUpload` scalar `parseValue` with a valid value.', () => {
     doesNotThrow(() => {
       GraphQLUpload.parseValue(new Upload());

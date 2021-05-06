@@ -1,14 +1,12 @@
-'use strict';
+import { deepStrictEqual, ok, strictEqual } from 'assert';
+import FormData from 'form-data';
+import Koa from 'koa';
+import fetch from 'node-fetch';
+import graphqlUploadKoa from '../../public/graphqlUploadKoa.js';
+import processRequest from '../../public/processRequest.js';
+import listen from '../listen.mjs';
 
-const { deepStrictEqual, ok, strictEqual } = require('assert');
-const FormData = require('form-data');
-const Koa = require('koa');
-const fetch = require('node-fetch');
-const graphqlUploadKoa = require('../../public/graphqlUploadKoa');
-const processRequest = require('../../public/processRequest');
-const listen = require('../listen');
-
-module.exports = (tests) => {
+export default (tests) => {
   tests.add('`graphqlUploadKoa` with a non multipart request.', async () => {
     let processRequestRan = false;
 

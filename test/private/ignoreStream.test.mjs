@@ -1,10 +1,8 @@
-'use strict';
+import { doesNotThrow, strictEqual } from 'assert';
+import ignoreStream from '../../private/ignoreStream.js';
+import CountReadableStream from '../CountReadableStream.mjs';
 
-const { doesNotThrow, strictEqual } = require('assert');
-const ignoreStream = require('../../private/ignoreStream');
-const CountReadableStream = require('../CountReadableStream');
-
-module.exports = (tests) => {
+export default (tests) => {
   tests.add('`ignoreStream` ignores errors.', () => {
     doesNotThrow(() => {
       const stream = new CountReadableStream();

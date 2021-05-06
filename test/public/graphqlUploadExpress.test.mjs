@@ -1,15 +1,13 @@
-'use strict';
+import { deepStrictEqual, ok, strictEqual } from 'assert';
+import express from 'express';
+import FormData from 'form-data';
+import createError from 'http-errors';
+import fetch from 'node-fetch';
+import graphqlUploadExpress from '../../public/graphqlUploadExpress.js';
+import processRequest from '../../public/processRequest.js';
+import listen from '../listen.mjs';
 
-const { deepStrictEqual, ok, strictEqual } = require('assert');
-const express = require('express');
-const FormData = require('form-data');
-const createError = require('http-errors');
-const fetch = require('node-fetch');
-const graphqlUploadExpress = require('../../public/graphqlUploadExpress');
-const processRequest = require('../../public/processRequest');
-const listen = require('../listen');
-
-module.exports = (tests) => {
+export default (tests) => {
   tests.add(
     '`graphqlUploadExpress` with a non multipart request.',
     async () => {
