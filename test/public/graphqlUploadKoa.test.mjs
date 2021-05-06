@@ -7,7 +7,7 @@ import processRequest from '../../public/processRequest.js';
 import listen from '../listen.mjs';
 
 export default (tests) => {
-  tests.add('`graphqlUploadKoa` with a non multipart request.', async () => {
+  tests.add('`graphqlUploadKoa` with a non-multipart request.', async () => {
     let processRequestRan = false;
 
     const app = new Koa().use(

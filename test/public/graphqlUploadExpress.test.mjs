@@ -9,7 +9,7 @@ import listen from '../listen.mjs';
 
 export default (tests) => {
   tests.add(
-    '`graphqlUploadExpress` with a non multipart request.',
+    '`graphqlUploadExpress` with a non-multipart request.',
     async () => {
       let processRequestRan = false;
 

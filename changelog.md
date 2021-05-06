@@ -29,8 +29,7 @@
 - Simplified JSDoc related package scripts now that [`jsdoc-md`](https://npm.im/jsdoc-md) v10 automatically generates a Prettier formatted readme.
 - Added a package `test:jsdoc` script that checks the readme API docs are up to date with the source JSDoc.
 - Refactored private constants from exports of a single module to individual modules.
-- Fixed a comment typo.
-- Fixed a test name typo.
+- Fixed test name and comment typos.
 - Prettier format for a JSDoc code example.
 - Removed from the readme the notice that the package was previously published as [`apollo-upload-server`](https://npm.im/apollo-upload-server).
 - Simplified the readme “Setup” and “Support” sections.

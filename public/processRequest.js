@@ -10,17 +10,18 @@ const ignoreStream = require('../private/ignoreStream');
 const Upload = require('./Upload');
 
 /**
- * Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
+ * Processes a
+ * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
  * It parses the `operations` and `map` fields to create an
  * [`Upload`]{@link Upload} instance for each expected file upload, placing
  * references wherever the file is expected in the
  * [GraphQL operation]{@link GraphQLOperation} for the
  * [`Upload` scalar]{@link GraphQLUpload} to derive it’s value. Errors are
- * created with [`http-errors`](https://npm.im/http-errors) to assist in
- * sending responses with appropriate HTTP status codes. Used in
+ * created with [`http-errors`](https://npm.im/http-errors) to assist in sending
+ * responses with appropriate HTTP status codes. Used in
  * [`graphqlUploadExpress`]{@link graphqlUploadExpress} and
- * [`graphqlUploadKoa`]{@link graphqlUploadKoa} and can be used to create
- * custom middleware.
+ * [`graphqlUploadKoa`]{@link graphqlUploadKoa} and can be used to create custom
+ * middleware.
  * @kind function
  * @name processRequest
  * @type {ProcessRequestFunction}
