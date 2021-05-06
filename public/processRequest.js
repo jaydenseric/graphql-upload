@@ -38,7 +38,7 @@ const Upload = require('./Upload');
  * ```
  *
  * ```js
- * const processRequest = require('graphql-upload/public/processRequest');
+ * const processRequest = require('graphql-upload/public/processRequest.js');
  * ```
  */
 module.exports = function processRequest(

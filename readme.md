@@ -90,7 +90,7 @@ _Ways to `require`._
 > ```
 >
 > ```js
-> const GraphQLUpload = require('graphql-upload/public/GraphQLUpload');
+> const GraphQLUpload = require('graphql-upload/public/GraphQLUpload.js');
 > ```
 
 _Setup for a schema built with [`makeExecutableSchema`](https://apollographql.com/docs/graphql-tools/generate-schema#makeExecutableSchema)._
@@ -169,7 +169,7 @@ _Ways to `require`._
 > ```
 >
 > ```js
-> const Upload = require('graphql-upload/public/Upload');
+> const Upload = require('graphql-upload/public/Upload.js');
 > ```
 
 #### Upload instance method reject
@@ -232,7 +232,7 @@ _Ways to `require`._
 > ```
 >
 > ```js
-> const graphqlUploadExpress = require('graphql-upload/public/graphqlUploadExpress');
+> const graphqlUploadExpress = require('graphql-upload/public/graphqlUploadExpress.js');
 > ```
 
 _Basic [`express-graphql`](https://npm.im/express-graphql) setup._
@@ -284,7 +284,7 @@ _Ways to `require`._
 > ```
 >
 > ```js
-> const graphqlUploadKoa = require('graphql-upload/public/graphqlUploadKoa');
+> const graphqlUploadKoa = require('graphql-upload/public/graphqlUploadKoa.js');
 > ```
 
 _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
@@ -331,7 +331,7 @@ _Ways to `require`._
 > ```
 >
 > ```js
-> const processRequest = require('graphql-upload/public/processRequest');
+> const processRequest = require('graphql-upload/public/processRequest.js');
 > ```
 
 ---

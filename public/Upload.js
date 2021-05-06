@@ -24,7 +24,7 @@
  * ```
  *
  * ```js
- * const Upload = require('graphql-upload/public/Upload');
+ * const Upload = require('graphql-upload/public/Upload.js');
  * ```
  */
 module.exports = class Upload {

@@ -28,7 +28,7 @@ const defaultProcessRequest = require('./processRequest');
  * ```
  *
  * ```js
- * const graphqlUploadExpress = require('graphql-upload/public/graphqlUploadExpress');
+ * const graphqlUploadExpress = require('graphql-upload/public/graphqlUploadExpress.js');
  * ```
  * @example <caption>Basic [`express-graphql`](https://npm.im/express-graphql) setup.</caption>
  * ```js

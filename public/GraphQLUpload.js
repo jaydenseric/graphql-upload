@@ -28,7 +28,7 @@ const Upload = require('./Upload');
  * ```
  *
  * ```js
- * const GraphQLUpload = require('graphql-upload/public/GraphQLUpload');
+ * const GraphQLUpload = require('graphql-upload/public/GraphQLUpload.js');
  * ```
  * @example <caption>Setup for a schema built with [`makeExecutableSchema`](https://apollographql.com/docs/graphql-tools/generate-schema#makeExecutableSchema).</caption>
  * ```js
