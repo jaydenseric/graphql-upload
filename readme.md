@@ -18,7 +18,7 @@ npm install graphql-upload graphql
 
 Use the [`graphqlUploadKoa`](#function-graphqluploadkoa) or [`graphqlUploadExpress`](#function-graphqluploadexpress) middleware just before GraphQL middleware. Alternatively, use [`processRequest`](#function-processrequest) to create custom middleware.
 
-A schema built with separate SDL and resolvers (e.g. using [`makeExecutableSchema`](https://apollographql.com/docs/graphql-tools/generate-schema#makeExecutableSchema)) requires the [`Upload` scalar](#class-graphqlupload) to be setup.
+A schema built with separate SDL and resolvers (e.g. using [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)) requires the [`Upload` scalar](#class-graphqlupload) to be setup.
 
 ## Usage
 
@@ -93,7 +93,7 @@ _Ways to `require`._
 > const GraphQLUpload = require('graphql-upload/public/GraphQLUpload.js');
 > ```
 
-_A schema built with [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)._
+_A schema built using [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)._
 
 > ```js
 > const { makeExecutableSchema } = require('@graphql-tools/schema');
