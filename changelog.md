@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Updated dev dependencies.
+
 ## 12.0.0
 
 ### Major
