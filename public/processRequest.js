@@ -116,6 +116,11 @@ module.exports = function processRequest(
         for (const upload of map.values())
           if (upload.file) upload.file.capacitor.release();
     };
+    
+    
+    // `removeListener` might not have time to remove the listener from
+    // the `end` event, so let's track ut manually
+    let requestEnded = false;
 
     /**
      * Handles when the request is closed before it properly ended.
@@ -124,6 +129,9 @@ module.exports = function processRequest(
      * @ignore
      */
     const abort = () => {
+      if (requestEnded) {
+        return;
+      }
       exit(
         createError(
           499,
@@ -353,6 +361,7 @@ module.exports = function processRequest(
 
     request.once('close', abort);
     request.once('end', () => {
+      requestEnded = true;
       request.removeListener('close', abort);
     });
 
