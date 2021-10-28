@@ -50,8 +50,6 @@ The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-mult
 
 ## API
 
-### Table of contents
-
 - [class GraphQLUpload](#class-graphqlupload)
 - [class Upload](#class-upload)
   - [Upload instance method reject](#upload-instance-method-reject)
