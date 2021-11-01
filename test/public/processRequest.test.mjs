@@ -1398,4 +1398,42 @@ export default (tests) => {
       }
     }
   );
+
+  tests.add(
+    '`processRequest` with an unparsable multipart request.',
+    async () => {
+      let serverError;
+
+      const server = createServer(async (request, response) => {
+        try {
+          await rejects(processRequest(request, response), {
+            name: 'Error',
+            message: 'Unexpected end of multipart data',
+          });
+        } catch (error) {
+          serverError = error;
+        } finally {
+          response.end();
+        }
+      });
+
+      const { port, close } = await listen(server);
+
+      try {
+        const boundary = 'abcde';
+
+        await fetch(`http://localhost:${port}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': `multipart/form-data; boundary=${boundary}`,
+          },
+          body: `--${boundary}\r\nContent-Disposition`,
+        });
+
+        if (serverError) throw serverError;
+      } finally {
+        close();
+      }
+    }
+  );
 };

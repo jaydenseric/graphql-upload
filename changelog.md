@@ -12,6 +12,7 @@
 - Updated dependencies.
 - Also run GitHub Actions CI with Node.js v17.
 - Test the `processRequest` function with a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec) that has no files.
+- Test the `processRequest` function with an unparsable multipart request.
 
 ## 12.0.0
 
