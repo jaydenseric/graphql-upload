@@ -7,7 +7,7 @@ import {
   throws,
 } from 'assert';
 import { createServer } from 'http';
-import FormData from 'form-data';
+import { File, FormData } from 'formdata-node';
 import { ReadStream } from 'fs-capacitor';
 import fetch from 'node-fetch';
 import Upload from '../../public/Upload.js';
@@ -87,7 +87,7 @@ export default (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -143,7 +143,7 @@ export default (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -209,8 +209,8 @@ export default (tests) => {
         'map',
         JSON.stringify({ 1: ['0.variables.file'], 2: ['1.variables.file'] })
       );
-      body.append('1', 'a', { filename: 'a.txt' });
-      body.append('2', 'b', { filename: 'b.txt' });
+      body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
+      body.append('2', new File(['b'], 'b.txt', { type: 'text/plain' }));
 
       await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -275,7 +275,7 @@ export default (tests) => {
         'map',
         JSON.stringify({ 1: ['variables.files.0', 'variables.files.1'] })
       );
-      body.append('1', 'a', { filename: 'a.txt' });
+      body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
       await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -318,8 +318,8 @@ export default (tests) => {
         'map',
         JSON.stringify({ 1: ['variables.fileA'], 2: ['variables.fileB'] })
       );
-      body.append('1', 'a', { filename: 'a.txt' });
-      body.append('2', 'b', { filename: 'b.txt' });
+      body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
+      body.append('2', new File(['b'], 'b.txt', { type: 'text/plain' }));
 
       await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -367,8 +367,8 @@ export default (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', 'a', { filename: 'a.txt' });
-        body.append('2', 'b', { filename: 'b.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
+        body.append('2', new File(['b'], 'b.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -456,8 +456,8 @@ export default (tests) => {
           2: ['variables.files.1'],
         })
       );
-      body.append('1', 'a', { filename: 'a.txt' });
-      body.append('2', 'b', { filename: 'b.txt' });
+      body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
+      body.append('2', new File(['b'], 'b.txt', { type: 'text/plain' }));
 
       await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -520,9 +520,12 @@ export default (tests) => {
             2: ['variables.files.1'],
           })
         );
-        body.append('1', 'a', { filename: 'a.txt' });
-        body.append('extraneous', 'c', { filename: 'c.txt' });
-        body.append('2', 'b', { filename: 'b.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
+        body.append(
+          'extraneous',
+          new File(['c'], 'c.txt', { type: 'text/plain' })
+        );
+        body.append('2', new File(['b'], 'b.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -593,8 +596,8 @@ export default (tests) => {
           2: ['variables.files.1'],
         })
       );
-      body.append('1', 'aa', { filename: 'a.txt' });
-      body.append('2', 'b', { filename: 'b.txt' });
+      body.append('1', new File(['aa'], 'a.txt', { type: 'text/plain' }));
+      body.append('2', new File(['b'], 'b.txt', { type: 'text/plain' }));
 
       await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -630,7 +633,7 @@ export default (tests) => {
 
       body.append('operations', JSON.stringify({ variables: { file: null } }));
       body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-      body.append('1', 'a', { filename: 'a.txt' });
+      body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
       await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -749,15 +752,21 @@ export default (tests) => {
             3: ['variables.fileC'],
           })
         );
-        formData.append('1', 'a', { filename: 'a.txt' });
+        formData.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
         formData.append(
           '2',
-          // Will arrive in multiple chunks as the TCP max packet size is 64000
-          // bytes and the default Node.js fs stream buffer is 65536 bytes.
-          `${'b'.repeat(70000)}${abortMarker}${'b'.repeat(10)}`,
-          { filename: 'b.txt' }
+          new File(
+            [
+              // Will arrive in multiple chunks as the TCP max packet size is
+              // 64000 bytes and the default Node.js fs stream buffer is 65536
+              // bytes.
+              `${'b'.repeat(70000)}${abortMarker}${'b'.repeat(10)}`,
+            ],
+            'b.txt',
+            { type: 'text/plain' }
+          )
         );
-        formData.append('3', 'c', { filename: 'c.txt' });
+        formData.append('3', new File(['c'], 'c.txt', { type: 'text/plain' }));
 
         await abortingMultipartRequest(
           `http://localhost:${port}`,
@@ -883,15 +892,21 @@ export default (tests) => {
             3: ['variables.fileC'],
           })
         );
-        formData.append('1', 'a', { filename: 'a.txt' });
+        formData.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
         formData.append(
           '2',
-          // Will arrive in multiple chunks as the TCP max packet size is 64000
-          // bytes and the default Node.js fs stream buffer is 65536 bytes.
-          `${'b'.repeat(70000)}${abortMarker}${'b'.repeat(10)}`,
-          { filename: 'b.txt' }
+          new File(
+            [
+              // Will arrive in multiple chunks as the TCP max packet size is
+              // 64000 bytes and the default Node.js fs stream buffer is 65536
+              // bytes.
+              `${'b'.repeat(70000)}${abortMarker}${'b'.repeat(10)}`,
+            ],
+            'b.txt',
+            { type: 'text/plain' }
+          )
         );
-        formData.append('3', 'c', { filename: 'c.txt' });
+        formData.append('3', new File(['c'], 'c.txt', { type: 'text/plain' }));
 
         await abortingMultipartRequest(
           `http://localhost:${port}`,
@@ -940,7 +955,7 @@ export default (tests) => {
           'operations',
           JSON.stringify({ variables: { file: null } })
         );
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -981,7 +996,7 @@ export default (tests) => {
           'operations',
           JSON.stringify({ variables: { file: null } })
         );
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
@@ -1097,7 +1112,7 @@ export default (tests) => {
 
         body.append('operations', '{ x }');
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -1138,10 +1153,16 @@ export default (tests) => {
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
         body.append(
           '1',
-          // Will arrive in multiple chunks as the TCP max packet size is 64000
-          // bytes and the default Node.js fs stream buffer is 65536 bytes.
-          'a'.repeat(70000),
-          { filename: 'a.txt' }
+          new File(
+            [
+              // Will arrive in multiple chunks as the TCP max packet size is
+              // 64000 bytes and the default Node.js fs stream buffer is 65536
+              // bytes.
+              'a'.repeat(70000),
+            ],
+            'a.txt',
+            { type: 'text/plain' }
+          )
         );
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
@@ -1181,7 +1202,7 @@ export default (tests) => {
 
         body.append('operations', 'null');
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -1223,7 +1244,7 @@ export default (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('map', '{ x }');
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -1265,7 +1286,7 @@ export default (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('map', 'null');
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -1307,7 +1328,7 @@ export default (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('map', JSON.stringify({ 1: null }));
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -1349,7 +1370,7 @@ export default (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('map', JSON.stringify({ 1: [null] }));
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -1388,7 +1409,7 @@ export default (tests) => {
 
         body.append('operations', JSON.stringify({ variables: '' }));
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 

@@ -1,5 +1,5 @@
 import { deepStrictEqual, ok, strictEqual } from 'assert';
-import FormData from 'form-data';
+import { File, FormData } from 'formdata-node';
 import Koa from 'koa';
 import fetch from 'node-fetch';
 import graphqlUploadKoa from '../../public/graphqlUploadKoa.js';
@@ -43,7 +43,7 @@ export default (tests) => {
 
       body.append('operations', JSON.stringify({ variables: { file: null } }));
       body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-      body.append('1', 'a', { filename: 'a.txt' });
+      body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
       await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -85,7 +85,7 @@ export default (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -136,7 +136,7 @@ export default (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -184,7 +184,7 @@ export default (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 

@@ -1,5 +1,13 @@
-import { request as httpRequest } from 'http';
-import { Transform } from 'stream';
+import { Readable } from 'stream';
+import { FormDataEncoder } from 'form-data-encoder';
+import nodeAbortController from 'node-abort-controller';
+import fetch, { AbortError } from 'node-fetch';
+
+const AbortController =
+  globalThis.AbortController || nodeAbortController.AbortController;
+
+const textEncoder = new TextEncoder();
+const textDecoder = new TextDecoder();
 
 /**
  * Sends a multipart request that deliberately aborts after a certain amount of
@@ -8,56 +16,55 @@ import { Transform } from 'stream';
  * @name abortingMultipartRequest
  * @param {string} url The request URL.
  * @param {FormData} formData A `FormData` instance for the request body.
- * @param { string} abortMarker A unique character in the request body that marks where to abort the request.
+ * @param {string} abortMarker A unique character in the request body that marks where to abort the request.
  * @param {Promise<void>} requestReceived Resolves once the request has been received by the server request handler.
- * @returns {Promise<void>} Resolves once the aborted request closes.
+ * @returns {Promise<void>} Resolves once the request aborts.
  * @ignore
  */
-export default function abortingMultipartRequest(
+export default async function abortingMultipartRequest(
   url,
   formData,
   abortMarker,
   requestReceived
 ) {
-  return new Promise((resolve, reject) => {
-    const request = httpRequest(url, {
+  const abortController = new AbortController();
+  const encoder = new FormDataEncoder(formData);
+
+  /**
+   * An async generator to iterate the encoded chunks of the form data, that
+   * only yields chunks up until the abort marker and then aborts.
+   */
+  async function* abortingFormData() {
+    for await (const chunk of encoder) {
+      const chunkString = textDecoder.decode(chunk);
+      const chunkAbortIndex = chunkString.indexOf(abortMarker);
+
+      // Check if the chunk has the abort marker character in it.
+      if (chunkAbortIndex !== -1) {
+        if (chunkAbortIndex !== 0)
+          // Yield the final truncated chunk before aborting.
+          yield textEncoder.encode(chunkString.substr(0, chunkAbortIndex));
+
+        // Abort the request after it has been received by the server request
+        // handler, or else Node.js won’t run the handler.
+        await requestReceived;
+
+        abortController.abort();
+
+        // Don’t iterate chunks after the abort marker.
+        break;
+      } else yield chunk;
+    }
+  }
+
+  try {
+    await fetch(url, {
       method: 'POST',
-      headers: formData.getHeaders(),
+      headers: encoder.headers,
+      body: Readable.from(abortingFormData()),
+      signal: abortController.signal,
     });
-
-    request.on('error', (error) => {
-      // Error expected when the connection is aborted.
-      if (error.code !== 'ECONNRESET') reject(error);
-    });
-
-    request.on('close', resolve);
-
-    const transform = new Transform({
-      transform(chunk, encoding, callback) {
-        if (this._aborted) return;
-
-        const chunkString = chunk.toString('utf8');
-        const chunkAbortIndex = chunkString.indexOf(abortMarker);
-
-        // Check if the chunk has the abort marker character in it.
-        if (chunkAbortIndex !== -1) {
-          this._aborted = true;
-
-          if (chunkAbortIndex !== 0)
-            // Send partial chunk before abort.
-            callback(null, chunkString.substr(0, chunkAbortIndex));
-
-          // Abort the request after it has been received by the server request
-          // handler, or else Node.js won’t run the handler.
-          requestReceived.then(() => request.abort());
-
-          return;
-        }
-
-        callback(null, chunk);
-      },
-    });
-
-    formData.pipe(transform).pipe(request);
-  });
+  } catch (error) {
+    if (!(error instanceof AbortError)) throw error;
+  }
 }

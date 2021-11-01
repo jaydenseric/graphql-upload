@@ -1,6 +1,6 @@
 import { deepStrictEqual, ok, strictEqual } from 'assert';
 import express from 'express';
-import FormData from 'form-data';
+import { File, FormData } from 'formdata-node';
 import createError from 'http-errors';
 import fetch from 'node-fetch';
 import graphqlUploadExpress from '../../public/graphqlUploadExpress.js';
@@ -49,7 +49,7 @@ export default (tests) => {
 
       body.append('operations', JSON.stringify({ variables: { file: null } }));
       body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-      body.append('1', 'a', { filename: 'a.txt' });
+      body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
       await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -91,7 +91,7 @@ export default (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -154,7 +154,7 @@ export default (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
@@ -213,7 +213,7 @@ export default (tests) => {
           JSON.stringify({ variables: { file: null } })
         );
         body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', 'a', { filename: 'a.txt' });
+        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
 
         await fetch(`http://localhost:${port}`, { method: 'POST', body });
 
