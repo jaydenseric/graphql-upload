@@ -1,4 +1,11 @@
-import { notStrictEqual, ok, rejects, strictEqual, throws } from 'assert';
+import {
+  deepStrictEqual,
+  notStrictEqual,
+  ok,
+  rejects,
+  strictEqual,
+  throws,
+} from 'assert';
 import { createServer } from 'http';
 import FormData from 'form-data';
 import { ReadStream } from 'fs-capacitor';
@@ -10,6 +17,36 @@ import listen from '../listen.mjs';
 import streamToString from '../streamToString.mjs';
 
 export default (tests) => {
+  tests.add('`processRequest` with no files.', async () => {
+    let serverError;
+
+    const operation = { variables: { a: true } };
+    const server = createServer(async (request, response) => {
+      try {
+        deepStrictEqual(await processRequest(request, response), operation);
+      } catch (error) {
+        serverError = error;
+      } finally {
+        response.end();
+      }
+    });
+
+    const { port, close } = await listen(server);
+
+    try {
+      const body = new FormData();
+
+      body.append('operations', JSON.stringify(operation));
+      body.append('map', '{}');
+
+      await fetch(`http://localhost:${port}`, { method: 'POST', body });
+
+      if (serverError) throw serverError;
+    } finally {
+      close();
+    }
+  });
+
   tests.add(
     '`processRequest` with a single file and default `createReadStream` options.',
     async () => {
