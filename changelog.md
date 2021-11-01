@@ -14,6 +14,11 @@
 - Test the `processRequest` function with a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec) that has no files.
 - Test the `processRequest` function with an unparsable multipart request.
 - Replaced the [`form-data`](https://npm.im/form-data) dev dependency with [`formdata-node`](https://npm.im/formdata-node), [`formdata-node`](https://npm.im/form-data-encoder), and [`node-abort-controller`](https://npm.im/node-abort-controller) and refactored tests to align with web standards.
+- Improved the `processRequest` function:
+  - Fixed ending requests from being handled incorrectly as aborting in edge cases, closing [#272](https://github.com/jaydenseric/graphql-upload/pull/272).
+  - Fixed read streams created via the resolved `Upload` scalar value `createReadStream` method:
+    - Not emitting the `error` event when the multipart request is aborted certain ways while the file is uploading.
+    - Emitting incorrect `error` event details for multipart request file field parse errors.
 
 ## 12.0.0
 
