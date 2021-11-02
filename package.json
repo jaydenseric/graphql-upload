@@ -45,7 +45,7 @@
     "node": "^12.20.0 || ^14.13.1 || >= 16.0.0"
   },
   "peerDependencies": {
-    "graphql": "0.13.1 - 15"
+    "graphql": "0.13.1 - 16"
   },
   "dependencies": {
     "busboy": "^0.3.1",
@@ -65,7 +65,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "express": "^4.17.1",
     "form-data": "^4.0.0",
-    "graphql": "^15.7.1",
+    "graphql": "^16.0.1",
     "hard-rejection": "^2.1.0",
     "jsdoc-md": "^11.0.2",
     "koa": "^2.13.4",
