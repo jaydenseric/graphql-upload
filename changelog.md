@@ -9,6 +9,7 @@
 
 ### Patch
 
+- Updated the [`graphql`](https://npm.im/graphql) peer dependency to `0.13.1 - 16`.
 - Updated dependencies.
 - Also run GitHub Actions CI with Node.js v17.
 - Test the `processRequest` function with a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec) that has no files.
