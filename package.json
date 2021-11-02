@@ -71,7 +71,7 @@
     "koa": "^2.13.4",
     "node-fetch": "^3.0.0",
     "prettier": "^2.4.1",
-    "test-director": "^6.0.0"
+    "test-director": "^7.0.0"
   },
   "scripts": {
     "jsdoc": "jsdoc-md",
