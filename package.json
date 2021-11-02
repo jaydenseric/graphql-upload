@@ -45,7 +45,7 @@
     "node": "^12.20.0 || ^14.13.1 || >= 16.0.0"
   },
   "peerDependencies": {
-    "graphql": "0.13.1 - 15"
+    "graphql": "0.13.1 - 16"
   },
   "dependencies": {
     "busboy": "^0.3.1",
@@ -66,14 +66,14 @@
     "express": "^4.17.1",
     "form-data-encoder": "^1.6.0",
     "formdata-node": "^4.3.1",
-    "graphql": "^15.7.1",
+    "graphql": "^16.0.1",
     "hard-rejection": "^2.1.0",
     "jsdoc-md": "^11.0.2",
     "koa": "^2.13.4",
     "node-abort-controller": "^3.0.1",
     "node-fetch": "^3.0.0",
     "prettier": "^2.4.1",
-    "test-director": "^6.0.0"
+    "test-director": "^7.0.0"
   },
   "scripts": {
     "jsdoc": "jsdoc-md",
