@@ -54,7 +54,7 @@ module.exports = function processRequest(
   return new Promise((resolve, reject) => {
     let released;
     let exitError;
-    let currentStream;
+    let lastFileStream;
     let operations;
     let operationsPath;
     let map;
@@ -77,14 +77,24 @@ module.exports = function processRequest(
      * @ignore
      */
     const exit = (error) => {
+      // None of the tested scenarios cause multiple calls of this function, but
+      // it’t still good to guard against it happening in case it’s possible now
+      // or in the future.
+      // coverage ignore next line
       if (exitError) return;
+
       exitError = error;
 
       reject(exitError);
 
       parser.destroy();
 
-      if (currentStream) currentStream.destroy(exitError);
+      if (
+        lastFileStream &&
+        !lastFileStream.readableEnded &&
+        !lastFileStream.destroyed
+      )
+        lastFileStream.destroy(exitError);
 
       if (map)
         for (const upload of map.values())
@@ -101,42 +111,9 @@ module.exports = function processRequest(
       });
     };
 
-    /**
-     * Releases resources and cleans up Capacitor temporary files. Successive
-     * calls have no effect.
-     * @kind function
-     * @name processRequest~release
-     * @ignore
-     */
-    const release = () => {
-      if (released) return;
-      released = true;
-
-      if (map)
-        for (const upload of map.values())
-          if (upload.file) upload.file.capacitor.release();
-    };
-
-    /**
-     * Handles when the request is closed before it properly ended.
-     * @kind function
-     * @name processRequest~abort
-     * @ignore
-     */
-    const abort = () => {
-      exit(
-        createError(
-          499,
-          'Request disconnected during file upload stream parsing.'
-        )
-      );
-    };
-
     parser.on(
       'field',
       (fieldName, value, fieldNameTruncated, valueTruncated) => {
-        if (exitError) return;
-
         if (valueTruncated)
           return exit(
             createError(
@@ -248,10 +225,7 @@ module.exports = function processRequest(
     );
 
     parser.on('file', (fieldName, stream, filename, encoding, mimetype) => {
-      if (exitError) {
-        ignoreStream(stream);
-        return;
-      }
+      lastFileStream = stream;
 
       if (!map) {
         ignoreStream(stream);
@@ -262,11 +236,6 @@ module.exports = function processRequest(
           )
         );
       }
-
-      currentStream = stream;
-      stream.on('end', () => {
-        currentStream = null;
-      });
 
       const upload = map.get(fieldName);
 
@@ -297,7 +266,7 @@ module.exports = function processRequest(
       stream.on('error', (error) => {
         fileError = error;
         stream.unpipe();
-        capacitor.destroy(exitError);
+        capacitor.destroy(fileError);
       });
 
       const file = {
@@ -348,12 +317,24 @@ module.exports = function processRequest(
 
     parser.once('error', exit);
 
-    response.once('finish', release);
-    response.once('close', release);
+    response.once('close', () => {
+      released = true;
 
-    request.once('close', abort);
-    request.once('end', () => {
-      request.removeListener('close', abort);
+      if (map)
+        for (const upload of map.values())
+          if (upload.file)
+            // Release resources and clean up temporary files.
+            upload.file.capacitor.release();
+    });
+
+    request.once('close', () => {
+      if (!request.readableEnded)
+        exit(
+          createError(
+            499,
+            'Request disconnected during file upload stream parsing.'
+          )
+        );
     });
 
     request.pipe(parser);
