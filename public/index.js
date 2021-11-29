@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
-exports.GraphQLUpload = require('./GraphQLUpload');
-exports.processRequest = require('./processRequest');
-exports.graphqlUploadKoa = require('./graphqlUploadKoa');
-exports.graphqlUploadExpress = require('./graphqlUploadExpress');
-exports.Upload = require('./Upload');
+exports.GraphQLUpload = require("./GraphQLUpload");
+exports.processRequest = require("./processRequest");
+exports.graphqlUploadKoa = require("./graphqlUploadKoa");
+exports.graphqlUploadExpress = require("./graphqlUploadExpress");
+exports.Upload = require("./Upload");
 
 /**
  * File upload details that are only available after the file’s field in the

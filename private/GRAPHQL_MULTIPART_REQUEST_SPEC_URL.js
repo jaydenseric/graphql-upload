@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec)
@@ -9,4 +9,4 @@
  * @ignore
  */
 module.exports =
-  'https://github.com/jaydenseric/graphql-multipart-request-spec';
+  "https://github.com/jaydenseric/graphql-multipart-request-spec";

@@ -20,6 +20,7 @@
   - Fixed read streams created via the resolved `Upload` scalar value `createReadStream` method:
     - Not emitting the `error` event when the multipart request is aborted certain ways while the file is uploading.
     - Emitting incorrect `error` event details for multipart request file field parse errors.
+- Configured Prettier option `singleQuote` to the default, `false`.
 
 ## 12.0.0
 

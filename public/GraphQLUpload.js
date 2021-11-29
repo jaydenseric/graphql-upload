@@ -2,10 +2,10 @@
 // https://github.com/gajus/eslint-plugin-jsdoc/issues/710
 /* eslint-disable jsdoc/check-examples */
 
-'use strict';
+"use strict";
 
-const { GraphQLScalarType, GraphQLError } = require('graphql');
-const Upload = require('./Upload');
+const { GraphQLScalarType, GraphQLError } = require("graphql");
+const Upload = require("./Upload");
 
 /**
  * A GraphQL `Upload` scalar that can be used in a
@@ -16,24 +16,24 @@ const Upload = require('./Upload');
  * @name GraphQLUpload
  * @example <caption>Ways to `import`.</caption>
  * ```js
- * import { GraphQLUpload } from 'graphql-upload';
+ * import { GraphQLUpload } from "graphql-upload";
  * ```
  *
  * ```js
- * import GraphQLUpload from 'graphql-upload/public/GraphQLUpload.js';
+ * import GraphQLUpload from "graphql-upload/public/GraphQLUpload.js";
  * ```
  * @example <caption>Ways to `require`.</caption>
  * ```js
- * const { GraphQLUpload } = require('graphql-upload');
+ * const { GraphQLUpload } = require("graphql-upload");
  * ```
  *
  * ```js
- * const GraphQLUpload = require('graphql-upload/public/GraphQLUpload.js');
+ * const GraphQLUpload = require("graphql-upload/public/GraphQLUpload.js");
  * ```
  * @example <caption>A schema built using [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema).</caption>
  * ```js
- * const { makeExecutableSchema } = require('@graphql-tools/schema');
- * const { GraphQLUpload } = require('graphql-upload');
+ * const { makeExecutableSchema } = require("@graphql-tools/schema");
+ * const { GraphQLUpload } = require("graphql-upload");
  *
  * const schema = makeExecutableSchema({
  *   typeDefs: /* GraphQL *\/ `
@@ -46,19 +46,19 @@ const Upload = require('./Upload');
  * ```
  * @example <caption>A manually constructed schema with an image upload mutation.</caption>
  * ```js
- * const { GraphQLSchema, GraphQLObjectType, GraphQLBoolean } = require('graphql');
- * const { GraphQLUpload } = require('graphql-upload');
+ * const { GraphQLSchema, GraphQLObjectType, GraphQLBoolean } = require("graphql");
+ * const { GraphQLUpload } = require("graphql-upload");
  *
  * const schema = new GraphQLSchema({
  *   mutation: new GraphQLObjectType({
- *     name: 'Mutation',
+ *     name: "Mutation",
  *     fields: {
  *       uploadImage: {
- *         description: 'Uploads an image.',
+ *         description: "Uploads an image.",
  *         type: GraphQLBoolean,
  *         args: {
  *           image: {
- *             description: 'Image file.',
+ *             description: "Image file.",
  *             type: GraphQLUpload,
  *           },
  *         },
@@ -75,16 +75,16 @@ const Upload = require('./Upload');
  * ```
  */
 module.exports = new GraphQLScalarType({
-  name: 'Upload',
-  description: 'The `Upload` scalar type represents a file upload.',
+  name: "Upload",
+  description: "The `Upload` scalar type represents a file upload.",
   parseValue(value) {
     if (value instanceof Upload) return value.promise;
-    throw new GraphQLError('Upload value invalid.');
+    throw new GraphQLError("Upload value invalid.");
   },
   parseLiteral(ast) {
-    throw new GraphQLError('Upload literal unsupported.', ast);
+    throw new GraphQLError("Upload literal unsupported.", ast);
   },
   serialize() {
-    throw new GraphQLError('Upload serialization unsupported.');
+    throw new GraphQLError("Upload serialization unsupported.");
   },
 });

@@ -1,12 +1,12 @@
-import { ok, rejects, strictEqual } from 'assert';
-import Upload from '../../public/Upload.js';
+import { ok, rejects, strictEqual } from "assert";
+import Upload from "../../public/Upload.js";
 
 export default (tests) => {
-  tests.add('`Upload` class resolving a file.', async () => {
+  tests.add("`Upload` class resolving a file.", async () => {
     const upload = new Upload();
 
     ok(upload.promise instanceof Promise);
-    strictEqual(typeof upload.resolve, 'function');
+    strictEqual(typeof upload.resolve, "function");
 
     const file = {};
 
@@ -18,13 +18,13 @@ export default (tests) => {
     strictEqual(upload.file, file);
   });
 
-  tests.add('`Upload` class with a handled rejection.', async () => {
+  tests.add("`Upload` class with a handled rejection.", async () => {
     const upload = new Upload();
 
     ok(upload.promise instanceof Promise);
-    strictEqual(typeof upload.reject, 'function');
+    strictEqual(typeof upload.reject, "function");
 
-    const error = new Error('Message.');
+    const error = new Error("Message.");
 
     upload.reject(error);
 
@@ -33,13 +33,13 @@ export default (tests) => {
     await rejects(Promise.race([upload.promise, Promise.resolve()]), error);
   });
 
-  tests.add('`Upload` class with an unhandled rejection.', async () => {
+  tests.add("`Upload` class with an unhandled rejection.", async () => {
     const upload = new Upload();
 
     ok(upload.promise instanceof Promise);
-    strictEqual(typeof upload.reject, 'function');
+    strictEqual(typeof upload.reject, "function");
 
-    const error = new Error('Message.');
+    const error = new Error("Message.");
 
     upload.reject(error);
 

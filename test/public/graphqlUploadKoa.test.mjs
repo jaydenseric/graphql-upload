@@ -1,13 +1,13 @@
-import { deepStrictEqual, ok, strictEqual } from 'assert';
-import { File, FormData } from 'formdata-node';
-import Koa from 'koa';
-import fetch from 'node-fetch';
-import graphqlUploadKoa from '../../public/graphqlUploadKoa.js';
-import processRequest from '../../public/processRequest.js';
-import listen from '../listen.mjs';
+import { deepStrictEqual, ok, strictEqual } from "assert";
+import { File, FormData } from "formdata-node";
+import Koa from "koa";
+import fetch from "node-fetch";
+import graphqlUploadKoa from "../../public/graphqlUploadKoa.js";
+import processRequest from "../../public/processRequest.js";
+import listen from "../listen.mjs";
 
 export default (tests) => {
-  tests.add('`graphqlUploadKoa` with a non-multipart request.', async () => {
+  tests.add("`graphqlUploadKoa` with a non-multipart request.", async () => {
     let processRequestRan = false;
 
     const app = new Koa().use(
@@ -21,14 +21,14 @@ export default (tests) => {
     const { port, close } = await listen(app);
 
     try {
-      await fetch(`http://localhost:${port}`, { method: 'POST' });
+      await fetch(`http://localhost:${port}`, { method: "POST" });
       strictEqual(processRequestRan, false);
     } finally {
       close();
     }
   });
 
-  tests.add('`graphqlUploadKoa` with a multipart request.', async () => {
+  tests.add("`graphqlUploadKoa` with a multipart request.", async () => {
     let ctxRequestBody;
 
     const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
@@ -41,11 +41,11 @@ export default (tests) => {
     try {
       const body = new FormData();
 
-      body.append('operations', JSON.stringify({ variables: { file: null } }));
-      body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-      body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
+      body.append("operations", JSON.stringify({ variables: { file: null } }));
+      body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+      body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-      await fetch(`http://localhost:${port}`, { method: 'POST', body });
+      await fetch(`http://localhost:${port}`, { method: "POST", body });
 
       ok(ctxRequestBody);
       ok(ctxRequestBody.variables);
@@ -56,7 +56,7 @@ export default (tests) => {
   });
 
   tests.add(
-    '`graphqlUploadKoa` with a multipart request and option `processRequest`.',
+    "`graphqlUploadKoa` with a multipart request and option `processRequest`.",
     async () => {
       let processRequestRan = false;
       let ctxRequestBody;
@@ -81,13 +81,13 @@ export default (tests) => {
         const body = new FormData();
 
         body.append(
-          'operations',
+          "operations",
           JSON.stringify({ variables: { file: null } })
         );
-        body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
+        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+        body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body });
+        await fetch(`http://localhost:${port}`, { method: "POST", body });
 
         strictEqual(processRequestRan, true);
         ok(ctxRequestBody);
@@ -100,14 +100,14 @@ export default (tests) => {
   );
 
   tests.add(
-    '`graphqlUploadKoa` with a multipart request and option `processRequest` throwing an error.',
+    "`graphqlUploadKoa` with a multipart request and option `processRequest` throwing an error.",
     async () => {
       let koaError;
       let requestCompleted;
 
-      const error = new Error('Message.');
+      const error = new Error("Message.");
       const app = new Koa()
-        .on('error', (error) => {
+        .on("error", (error) => {
           koaError = error;
         })
         .use(async (ctx, next) => {
@@ -132,18 +132,18 @@ export default (tests) => {
         const body = new FormData();
 
         body.append(
-          'operations',
+          "operations",
           JSON.stringify({ variables: { file: null } })
         );
-        body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
+        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+        body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body });
+        await fetch(`http://localhost:${port}`, { method: "POST", body });
 
         deepStrictEqual(koaError, error);
         ok(
           requestCompleted,
-          'Response wasn’t delayed until the request completed.'
+          "Response wasn’t delayed until the request completed."
         );
       } finally {
         close();
@@ -152,14 +152,14 @@ export default (tests) => {
   );
 
   tests.add(
-    '`graphqlUploadKoa` with a multipart request and following middleware throwing an error.',
+    "`graphqlUploadKoa` with a multipart request and following middleware throwing an error.",
     async () => {
       let koaError;
       let requestCompleted;
 
-      const error = new Error('Message.');
+      const error = new Error("Message.");
       const app = new Koa()
-        .on('error', (error) => {
+        .on("error", (error) => {
           koaError = error;
         })
         .use(async (ctx, next) => {
@@ -180,18 +180,18 @@ export default (tests) => {
         const body = new FormData();
 
         body.append(
-          'operations',
+          "operations",
           JSON.stringify({ variables: { file: null } })
         );
-        body.append('map', JSON.stringify({ 1: ['variables.file'] }));
-        body.append('1', new File(['a'], 'a.txt', { type: 'text/plain' }));
+        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+        body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: 'POST', body });
+        await fetch(`http://localhost:${port}`, { method: "POST", body });
 
         deepStrictEqual(koaError, error);
         ok(
           requestCompleted,
-          'Response wasn’t delayed until the request completed.'
+          "Response wasn’t delayed until the request completed."
         );
       } finally {
         close();

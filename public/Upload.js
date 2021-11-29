@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * A file expected to be uploaded as it has been declared in the `map` field of
@@ -12,19 +12,19 @@
  * @name Upload
  * @example <caption>Ways to `import`.</caption>
  * ```js
- * import { Upload } from 'graphql-upload';
+ * import { Upload } from "graphql-upload";
  * ```
  *
  * ```js
- * import Upload from 'graphql-upload/public/Upload.js';
+ * import Upload from "graphql-upload/public/Upload.js";
  * ```
  * @example <caption>Ways to `require`.</caption>
  * ```js
- * const { Upload } = require('graphql-upload');
+ * const { Upload } = require("graphql-upload");
  * ```
  *
  * ```js
- * const Upload = require('graphql-upload/public/Upload.js');
+ * const Upload = require("graphql-upload/public/Upload.js");
  * ```
  */
 module.exports = class Upload {

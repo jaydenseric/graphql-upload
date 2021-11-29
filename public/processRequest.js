@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
-const Busboy = require('busboy');
-const { WriteStream } = require('fs-capacitor');
-const createError = require('http-errors');
-const isObject = require('isobject');
-const objectPath = require('object-path');
-const GRAPHQL_MULTIPART_REQUEST_SPEC_URL = require('../private/GRAPHQL_MULTIPART_REQUEST_SPEC_URL');
-const ignoreStream = require('../private/ignoreStream');
-const Upload = require('./Upload');
+const Busboy = require("busboy");
+const { WriteStream } = require("fs-capacitor");
+const createError = require("http-errors");
+const isObject = require("isobject");
+const objectPath = require("object-path");
+const GRAPHQL_MULTIPART_REQUEST_SPEC_URL = require("../private/GRAPHQL_MULTIPART_REQUEST_SPEC_URL");
+const ignoreStream = require("../private/ignoreStream");
+const Upload = require("./Upload");
 
 /**
  * Processes a
@@ -27,19 +27,19 @@ const Upload = require('./Upload');
  * @type {ProcessRequestFunction}
  * @example <caption>Ways to `import`.</caption>
  * ```js
- * import { processRequest } from 'graphql-upload';
+ * import { processRequest } from "graphql-upload";
  * ```
  *
  * ```js
- * import processRequest from 'graphql-upload/public/processRequest.js';
+ * import processRequest from "graphql-upload/public/processRequest.js";
  * ```
  * @example <caption>Ways to `require`.</caption>
  * ```js
- * const { processRequest } = require('graphql-upload');
+ * const { processRequest } = require("graphql-upload");
  * ```
  *
  * ```js
- * const processRequest = require('graphql-upload/public/processRequest.js');
+ * const processRequest = require("graphql-upload/public/processRequest.js");
  * ```
  */
 module.exports = function processRequest(
@@ -112,7 +112,7 @@ module.exports = function processRequest(
     };
 
     parser.on(
-      'field',
+      "field",
       (fieldName, value, fieldNameTruncated, valueTruncated) => {
         if (valueTruncated)
           return exit(
@@ -123,7 +123,7 @@ module.exports = function processRequest(
           );
 
         switch (fieldName) {
-          case 'operations':
+          case "operations":
             try {
               operations = JSON.parse(value);
             } catch (error) {
@@ -146,7 +146,7 @@ module.exports = function processRequest(
             operationsPath = objectPath(operations);
 
             break;
-          case 'map': {
+          case "map": {
             if (!operations)
               return exit(
                 createError(
@@ -197,7 +197,7 @@ module.exports = function processRequest(
               map.set(fieldName, new Upload());
 
               for (const [index, path] of paths.entries()) {
-                if (typeof path !== 'string')
+                if (typeof path !== "string")
                   return exit(
                     createError(
                       400,
@@ -224,7 +224,7 @@ module.exports = function processRequest(
       }
     );
 
-    parser.on('file', (fieldName, stream, filename, encoding, mimetype) => {
+    parser.on("file", (fieldName, stream, filename, encoding, mimetype) => {
       lastFileStream = stream;
 
       if (!map) {
@@ -249,12 +249,12 @@ module.exports = function processRequest(
       let fileError;
       const capacitor = new WriteStream();
 
-      capacitor.on('error', () => {
+      capacitor.on("error", () => {
         stream.unpipe();
         stream.resume();
       });
 
-      stream.on('limit', () => {
+      stream.on("limit", () => {
         fileError = createError(
           413,
           `File truncated as it exceeds the ${maxFileSize} byte size limit.`
@@ -263,7 +263,7 @@ module.exports = function processRequest(
         capacitor.destroy(fileError);
       });
 
-      stream.on('error', (error) => {
+      stream.on("error", (error) => {
         fileError = error;
         stream.unpipe();
         capacitor.destroy(fileError);
@@ -280,17 +280,17 @@ module.exports = function processRequest(
         },
       };
 
-      Object.defineProperty(file, 'capacitor', { value: capacitor });
+      Object.defineProperty(file, "capacitor", { value: capacitor });
 
       stream.pipe(capacitor);
       upload.resolve(file);
     });
 
-    parser.once('filesLimit', () =>
+    parser.once("filesLimit", () =>
       exit(createError(413, `${maxFiles} max file uploads exceeded.`))
     );
 
-    parser.once('finish', () => {
+    parser.once("finish", () => {
       request.unpipe(parser);
       request.resume();
 
@@ -312,12 +312,12 @@ module.exports = function processRequest(
 
       for (const upload of map.values())
         if (!upload.file)
-          upload.reject(createError(400, 'File missing in the request.'));
+          upload.reject(createError(400, "File missing in the request."));
     });
 
-    parser.once('error', exit);
+    parser.once("error", exit);
 
-    response.once('close', () => {
+    response.once("close", () => {
       released = true;
 
       if (map)
@@ -327,12 +327,12 @@ module.exports = function processRequest(
             upload.file.capacitor.release();
     });
 
-    request.once('close', () => {
+    request.once("close", () => {
       if (!request.readableEnded)
         exit(
           createError(
             499,
-            'Request disconnected during file upload stream parsing.'
+            "Request disconnected during file upload stream parsing."
           )
         );
     });

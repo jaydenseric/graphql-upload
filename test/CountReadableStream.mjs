@@ -1,4 +1,4 @@
-import { Readable } from 'stream';
+import { Readable } from "stream";
 
 /**
  * A count readable stream, for testing purposes.
@@ -16,6 +16,6 @@ export default class CountReadableStream extends Readable {
 
   _read() {
     const i = this._index++;
-    this.push(i > this._max ? null : Buffer.from(String(i), 'ascii'));
+    this.push(i > this._max ? null : Buffer.from(String(i), "ascii"));
   }
 }

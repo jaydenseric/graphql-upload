@@ -1,53 +1,53 @@
-import { doesNotThrow, throws } from 'assert';
-import { parseValue } from 'graphql';
-import GraphQLUpload from '../../public/GraphQLUpload.js';
-import Upload from '../../public/Upload.js';
+import { doesNotThrow, throws } from "assert";
+import { parseValue } from "graphql";
+import GraphQLUpload from "../../public/GraphQLUpload.js";
+import Upload from "../../public/Upload.js";
 
 export default (tests) => {
-  tests.add('`GraphQLUpload` scalar `parseValue` with a valid value.', () => {
+  tests.add("`GraphQLUpload` scalar `parseValue` with a valid value.", () => {
     doesNotThrow(() => {
       GraphQLUpload.parseValue(new Upload());
     });
   });
 
   tests.add(
-    '`GraphQLUpload` scalar `parseValue` with an invalid value.',
+    "`GraphQLUpload` scalar `parseValue` with an invalid value.",
     () => {
       throws(
         () => {
           GraphQLUpload.parseValue(true);
         },
         {
-          name: 'GraphQLError',
-          message: 'Upload value invalid.',
+          name: "GraphQLError",
+          message: "Upload value invalid.",
         }
       );
     }
   );
 
-  tests.add('`GraphQLUpload` scalar `parseLiteral`.', () => {
+  tests.add("`GraphQLUpload` scalar `parseLiteral`.", () => {
     throws(
       () => {
         // The dummy value is irrelevant.
         GraphQLUpload.parseLiteral(parseValue('""'));
       },
       {
-        name: 'GraphQLError',
-        message: 'Upload literal unsupported.',
+        name: "GraphQLError",
+        message: "Upload literal unsupported.",
         locations: [{ line: 1, column: 1 }],
       }
     );
   });
 
-  tests.add('`GraphQLUpload` scalar `serialize`.', () => {
+  tests.add("`GraphQLUpload` scalar `serialize`.", () => {
     throws(
       () => {
         // The dummy value is irrelevant.
-        GraphQLUpload.serialize('');
+        GraphQLUpload.serialize("");
       },
       {
-        name: 'GraphQLError',
-        message: 'Upload serialization unsupported.',
+        name: "GraphQLError",
+        message: "Upload serialization unsupported.",
       }
     );
   });

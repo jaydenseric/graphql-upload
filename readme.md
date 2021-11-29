@@ -74,28 +74,28 @@ A GraphQL `Upload` scalar that can be used in a [`GraphQLSchema`](https://graphq
 _Ways to `import`._
 
 > ```js
-> import { GraphQLUpload } from 'graphql-upload';
+> import { GraphQLUpload } from "graphql-upload";
 > ```
 >
 > ```js
-> import GraphQLUpload from 'graphql-upload/public/GraphQLUpload.js';
+> import GraphQLUpload from "graphql-upload/public/GraphQLUpload.js";
 > ```
 
 _Ways to `require`._
 
 > ```js
-> const { GraphQLUpload } = require('graphql-upload');
+> const { GraphQLUpload } = require("graphql-upload");
 > ```
 >
 > ```js
-> const GraphQLUpload = require('graphql-upload/public/GraphQLUpload.js');
+> const GraphQLUpload = require("graphql-upload/public/GraphQLUpload.js");
 > ```
 
 _A schema built using [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)._
 
 > ```js
-> const { makeExecutableSchema } = require('@graphql-tools/schema');
-> const { GraphQLUpload } = require('graphql-upload');
+> const { makeExecutableSchema } = require("@graphql-tools/schema");
+> const { GraphQLUpload } = require("graphql-upload");
 >
 > const schema = makeExecutableSchema({
 >   typeDefs: /* GraphQL */ `
@@ -114,19 +114,19 @@ _A manually constructed schema with an image upload mutation._
 >   GraphQLSchema,
 >   GraphQLObjectType,
 >   GraphQLBoolean,
-> } = require('graphql');
-> const { GraphQLUpload } = require('graphql-upload');
+> } = require("graphql");
+> const { GraphQLUpload } = require("graphql-upload");
 >
 > const schema = new GraphQLSchema({
 >   mutation: new GraphQLObjectType({
->     name: 'Mutation',
+>     name: "Mutation",
 >     fields: {
 >       uploadImage: {
->         description: 'Uploads an image.',
+>         description: "Uploads an image.",
 >         type: GraphQLBoolean,
 >         args: {
 >           image: {
->             description: 'Image file.',
+>             description: "Image file.",
 >             type: GraphQLUpload,
 >           },
 >         },
@@ -153,21 +153,21 @@ A file expected to be uploaded as it has been declared in the `map` field of a [
 _Ways to `import`._
 
 > ```js
-> import { Upload } from 'graphql-upload';
+> import { Upload } from "graphql-upload";
 > ```
 >
 > ```js
-> import Upload from 'graphql-upload/public/Upload.js';
+> import Upload from "graphql-upload/public/Upload.js";
 > ```
 
 _Ways to `require`._
 
 > ```js
-> const { Upload } = require('graphql-upload');
+> const { Upload } = require("graphql-upload");
 > ```
 >
 > ```js
-> const Upload = require('graphql-upload/public/Upload.js');
+> const Upload = require("graphql-upload/public/Upload.js");
 > ```
 
 #### Upload instance method reject
@@ -216,34 +216,34 @@ Creates [Express](https://expressjs.com) middleware that processes [GraphQL mult
 _Ways to `import`._
 
 > ```js
-> import { graphqlUploadExpress } from 'graphql-upload';
+> import { graphqlUploadExpress } from "graphql-upload";
 > ```
 >
 > ```js
-> import graphqlUploadExpress from 'graphql-upload/public/graphqlUploadExpress.js';
+> import graphqlUploadExpress from "graphql-upload/public/graphqlUploadExpress.js";
 > ```
 
 _Ways to `require`._
 
 > ```js
-> const { graphqlUploadExpress } = require('graphql-upload');
+> const { graphqlUploadExpress } = require("graphql-upload");
 > ```
 >
 > ```js
-> const graphqlUploadExpress = require('graphql-upload/public/graphqlUploadExpress.js');
+> const graphqlUploadExpress = require("graphql-upload/public/graphqlUploadExpress.js");
 > ```
 
 _Basic [`express-graphql`](https://npm.im/express-graphql) setup._
 
 > ```js
-> const express = require('express');
-> const graphqlHTTP = require('express-graphql');
-> const { graphqlUploadExpress } = require('graphql-upload');
-> const schema = require('./schema');
+> const express = require("express");
+> const graphqlHTTP = require("express-graphql");
+> const { graphqlUploadExpress } = require("graphql-upload");
+> const schema = require("./schema");
 >
 > express()
 >   .use(
->     '/graphql',
+>     "/graphql",
 >     graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
 >     graphqlHTTP({ schema })
 >   )
@@ -268,31 +268,31 @@ Creates [Koa](https://koajs.com) middleware that processes [GraphQL multipart re
 _Ways to `import`._
 
 > ```js
-> import { graphqlUploadKoa } from 'graphql-upload';
+> import { graphqlUploadKoa } from "graphql-upload";
 > ```
 >
 > ```js
-> import graphqlUploadKoa from 'graphql-upload/public/graphqlUploadKoa.js';
+> import graphqlUploadKoa from "graphql-upload/public/graphqlUploadKoa.js";
 > ```
 
 _Ways to `require`._
 
 > ```js
-> const { graphqlUploadKoa } = require('graphql-upload');
+> const { graphqlUploadKoa } = require("graphql-upload");
 > ```
 >
 > ```js
-> const graphqlUploadKoa = require('graphql-upload/public/graphqlUploadKoa.js');
+> const graphqlUploadKoa = require("graphql-upload/public/graphqlUploadKoa.js");
 > ```
 
 _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
 
 > ```js
-> const Koa = require('koa');
-> const bodyParser = require('koa-bodyparser');
-> const { errorHandler, execute } = require('graphql-api-koa');
-> const { graphqlUploadKoa } = require('graphql-upload');
-> const schema = require('./schema');
+> const Koa = require("koa");
+> const bodyParser = require("koa-bodyparser");
+> const { errorHandler, execute } = require("graphql-api-koa");
+> const { graphqlUploadKoa } = require("graphql-upload");
+> const schema = require("./schema");
 >
 > new Koa()
 >   .use(errorHandler())
@@ -315,21 +315,21 @@ Processes a [GraphQL multipart request](https://github.com/jaydenseric/graphql-m
 _Ways to `import`._
 
 > ```js
-> import { processRequest } from 'graphql-upload';
+> import { processRequest } from "graphql-upload";
 > ```
 >
 > ```js
-> import processRequest from 'graphql-upload/public/processRequest.js';
+> import processRequest from "graphql-upload/public/processRequest.js";
 > ```
 
 _Ways to `require`._
 
 > ```js
-> const { processRequest } = require('graphql-upload');
+> const { processRequest } = require("graphql-upload");
 > ```
 >
 > ```js
-> const processRequest = require('graphql-upload/public/processRequest.js');
+> const processRequest = require("graphql-upload/public/processRequest.js");
 > ```
 
 ---

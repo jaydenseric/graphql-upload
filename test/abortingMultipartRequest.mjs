@@ -1,7 +1,7 @@
-import { Readable } from 'stream';
-import { FormDataEncoder } from 'form-data-encoder';
-import nodeAbortController from 'node-abort-controller';
-import fetch, { AbortError } from 'node-fetch';
+import { Readable } from "stream";
+import { FormDataEncoder } from "form-data-encoder";
+import nodeAbortController from "node-abort-controller";
+import fetch, { AbortError } from "node-fetch";
 
 const AbortController =
   globalThis.AbortController || nodeAbortController.AbortController;
@@ -59,7 +59,7 @@ export default async function abortingMultipartRequest(
 
   try {
     await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: encoder.headers,
       body: Readable.from(abortingFormData()),
       signal: abortController.signal,

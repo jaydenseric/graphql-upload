@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const defaultProcessRequest = require('./processRequest');
+const defaultProcessRequest = require("./processRequest");
 
 /**
  * Creates [Koa](https://koajs.com) middleware that processes
@@ -16,27 +16,27 @@ const defaultProcessRequest = require('./processRequest');
  * @returns {Function} Koa middleware.
  * @example <caption>Ways to `import`.</caption>
  * ```js
- * import { graphqlUploadKoa } from 'graphql-upload';
+ * import { graphqlUploadKoa } from "graphql-upload";
  * ```
  *
  * ```js
- * import graphqlUploadKoa from 'graphql-upload/public/graphqlUploadKoa.js';
+ * import graphqlUploadKoa from "graphql-upload/public/graphqlUploadKoa.js";
  * ```
  * @example <caption>Ways to `require`.</caption>
  * ```js
- * const { graphqlUploadKoa } = require('graphql-upload');
+ * const { graphqlUploadKoa } = require("graphql-upload");
  * ```
  *
  * ```js
- * const graphqlUploadKoa = require('graphql-upload/public/graphqlUploadKoa.js');
+ * const graphqlUploadKoa = require("graphql-upload/public/graphqlUploadKoa.js");
  * ```
  * @example <caption>Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup.</caption>
  * ```js
- * const Koa = require('koa');
- * const bodyParser = require('koa-bodyparser');
- * const { errorHandler, execute } = require('graphql-api-koa');
- * const { graphqlUploadKoa } = require('graphql-upload');
- * const schema = require('./schema');
+ * const Koa = require("koa");
+ * const bodyParser = require("koa-bodyparser");
+ * const { errorHandler, execute } = require("graphql-api-koa");
+ * const { graphqlUploadKoa } = require("graphql-upload");
+ * const schema = require("./schema");
  *
  * new Koa()
  *   .use(errorHandler())
@@ -51,9 +51,9 @@ module.exports = function graphqlUploadKoa({
   ...processRequestOptions
 } = {}) {
   return async function graphqlUploadKoaMiddleware(ctx, next) {
-    if (!ctx.request.is('multipart/form-data')) return next();
+    if (!ctx.request.is("multipart/form-data")) return next();
 
-    const finished = new Promise((resolve) => ctx.req.on('end', resolve));
+    const finished = new Promise((resolve) => ctx.req.on("end", resolve));
 
     try {
       ctx.request.body = await processRequest(
