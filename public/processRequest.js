@@ -3,7 +3,6 @@
 const Busboy = require("busboy");
 const { WriteStream } = require("fs-capacitor");
 const createError = require("http-errors");
-const isObject = require("isobject");
 const objectPath = require("object-path");
 const GRAPHQL_MULTIPART_REQUEST_SPEC_URL = require("../private/GRAPHQL_MULTIPART_REQUEST_SPEC_URL");
 const ignoreStream = require("../private/ignoreStream");
@@ -135,7 +134,9 @@ module.exports = function processRequest(
               );
             }
 
-            if (!isObject(operations) && !Array.isArray(operations))
+            // `operations` should be an object or an array. Note that arrays
+            // and `null` have an `object` type.
+            if (typeof operations !== "object" || !operations)
               return exit(
                 createError(
                   400,
@@ -167,7 +168,12 @@ module.exports = function processRequest(
               );
             }
 
-            if (!isObject(parsedMap))
+            // `map` should be an object.
+            if (
+              typeof parsedMap !== "object" ||
+              !parsedMap ||
+              Array.isArray(parsedMap)
+            )
               return exit(
                 createError(
                   400,

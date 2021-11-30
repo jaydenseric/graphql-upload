@@ -1174,44 +1174,49 @@ export default (tests) => {
     }
   );
 
-  tests.add(
-    "`processRequest` with invalid multipart form field `operations` type.",
-    async () => {
-      let serverError;
+  for (const [type, value] of [
+    ["null", null],
+    ["boolean", true],
+    ["string", ""],
+  ])
+    tests.add(
+      `\`processRequest\` with invalid multipart form field \`operations\` type, ${type}.`,
+      async () => {
+        let serverError;
 
-      const server = createServer(async (request, response) => {
+        const server = createServer(async (request, response) => {
+          try {
+            await rejects(processRequest(request, response), {
+              name: "BadRequestError",
+              message:
+                "Invalid type for the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+              status: 400,
+              expose: true,
+            });
+          } catch (error) {
+            serverError = error;
+          } finally {
+            response.end();
+          }
+        });
+
+        const { port, close } = await listen(server);
+
         try {
-          await rejects(processRequest(request, response), {
-            name: "BadRequestError",
-            message:
-              "Invalid type for the ‘operations’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
-            status: 400,
-            expose: true,
-          });
-        } catch (error) {
-          serverError = error;
+          const body = new FormData();
+
+          body.append("operations", JSON.stringify(value));
+          body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+          body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
+
+          await fetch(`http://localhost:${port}`, { method: "POST", body });
+
+          if (serverError) throw serverError;
         } finally {
-          response.end();
+          close();
         }
-      });
-
-      const { port, close } = await listen(server);
-
-      try {
-        const body = new FormData();
-
-        body.append("operations", "null");
-        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
-        body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
-
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
-
-        if (serverError) throw serverError;
-      } finally {
-        close();
       }
-    }
-  );
+    );
 
   tests.add(
     "`processRequest` with invalid multipart form field `map` JSON.",
@@ -1255,47 +1260,53 @@ export default (tests) => {
     }
   );
 
-  tests.add(
-    "`processRequest` with invalid multipart form field `map` type.",
-    async () => {
-      let serverError;
+  for (const [type, value] of [
+    ["null", null],
+    ["array", []],
+    ["boolean", true],
+    ["string", ""],
+  ])
+    tests.add(
+      `\`processRequest\` with invalid multipart form field \`map\` type, ${type}.`,
+      async () => {
+        let serverError;
 
-      const server = createServer(async (request, response) => {
+        const server = createServer(async (request, response) => {
+          try {
+            await rejects(processRequest(request, response), {
+              name: "BadRequestError",
+              message:
+                "Invalid type for the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
+              status: 400,
+              expose: true,
+            });
+          } catch (error) {
+            serverError = error;
+          } finally {
+            response.end();
+          }
+        });
+
+        const { port, close } = await listen(server);
+
         try {
-          await rejects(processRequest(request, response), {
-            name: "BadRequestError",
-            message:
-              "Invalid type for the ‘map’ multipart field (https://github.com/jaydenseric/graphql-multipart-request-spec).",
-            status: 400,
-            expose: true,
-          });
-        } catch (error) {
-          serverError = error;
+          const body = new FormData();
+
+          body.append(
+            "operations",
+            JSON.stringify({ variables: { file: null } })
+          );
+          body.append("map", JSON.stringify(value));
+          body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
+
+          await fetch(`http://localhost:${port}`, { method: "POST", body });
+
+          if (serverError) throw serverError;
         } finally {
-          response.end();
+          close();
         }
-      });
-
-      const { port, close } = await listen(server);
-
-      try {
-        const body = new FormData();
-
-        body.append(
-          "operations",
-          JSON.stringify({ variables: { file: null } })
-        );
-        body.append("map", "null");
-        body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
-
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
-
-        if (serverError) throw serverError;
-      } finally {
-        close();
       }
-    }
-  );
+    );
 
   tests.add(
     "`processRequest` with invalid multipart form field `map` entry type.",
