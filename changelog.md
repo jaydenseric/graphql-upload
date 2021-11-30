@@ -12,6 +12,7 @@
 - Updated the [`graphql`](https://npm.im/graphql) peer dependency to `0.13.1 - 16`.
 - Updated dependencies.
 - Also run GitHub Actions CI with Node.js v17.
+- Simplified package scripts.
 - Test the `processRequest` function with a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec) that has no files.
 - Test the `processRequest` function with an unparsable multipart request.
 - Replaced the [`form-data`](https://npm.im/form-data) dev dependency with [`formdata-node`](https://npm.im/formdata-node), [`formdata-node`](https://npm.im/form-data-encoder), and [`node-abort-controller`](https://npm.im/node-abort-controller) and refactored tests to align with web standards.
