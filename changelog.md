@@ -1,6 +1,6 @@
 # graphql-upload changelog
 
-## Next
+## 13.0.0
 
 ### Major
 
