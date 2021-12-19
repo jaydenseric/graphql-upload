@@ -1,6 +1,4 @@
-"use strict";
-
-const defaultProcessRequest = require("./processRequest");
+import defaultProcessRequest from "./processRequest.js";
 
 /**
  * Creates [Koa](https://koajs.com) middleware that processes
@@ -46,7 +44,7 @@ const defaultProcessRequest = require("./processRequest");
  *   .listen(3000);
  * ```
  */
-module.exports = function graphqlUploadKoa({
+export default function graphqlUploadKoa({
   processRequest = defaultProcessRequest,
   ...processRequestOptions
 } = {}) {
@@ -66,4 +64,4 @@ module.exports = function graphqlUploadKoa({
       await finished;
     }
   };
-};
+}

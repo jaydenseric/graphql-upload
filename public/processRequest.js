@@ -1,12 +1,10 @@
-"use strict";
-
-const Busboy = require("busboy");
-const { WriteStream } = require("fs-capacitor");
-const createError = require("http-errors");
-const objectPath = require("object-path");
-const GRAPHQL_MULTIPART_REQUEST_SPEC_URL = require("../private/GRAPHQL_MULTIPART_REQUEST_SPEC_URL");
-const ignoreStream = require("../private/ignoreStream");
-const Upload = require("./Upload");
+import Busboy from "busboy";
+import { WriteStream } from "fs-capacitor";
+import createError from "http-errors";
+import objectPath from "object-path";
+import GRAPHQL_MULTIPART_REQUEST_SPEC_URL from "../private/GRAPHQL_MULTIPART_REQUEST_SPEC_URL.js";
+import ignoreStream from "../private/ignoreStream.js";
+import Upload from "./Upload.js";
 
 /**
  * Processes a
@@ -41,7 +39,7 @@ const Upload = require("./Upload");
  * const processRequest = require("graphql-upload/public/processRequest.js");
  * ```
  */
-module.exports = function processRequest(
+export default function processRequest(
   request,
   response,
   {
@@ -345,4 +343,4 @@ module.exports = function processRequest(
 
     request.pipe(parser);
   });
-};
+}

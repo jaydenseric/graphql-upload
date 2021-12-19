@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec)
  * URL. Useful for error messages, etc.
@@ -8,5 +6,4 @@
  * @type {string}
  * @ignore
  */
-module.exports =
-  "https://github.com/jaydenseric/graphql-multipart-request-spec";
+export default "https://github.com/jaydenseric/graphql-multipart-request-spec";

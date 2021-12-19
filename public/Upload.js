@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * A file expected to be uploaded as it has been declared in the `map` field of
  * a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
@@ -27,7 +25,7 @@
  * const Upload = require("graphql-upload/public/Upload.js");
  * ```
  */
-module.exports = class Upload {
+export default class Upload {
   constructor() {
     /**
      * Promise that resolves file upload details. This should only be utilized
@@ -72,4 +70,4 @@ module.exports = class Upload {
     // https://github.com/nodejs/node/issues/20392
     this.promise.catch(() => {});
   }
-};
+}

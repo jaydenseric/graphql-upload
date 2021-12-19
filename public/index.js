@@ -1,10 +1,16 @@
-"use strict";
+import GraphQLUpload from "./GraphQLUpload.js";
+import Upload from "./Upload.js";
+import graphqlUploadExpress from "./graphqlUploadExpress.js";
+import graphqlUploadKoa from "./graphqlUploadKoa.js";
+import processRequest from "./processRequest.js";
 
-exports.GraphQLUpload = require("./GraphQLUpload");
-exports.processRequest = require("./processRequest");
-exports.graphqlUploadKoa = require("./graphqlUploadKoa");
-exports.graphqlUploadExpress = require("./graphqlUploadExpress");
-exports.Upload = require("./Upload");
+export {
+  GraphQLUpload,
+  processRequest,
+  graphqlUploadKoa,
+  graphqlUploadExpress,
+  Upload,
+};
 
 /**
  * File upload details that are only available after the file’s field in the
