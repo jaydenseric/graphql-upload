@@ -1,7 +1,3 @@
-// One of the JSDoc code examples contains `*/` escaped using `*\/`, see:
-// https://github.com/gajus/eslint-plugin-jsdoc/issues/710
-/* eslint-disable jsdoc/check-examples */
-
 "use strict";
 
 const { GraphQLScalarType, GraphQLError } = require("graphql");

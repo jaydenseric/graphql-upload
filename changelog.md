@@ -9,6 +9,7 @@
 ### Patch
 
 - Updated dev dependencies.
+- Simplified dev dependencies and config for ESLint.
 - Updated GitHub Actions CI config:
   - Run tests with Node.js v14, v16, v18.
   - Updated `actions/checkout` to v3.

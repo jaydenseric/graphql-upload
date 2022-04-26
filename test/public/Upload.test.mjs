@@ -1,4 +1,5 @@
 import { ok, rejects, strictEqual } from "assert";
+
 import Upload from "../../public/Upload.js";
 
 export default (tests) => {

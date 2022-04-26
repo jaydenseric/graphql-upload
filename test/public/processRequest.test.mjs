@@ -6,12 +6,13 @@ import {
   strictEqual,
   throws,
 } from "assert";
-import { createServer } from "http";
 import { File, FormData } from "formdata-node";
 import { ReadStream } from "fs-capacitor";
+import { createServer } from "http";
 import fetch from "node-fetch";
-import Upload from "../../public/Upload.js";
+
 import processRequest from "../../public/processRequest.js";
+import Upload from "../../public/Upload.js";
 import abortingMultipartRequest from "../abortingMultipartRequest.mjs";
 import listen from "../listen.mjs";
 import streamToString from "../streamToString.mjs";

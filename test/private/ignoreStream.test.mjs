@@ -1,4 +1,5 @@
 import { doesNotThrow, strictEqual } from "assert";
+
 import ignoreStream from "../../private/ignoreStream.js";
 import CountReadableStream from "../CountReadableStream.mjs";
 
