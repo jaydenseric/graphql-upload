@@ -77,7 +77,7 @@ module.exports = function processRequest(
      */
     const exit = (error) => {
       // None of the tested scenarios cause multiple calls of this function, but
-      // it’t still good to guard against it happening in case it’s possible now
+      // it’s still good to guard against it happening in case it’s possible now
       // or in the future.
       // coverage ignore next line
       if (exitError) return;

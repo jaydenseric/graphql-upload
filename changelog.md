@@ -15,6 +15,7 @@
   - Run tests with Node.js v14, v16, v18.
   - Updated `actions/checkout` to v3.
   - Updated `actions/setup-node` to v3.
+- Fixed a typo in a code comment.
 
 ## 13.0.0
 
