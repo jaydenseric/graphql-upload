@@ -46,7 +46,7 @@ The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-mult
 
 ## Requirements
 
-- [Node.js](https://nodejs.org): `^12.22.0 || ^14.17.0 || >= 16.0.0`
+- [Node.js](https://nodejs.org): `^14.17.0 || ^16.0.0 || >= 18.0.0`
 
 ## API
 
