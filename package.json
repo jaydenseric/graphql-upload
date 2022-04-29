@@ -64,7 +64,6 @@
     "form-data-encoder": "^1.7.2",
     "formdata-node": "^4.3.2",
     "graphql": "^16.4.0",
-    "hard-rejection": "^2.1.0",
     "jsdoc-md": "^11.0.2",
     "koa": "^2.13.4",
     "node-abort-controller": "^3.0.1",
@@ -77,7 +76,7 @@
     "docs-check": "jsdoc-md -c",
     "eslint": "eslint .",
     "prettier": "prettier -c .",
-    "tests": "coverage-node -r hard-rejection/register test.mjs",
+    "tests": "coverage-node --unhandled-rejections=throw test.mjs",
     "test": "npm run eslint && npm run prettier && npm run docs-check && npm run tests",
     "prepublishOnly": "npm test"
   }

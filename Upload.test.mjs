@@ -44,8 +44,9 @@ export default (tests) => {
 
     upload.reject(error);
 
-    // Rely on the fact that `-r hard-rejection/register` is used when these
-    // tests are run via the Node.js CLI. The process won’t exit with an error
-    // if the unhandled rejection is silenced as intended.
+    // Node.js CLI flag `--unhandled-rejections=throw` must be used when these
+    // tests are run with Node.js v14 (it’s unnecessary for Node.js v15+) or the
+    // process won’t exit with an error if the unhandled rejection is’t silenced
+    // as intended.
   });
 };

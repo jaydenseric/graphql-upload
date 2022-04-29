@@ -14,6 +14,7 @@
 
 - Updated dev dependencies.
 - Simplified dev dependencies and config for ESLint.
+- Removed the [`hard-rejection`](https://npm.im/hard-rejection) dev dependency. Instead, tests are run with the Node.js CLI flag `--unhandled-rejections=throw` to make Node.js v14 behave like newer versions.
 - Updated GitHub Actions CI config:
   - Run tests with Node.js v14, v16, v18.
   - Updated `actions/checkout` to v3.
