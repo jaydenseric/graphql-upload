@@ -14,19 +14,11 @@ const defaultProcessRequest = require("./processRequest");
  * @param {ProcessRequestOptions} options Middleware options. Any [`ProcessRequestOptions`]{@link ProcessRequestOptions} can be used.
  * @param {ProcessRequestFunction} [options.processRequest=processRequest] Used to process [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec).
  * @returns {Function} Koa middleware.
- * @example <caption>Ways to `import`.</caption>
- * ```js
- * import { graphqlUploadKoa } from "graphql-upload";
- * ```
- *
+ * @example <caption>How to `import`.</caption>
  * ```js
  * import graphqlUploadKoa from "graphql-upload/graphqlUploadKoa.js";
  * ```
- * @example <caption>Ways to `require`.</caption>
- * ```js
- * const { graphqlUploadKoa } = require("graphql-upload");
- * ```
- *
+ * @example <caption>How to `require`.</caption>
  * ```js
  * const graphqlUploadKoa = require("graphql-upload/graphqlUploadKoa.js");
  * ```
@@ -35,7 +27,7 @@ const defaultProcessRequest = require("./processRequest");
  * const Koa = require("koa");
  * const bodyParser = require("koa-bodyparser");
  * const { errorHandler, execute } = require("graphql-api-koa");
- * const { graphqlUploadKoa } = require("graphql-upload");
+ * const graphqlUploadKoa = require("graphql-upload/graphqlUploadKoa.js");
  * const schema = require("./schema");
  *
  * new Koa()

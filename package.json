@@ -32,18 +32,11 @@
     "graphqlUploadExpress.js",
     "graphqlUploadKoa.js",
     "ignoreStream.js",
-    "index.js",
-    "index.mjs",
     "processRequest.js",
     "Upload.js"
   ],
   "sideEffects": false,
-  "main": "./index.js",
   "exports": {
-    ".": {
-      "import": "./index.mjs",
-      "require": "./index.js"
-    },
     "./GraphQLUpload.js": "./GraphQLUpload.js",
     "./graphqlUploadExpress.js": "./graphqlUploadExpress.js",
     "./graphqlUploadKoa.js": "./graphqlUploadKoa.js",

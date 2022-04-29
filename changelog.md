@@ -7,6 +7,7 @@
 - Updated Node.js support to `^14.17.0 || ^16.0.0 || >= 18.0.0`.
 - Updated the [`http-errors`](https://npm.im/http-errors) dependency to v2.
 - Public modules are now individually listed in the package `files` and `exports` fields.
+- Removed the package main index module; deep imports must be used.
 - Shortened public module deep import paths, removing the `/public/`.
 
 ### Patch

@@ -24,19 +24,11 @@ const Upload = require("./Upload");
  * @kind function
  * @name processRequest
  * @type {ProcessRequestFunction}
- * @example <caption>Ways to `import`.</caption>
- * ```js
- * import { processRequest } from "graphql-upload";
- * ```
- *
+ * @example <caption>How to `import`.</caption>
  * ```js
  * import processRequest from "graphql-upload/processRequest.js";
  * ```
- * @example <caption>Ways to `require`.</caption>
- * ```js
- * const { processRequest } = require("graphql-upload");
- * ```
- *
+ * @example <caption>How to `require`.</caption>
  * ```js
  * const processRequest = require("graphql-upload/processRequest.js");
  * ```
@@ -346,3 +338,41 @@ module.exports = function processRequest(
     request.pipe(parser);
   });
 };
+
+/**
+ * A GraphQL operation object in a shape that can be consumed and executed by
+ * most GraphQL servers.
+ * @kind typedef
+ * @name GraphQLOperation
+ * @type {object}
+ * @prop {string} query GraphQL document containing queries and fragments.
+ * @prop {string|null} [operationName] GraphQL document operation name to execute.
+ * @prop {object|null} [variables] GraphQL document operation variables and values map.
+ * @see [GraphQL over HTTP spec](https://github.com/graphql/graphql-over-http).
+ * @see [Apollo Server POST requests](https://www.apollographql.com/docs/apollo-server/requests/#post-requests).
+ */
+
+/**
+ * Processes a
+ * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
+ * @kind typedef
+ * @name ProcessRequestFunction
+ * @type {Function}
+ * @param {IncomingMessage} request [Node.js HTTP server request instance](https://nodejs.org/api/http.html#http_class_http_incomingmessage).
+ * @param {ServerResponse} response [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse).
+ * @param {ProcessRequestOptions} [options] Options for processing the request.
+ * @returns {Promise<GraphQLOperation | Array<GraphQLOperation>>} GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
+ * @see [`processRequest`]{@link processRequest}.
+ */
+
+/**
+ * Options for processing a
+ * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec);
+ * mostly relating to security, performance and limits.
+ * @kind typedef
+ * @name ProcessRequestOptions
+ * @type {object}
+ * @prop {number} [maxFieldSize=1000000] Maximum allowed non-file multipart form field size in bytes; enough for your queries.
+ * @prop {number} [maxFileSize=Infinity] Maximum allowed file size in bytes.
+ * @prop {number} [maxFiles=Infinity] Maximum allowed number of files.
+ */

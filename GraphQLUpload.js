@@ -10,26 +10,18 @@ const Upload = require("./Upload");
  * [file upload details]{@link FileUpload} for processing and storage.
  * @kind class
  * @name GraphQLUpload
- * @example <caption>Ways to `import`.</caption>
- * ```js
- * import { GraphQLUpload } from "graphql-upload";
- * ```
- *
+ * @example <caption>How to `import`.</caption>
  * ```js
  * import GraphQLUpload from "graphql-upload/GraphQLUpload.js";
  * ```
- * @example <caption>Ways to `require`.</caption>
- * ```js
- * const { GraphQLUpload } = require("graphql-upload");
- * ```
- *
+ * @example <caption>How to `require`.</caption>
  * ```js
  * const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
  * ```
  * @example <caption>A schema built using [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema).</caption>
  * ```js
  * const { makeExecutableSchema } = require("@graphql-tools/schema");
- * const { GraphQLUpload } = require("graphql-upload");
+ * const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
  *
  * const schema = makeExecutableSchema({
  *   typeDefs: /* GraphQL *\/ `
@@ -43,7 +35,7 @@ const Upload = require("./Upload");
  * @example <caption>A manually constructed schema with an image upload mutation.</caption>
  * ```js
  * const { GraphQLSchema, GraphQLObjectType, GraphQLBoolean } = require("graphql");
- * const { GraphQLUpload } = require("graphql-upload");
+ * const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
  *
  * const schema = new GraphQLSchema({
  *   mutation: new GraphQLObjectType({

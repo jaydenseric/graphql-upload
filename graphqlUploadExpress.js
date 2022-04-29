@@ -14,19 +14,11 @@ const defaultProcessRequest = require("./processRequest");
  * @param {ProcessRequestOptions} options Middleware options. Any [`ProcessRequestOptions`]{@link ProcessRequestOptions} can be used.
  * @param {ProcessRequestFunction} [options.processRequest=processRequest] Used to process [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec).
  * @returns {Function} Express middleware.
- * @example <caption>Ways to `import`.</caption>
- * ```js
- * import { graphqlUploadExpress } from "graphql-upload";
- * ```
- *
+ * @example <caption>How to `import`.</caption>
  * ```js
  * import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.js";
  * ```
- * @example <caption>Ways to `require`.</caption>
- * ```js
- * const { graphqlUploadExpress } = require("graphql-upload");
- * ```
- *
+ * @example <caption>How to `require`.</caption>
  * ```js
  * const graphqlUploadExpress = require("graphql-upload/graphqlUploadExpress.js");
  * ```
@@ -34,7 +26,7 @@ const defaultProcessRequest = require("./processRequest");
  * ```js
  * const express = require("express");
  * const graphqlHTTP = require("express-graphql");
- * const { graphqlUploadExpress } = require("graphql-upload");
+ * const graphqlUploadExpress = require("graphql-upload/graphqlUploadExpress.js");
  * const schema = require("./schema");
  *
  * express()
