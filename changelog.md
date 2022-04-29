@@ -5,6 +5,7 @@
 ### Major
 
 - Updated Node.js support to `^14.17.0 || ^16.0.0 || >= 18.0.0`.
+- Updated the [`http-errors`](https://npm.im/http-errors) dependency to v2.
 
 ### Patch
 
