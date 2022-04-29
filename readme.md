@@ -215,7 +215,7 @@ _Basic [`express-graphql`](https://npm.im/express-graphql) setup._
 > const express = require("express");
 > const graphqlHTTP = require("express-graphql");
 > const graphqlUploadExpress = require("graphql-upload/graphqlUploadExpress.js");
-> const schema = require("./schema");
+> const schema = require("./schema.js");
 >
 > express()
 >   .use(
@@ -260,7 +260,7 @@ _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
 > const bodyParser = require("koa-bodyparser");
 > const { errorHandler, execute } = require("graphql-api-koa");
 > const graphqlUploadKoa = require("graphql-upload/graphqlUploadKoa.js");
-> const schema = require("./schema");
+> const schema = require("./schema.js");
 >
 > new Koa()
 >   .use(errorHandler())

@@ -1,7 +1,7 @@
 "use strict";
 
 const { GraphQLScalarType, GraphQLError } = require("graphql");
-const Upload = require("./Upload");
+const Upload = require("./Upload.js");
 
 /**
  * A GraphQL `Upload` scalar that can be used in a

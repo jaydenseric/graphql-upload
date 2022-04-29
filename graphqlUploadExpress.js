@@ -1,6 +1,6 @@
 "use strict";
 
-const defaultProcessRequest = require("./processRequest");
+const defaultProcessRequest = require("./processRequest.js");
 
 /**
  * Creates [Express](https://expressjs.com) middleware that processes
@@ -27,7 +27,7 @@ const defaultProcessRequest = require("./processRequest");
  * const express = require("express");
  * const graphqlHTTP = require("express-graphql");
  * const graphqlUploadExpress = require("graphql-upload/graphqlUploadExpress.js");
- * const schema = require("./schema");
+ * const schema = require("./schema.js");
  *
  * express()
  *   .use(

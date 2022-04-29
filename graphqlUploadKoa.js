@@ -1,6 +1,6 @@
 "use strict";
 
-const defaultProcessRequest = require("./processRequest");
+const defaultProcessRequest = require("./processRequest.js");
 
 /**
  * Creates [Koa](https://koajs.com) middleware that processes
@@ -28,7 +28,7 @@ const defaultProcessRequest = require("./processRequest");
  * const bodyParser = require("koa-bodyparser");
  * const { errorHandler, execute } = require("graphql-api-koa");
  * const graphqlUploadKoa = require("graphql-upload/graphqlUploadKoa.js");
- * const schema = require("./schema");
+ * const schema = require("./schema.js");
  *
  * new Koa()
  *   .use(errorHandler())
