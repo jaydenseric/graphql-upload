@@ -11,11 +11,11 @@ import { ReadStream } from "fs-capacitor";
 import { createServer } from "http";
 import fetch from "node-fetch";
 
-import processRequest from "../../public/processRequest.js";
-import Upload from "../../public/Upload.js";
-import abortingMultipartRequest from "../abortingMultipartRequest.mjs";
-import listen from "../listen.mjs";
-import streamToString from "../streamToString.mjs";
+import processRequest from "./processRequest.js";
+import abortingMultipartRequest from "./test/abortingMultipartRequest.mjs";
+import listen from "./test/listen.mjs";
+import streamToString from "./test/streamToString.mjs";
+import Upload from "./Upload.js";
 
 export default (tests) => {
   tests.add("`processRequest` with no files.", async () => {

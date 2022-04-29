@@ -1,6 +1,6 @@
 import { ok, rejects, strictEqual } from "assert";
 
-import Upload from "../../public/Upload.js";
+import Upload from "./Upload.js";
 
 export default (tests) => {
   tests.add("`Upload` class resolving a file.", async () => {

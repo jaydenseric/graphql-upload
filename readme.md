@@ -78,7 +78,7 @@ _Ways to `import`._
 > ```
 >
 > ```js
-> import GraphQLUpload from "graphql-upload/public/GraphQLUpload.js";
+> import GraphQLUpload from "graphql-upload/GraphQLUpload.js";
 > ```
 
 _Ways to `require`._
@@ -88,7 +88,7 @@ _Ways to `require`._
 > ```
 >
 > ```js
-> const GraphQLUpload = require("graphql-upload/public/GraphQLUpload.js");
+> const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
 > ```
 
 _A schema built using [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)._
@@ -157,7 +157,7 @@ _Ways to `import`._
 > ```
 >
 > ```js
-> import Upload from "graphql-upload/public/Upload.js";
+> import Upload from "graphql-upload/Upload.js";
 > ```
 
 _Ways to `require`._
@@ -167,7 +167,7 @@ _Ways to `require`._
 > ```
 >
 > ```js
-> const Upload = require("graphql-upload/public/Upload.js");
+> const Upload = require("graphql-upload/Upload.js");
 > ```
 
 #### Upload instance method reject
@@ -220,7 +220,7 @@ _Ways to `import`._
 > ```
 >
 > ```js
-> import graphqlUploadExpress from "graphql-upload/public/graphqlUploadExpress.js";
+> import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.js";
 > ```
 
 _Ways to `require`._
@@ -230,7 +230,7 @@ _Ways to `require`._
 > ```
 >
 > ```js
-> const graphqlUploadExpress = require("graphql-upload/public/graphqlUploadExpress.js");
+> const graphqlUploadExpress = require("graphql-upload/graphqlUploadExpress.js");
 > ```
 
 _Basic [`express-graphql`](https://npm.im/express-graphql) setup._
@@ -272,7 +272,7 @@ _Ways to `import`._
 > ```
 >
 > ```js
-> import graphqlUploadKoa from "graphql-upload/public/graphqlUploadKoa.js";
+> import graphqlUploadKoa from "graphql-upload/graphqlUploadKoa.js";
 > ```
 
 _Ways to `require`._
@@ -282,7 +282,7 @@ _Ways to `require`._
 > ```
 >
 > ```js
-> const graphqlUploadKoa = require("graphql-upload/public/graphqlUploadKoa.js");
+> const graphqlUploadKoa = require("graphql-upload/graphqlUploadKoa.js");
 > ```
 
 _Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup._
@@ -319,7 +319,7 @@ _Ways to `import`._
 > ```
 >
 > ```js
-> import processRequest from "graphql-upload/public/processRequest.js";
+> import processRequest from "graphql-upload/processRequest.js";
 > ```
 
 _Ways to `require`._
@@ -329,7 +329,7 @@ _Ways to `require`._
 > ```
 >
 > ```js
-> const processRequest = require("graphql-upload/public/processRequest.js");
+> const processRequest = require("graphql-upload/processRequest.js");
 > ```
 
 ---

@@ -6,6 +6,8 @@
 
 - Updated Node.js support to `^14.17.0 || ^16.0.0 || >= 18.0.0`.
 - Updated the [`http-errors`](https://npm.im/http-errors) dependency to v2.
+- Public modules are now individually listed in the package `files` and `exports` fields.
+- Shortened public module deep import paths, removing the `/public/`.
 
 ### Patch
 
@@ -15,6 +17,7 @@
   - Run tests with Node.js v14, v16, v18.
   - Updated `actions/checkout` to v3.
   - Updated `actions/setup-node` to v3.
+- Reorganized the test file structure.
 - Fixed a typo in a code comment.
 
 ## 13.0.0

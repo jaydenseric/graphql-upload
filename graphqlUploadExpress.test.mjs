@@ -4,9 +4,9 @@ import { File, FormData } from "formdata-node";
 import createError from "http-errors";
 import fetch from "node-fetch";
 
-import graphqlUploadExpress from "../../public/graphqlUploadExpress.js";
-import processRequest from "../../public/processRequest.js";
-import listen from "../listen.mjs";
+import graphqlUploadExpress from "./graphqlUploadExpress.js";
+import processRequest from "./processRequest.js";
+import listen from "./test/listen.mjs";
 
 export default (tests) => {
   tests.add(

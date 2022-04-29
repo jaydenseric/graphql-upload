@@ -1,8 +1,8 @@
 import { doesNotThrow, throws } from "assert";
 import { parseValue } from "graphql";
 
-import GraphQLUpload from "../../public/GraphQLUpload.js";
-import Upload from "../../public/Upload.js";
+import GraphQLUpload from "./GraphQLUpload.js";
+import Upload from "./Upload.js";
 
 export default (tests) => {
   tests.add("`GraphQLUpload` scalar `parseValue` with a valid value.", () => {

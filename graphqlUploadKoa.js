@@ -20,7 +20,7 @@ const defaultProcessRequest = require("./processRequest");
  * ```
  *
  * ```js
- * import graphqlUploadKoa from "graphql-upload/public/graphqlUploadKoa.js";
+ * import graphqlUploadKoa from "graphql-upload/graphqlUploadKoa.js";
  * ```
  * @example <caption>Ways to `require`.</caption>
  * ```js
@@ -28,7 +28,7 @@ const defaultProcessRequest = require("./processRequest");
  * ```
  *
  * ```js
- * const graphqlUploadKoa = require("graphql-upload/public/graphqlUploadKoa.js");
+ * const graphqlUploadKoa = require("graphql-upload/graphqlUploadKoa.js");
  * ```
  * @example <caption>Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup.</caption>
  * ```js

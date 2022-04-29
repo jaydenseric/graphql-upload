@@ -4,8 +4,8 @@ const Busboy = require("busboy");
 const { WriteStream } = require("fs-capacitor");
 const createError = require("http-errors");
 const objectPath = require("object-path");
-const GRAPHQL_MULTIPART_REQUEST_SPEC_URL = require("../private/GRAPHQL_MULTIPART_REQUEST_SPEC_URL");
-const ignoreStream = require("../private/ignoreStream");
+const GRAPHQL_MULTIPART_REQUEST_SPEC_URL = require("./GRAPHQL_MULTIPART_REQUEST_SPEC_URL");
+const ignoreStream = require("./ignoreStream");
 const Upload = require("./Upload");
 
 /**
@@ -30,7 +30,7 @@ const Upload = require("./Upload");
  * ```
  *
  * ```js
- * import processRequest from "graphql-upload/public/processRequest.js";
+ * import processRequest from "graphql-upload/processRequest.js";
  * ```
  * @example <caption>Ways to `require`.</caption>
  * ```js
@@ -38,7 +38,7 @@ const Upload = require("./Upload");
  * ```
  *
  * ```js
- * const processRequest = require("graphql-upload/public/processRequest.js");
+ * const processRequest = require("graphql-upload/processRequest.js");
  * ```
  */
 module.exports = function processRequest(

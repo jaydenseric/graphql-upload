@@ -16,7 +16,7 @@
  * ```
  *
  * ```js
- * import Upload from "graphql-upload/public/Upload.js";
+ * import Upload from "graphql-upload/Upload.js";
  * ```
  * @example <caption>Ways to `require`.</caption>
  * ```js
@@ -24,7 +24,7 @@
  * ```
  *
  * ```js
- * const Upload = require("graphql-upload/public/Upload.js");
+ * const Upload = require("graphql-upload/Upload.js");
  * ```
  */
 module.exports = class Upload {

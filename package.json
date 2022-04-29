@@ -27,18 +27,29 @@
     "mjs"
   ],
   "files": [
-    "private",
-    "public"
+    "GRAPHQL_MULTIPART_REQUEST_SPEC_URL.js",
+    "GraphQLUpload.js",
+    "graphqlUploadExpress.js",
+    "graphqlUploadKoa.js",
+    "ignoreStream.js",
+    "index.js",
+    "index.mjs",
+    "processRequest.js",
+    "Upload.js"
   ],
   "sideEffects": false,
-  "main": "./public/index.js",
+  "main": "./index.js",
   "exports": {
     ".": {
-      "import": "./public/index.mjs",
-      "require": "./public/index.js"
+      "import": "./index.mjs",
+      "require": "./index.js"
     },
-    "./public/*": "./public/*",
-    "./package.json": "./package.json"
+    "./GraphQLUpload.js": "./GraphQLUpload.js",
+    "./graphqlUploadExpress.js": "./graphqlUploadExpress.js",
+    "./graphqlUploadKoa.js": "./graphqlUploadKoa.js",
+    "./package.json": "./package.json",
+    "./processRequest.js": "./processRequest.js",
+    "./Upload.js": "./Upload.js"
   },
   "engines": {
     "node": "^14.17.0 || ^16.0.0 || >= 18.0.0"
@@ -73,7 +84,7 @@
     "docs-check": "jsdoc-md -c",
     "eslint": "eslint .",
     "prettier": "prettier -c .",
-    "tests": "coverage-node -r hard-rejection/register test/index.mjs",
+    "tests": "coverage-node -r hard-rejection/register test.mjs",
     "test": "npm run eslint && npm run prettier && npm run docs-check && npm run tests",
     "prepublishOnly": "npm test"
   }

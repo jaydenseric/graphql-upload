@@ -3,9 +3,9 @@ import { File, FormData } from "formdata-node";
 import Koa from "koa";
 import fetch from "node-fetch";
 
-import graphqlUploadKoa from "../../public/graphqlUploadKoa.js";
-import processRequest from "../../public/processRequest.js";
-import listen from "../listen.mjs";
+import graphqlUploadKoa from "./graphqlUploadKoa.js";
+import processRequest from "./processRequest.js";
+import listen from "./test/listen.mjs";
 
 export default (tests) => {
   tests.add("`graphqlUploadKoa` with a non-multipart request.", async () => {
