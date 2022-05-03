@@ -1,8 +1,7 @@
 import { deepStrictEqual, ok, strictEqual } from "assert";
 import express from "express";
-import { File, FormData } from "formdata-node";
 import createError from "http-errors";
-import fetch from "node-fetch";
+import fetch, { File, FormData } from "node-fetch";
 
 import graphqlUploadExpress from "./graphqlUploadExpress.js";
 import processRequest from "./processRequest.js";
