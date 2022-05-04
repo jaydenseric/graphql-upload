@@ -67,7 +67,7 @@ export default (tests) => {
           const stream = upload.createReadStream();
 
           ok(stream instanceof ReadStream);
-          strictEqual(stream._readableState.encoding, null);
+          strictEqual(stream.readableEncoding, null);
           strictEqual(stream.readableHighWaterMark, 16384);
           strictEqual(await streamToString(stream), "a");
         } catch (error) {
@@ -120,7 +120,7 @@ export default (tests) => {
           const stream = upload.createReadStream({ encoding, highWaterMark });
 
           ok(stream instanceof ReadStream);
-          strictEqual(stream._readableState.encoding, encoding);
+          strictEqual(stream.readableEncoding, encoding);
           strictEqual(stream.readableHighWaterMark, highWaterMark);
           strictEqual(
             await streamToString(stream),
