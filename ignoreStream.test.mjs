@@ -1,8 +1,14 @@
+// @ts-check
+
 import { doesNotThrow, strictEqual } from "assert";
 
 import ignoreStream from "./ignoreStream.js";
 import CountReadableStream from "./test/CountReadableStream.mjs";
 
+/**
+ * Adds `ignoreStream` tests.
+ * @param {import("test-director").default} tests Test director.
+ */
 export default (tests) => {
   tests.add("`ignoreStream` ignores errors.", () => {
     doesNotThrow(() => {

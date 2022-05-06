@@ -1,3 +1,5 @@
+// @ts-check
+
 import TestDirector from "test-director";
 
 import test_GraphQLUpload from "./GraphQLUpload.test.mjs";

@@ -1,4 +1,7 @@
+// @ts-check
+
 import { deepStrictEqual, ok, strictEqual } from "assert";
+import { createServer } from "http";
 import Koa from "koa";
 import fetch, { File, FormData } from "node-fetch";
 
@@ -6,19 +9,24 @@ import graphqlUploadKoa from "./graphqlUploadKoa.js";
 import processRequest from "./processRequest.js";
 import listen from "./test/listen.mjs";
 
+/**
+ * Adds `graphqlUploadKoa` tests.
+ * @param {import("test-director").default} tests Test director.
+ */
 export default (tests) => {
-  tests.add("`graphqlUploadKoa` with a non-multipart request.", async () => {
+  tests.add("`graphqlUploadKoa` with a non multipart request.", async () => {
     let processRequestRan = false;
 
     const app = new Koa().use(
       graphqlUploadKoa({
+        /** @type {any} */
         async processRequest() {
           processRequestRan = true;
         },
       })
     );
 
-    const { port, close } = await listen(app);
+    const { port, close } = await listen(createServer(app.callback()));
 
     try {
       await fetch(`http://localhost:${port}`, { method: "POST" });
@@ -29,14 +37,23 @@ export default (tests) => {
   });
 
   tests.add("`graphqlUploadKoa` with a multipart request.", async () => {
+    /**
+     * @type {{
+     *   variables: {
+     *     file: import("./Upload.js"),
+     *   },
+     * } | undefined}
+     */
     let ctxRequestBody;
 
     const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
-      ctxRequestBody = ctx.request.body;
+      ctxRequestBody =
+        // @ts-ignore By convention this should be present.
+        ctx.request.body;
       await next();
     });
 
-    const { port, close } = await listen(app);
+    const { port, close } = await listen(createServer(app.callback()));
 
     try {
       const body = new FormData();
@@ -59,6 +76,14 @@ export default (tests) => {
     "`graphqlUploadKoa` with a multipart request and option `processRequest`.",
     async () => {
       let processRequestRan = false;
+
+      /**
+       * @type {{
+       *   variables: {
+       *     file: import("./Upload.js"),
+       *   },
+       * } | undefined}
+       */
       let ctxRequestBody;
 
       const app = new Koa()
@@ -71,11 +96,13 @@ export default (tests) => {
           })
         )
         .use(async (ctx, next) => {
-          ctxRequestBody = ctx.request.body;
+          ctxRequestBody =
+            // @ts-ignore By convention this should be present.
+            ctx.request.body;
           await next();
         });
 
-      const { port, close } = await listen(app);
+      const { port, close } = await listen(createServer(app.callback()));
 
       try {
         const body = new FormData();
@@ -126,7 +153,7 @@ export default (tests) => {
           })
         );
 
-      const { port, close } = await listen(app);
+      const { port, close } = await listen(createServer(app.callback()));
 
       try {
         const body = new FormData();
@@ -174,7 +201,7 @@ export default (tests) => {
           throw error;
         });
 
-      const { port, close } = await listen(app);
+      const { port, close } = await listen(createServer(app.callback()));
 
       try {
         const body = new FormData();

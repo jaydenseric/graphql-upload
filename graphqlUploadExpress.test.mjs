@@ -1,5 +1,8 @@
+// @ts-check
+
 import { deepStrictEqual, ok, strictEqual } from "assert";
 import express from "express";
+import { createServer } from "http";
 import createError from "http-errors";
 import fetch, { File, FormData } from "node-fetch";
 
@@ -7,21 +10,26 @@ import graphqlUploadExpress from "./graphqlUploadExpress.js";
 import processRequest from "./processRequest.js";
 import listen from "./test/listen.mjs";
 
+/**
+ * Adds `graphqlUploadExpress` tests.
+ * @param {import("test-director").default} tests Test director.
+ */
 export default (tests) => {
   tests.add(
-    "`graphqlUploadExpress` with a non-multipart request.",
+    "`graphqlUploadExpress` with a non multipart request.",
     async () => {
       let processRequestRan = false;
 
       const app = express().use(
         graphqlUploadExpress({
+          /** @type {any} */
           async processRequest() {
             processRequestRan = true;
           },
         })
       );
 
-      const { port, close } = await listen(app);
+      const { port, close } = await listen(createServer(app));
 
       try {
         await fetch(`http://localhost:${port}`, { method: "POST" });
@@ -33,6 +41,13 @@ export default (tests) => {
   );
 
   tests.add("`graphqlUploadExpress` with a multipart request.", async () => {
+    /**
+     * @type {{
+     *   variables: {
+     *     file: import("./Upload.js"),
+     *   },
+     * } | undefined}
+     */
     let requestBody;
 
     const app = express()
@@ -42,7 +57,7 @@ export default (tests) => {
         next();
       });
 
-    const { port, close } = await listen(app);
+    const { port, close } = await listen(createServer(app));
 
     try {
       const body = new FormData();
@@ -65,6 +80,14 @@ export default (tests) => {
     "`graphqlUploadExpress` with a multipart request and option `processRequest`.",
     async () => {
       let processRequestRan = false;
+
+      /**
+       * @type {{
+       *   variables: {
+       *     file: import("./Upload.js"),
+       *   },
+       * } | undefined}
+       */
       let requestBody;
 
       const app = express()
@@ -81,7 +104,7 @@ export default (tests) => {
           next();
         });
 
-      const { port, close } = await listen(app);
+      const { port, close } = await listen(createServer(app));
 
       try {
         const body = new FormData();
@@ -117,6 +140,7 @@ export default (tests) => {
         .use((request, response, next) => {
           const { send } = response;
 
+          // @ts-ignore Todo: Find a less hacky way.
           response.send = (...args) => {
             requestCompleted = request.complete;
             response.send = send;
@@ -133,18 +157,26 @@ export default (tests) => {
             },
           })
         )
-        .use((error, request, response, next) => {
-          expressError = error;
-          responseStatusCode = response.statusCode;
+        .use(
+          /**
+           * @param {Error} error
+           * @param {import("express").Request} request
+           * @param {import("express").Response} response
+           * @param {import("express").NextFunction} next
+           */
+          (error, request, response, next) => {
+            expressError = error;
+            responseStatusCode = response.statusCode;
 
-          // Sending a response here prevents the default Express error handler
-          // from running, which would undesirably (in this case) display the
-          // error in the console.
-          if (response.headersSent) next(error);
-          else response.send();
-        });
+            // Sending a response here prevents the default Express error handler
+            // from running, which would undesirably (in this case) display the
+            // error in the console.
+            if (response.headersSent) next(error);
+            else response.send();
+          }
+        );
 
-      const { port, close } = await listen(app);
+      const { port, close } = await listen(createServer(app));
 
       try {
         const body = new FormData();
@@ -181,6 +213,7 @@ export default (tests) => {
         .use((request, response, next) => {
           const { send } = response;
 
+          // @ts-ignore Todo: Find a less hacky way.
           response.send = (...args) => {
             requestCompleted = request.complete;
             response.send = send;
@@ -193,17 +226,25 @@ export default (tests) => {
         .use(() => {
           throw error;
         })
-        .use((error, request, response, next) => {
-          expressError = error;
+        .use(
+          /**
+           * @param {Error} error
+           * @param {import("express").Request} request
+           * @param {import("express").Response} response
+           * @param {import("express").NextFunction} next
+           */
+          (error, request, response, next) => {
+            expressError = error;
 
-          // Sending a response here prevents the default Express error handler
-          // from running, which would undesirably (in this case) display the
-          // error in the console.
-          if (response.headersSent) next(error);
-          else response.send();
-        });
+            // Sending a response here prevents the default Express error handler
+            // from running, which would undesirably (in this case) display the
+            // error in the console.
+            if (response.headersSent) next(error);
+            else response.send();
+          }
+        );
 
-      const { port, close } = await listen(app);
+      const { port, close } = await listen(createServer(app));
 
       try {
         const body = new FormData();

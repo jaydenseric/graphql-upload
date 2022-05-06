@@ -1,20 +1,18 @@
+// @ts-check
+
 /**
  * Starts a Node.js HTTP server.
- * @kind function
- * @name listen
- * @param {object} server Node.js HTTP server.
- * @returns {Promise<{port: number, close: Function}>} Resolves the port the server is listening on, and a server close function.
- * @ignore
+ * @param {import("http").Server} server Node.js HTTP server.
+ * @returns Resolves the port the server is listening on, and a server close
+ *   function.
  */
-export default function listen(server) {
-  return new Promise((resolve, reject) => {
-    server.listen(function (error) {
-      if (error) reject(error);
-      else
-        resolve({
-          port: this.address().port,
-          close: () => this.close(),
-        });
-    });
+export default async function listen(server) {
+  await new Promise((resolve) => {
+    server.listen(resolve);
   });
+
+  return {
+    port: /** @type {import("net").AddressInfo} */ (server.address()).port,
+    close: () => server.close(),
+  };
 }

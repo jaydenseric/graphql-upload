@@ -1,3 +1,5 @@
+// @ts-check
+
 import { FormDataEncoder } from "form-data-encoder";
 import nodeAbortController from "node-abort-controller";
 import fetch, { AbortError } from "node-fetch";
@@ -12,14 +14,13 @@ const textDecoder = new TextDecoder();
 /**
  * Sends a multipart request that deliberately aborts after a certain amount of
  * data has been uploaded to the server, for testing purposes.
- * @kind function
- * @name abortingMultipartRequest
  * @param {string} url The request URL.
  * @param {FormData} formData A `FormData` instance for the request body.
- * @param {string} abortMarker A unique character in the request body that marks where to abort the request.
- * @param {Promise<void>} requestReceived Resolves once the request has been received by the server request handler.
+ * @param {string} abortMarker A unique character in the request body that marks
+ *   where to abort the request.
+ * @param {Promise<void>} requestReceived Resolves once the request has been
+ *   received by the server request handler.
  * @returns {Promise<void>} Resolves once the request aborts.
- * @ignore
  */
 export default async function abortingMultipartRequest(
   url,

@@ -1,3 +1,5 @@
+// @ts-check
+
 import {
   deepStrictEqual,
   notStrictEqual,
@@ -12,10 +14,15 @@ import fetch, { File, FormData } from "node-fetch";
 
 import processRequest from "./processRequest.js";
 import abortingMultipartRequest from "./test/abortingMultipartRequest.mjs";
+import Deferred from "./test/Deferred.mjs";
 import listen from "./test/listen.mjs";
 import streamToString from "./test/streamToString.mjs";
 import Upload from "./Upload.js";
 
+/**
+ * Adds `processRequest` tests.
+ * @param {import("test-director").default} tests Test director.
+ */
 export default (tests) => {
   tests.add("`processRequest` with no files.", async () => {
     let serverError;
@@ -54,7 +61,15 @@ export default (tests) => {
 
       const server = createServer(async (request, response) => {
         try {
-          const operation = await processRequest(request, response);
+          const operation =
+            /**
+             * @type {{
+             *   variables: {
+             *     file: import("./Upload.js"),
+             *   },
+             * }}
+             */
+            (await processRequest(request, response));
 
           ok(operation.variables.file instanceof Upload);
 
@@ -105,7 +120,15 @@ export default (tests) => {
 
       const server = createServer(async (request, response) => {
         try {
-          const operation = await processRequest(request, response);
+          const operation =
+            /**
+             * @type {{
+             *   variables: {
+             *     file: import("./Upload.js"),
+             *   },
+             * }}
+             */
+            (await processRequest(request, response));
 
           ok(operation.variables.file instanceof Upload);
 
@@ -159,7 +182,15 @@ export default (tests) => {
 
     const server = createServer(async (request, response) => {
       try {
-        const operations = await processRequest(request, response);
+        const operations =
+          /**
+           * @type {Array<{
+           *   variables: {
+           *     file: import("./Upload.js"),
+           *   },
+           * }>}
+           */
+          (await processRequest(request, response));
 
         ok(operations[0].variables.file instanceof Upload);
 
@@ -225,7 +256,15 @@ export default (tests) => {
 
     const server = createServer(async (request, response) => {
       try {
-        const operation = await processRequest(request, response);
+        const operation =
+          /**
+           * @type {{
+           *   variables: {
+           *     files: Array<import("./Upload.js")>,
+           *   },
+           * }}
+           */
+          (await processRequest(request, response));
 
         ok(operation.variables.files[0] instanceof Upload);
         ok(operation.variables.files[1] instanceof Upload);
@@ -290,7 +329,16 @@ export default (tests) => {
 
     const server = createServer(async (request, response) => {
       try {
-        const operation = await processRequest(request, response);
+        const operation =
+          /**
+           * @type {{
+           *   variables: {
+           *     fileA: import("./Upload.js"),
+           *     fileB: import("./Upload.js"),
+           *   },
+           * }}
+           */
+          (await processRequest(request, response));
 
         ok(operation.variables.fileB instanceof Upload);
 
@@ -336,7 +384,15 @@ export default (tests) => {
 
       const server = createServer(async (request, response) => {
         try {
-          const operation = await processRequest(request, response);
+          const operation =
+            /**
+             * @type {{
+             *   variables: {
+             *     file: import("./Upload.js"),
+             *   },
+             * }}
+             */
+            (await processRequest(request, response));
 
           ok(operation.variables.file instanceof Upload);
 
@@ -386,7 +442,15 @@ export default (tests) => {
 
       const server = createServer(async (request, response) => {
         try {
-          const operation = await processRequest(request, response);
+          const operation =
+            /**
+             * @type {{
+             *   variables: {
+             *     file: import("./Upload.js"),
+             *   },
+             * }}
+             */
+            (await processRequest(request, response));
 
           ok(operation.variables.file instanceof Upload);
           await rejects(operation.variables.file.promise, {
@@ -474,9 +538,15 @@ export default (tests) => {
 
       const server = createServer(async (request, response) => {
         try {
-          const operation = await processRequest(request, response, {
-            maxFiles: 2,
-          });
+          const operation =
+            /**
+             * @type {{
+             *   variables: {
+             *     files: Array<import("./Upload.js")>,
+             *   },
+             * }}
+             */
+            (await processRequest(request, response, { maxFiles: 2 }));
 
           ok(operation.variables.files[0] instanceof Upload);
 
@@ -541,9 +611,15 @@ export default (tests) => {
 
     const server = createServer(async (request, response) => {
       try {
-        const operation = await processRequest(request, response, {
-          maxFileSize: 1,
-        });
+        const operation =
+          /**
+           * @type {{
+           *   variables: {
+           *     files: Array<import("./Upload.js")>,
+           *   },
+           * }}
+           */
+          (await processRequest(request, response, { maxFileSize: 1 }));
 
         ok(operation.variables.files[0] instanceof Upload);
 
@@ -653,23 +729,27 @@ export default (tests) => {
       // request part way through, the server request handler must be manually
       // awaited or else the test will resolve and the process will exit before
       // it’s done.
-      let resolveDone;
-      const done = new Promise((resolve) => {
-        resolveDone = resolve;
-      });
+      const done = new Deferred();
 
       // The request must be aborted after it has been received by the server
       // request handler, or else Node.js won’t run the handler.
-      let resolveRequestReceived;
-      const requestReceived = new Promise((resolve) => {
-        resolveRequestReceived = resolve;
-      });
+      const requestReceived = new Deferred();
 
       const server = createServer(async (request, response) => {
         try {
-          resolveRequestReceived();
+          requestReceived.resolve();
 
-          const operation = await processRequest(request, response);
+          const operation =
+            /**
+             * @type {{
+             *   variables: {
+             *     fileA: import("./Upload.js"),
+             *     fileB: import("./Upload.js"),
+             *     fileC: import("./Upload.js"),
+             *   },
+             * }}
+             */
+            (await processRequest(request, response));
 
           const testUploadA = async () => {
             ok(operation.variables.fileA instanceof Upload);
@@ -728,7 +808,7 @@ export default (tests) => {
           serverError = error;
         } finally {
           response.end();
-          resolveDone();
+          done.resolve();
         }
       });
 
@@ -772,10 +852,10 @@ export default (tests) => {
           `http://localhost:${port}`,
           formData,
           abortMarker,
-          requestReceived
+          requestReceived.promise
         );
 
-        await done;
+        await done.promise;
 
         if (serverError) throw serverError;
       } finally {
@@ -794,23 +874,27 @@ export default (tests) => {
       // request part way through, the server request handler must be manually
       // awaited or else the test will resolve and the process will exit before
       // it’s done.
-      let resolveDone;
-      const done = new Promise((resolve) => {
-        resolveDone = resolve;
-      });
+      const done = new Deferred();
 
       // The request must be aborted after it has been received by the server
       // request handler, or else Node.js won’t run the handler.
-      let resolveRequestReceived;
-      const requestReceived = new Promise((resolve) => {
-        resolveRequestReceived = resolve;
-      });
+      const requestReceived = new Deferred();
 
       const server = createServer(async (request, response) => {
         try {
-          resolveRequestReceived();
+          requestReceived.resolve();
 
-          const operation = await processRequest(request, response);
+          const operation =
+            /**
+             * @type {{
+             *   variables: {
+             *     fileA: import("./Upload.js"),
+             *     fileB: import("./Upload.js"),
+             *     fileC: import("./Upload.js"),
+             *   },
+             * }}
+             */
+            (await processRequest(request, response));
 
           // Wait for the request parsing to finish.
           await new Promise((resolve) => {
@@ -868,7 +952,7 @@ export default (tests) => {
           serverError = error;
         } finally {
           response.end();
-          resolveDone();
+          done.resolve();
         }
       });
 
@@ -912,10 +996,10 @@ export default (tests) => {
           `http://localhost:${port}`,
           formData,
           abortMarker,
-          requestReceived
+          requestReceived.promise
         );
 
-        await done;
+        await done.promise;
 
         if (serverError) throw serverError;
       } finally {

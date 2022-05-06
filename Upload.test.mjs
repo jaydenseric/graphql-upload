@@ -1,7 +1,13 @@
+// @ts-check
+
 import { ok, rejects, strictEqual } from "assert";
 
 import Upload from "./Upload.js";
 
+/**
+ * Adds `Upload` tests.
+ * @param {import("test-director").default} tests Test director.
+ */
 export default (tests) => {
   tests.add("`Upload` class resolving a file.", async () => {
     const upload = new Upload();
@@ -9,6 +15,7 @@ export default (tests) => {
     ok(upload.promise instanceof Promise);
     strictEqual(typeof upload.resolve, "function");
 
+    /** @type {any} */
     const file = {};
 
     upload.resolve(file);

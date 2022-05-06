@@ -1,3 +1,5 @@
+// @ts-check
+
 "use strict";
 
 const Busboy = require("busboy");
@@ -8,32 +10,23 @@ const GRAPHQL_MULTIPART_REQUEST_SPEC_URL = require("./GRAPHQL_MULTIPART_REQUEST_
 const ignoreStream = require("./ignoreStream.js");
 const Upload = require("./Upload.js");
 
+/** @typedef {import("./GraphQLUpload.js")} GraphQLUpload */
+/** @typedef {import("./graphqlUploadExpress.js")} graphqlUploadExpress */
+/** @typedef {import("./graphqlUploadKoa.js")} graphqlUploadKoa */
+
 /**
- * Processes a
+ * Processes an incoming
  * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
- * It parses the `operations` and `map` fields to create an
- * [`Upload`]{@link Upload} instance for each expected file upload, placing
- * references wherever the file is expected in the
- * [GraphQL operation]{@link GraphQLOperation} for the
- * [`Upload`]{@link GraphQLUpload} scalar to derive it’s value. Errors are
- * created with [`http-errors`](https://npm.im/http-errors) to assist in sending
- * responses with appropriate HTTP status codes. Used in
- * [`graphqlUploadExpress`]{@link graphqlUploadExpress} and
- * [`graphqlUploadKoa`]{@link graphqlUploadKoa} and can be used to create custom
- * middleware.
- * @kind function
- * @name processRequest
+ * It parses the `operations` and `map` fields to create an {@linkcode Upload}
+ * instance for each expected file upload, placing references wherever the file
+ * is expected in the GraphQL operation for the {@linkcode GraphQLUpload} scalar
+ * to derive it’s value. Errors are created with
+ * [`http-errors`](https://npm.im/http-errors) to assist in sending responses
+ * with appropriate HTTP status codes. Used to create custom middleware and is
+ * used by {@linkcode graphqlUploadExpress} and {@linkcode graphqlUploadKoa}.
  * @type {ProcessRequestFunction}
- * @example <caption>How to `import`.</caption>
- * ```js
- * import processRequest from "graphql-upload/processRequest.js";
- * ```
- * @example <caption>How to `require`.</caption>
- * ```js
- * const processRequest = require("graphql-upload/processRequest.js");
- * ```
  */
-module.exports = function processRequest(
+function processRequest(
   request,
   response,
   {
@@ -43,14 +36,34 @@ module.exports = function processRequest(
   } = {}
 ) {
   return new Promise((resolve, reject) => {
+    /** @type {boolean} */
     let released;
+
+    /** @type {Error} */
     let exitError;
+
+    /** @type {import("stream").Readable} */
     let lastFileStream;
+
+    /**
+     * @type {{ [key: string]: unknown } | Array<
+     *   { [key: string]: unknown }
+     * >}
+     */
     let operations;
+
+    /**
+     * @type {import("object-path").ObjectPathBound<
+     *   { [key: string]: unknown } | Array<{ [key: string]: unknown }>
+     * >}
+     */
     let operationsPath;
+
+    /** @type {Map<string, Upload>} */
     let map;
 
     const parser = new Busboy({
+      // @ts-ignore This is about to change with `busboy` v1 types.
       headers: request.headers,
       limits: {
         fieldSize: maxFieldSize,
@@ -62,10 +75,7 @@ module.exports = function processRequest(
 
     /**
      * Exits request processing with an error. Successive calls have no effect.
-     * @kind function
-     * @name processRequest~exit
-     * @param {object} error Error instance.
-     * @ignore
+     * @param {Error} error Error instance.
      */
     const exit = (error) => {
       // None of the tested scenarios cause multiple calls of this function, but
@@ -244,7 +254,9 @@ module.exports = function processRequest(
         return;
       }
 
+      /** @type {Error} */
       let fileError;
+
       const capacitor = new WriteStream();
 
       capacitor.on("error", () => {
@@ -267,6 +279,7 @@ module.exports = function processRequest(
         capacitor.destroy(fileError);
       });
 
+      /** @type {FileUpload} */
       const file = {
         filename,
         mimetype,
@@ -276,9 +289,14 @@ module.exports = function processRequest(
           if (error) throw error;
           return capacitor.createReadStream(options);
         },
+        capacitor,
       };
 
-      Object.defineProperty(file, "capacitor", { value: capacitor });
+      Object.defineProperty(file, "capacitor", {
+        enumerable: false,
+        configurable: false,
+        writable: false,
+      });
 
       stream.pipe(capacitor);
       upload.resolve(file);
@@ -337,42 +355,81 @@ module.exports = function processRequest(
 
     request.pipe(parser);
   });
-};
+}
+
+module.exports = processRequest;
 
 /**
- * A GraphQL operation object in a shape that can be consumed and executed by
- * most GraphQL servers.
- * @kind typedef
- * @name GraphQLOperation
- * @type {object}
- * @prop {string} query GraphQL document containing queries and fragments.
- * @prop {string|null} [operationName] GraphQL document operation name to execute.
- * @prop {object|null} [variables] GraphQL document operation variables and values map.
- * @see [GraphQL over HTTP spec](https://github.com/graphql/graphql-over-http).
- * @see [Apollo Server POST requests](https://www.apollographql.com/docs/apollo-server/requests/#post-requests).
+ * File upload details that are only available after the file’s field in the
+ * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec)
+ * has begun streaming in.
+ * @typedef {object} FileUpload
+ * @prop {string} filename File name.
+ * @prop {string} mimetype File MIME type. Provided by the client and can’t be
+ *   trusted.
+ * @prop {string} encoding File stream transfer encoding.
+ * @prop {import("fs-capacitor").WriteStream} capacitor A private implementation
+ *   detail that shouldn’t be used outside
+ *   [`graphql-upload`](https://npm.im/graphql-upload).
+ * @prop {FileUploadCreateReadStream} createReadStream Creates a
+ *   [Node.js readable stream](https://nodejs.org/api/stream.html#readable-streams)
+ *   of the file’s contents, for processing and storage.
  */
 
 /**
- * Processes a
+ * Creates a
+ * [Node.js readable stream](https://nodejs.org/api/stream.html#readable-streams)
+ * of an {@link FileUpload uploading file’s} contents, for processing and
+ * storage. Multiple calls create independent streams. Throws if called after
+ * all resolvers have resolved, or after an error has interrupted the request.
+ * @callback FileUploadCreateReadStream
+ * @param {FileUploadCreateReadStreamOptions} [options] Options.
+ * @returns {import("stream").Readable}
+ *   [Node.js readable stream](https://nodejs.org/api/stream.html#readable-streams)
+ *   of the file’s contents.
+ * @see [Node.js `Readable` stream constructor docs](https://nodejs.org/api/stream.html#new-streamreadableoptions).
+ * @see [Node.js stream backpressure guide](https://nodejs.org/en/docs/guides/backpressuring-in-streams).
+ */
+
+/**
+ * {@linkcode FileUploadCreateReadStream} options.
+ * @typedef {object} FileUploadCreateReadStreamOptions
+ * @prop {string} [options.encoding] Specify an encoding for the
+ *   [`data`](https://nodejs.org/api/stream.html#event-data) chunks to be
+ *   strings (without splitting multi-byte characters across chunks) instead of
+ *   Node.js [`Buffer`](https://nodejs.org/api/buffer.html#buffer) instances.
+ *   Supported values depend on the
+ *   [`Buffer` implementation](https://github.com/nodejs/node/blob/v18.1.0/lib/buffer.js#L590-L680)
+ *   and include `utf8`, `ucs2`, `utf16le`, `latin1`, `ascii`, `base64`,
+ *   `base64url`, or `hex`. Defaults to `utf8`.
+ * @prop {number} [options.highWaterMark] Maximum number of bytes to store in
+ *   the internal buffer before ceasing to read from the underlying resource.
+ *   Defaults to `16384`.
+ */
+
+/**
+ * Processes an incoming
  * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
- * @kind typedef
- * @name ProcessRequestFunction
- * @type {Function}
- * @param {IncomingMessage} request [Node.js HTTP server request instance](https://nodejs.org/api/http.html#http_class_http_incomingmessage).
- * @param {ServerResponse} response [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse).
- * @param {ProcessRequestOptions} [options] Options for processing the request.
- * @returns {Promise<GraphQLOperation | Array<GraphQLOperation>>} GraphQL operation or batch of operations for a GraphQL server to consume (usually as the request body).
- * @see [`processRequest`]{@link processRequest}.
+ * @callback ProcessRequestFunction
+ * @param {import("http").IncomingMessage} request
+ *   [Node.js HTTP server request instance](https://nodejs.org/api/http.html#http_class_http_incomingmessage).
+ * @param {import("http").ServerResponse} response
+ *   [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse).
+ * @param {ProcessRequestOptions} [options] Options.
+ * @returns {Promise<
+ *   { [key: string]: unknown } | Array<{ [key: string]: unknown }>
+ * >} GraphQL operation or batch of operations for a GraphQL server to consume
+ *   (usually as the request body). A GraphQL operation typically has the
+ *   properties `query` and `variables`.
  */
 
 /**
- * Options for processing a
- * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec);
- * mostly relating to security, performance and limits.
- * @kind typedef
- * @name ProcessRequestOptions
- * @type {object}
- * @prop {number} [maxFieldSize=1000000] Maximum allowed non-file multipart form field size in bytes; enough for your queries.
- * @prop {number} [maxFileSize=Infinity] Maximum allowed file size in bytes.
- * @prop {number} [maxFiles=Infinity] Maximum allowed number of files.
+ * {@linkcode ProcessRequestFunction} options.
+ * @typedef {object} ProcessRequestOptions
+ * @prop {number} [maxFieldSize] Maximum allowed non file multipart form field
+ *   size in bytes; enough for your queries. Defaults to `1000000` (1 MB).
+ * @prop {number} [maxFileSize] Maximum allowed file size in bytes. Defaults to
+ *   `Infinity`.
+ * @prop {number} [maxFiles] Maximum allowed number of files. Defaults to
+ *   `Infinity`.
  */

@@ -9,11 +9,14 @@
 - Public modules are now individually listed in the package `files` and `exports` fields.
 - Removed the package main index module; deep imports must be used.
 - Shortened public module deep import paths, removing the `/public/`.
+- Implemented TypeScript types via JSDoc comments, closing [#282](https://github.com/jaydenseric/graphql-upload/issues/282).
 
 ### Patch
 
 - Updated dev dependencies.
 - Simplified dev dependencies and config for ESLint.
+- Check TypeScript types via a new package `types` script.
+- Removed the [`jsdoc-md`](https://npm.im/jsdoc-md) dev dependency and the related package scripts, replacing the readme “API” section with a manually written “Exports” section.
 - Removed the [`hard-rejection`](https://npm.im/hard-rejection) dev dependency. Instead, tests are run with the Node.js CLI flag `--unhandled-rejections=throw` to make Node.js v14 behave like newer versions.
 - Removed the [`formdata-node`](https://npm.im/formdata-node) dev dependency. Instead, `File` and `FormData` are imported from [`node-fetch`](https://npm.im/formdata-node).
 - Updated GitHub Actions CI config:
@@ -24,6 +27,7 @@
 - Use the `.js` file extension in `require` paths.
 - Use the Node.js `Readable` property `readableEncoding` instead of `_readableState.encoding` in tests.
 - Fixed a typo in a code comment.
+- Updated documentation.
 
 ## 13.0.0
 

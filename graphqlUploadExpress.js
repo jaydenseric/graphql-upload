@@ -1,28 +1,22 @@
+// @ts-check
+
 "use strict";
 
 const defaultProcessRequest = require("./processRequest.js");
 
 /**
- * Creates [Express](https://expressjs.com) middleware that processes
+ * Creates [Express](https://expressjs.com) middleware that processes incoming
  * [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec)
- * using [`processRequest`]{@link processRequest}, ignoring non-multipart
- * requests. It sets the request body to be
- * [similar to a conventional GraphQL POST request]{@link GraphQLOperation} for
+ * using {@linkcode processRequest}, ignoring non multipart requests. It sets
+ * the request `body` to be similar to a conventional GraphQL POST request for
  * following GraphQL middleware to consume.
- * @kind function
- * @name graphqlUploadExpress
- * @param {ProcessRequestOptions} options Middleware options. Any [`ProcessRequestOptions`]{@link ProcessRequestOptions} can be used.
- * @param {ProcessRequestFunction} [options.processRequest=processRequest] Used to process [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec).
- * @returns {Function} Express middleware.
- * @example <caption>How to `import`.</caption>
- * ```js
- * import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.js";
- * ```
- * @example <caption>How to `require`.</caption>
- * ```js
- * const graphqlUploadExpress = require("graphql-upload/graphqlUploadExpress.js");
- * ```
- * @example <caption>Basic [`express-graphql`](https://npm.im/express-graphql) setup.</caption>
+ * @param {import("./processRequest.js").ProcessRequestOptions & {
+ *   processRequest?: import("./processRequest.js").ProcessRequestFunction
+ * }} options Options.
+ * @returns Express middleware.
+ * @example
+ * Basic [`express-graphql`](https://npm.im/express-graphql) setup:
+ *
  * ```js
  * const express = require("express");
  * const graphqlHTTP = require("express-graphql");
@@ -38,22 +32,36 @@ const defaultProcessRequest = require("./processRequest.js");
  *   .listen(3000);
  * ```
  */
-module.exports = function graphqlUploadExpress({
+function graphqlUploadExpress({
   processRequest = defaultProcessRequest,
   ...processRequestOptions
 } = {}) {
-  return function graphqlUploadExpressMiddleware(request, response, next) {
+  /**
+   * [Express](https://expressjs.com) middleware that processes incoming
+   * [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec)
+   * using {@linkcode processRequest}, ignoring non multipart requests. It sets
+   * the request `body` to be similar to a conventional GraphQL POST request for
+   * following GraphQL middleware to consume.
+   * @param {import("express").Request} request
+   * @param {import("express").Response} response
+   * @param {import("express").NextFunction} next
+   */
+  function graphqlUploadExpressMiddleware(request, response, next) {
     if (!request.is("multipart/form-data")) return next();
 
-    const finished = new Promise((resolve) => request.on("end", resolve));
+    const requestEnd = new Promise((resolve) => request.on("end", resolve));
     const { send } = response;
 
-    response.send = (...args) => {
-      finished.then(() => {
-        response.send = send;
-        response.send(...args);
-      });
-    };
+    // @ts-ignore Todo: Find a less hacky way to prevent sending a response
+    // before the request has ended.
+    response.send =
+      /** @param {Array<unknown>} args */
+      (...args) => {
+        requestEnd.then(() => {
+          response.send = send;
+          response.send(...args);
+        });
+      };
 
     processRequest(request, response, processRequestOptions)
       .then((body) => {
@@ -64,5 +72,9 @@ module.exports = function graphqlUploadExpress({
         if (error.status && error.expose) response.status(error.status);
         next(error);
       });
-  };
-};
+  }
+
+  return graphqlUploadExpressMiddleware;
+}
+
+module.exports = graphqlUploadExpress;

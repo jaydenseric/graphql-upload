@@ -51,6 +51,11 @@
     "graphql": "0.13.1 - 16"
   },
   "dependencies": {
+    "@types/busboy": "^0.3.2",
+    "@types/express": "^4.17.13",
+    "@types/koa": "^2.13.4",
+    "@types/node": "*",
+    "@types/object-path": "^0.11.1",
     "busboy": "^0.3.1",
     "fs-capacitor": "^6.2.0",
     "http-errors": "^2.0.0",
@@ -63,20 +68,19 @@
     "express": "^4.18.0",
     "form-data-encoder": "^1.7.2",
     "graphql": "^16.4.0",
-    "jsdoc-md": "^11.0.2",
     "koa": "^2.13.4",
     "node-abort-controller": "^3.0.1",
     "node-fetch": "^3.2.3",
     "prettier": "^2.6.2",
-    "test-director": "^8.0.2"
+    "test-director": "^8.0.2",
+    "typescript": "^4.7.0-dev.20220505"
   },
   "scripts": {
-    "docs-update": "jsdoc-md",
-    "docs-check": "jsdoc-md -c",
     "eslint": "eslint .",
     "prettier": "prettier -c .",
+    "types": "tsc -p jsconfig.json",
     "tests": "coverage-node --unhandled-rejections=throw test.mjs",
-    "test": "npm run eslint && npm run prettier && npm run docs-check && npm run tests",
+    "test": "npm run eslint && npm run prettier && npm run types && npm run tests",
     "prepublishOnly": "npm test"
   }
 }

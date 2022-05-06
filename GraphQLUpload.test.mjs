@@ -1,9 +1,15 @@
+// @ts-check
+
 import { doesNotThrow, throws } from "assert";
 import { parseValue } from "graphql";
 
 import GraphQLUpload from "./GraphQLUpload.js";
 import Upload from "./Upload.js";
 
+/**
+ * Adds `GraphQLUpload` tests.
+ * @param {import("test-director").default} tests Test director.
+ */
 export default (tests) => {
   tests.add("`GraphQLUpload` scalar `parseValue` with a valid value.", () => {
     doesNotThrow(() => {
