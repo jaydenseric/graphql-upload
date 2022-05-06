@@ -50,7 +50,7 @@ The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-mult
 
 ## Exports
 
-These ECMAScript modules are published to [npm](https://npmjs.com) and exported via the [`package.json`](./package.json) `exports` field:
+These CommonJS modules are published to [npm](https://npmjs.com) and exported via the [`package.json`](./package.json) `exports` field:
 
 - [`GraphQLUpload.js`](./GraphQLUpload.js)
 - [`graphqlUploadExpress.js`](./graphqlUploadExpress.js)
