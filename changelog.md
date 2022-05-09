@@ -18,7 +18,7 @@
 - Check TypeScript types via a new package `types` script.
 - Removed the [`jsdoc-md`](https://npm.im/jsdoc-md) dev dependency and the related package scripts, replacing the readme “API” section with a manually written “Exports” section.
 - Removed the [`hard-rejection`](https://npm.im/hard-rejection) dev dependency. Instead, tests are run with the Node.js CLI flag `--unhandled-rejections=throw` to make Node.js v14 behave like newer versions.
-- Removed the [`formdata-node`](https://npm.im/formdata-node) dev dependency. Instead, `File` and `FormData` are imported from [`node-fetch`](https://npm.im/formdata-node).
+- Removed the [`formdata-node`](https://npm.im/formdata-node) dev dependency. Instead, `File` and `FormData` are imported from [`node-fetch`](https://npm.im/node-fetch).
 - Updated GitHub Actions CI config:
   - Run tests with Node.js v14, v16, v18.
   - Updated `actions/checkout` to v3.
