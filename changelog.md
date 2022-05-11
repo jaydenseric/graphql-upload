@@ -5,11 +5,13 @@
 ### Major
 
 - Updated Node.js support to `^14.17.0 || ^16.0.0 || >= 18.0.0`.
+- Updated the [`graphql`](https://npm.im/graphql) peer dependency to `^16.3.0`.
 - Updated the [`http-errors`](https://npm.im/http-errors) dependency to v2.
 - Public modules are now individually listed in the package `files` and `exports` fields.
 - Removed the package main index module; deep imports must be used.
 - Shortened public module deep import paths, removing the `/public/`.
 - Implemented TypeScript types via JSDoc comments, closing [#282](https://github.com/jaydenseric/graphql-upload/issues/282).
+- The `GraphQLUpload` scalar no longer uses deprecated `GraphQLError` constructor parameters.
 
 ### Patch
 
