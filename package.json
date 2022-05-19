@@ -48,12 +48,20 @@
     "node": "^14.17.0 || ^16.0.0 || >= 18.0.0"
   },
   "peerDependencies": {
+    "@types/express": "^4.0.29",
+    "@types/koa": "^2.11.4",
     "graphql": "^16.3.0"
+  },
+  "peerDependenciesMeta": {
+    "@types/express": {
+      "optional": true
+    },
+    "@types/koa": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@types/busboy": "^0.3.2",
-    "@types/express": "^4.17.13",
-    "@types/koa": "^2.13.4",
     "@types/node": "*",
     "@types/object-path": "^0.11.1",
     "busboy": "^0.3.1",
@@ -62,6 +70,8 @@
     "object-path": "^0.11.8"
   },
   "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/koa": "^2.13.4",
     "coverage-node": "^6.1.0",
     "eslint": "^8.15.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
