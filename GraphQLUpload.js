@@ -14,7 +14,7 @@ const Upload = require("./Upload.js");
  * {@link FileUpload file upload details} for processing and storage.
  * @example
  * A schema built using
- * [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema#makeexecutableschema)
+ * [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema_src#makeexecutableschema)
  * from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema):
  *
  * ```js

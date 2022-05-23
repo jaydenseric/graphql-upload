@@ -18,7 +18,7 @@ npm install graphql-upload graphql
 
 Use the [`graphqlUploadKoa`](./graphqlUploadKoa.js) or [`graphqlUploadExpress`](./graphqlUploadExpress.js) middleware just before GraphQL middleware. Alternatively, use [`processRequest`](./processRequest.js) to create custom middleware.
 
-A schema built with separate SDL and resolvers (e.g. using [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)) requires the [`Upload`](./GraphQLUpload.js) scalar to be setup.
+A schema built with separate SDL and resolvers (e.g. using [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema_src#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)) requires the [`Upload`](./GraphQLUpload.js) scalar to be setup.
 
 ## Usage
 
