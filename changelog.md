@@ -28,6 +28,7 @@
 - Reorganized the test file structure.
 - Use the `.js` file extension in `require` paths.
 - Use the Node.js `Readable` property `readableEncoding` instead of `_readableState.encoding` in tests.
+- Use `substring` instead of the deprecated string method `substr` in tests.
 - Fixed a typo in a code comment.
 - Updated documentation.
 - Added a `license.md` MIT License file, closing [#86](https://github.com/jaydenseric/graphql-upload/issues/86).

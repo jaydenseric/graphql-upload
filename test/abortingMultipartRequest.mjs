@@ -44,7 +44,7 @@ export default async function abortingMultipartRequest(
       if (chunkAbortIndex !== -1) {
         if (chunkAbortIndex !== 0)
           // Yield the final truncated chunk before aborting.
-          yield textEncoder.encode(chunkString.substr(0, chunkAbortIndex));
+          yield textEncoder.encode(chunkString.substring(0, chunkAbortIndex));
 
         // Abort the request after it has been received by the server request
         // handler, or else Node.js won’t run the handler.
