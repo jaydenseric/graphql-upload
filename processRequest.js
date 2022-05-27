@@ -78,10 +78,6 @@ function processRequest(
      * @param {Error} error Error instance.
      */
     const exit = (error) => {
-      // None of the tested scenarios cause multiple calls of this function, but
-      // it’s still good to guard against it happening in case it’s possible now
-      // or in the future.
-      // coverage ignore next line
       if (exitError) return;
 
       exitError = error;
@@ -331,7 +327,11 @@ function processRequest(
           upload.reject(createError(400, "File missing in the request."));
     });
 
-    parser.once("error", exit);
+    // Use the `on` method instead of `once` as in edge cases the same parser
+    // could have multiple `error` events and all must be handled to prevent the
+    // Node.js process exiting with an error. One edge case is if there is a
+    // malformed part header as well as an unexpected end of the form.
+    parser.on("error", exit);
 
     response.once("close", () => {
       released = true;

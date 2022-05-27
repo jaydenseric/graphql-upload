@@ -13,6 +13,7 @@
 ### Patch
 
 - Updated the [`typescript`](https://npm.im/typescript) dev dependency.
+- In the function `processRequest` use the `on` method instead of `once` to listen for `error` events on the [`busboy`](https://npm.im/busboy) parser, as in edge cases the same parser could have multiple `error` events and all must be handled to prevent the Node.js process exiting with an error.
 - Added a test for the function `processRequest` with a maliciously malformed multipart request.
 
 ## 14.0.0
