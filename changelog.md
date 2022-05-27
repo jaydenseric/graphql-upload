@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Updated the [`typescript`](https://npm.im/typescript) dev dependency.
+
 ## 14.0.0
 
 ### Major
