@@ -13,6 +13,7 @@
 ### Patch
 
 - Updated the [`typescript`](https://npm.im/typescript) dev dependency.
+- Added a test for the function `processRequest` with a maliciously malformed multipart request.
 
 ## 14.0.0
 

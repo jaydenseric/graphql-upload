@@ -1552,4 +1552,45 @@ export default (tests) => {
       }
     }
   );
+
+  tests.add(
+    "`processRequest` with a maliciously malformed multipart request.",
+    async () => {
+      let serverError;
+
+      const server = createServer(async (request, response) => {
+        try {
+          await rejects(processRequest(request, response), {
+            name: "Error",
+            message: "Malformed part header",
+          });
+        } catch (error) {
+          serverError = error;
+        } finally {
+          response.end();
+        }
+      });
+
+      const { port, close } = await listen(server);
+
+      try {
+        const boundary = "abcde";
+
+        await fetch(`http://localhost:${port}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${boundary}`,
+          },
+          body: `--${boundary}\r\n Content-Disposition: form-data;`,
+          //                      ^
+          // Invalid space char at the header name start. See:
+          // https://github.com/jaydenseric/graphql-upload/issues/311#issuecomment-1139513829
+        });
+
+        if (serverError) throw serverError;
+      } finally {
+        close();
+      }
+    }
+  );
 };
