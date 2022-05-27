@@ -2,6 +2,14 @@
 
 ## Next
 
+### Major
+
+- Updated the [`busboy`](https://npm.im/busboy) dependency to v1, fixing [#311](https://github.com/jaydenseric/graphql-upload/issues/311).
+  - This important update addresses the vulnerability [CVE-2022-24434](https://nvd.nist.gov/vuln/detail/CVE-2022-24434) ([GHSA-wm7h-9275-46v2](https://github.com/advisories/GHSA-wm7h-9275-46v2)).
+  - It now emits an error on a file upload stream if the request disconnects partway through, which is different to the error that used to come from [`graphql-upload`](https://npm.im/graphql-upload).
+  - Some error messages have changed.
+  - Temporarily until [mscdex/busboy#297](https://github.com/mscdex/busboy/issues/297) is fixed upstream, for the function `processRequest` and the middleware `graphqlUploadExpress` and `graphqlUploadKoa` the option `maxFileSize` is actually 1 byte less than the amount specified.
+
 ### Patch
 
 - Updated the [`typescript`](https://npm.im/typescript) dev dependency.

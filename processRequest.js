@@ -2,7 +2,7 @@
 
 "use strict";
 
-const Busboy = require("busboy");
+const busboy = require("busboy");
 const { WriteStream } = require("fs-capacitor");
 const createError = require("http-errors");
 const objectPath = require("object-path");
@@ -62,7 +62,7 @@ function processRequest(
     /** @type {Map<string, Upload>} */
     let map;
 
-    const parser = new Busboy({
+    const parser = busboy({
       // @ts-ignore This is about to change with `busboy` v1 types.
       headers: request.headers,
       limits: {
@@ -112,195 +112,195 @@ function processRequest(
       });
     };
 
-    parser.on(
-      "field",
-      (fieldName, value, fieldNameTruncated, valueTruncated) => {
-        if (valueTruncated)
-          return exit(
-            createError(
-              413,
-              `The ‘${fieldName}’ multipart field value exceeds the ${maxFieldSize} byte size limit.`
-            )
-          );
+    parser.on("field", (fieldName, value, { valueTruncated }) => {
+      if (valueTruncated)
+        return exit(
+          createError(
+            413,
+            `The ‘${fieldName}’ multipart field value exceeds the ${maxFieldSize} byte size limit.`
+          )
+        );
 
-        switch (fieldName) {
-          case "operations":
-            try {
-              operations = JSON.parse(value);
-            } catch (error) {
+      switch (fieldName) {
+        case "operations":
+          try {
+            operations = JSON.parse(value);
+          } catch (error) {
+            return exit(
+              createError(
+                400,
+                `Invalid JSON in the ‘operations’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
+              )
+            );
+          }
+
+          // `operations` should be an object or an array. Note that arrays
+          // and `null` have an `object` type.
+          if (typeof operations !== "object" || !operations)
+            return exit(
+              createError(
+                400,
+                `Invalid type for the ‘operations’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
+              )
+            );
+
+          operationsPath = objectPath(operations);
+
+          break;
+        case "map": {
+          if (!operations)
+            return exit(
+              createError(
+                400,
+                `Misordered multipart fields; ‘map’ should follow ‘operations’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
+              )
+            );
+
+          let parsedMap;
+          try {
+            parsedMap = JSON.parse(value);
+          } catch (error) {
+            return exit(
+              createError(
+                400,
+                `Invalid JSON in the ‘map’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
+              )
+            );
+          }
+
+          // `map` should be an object.
+          if (
+            typeof parsedMap !== "object" ||
+            !parsedMap ||
+            Array.isArray(parsedMap)
+          )
+            return exit(
+              createError(
+                400,
+                `Invalid type for the ‘map’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
+              )
+            );
+
+          const mapEntries = Object.entries(parsedMap);
+
+          // Check max files is not exceeded, even though the number of files
+          // to parse might not match the map provided by the client.
+          if (mapEntries.length > maxFiles)
+            return exit(
+              createError(413, `${maxFiles} max file uploads exceeded.`)
+            );
+
+          map = new Map();
+          for (const [fieldName, paths] of mapEntries) {
+            if (!Array.isArray(paths))
               return exit(
                 createError(
                   400,
-                  `Invalid JSON in the ‘operations’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-                )
-              );
-            }
-
-            // `operations` should be an object or an array. Note that arrays
-            // and `null` have an `object` type.
-            if (typeof operations !== "object" || !operations)
-              return exit(
-                createError(
-                  400,
-                  `Invalid type for the ‘operations’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
+                  `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
                 )
               );
 
-            operationsPath = objectPath(operations);
+            map.set(fieldName, new Upload());
 
-            break;
-          case "map": {
-            if (!operations)
-              return exit(
-                createError(
-                  400,
-                  `Misordered multipart fields; ‘map’ should follow ‘operations’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-                )
-              );
-
-            let parsedMap;
-            try {
-              parsedMap = JSON.parse(value);
-            } catch (error) {
-              return exit(
-                createError(
-                  400,
-                  `Invalid JSON in the ‘map’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-                )
-              );
-            }
-
-            // `map` should be an object.
-            if (
-              typeof parsedMap !== "object" ||
-              !parsedMap ||
-              Array.isArray(parsedMap)
-            )
-              return exit(
-                createError(
-                  400,
-                  `Invalid type for the ‘map’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-                )
-              );
-
-            const mapEntries = Object.entries(parsedMap);
-
-            // Check max files is not exceeded, even though the number of files
-            // to parse might not match the map provided by the client.
-            if (mapEntries.length > maxFiles)
-              return exit(
-                createError(413, `${maxFiles} max file uploads exceeded.`)
-              );
-
-            map = new Map();
-            for (const [fieldName, paths] of mapEntries) {
-              if (!Array.isArray(paths))
+            for (const [index, path] of paths.entries()) {
+              if (typeof path !== "string")
                 return exit(
                   createError(
                     400,
-                    `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
+                    `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
                   )
                 );
 
-              map.set(fieldName, new Upload());
-
-              for (const [index, path] of paths.entries()) {
-                if (typeof path !== "string")
-                  return exit(
-                    createError(
-                      400,
-                      `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-                    )
-                  );
-
-                try {
-                  operationsPath.set(path, map.get(fieldName));
-                } catch (error) {
-                  return exit(
-                    createError(
-                      400,
-                      `Invalid object path for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value ‘${path}’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-                    )
-                  );
-                }
+              try {
+                operationsPath.set(path, map.get(fieldName));
+              } catch (error) {
+                return exit(
+                  createError(
+                    400,
+                    `Invalid object path for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value ‘${path}’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
+                  )
+                );
               }
             }
-
-            resolve(operations);
           }
+
+          resolve(operations);
         }
       }
-    );
-
-    parser.on("file", (fieldName, stream, filename, encoding, mimetype) => {
-      lastFileStream = stream;
-
-      if (!map) {
-        ignoreStream(stream);
-        return exit(
-          createError(
-            400,
-            `Misordered multipart fields; files should follow ‘map’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-          )
-        );
-      }
-
-      const upload = map.get(fieldName);
-
-      if (!upload) {
-        // The file is extraneous. As the rest can still be processed, just
-        // ignore it and don’t exit with an error.
-        ignoreStream(stream);
-        return;
-      }
-
-      /** @type {Error} */
-      let fileError;
-
-      const capacitor = new WriteStream();
-
-      capacitor.on("error", () => {
-        stream.unpipe();
-        stream.resume();
-      });
-
-      stream.on("limit", () => {
-        fileError = createError(
-          413,
-          `File truncated as it exceeds the ${maxFileSize} byte size limit.`
-        );
-        stream.unpipe();
-        capacitor.destroy(fileError);
-      });
-
-      stream.on("error", (error) => {
-        fileError = error;
-        stream.unpipe();
-        capacitor.destroy(fileError);
-      });
-
-      /** @type {FileUpload} */
-      const file = {
-        filename,
-        mimetype,
-        encoding,
-        createReadStream(options) {
-          const error = fileError || (released ? exitError : null);
-          if (error) throw error;
-          return capacitor.createReadStream(options);
-        },
-        capacitor,
-      };
-
-      Object.defineProperty(file, "capacitor", {
-        enumerable: false,
-        configurable: false,
-        writable: false,
-      });
-
-      stream.pipe(capacitor);
-      upload.resolve(file);
     });
+
+    parser.on(
+      "file",
+      (fieldName, stream, { filename, encoding, mimeType: mimetype }) => {
+        lastFileStream = stream;
+
+        if (!map) {
+          ignoreStream(stream);
+          return exit(
+            createError(
+              400,
+              `Misordered multipart fields; files should follow ‘map’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
+            )
+          );
+        }
+
+        const upload = map.get(fieldName);
+
+        if (!upload) {
+          // The file is extraneous. As the rest can still be processed, just
+          // ignore it and don’t exit with an error.
+          ignoreStream(stream);
+          return;
+        }
+
+        /** @type {Error} */
+        let fileError;
+
+        const capacitor = new WriteStream();
+
+        capacitor.on("error", () => {
+          stream.unpipe();
+          stream.resume();
+        });
+
+        stream.on("limit", () => {
+          fileError = createError(
+            413,
+            `File truncated as it exceeds the ${maxFileSize} byte size limit.`
+          );
+          stream.unpipe();
+          capacitor.destroy(fileError);
+        });
+
+        stream.on("error", (error) => {
+          fileError = error;
+          stream.unpipe();
+          capacitor.destroy(fileError);
+        });
+
+        /** @type {FileUpload} */
+        const file = {
+          filename,
+          mimetype,
+          encoding,
+          createReadStream(options) {
+            const error = fileError || (released ? exitError : null);
+            if (error) throw error;
+            return capacitor.createReadStream(options);
+          },
+          capacitor,
+        };
+
+        Object.defineProperty(file, "capacitor", {
+          enumerable: false,
+          configurable: false,
+          writable: false,
+        });
+
+        stream.pipe(capacitor);
+        upload.resolve(file);
+      }
+    );
 
     parser.once("filesLimit", () =>
       exit(createError(413, `${maxFiles} max file uploads exceeded.`))

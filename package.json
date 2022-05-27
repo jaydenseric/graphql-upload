@@ -61,10 +61,10 @@
     }
   },
   "dependencies": {
-    "@types/busboy": "^0.3.2",
+    "@types/busboy": "^1.5.0",
     "@types/node": "*",
     "@types/object-path": "^0.11.1",
-    "busboy": "^0.3.1",
+    "busboy": "^1.6.0",
     "fs-capacitor": "^6.2.0",
     "http-errors": "^2.0.0",
     "object-path": "^0.11.8"

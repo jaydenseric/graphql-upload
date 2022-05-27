@@ -619,7 +619,13 @@ export default (tests) => {
            *   },
            * }}
            */
-          (await processRequest(request, response, { maxFileSize: 1 }));
+          (
+            await processRequest(request, response, {
+              // Todo: Change this back to 1 once this `busboy` bug is fixed:
+              // https://github.com/mscdex/busboy/issues/297
+              maxFileSize: 2,
+            })
+          );
 
         ok(operation.variables.files[0] instanceof Upload);
 
@@ -631,7 +637,7 @@ export default (tests) => {
           },
           {
             name: "PayloadTooLargeError",
-            message: "File truncated as it exceeds the 1 byte size limit.",
+            message: "File truncated as it exceeds the 2 byte size limit.",
             status: 413,
             expose: true,
           }
@@ -783,11 +789,8 @@ export default (tests) => {
                 stream.once("error", reject).once("end", resolve).resume();
               }),
               {
-                name: "BadRequestError",
-                message:
-                  "Request disconnected during file upload stream parsing.",
-                status: 499,
-                expose: true,
+                name: "Error",
+                message: "Unexpected end of file",
               }
             );
           };
@@ -928,11 +931,8 @@ export default (tests) => {
             strictEqual(upload.mimetype, "text/plain");
             strictEqual(upload.encoding, "7bit");
             throws(() => upload.createReadStream(), {
-              name: "BadRequestError",
-              message:
-                "Request disconnected during file upload stream parsing.",
-              status: 499,
-              expose: true,
+              name: "Error",
+              message: "Unexpected end of file",
             });
           };
 
@@ -1524,7 +1524,7 @@ export default (tests) => {
         try {
           await rejects(processRequest(request, response), {
             name: "Error",
-            message: "Unexpected end of multipart data",
+            message: "Unexpected end of form",
           });
         } catch (error) {
           serverError = error;
