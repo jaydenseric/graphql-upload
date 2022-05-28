@@ -789,8 +789,11 @@ export default (tests) => {
                 stream.once("error", reject).once("end", resolve).resume();
               }),
               {
-                name: "Error",
-                message: "Unexpected end of file",
+                name: "BadRequestError",
+                message:
+                  "Request disconnected during file upload stream parsing.",
+                status: 499,
+                expose: true,
               }
             );
           };
@@ -931,8 +934,11 @@ export default (tests) => {
             strictEqual(upload.mimetype, "text/plain");
             strictEqual(upload.encoding, "7bit");
             throws(() => upload.createReadStream(), {
-              name: "Error",
-              message: "Unexpected end of file",
+              name: "BadRequestError",
+              message:
+                "Request disconnected during file upload stream parsing.",
+              status: 499,
+              expose: true,
             });
           };
 

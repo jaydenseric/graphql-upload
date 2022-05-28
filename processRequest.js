@@ -42,9 +42,6 @@ function processRequest(
     /** @type {Error} */
     let exitError;
 
-    /** @type {import("stream").Readable} */
-    let lastFileStream;
-
     /**
      * @type {{ [key: string]: unknown } | Array<
      *   { [key: string]: unknown }
@@ -76,26 +73,19 @@ function processRequest(
     /**
      * Exits request processing with an error. Successive calls have no effect.
      * @param {Error} error Error instance.
+     * @param {boolean} [isParserError] Is the error from the parser.
      */
-    const exit = (error) => {
+    function exit(error, isParserError = false) {
       if (exitError) return;
 
       exitError = error;
 
-      reject(exitError);
-
-      parser.destroy();
-
-      if (
-        lastFileStream &&
-        !lastFileStream.readableEnded &&
-        !lastFileStream.destroyed
-      )
-        lastFileStream.destroy(exitError);
-
       if (map)
         for (const upload of map.values())
           if (!upload.file) upload.reject(exitError);
+
+      // If the error came from the parser, don’t cause it to be emitted again.
+      isParserError ? parser.destroy() : parser.destroy(exitError);
 
       request.unpipe(parser);
 
@@ -106,7 +96,9 @@ function processRequest(
       setImmediate(() => {
         request.resume();
       });
-    };
+
+      reject(exitError);
+    }
 
     parser.on("field", (fieldName, value, { valueTruncated }) => {
       if (valueTruncated)
@@ -228,8 +220,6 @@ function processRequest(
     parser.on(
       "file",
       (fieldName, stream, { filename, encoding, mimeType: mimetype }) => {
-        lastFileStream = stream;
-
         if (!map) {
           ignoreStream(stream);
           return exit(
@@ -331,7 +321,9 @@ function processRequest(
     // could have multiple `error` events and all must be handled to prevent the
     // Node.js process exiting with an error. One edge case is if there is a
     // malformed part header as well as an unexpected end of the form.
-    parser.on("error", exit);
+    parser.on("error", (/** @type {Error} */ error) => {
+      exit(error, true);
+    });
 
     response.once("close", () => {
       released = true;
