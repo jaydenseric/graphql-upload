@@ -11,8 +11,6 @@ const ignoreStream = require("./ignoreStream.js");
 const Upload = require("./Upload.js");
 
 /** @typedef {import("./GraphQLUpload.js")} GraphQLUpload */
-/** @typedef {import("./graphqlUploadExpress.js")} graphqlUploadExpress */
-/** @typedef {import("./graphqlUploadKoa.js")} graphqlUploadKoa */
 
 /**
  * Processes an incoming
@@ -22,8 +20,7 @@ const Upload = require("./Upload.js");
  * is expected in the GraphQL operation for the {@linkcode GraphQLUpload} scalar
  * to derive it’s value. Errors are created with
  * [`http-errors`](https://npm.im/http-errors) to assist in sending responses
- * with appropriate HTTP status codes. Used to create custom middleware and is
- * used by {@linkcode graphqlUploadExpress} and {@linkcode graphqlUploadKoa}.
+ * with appropriate HTTP status codes. Used to create custom middleware.
  * @type {ProcessRequestFunction}
  */
 function processRequest(

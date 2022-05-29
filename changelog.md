@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Don’t import and link types from the middlware modules `graphqlUploadExpress.js` and `graphqlUploadKoa.js` within the module `processRequest.js`, fixing [#314](https://github.com/jaydenseric/graphql-upload/issues/314).
+
 ## 15.0.0
 
 ### Major
