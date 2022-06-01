@@ -1,1 +1,3 @@
 package.json
+*.d.ts
+*.d.mts

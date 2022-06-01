@@ -1,2 +1,4 @@
 node_modules
+*.d.ts
+*.d.mts
 .DS_Store

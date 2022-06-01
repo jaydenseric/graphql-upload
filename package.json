@@ -28,21 +28,46 @@
   ],
   "files": [
     "GRAPHQL_MULTIPART_REQUEST_SPEC_URL.js",
+    "GRAPHQL_MULTIPART_REQUEST_SPEC_URL.d.ts",
     "GraphQLUpload.js",
+    "GraphQLUpload.d.ts",
     "graphqlUploadExpress.js",
+    "graphqlUploadExpress.d.ts",
     "graphqlUploadKoa.js",
+    "graphqlUploadKoa.d.ts",
     "ignoreStream.js",
+    "ignoreStream.d.ts",
     "processRequest.js",
-    "Upload.js"
+    "processRequest.d.ts",
+    "Upload.js",
+    "Upload.d.ts"
   ],
   "sideEffects": false,
   "exports": {
-    "./GraphQLUpload.js": "./GraphQLUpload.js",
-    "./graphqlUploadExpress.js": "./graphqlUploadExpress.js",
-    "./graphqlUploadKoa.js": "./graphqlUploadKoa.js",
-    "./package.json": "./package.json",
-    "./processRequest.js": "./processRequest.js",
-    "./Upload.js": "./Upload.js"
+    "./GraphQLUpload.js": {
+      "types": "./GraphQLUpload.d.ts",
+      "default": "./GraphQLUpload.js"
+    },
+    "./graphqlUploadExpress.js": {
+      "types": "./graphqlUploadExpress.d.ts",
+      "default": "./graphqlUploadExpress.js"
+    },
+    "./graphqlUploadKoa.js": {
+      "types": "./graphqlUploadKoa.d.ts",
+      "default": "./graphqlUploadKoa.js"
+    },
+    "./package.json": {
+      "types": "./package.d.ts",
+      "default": "./package.json"
+    },
+    "./processRequest.js": {
+      "types": "./ocessRequest.d.ts",
+      "default": "./processRequest.js"
+    },
+    "./Upload.js": {
+      "types": "./Upload.d.ts",
+      "default": "./Upload.js"
+    }
   },
   "engines": {
     "node": "^14.17.0 || ^16.0.0 || >= 18.0.0"
@@ -82,13 +107,14 @@
     "node-abort-controller": "^3.0.1",
     "node-fetch": "^3.2.3",
     "prettier": "^2.6.2",
+    "rimraf": "^3.0.2",
     "test-director": "^8.0.2",
     "typescript": "^4.7.2"
   },
   "scripts": {
     "eslint": "eslint .",
     "prettier": "prettier -c .",
-    "types": "tsc -p jsconfig.json",
+    "types": "rimraf *.d.ts *.d.mts && tsc -p jsconfig.json && rimraf *test.d.ts *test.d.mts",
     "tests": "coverage-node --unhandled-rejections=throw test.mjs",
     "test": "npm run eslint && npm run prettier && npm run types && npm run tests",
     "prepublishOnly": "npm test"
