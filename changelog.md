@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Updated dev dependencies.
+
 ## 15.0.1
 
 ### Patch
