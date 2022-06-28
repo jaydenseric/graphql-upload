@@ -5,6 +5,7 @@
 ### Patch
 
 - Updated dev dependencies.
+- Corrected the TypeScript type for the Koa context `ctx` parameter for the Koa middleware created by the function `graphqlUploadKoa`, from `import("koa").Context` to `import("koa").ParameterizedContext`.
 
 ## 15.0.1
 

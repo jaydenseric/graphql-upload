@@ -42,7 +42,7 @@ function graphqlUploadKoa({
    * using {@linkcode processRequest}, ignoring non multipart requests. It sets
    * the request `body` to be similar to a conventional GraphQL POST request for
    * following GraphQL middleware to consume.
-   * @param {import("koa").Context} ctx
+   * @param {import("koa").ParameterizedContext} ctx
    * @param {() => Promise<unknown>} next
    */
   async function graphqlUploadKoaMiddleware(ctx, next) {
