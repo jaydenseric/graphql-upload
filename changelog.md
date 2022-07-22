@@ -5,6 +5,7 @@
 ### Patch
 
 - Updated dev dependencies.
+- Updated the changelog entry for v14.0.0 to show how to migrate imports.
 
 ## 15.0.2
 
@@ -43,8 +44,60 @@
 - Updated the [`graphql`](https://npm.im/graphql) peer dependency to `^16.3.0`.
 - Updated the [`http-errors`](https://npm.im/http-errors) dependency to v2.
 - Public modules are now individually listed in the package `files` and `exports` fields.
-- Removed the package main index module; deep imports must be used.
-- Shortened public module deep import paths, removing the `/public/`.
+- Removed the package main index module; deep imports must be used. To migrate:
+
+  ```diff
+  - import { GraphQLUpload } from "graphql-upload";
+  + import GraphQLUpload from "graphql-upload/GraphQLUpload.js";
+  ```
+
+  ```diff
+  - import { graphqlUploadExpress } from "graphql-upload";
+  + import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.js";
+  ```
+
+  ```diff
+  - import { graphqlUploadKoa } from "graphql-upload";
+  + import graphqlUploadKoa from "graphql-upload/graphqlUploadKoa.js";
+  ```
+
+  ```diff
+  - import { processRequest } from "graphql-upload";
+  + import processRequest from "graphql-upload/processRequest.js";
+  ```
+
+  ```diff
+  - import { Upload } from "graphql-upload";
+  + import Upload from "graphql-upload/Upload.js";
+  ```
+
+- Shortened public module deep import paths, removing the `/public/`. To migrate:
+
+  ```diff
+  - import GraphQLUpload from "graphql-upload/public/GraphQLUpload.js";
+  + import GraphQLUpload from "graphql-upload/GraphQLUpload.js";
+  ```
+
+  ```diff
+  - import graphqlUploadExpress from "graphql-upload/public/graphqlUploadExpress.js";
+  + import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.js";
+  ```
+
+  ```diff
+  - import graphqlUploadKoa from "graphql-upload/public/graphqlUploadKoa.js";
+  + import graphqlUploadKoa from "graphql-upload/graphqlUploadKoa.js";
+  ```
+
+  ```diff
+  - import processRequest from "graphql-upload/public/processRequest.js";
+  + import processRequest from "graphql-upload/processRequest.js";
+  ```
+
+  ```diff
+  - import Upload from "graphql-upload/public/Upload.js";
+  + import Upload from "graphql-upload/Upload.js";
+  ```
+
 - Implemented TypeScript types via JSDoc comments, closing [#282](https://github.com/jaydenseric/graphql-upload/issues/282).
 - The `GraphQLUpload` scalar no longer uses deprecated `GraphQLError` constructor parameters.
 
