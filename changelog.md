@@ -44,7 +44,7 @@
 - Updated the [`graphql`](https://npm.im/graphql) peer dependency to `^16.3.0`.
 - Updated the [`http-errors`](https://npm.im/http-errors) dependency to v2.
 - Public modules are now individually listed in the package `files` and `exports` fields.
-- Removed the package main index module; deep imports must be used. To migrate:
+- Removed the package main index module; deep imports must be used. To migrate imports:
 
   ```diff
   - import { GraphQLUpload } from "graphql-upload";
@@ -71,7 +71,7 @@
   + import Upload from "graphql-upload/Upload.js";
   ```
 
-- Shortened public module deep import paths, removing the `/public/`. To migrate:
+- Shortened public module deep import paths, removing the `/public/`. To migrate imports:
 
   ```diff
   - import GraphQLUpload from "graphql-upload/public/GraphQLUpload.js";
