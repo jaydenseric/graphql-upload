@@ -6,8 +6,8 @@ import { createServer } from "http";
 import createError from "http-errors";
 import fetch, { File, FormData } from "node-fetch";
 
-import graphqlUploadExpress from "./graphqlUploadExpress.js";
-import processRequest from "./processRequest.js";
+import graphqlUploadExpress from "./graphqlUploadExpress.mjs";
+import processRequest from "./processRequest.mjs";
 import listen from "./test/listen.mjs";
 
 /**
@@ -44,7 +44,7 @@ export default (tests) => {
     /**
      * @type {{
      *   variables: {
-     *     file: import("./Upload.js"),
+     *     file: import("./Upload.mjs").default,
      *   },
      * } | undefined}
      */
@@ -84,7 +84,7 @@ export default (tests) => {
       /**
        * @type {{
        *   variables: {
-       *     file: import("./Upload.js"),
+       *     file: import("./Upload.mjs").default,
        *   },
        * } | undefined}
        */

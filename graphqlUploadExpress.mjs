@@ -1,8 +1,6 @@
 // @ts-check
 
-"use strict";
-
-const defaultProcessRequest = require("./processRequest.js");
+import defaultProcessRequest from "./processRequest.mjs";
 
 /**
  * Creates [Express](https://expressjs.com) middleware that processes incoming
@@ -10,29 +8,30 @@ const defaultProcessRequest = require("./processRequest.js");
  * using {@linkcode processRequest}, ignoring non multipart requests. It sets
  * the request `body` to be similar to a conventional GraphQL POST request for
  * following GraphQL middleware to consume.
- * @param {import("./processRequest.js").ProcessRequestOptions & {
- *   processRequest?: import("./processRequest.js").ProcessRequestFunction
+ * @param {import("./processRequest.mjs").ProcessRequestOptions & {
+ *   processRequest?: import("./processRequest.mjs").ProcessRequestFunction
  * }} options Options.
  * @returns Express middleware.
  * @example
  * Basic [`express-graphql`](https://npm.im/express-graphql) setup:
  *
  * ```js
- * const express = require("express");
- * const graphqlHTTP = require("express-graphql");
- * const graphqlUploadExpress = require("graphql-upload/graphqlUploadExpress.js");
- * const schema = require("./schema.js");
+ * import express from "express";
+ * import expressGraphQL from "express-graphql";
+ * import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
+ *
+ * import schema from "./schema.mjs";
  *
  * express()
  *   .use(
  *     "/graphql",
  *     graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
- *     graphqlHTTP({ schema })
+ *     expressGraphQL.graphqlHTTP({ schema })
  *   )
  *   .listen(3000);
  * ```
  */
-function graphqlUploadExpress({
+export default function graphqlUploadExpress({
   processRequest = defaultProcessRequest,
   ...processRequestOptions
 } = {}) {
@@ -76,5 +75,3 @@ function graphqlUploadExpress({
 
   return graphqlUploadExpressMiddleware;
 }
-
-module.exports = graphqlUploadExpress;

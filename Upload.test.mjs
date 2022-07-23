@@ -2,7 +2,7 @@
 
 import { ok, rejects, strictEqual } from "assert";
 
-import Upload from "./Upload.js";
+import Upload from "./Upload.mjs";
 
 /**
  * Adds `Upload` tests.

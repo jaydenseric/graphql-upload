@@ -1,8 +1,6 @@
 // @ts-check
 
-"use strict";
-
-const defaultProcessRequest = require("./processRequest.js");
+import defaultProcessRequest from "./processRequest.mjs";
 
 /**
  * Creates [Koa](https://koajs.com) middleware that processes incoming
@@ -10,19 +8,21 @@ const defaultProcessRequest = require("./processRequest.js");
  * using {@linkcode processRequest}, ignoring non multipart requests. It sets
  * the request `body` to be similar to a conventional GraphQL POST request for
  * following GraphQL middleware to consume.
- * @param {import("./processRequest.js").ProcessRequestOptions & {
- *   processRequest?: import("./processRequest.js").ProcessRequestFunction
+ * @param {import("./processRequest.mjs").ProcessRequestOptions & {
+ *   processRequest?: import("./processRequest.mjs").ProcessRequestFunction
  * }} options Options.
  * @returns Koa middleware.
  * @example
  * Basic [`graphql-api-koa`](https://npm.im/graphql-api-koa) setup:
  *
  * ```js
- * const Koa = require("koa");
- * const bodyParser = require("koa-bodyparser");
- * const { errorHandler, execute } = require("graphql-api-koa");
- * const graphqlUploadKoa = require("graphql-upload/graphqlUploadKoa.js");
- * const schema = require("./schema.js");
+ * import errorHandler from "graphql-api-koa/errorHandler.mjs";
+ * import execute from "graphql-api-koa/execute.mjs";
+ * import graphqlUploadKoa from "graphql-upload/graphqlUploadKoa.mjs";
+ * import Koa from "koa";
+ * import bodyParser from "koa-bodyparser";
+ *
+ * import schema from "./schema.mjs";
  *
  * new Koa()
  *   .use(errorHandler())
@@ -32,7 +32,7 @@ const defaultProcessRequest = require("./processRequest.js");
  *   .listen(3000);
  * ```
  */
-function graphqlUploadKoa({
+export default function graphqlUploadKoa({
   processRequest = defaultProcessRequest,
   ...processRequestOptions
 } = {}) {
@@ -65,5 +65,3 @@ function graphqlUploadKoa({
 
   return graphqlUploadKoaMiddleware;
 }
-
-module.exports = graphqlUploadKoa;

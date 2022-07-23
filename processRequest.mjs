@@ -1,16 +1,15 @@
 // @ts-check
 
-"use strict";
+import busboy from "busboy";
+import { WriteStream } from "fs-capacitor";
+import createError from "http-errors";
+import objectPath from "object-path";
 
-const busboy = require("busboy");
-const { WriteStream } = require("fs-capacitor");
-const createError = require("http-errors");
-const objectPath = require("object-path");
-const GRAPHQL_MULTIPART_REQUEST_SPEC_URL = require("./GRAPHQL_MULTIPART_REQUEST_SPEC_URL.js");
-const ignoreStream = require("./ignoreStream.js");
-const Upload = require("./Upload.js");
+import GRAPHQL_MULTIPART_REQUEST_SPEC_URL from "./GRAPHQL_MULTIPART_REQUEST_SPEC_URL.mjs";
+import ignoreStream from "./ignoreStream.mjs";
+import Upload from "./Upload.mjs";
 
-/** @typedef {import("./GraphQLUpload.js")} GraphQLUpload */
+/** @typedef {import("./GraphQLUpload.mjs").default} GraphQLUpload */
 
 /**
  * Processes an incoming
@@ -23,7 +22,7 @@ const Upload = require("./Upload.js");
  * with appropriate HTTP status codes. Used to create custom middleware.
  * @type {ProcessRequestFunction}
  */
-function processRequest(
+export default function processRequest(
   request,
   response,
   {
@@ -346,8 +345,6 @@ function processRequest(
   });
 }
 
-module.exports = processRequest;
-
 /**
  * File upload details that are only available after the file’s field in the
  * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec)
@@ -383,17 +380,19 @@ module.exports = processRequest;
 /**
  * {@linkcode FileUploadCreateReadStream} options.
  * @typedef {object} FileUploadCreateReadStreamOptions
- * @prop {string} [options.encoding] Specify an encoding for the
- *   [`data`](https://nodejs.org/api/stream.html#event-data) chunks to be
+ * @prop {import("fs-capacitor")
+ *   .ReadStreamOptions["encoding"]} [options.encoding] Specify an encoding for
+ *   the [`data`](https://nodejs.org/api/stream.html#event-data) chunks to be
  *   strings (without splitting multi-byte characters across chunks) instead of
  *   Node.js [`Buffer`](https://nodejs.org/api/buffer.html#buffer) instances.
  *   Supported values depend on the
  *   [`Buffer` implementation](https://github.com/nodejs/node/blob/v18.1.0/lib/buffer.js#L590-L680)
  *   and include `utf8`, `ucs2`, `utf16le`, `latin1`, `ascii`, `base64`,
  *   `base64url`, or `hex`. Defaults to `utf8`.
- * @prop {number} [options.highWaterMark] Maximum number of bytes to store in
- *   the internal buffer before ceasing to read from the underlying resource.
- *   Defaults to `16384`.
+ * @prop {import("fs-capacitor")
+ *   .ReadStreamOptions["highWaterMark"]} [options.highWaterMark] Maximum number
+ *   of bytes to store in the internal buffer before ceasing to read from the
+ *   underlying resource. Defaults to `16384`.
  */
 
 /**

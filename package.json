@@ -27,22 +27,22 @@
     "mjs"
   ],
   "files": [
-    "GRAPHQL_MULTIPART_REQUEST_SPEC_URL.js",
-    "GraphQLUpload.js",
-    "graphqlUploadExpress.js",
-    "graphqlUploadKoa.js",
-    "ignoreStream.js",
-    "processRequest.js",
-    "Upload.js"
+    "GRAPHQL_MULTIPART_REQUEST_SPEC_URL.mjs",
+    "GraphQLUpload.mjs",
+    "graphqlUploadExpress.mjs",
+    "graphqlUploadKoa.mjs",
+    "ignoreStream.mjs",
+    "processRequest.mjs",
+    "Upload.mjs"
   ],
   "sideEffects": false,
   "exports": {
-    "./GraphQLUpload.js": "./GraphQLUpload.js",
-    "./graphqlUploadExpress.js": "./graphqlUploadExpress.js",
-    "./graphqlUploadKoa.js": "./graphqlUploadKoa.js",
+    "./GraphQLUpload.mjs": "./GraphQLUpload.mjs",
+    "./graphqlUploadExpress.mjs": "./graphqlUploadExpress.mjs",
+    "./graphqlUploadKoa.mjs": "./graphqlUploadKoa.mjs",
     "./package.json": "./package.json",
-    "./processRequest.js": "./processRequest.js",
-    "./Upload.js": "./Upload.js"
+    "./processRequest.mjs": "./processRequest.mjs",
+    "./Upload.mjs": "./Upload.mjs"
   },
   "engines": {
     "node": "^14.17.0 || ^16.0.0 || >= 18.0.0"
@@ -65,7 +65,7 @@
     "@types/node": "*",
     "@types/object-path": "^0.11.1",
     "busboy": "^1.6.0",
-    "fs-capacitor": "^6.2.0",
+    "fs-capacitor": "^8.0.0",
     "http-errors": "^2.0.0",
     "object-path": "^0.11.8"
   },

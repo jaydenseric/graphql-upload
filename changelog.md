@@ -2,9 +2,41 @@
 
 ## Next
 
+### Major
+
+- Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to v8, fixing [#318](https://github.com/jaydenseric/graphql-upload/issues/318).
+- The type `FileUploadCreateReadStreamOptions` from the `processRequest.mjs` module now uses types from [`fs-capacitor`](https://npm.im/fs-capacitor) that are slightly more specific.
+- The API is now ESM in `.mjs` files instead of CJS in `.js` files, [accessible via `import` but not `require`](https://nodejs.org/dist/latest/docs/api/esm.html#require). To migrate imports:
+
+  ```diff
+  - import GraphQLUpload from "graphql-upload/GraphQLUpload.js";
+  + import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
+  ```
+
+  ```diff
+  - import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.js";
+  + import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
+  ```
+
+  ```diff
+  - import graphqlUploadKoa from "graphql-upload/graphqlUploadKoa.js";
+  + import graphqlUploadKoa from "graphql-upload/graphqlUploadKoa.mjs";
+  ```
+
+  ```diff
+  - import processRequest from "graphql-upload/processRequest.js";
+  + import processRequest from "graphql-upload/processRequest.mjs";
+  ```
+
+  ```diff
+  - import Upload from "graphql-upload/Upload.js";
+  + import Upload from "graphql-upload/Upload.mjs";
+  ```
+
 ### Patch
 
 - Updated dev dependencies.
+- Updated examples in JSDoc comments.
 - Updated the changelog entry for v14.0.0 to show how to migrate imports.
 
 ## 15.0.2

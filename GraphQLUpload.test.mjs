@@ -3,8 +3,8 @@
 import { doesNotThrow, throws } from "assert";
 import { parseValue } from "graphql";
 
-import GraphQLUpload from "./GraphQLUpload.js";
-import Upload from "./Upload.js";
+import GraphQLUpload from "./GraphQLUpload.mjs";
+import Upload from "./Upload.mjs";
 
 /**
  * Adds `GraphQLUpload` tests.

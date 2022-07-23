@@ -1,11 +1,10 @@
 // @ts-check
 
-"use strict";
+import { GraphQLError, GraphQLScalarType } from "graphql";
 
-const { GraphQLScalarType, GraphQLError } = require("graphql");
-const Upload = require("./Upload.js");
+import Upload from "./Upload.mjs";
 
-/** @typedef {import("./processRequest").FileUpload} FileUpload */
+/** @typedef {import("./processRequest.mjs").FileUpload} FileUpload */
 
 /**
  * A GraphQL `Upload` scalar that can be used in a
@@ -18,8 +17,8 @@ const Upload = require("./Upload.js");
  * from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema):
  *
  * ```js
- * const { makeExecutableSchema } = require("@graphql-tools/schema");
- * const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
+ * import { makeExecutableSchema } from "@graphql-tools/schema/makeExecutableSchema";
+ * import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
  *
  * const schema = makeExecutableSchema({
  *   typeDefs: `
@@ -34,8 +33,8 @@ const Upload = require("./Upload.js");
  * A manually constructed schema with an image upload mutation:
  *
  * ```js
- * const { GraphQLSchema, GraphQLObjectType, GraphQLBoolean } = require("graphql");
- * const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
+ * import { GraphQLBoolean, GraphQLObjectType, GraphQLSchema } from "graphql";
+ * import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
  *
  * const schema = new GraphQLSchema({
  *   mutation: new GraphQLObjectType({
@@ -77,4 +76,4 @@ const GraphQLUpload = new GraphQLScalarType({
   },
 });
 
-module.exports = GraphQLUpload;
+export default GraphQLUpload;

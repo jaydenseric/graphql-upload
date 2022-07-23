@@ -12,12 +12,12 @@ import { ReadStream } from "fs-capacitor";
 import { createServer } from "http";
 import fetch, { File, FormData } from "node-fetch";
 
-import processRequest from "./processRequest.js";
+import processRequest from "./processRequest.mjs";
 import abortingMultipartRequest from "./test/abortingMultipartRequest.mjs";
 import Deferred from "./test/Deferred.mjs";
 import listen from "./test/listen.mjs";
 import streamToString from "./test/streamToString.mjs";
-import Upload from "./Upload.js";
+import Upload from "./Upload.mjs";
 
 /**
  * Adds `processRequest` tests.
@@ -65,7 +65,7 @@ export default (tests) => {
             /**
              * @type {{
              *   variables: {
-             *     file: import("./Upload.js"),
+             *     file: Upload,
              *   },
              * }}
              */
@@ -124,7 +124,7 @@ export default (tests) => {
             /**
              * @type {{
              *   variables: {
-             *     file: import("./Upload.js"),
+             *     file: Upload,
              *   },
              * }}
              */
@@ -186,7 +186,7 @@ export default (tests) => {
           /**
            * @type {Array<{
            *   variables: {
-           *     file: import("./Upload.js"),
+           *     file: Upload,
            *   },
            * }>}
            */
@@ -260,7 +260,7 @@ export default (tests) => {
           /**
            * @type {{
            *   variables: {
-           *     files: Array<import("./Upload.js")>,
+           *     files: Array<Upload>,
            *   },
            * }}
            */
@@ -333,8 +333,8 @@ export default (tests) => {
           /**
            * @type {{
            *   variables: {
-           *     fileA: import("./Upload.js"),
-           *     fileB: import("./Upload.js"),
+           *     fileA: Upload,
+           *     fileB: Upload,
            *   },
            * }}
            */
@@ -388,7 +388,7 @@ export default (tests) => {
             /**
              * @type {{
              *   variables: {
-             *     file: import("./Upload.js"),
+             *     file: Upload,
              *   },
              * }}
              */
@@ -446,7 +446,7 @@ export default (tests) => {
             /**
              * @type {{
              *   variables: {
-             *     file: import("./Upload.js"),
+             *     file: Upload,
              *   },
              * }}
              */
@@ -542,7 +542,7 @@ export default (tests) => {
             /**
              * @type {{
              *   variables: {
-             *     files: Array<import("./Upload.js")>,
+             *     files: Array<Upload>,
              *   },
              * }}
              */
@@ -615,7 +615,7 @@ export default (tests) => {
           /**
            * @type {{
            *   variables: {
-           *     files: Array<import("./Upload.js")>,
+           *     files: Array<Upload>,
            *   },
            * }}
            */
@@ -749,9 +749,9 @@ export default (tests) => {
             /**
              * @type {{
              *   variables: {
-             *     fileA: import("./Upload.js"),
-             *     fileB: import("./Upload.js"),
-             *     fileC: import("./Upload.js"),
+             *     fileA: Upload,
+             *     fileB: Upload,
+             *     fileC: Upload,
              *   },
              * }}
              */
@@ -894,9 +894,9 @@ export default (tests) => {
             /**
              * @type {{
              *   variables: {
-             *     fileA: import("./Upload.js"),
-             *     fileB: import("./Upload.js"),
-             *     fileC: import("./Upload.js"),
+             *     fileA: Upload,
+             *     fileB: Upload,
+             *     fileC: Upload,
              *   },
              * }}
              */
