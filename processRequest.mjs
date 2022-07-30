@@ -56,7 +56,6 @@ export default function processRequest(
     let map;
 
     const parser = busboy({
-      // @ts-ignore This is about to change with `busboy` v1 types.
       headers: request.headers,
       limits: {
         fieldSize: maxFieldSize,

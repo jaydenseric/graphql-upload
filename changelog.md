@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Removed a redundant `@ts-ignore` comment.
+
 ## 16.0.0
 
 ### Major
