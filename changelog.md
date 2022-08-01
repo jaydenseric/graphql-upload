@@ -4,6 +4,7 @@
 
 ### Patch
 
+- Support non `latin1` characters in file names by setting the [`busboy`](https://npm.im/busboy) option `defParamCharset` to `utf8`, fixing [#328](https://github.com/jaydenseric/graphql-upload/issues/328).
 - Removed a redundant `@ts-ignore` comment.
 
 ## 16.0.0

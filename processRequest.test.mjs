@@ -55,7 +55,7 @@ export default (tests) => {
   });
 
   tests.add(
-    "`processRequest` with a single file and default `createReadStream` options.",
+    "`processRequest` with a single file, default `createReadStream` options, file name chars `latin1`.",
     async () => {
       let serverError;
 
@@ -103,6 +103,67 @@ export default (tests) => {
         );
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
+
+        await fetch(`http://localhost:${port}`, { method: "POST", body });
+
+        if (serverError) throw serverError;
+      } finally {
+        close();
+      }
+    }
+  );
+
+  tests.add(
+    "`processRequest` with a single file, default `createReadStream` options, file name chars non `latin1`.",
+    async () => {
+      const fileName = "你好.txt";
+
+      let serverError;
+
+      const server = createServer(async (request, response) => {
+        try {
+          const operation =
+            /**
+             * @type {{
+             *   variables: {
+             *     file: Upload,
+             *   },
+             * }}
+             */
+            (await processRequest(request, response));
+
+          ok(operation.variables.file instanceof Upload);
+
+          const upload = await operation.variables.file.promise;
+
+          strictEqual(upload.filename, fileName);
+          strictEqual(upload.mimetype, "text/plain");
+          strictEqual(upload.encoding, "7bit");
+
+          const stream = upload.createReadStream();
+
+          ok(stream instanceof ReadStream);
+          strictEqual(stream.readableEncoding, null);
+          strictEqual(stream.readableHighWaterMark, 16384);
+          strictEqual(await streamToString(stream), "a");
+        } catch (error) {
+          serverError = error;
+        } finally {
+          response.end();
+        }
+      });
+
+      const { port, close } = await listen(server);
+
+      try {
+        const body = new FormData();
+
+        body.append(
+          "operations",
+          JSON.stringify({ variables: { file: null } })
+        );
+        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+        body.append("1", new File(["a"], fileName, { type: "text/plain" }));
 
         await fetch(`http://localhost:${port}`, { method: "POST", body });
 

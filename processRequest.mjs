@@ -57,6 +57,7 @@ export default function processRequest(
 
     const parser = busboy({
       headers: request.headers,
+      defParamCharset: "utf8",
       limits: {
         fieldSize: maxFieldSize,
         fields: 2, // Only operations and map.
