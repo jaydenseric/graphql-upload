@@ -72,18 +72,18 @@
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/koa": "^2.13.5",
-    "coverage-node": "^6.1.0",
-    "eslint": "^8.20.0",
+    "coverage-node": "^8.0.0",
+    "eslint": "^8.23.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "express": "^4.18.1",
-    "form-data-encoder": "^2.0.1",
-    "graphql": "^16.5.0",
+    "form-data-encoder": "^2.1.0",
+    "graphql": "^16.6.0",
     "koa": "^2.13.4",
     "node-abort-controller": "^3.0.1",
-    "node-fetch": "^3.2.9",
+    "node-fetch": "^3.2.10",
     "prettier": "^2.6.2",
-    "test-director": "^8.0.2",
-    "typescript": "^4.7.4"
+    "test-director": "^10.0.0",
+    "typescript": "^4.8.2"
   },
   "scripts": {
     "eslint": "eslint .",
