@@ -1,6 +1,6 @@
 # graphql-upload changelog
 
-## Next
+## 16.0.2
 
 ### Patch
 
