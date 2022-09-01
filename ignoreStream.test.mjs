@@ -1,6 +1,6 @@
 // @ts-check
 
-import { doesNotThrow, strictEqual } from "assert";
+import { doesNotThrow, strictEqual } from "node:assert";
 
 import ignoreStream from "./ignoreStream.mjs";
 import CountReadableStream from "./test/CountReadableStream.mjs";

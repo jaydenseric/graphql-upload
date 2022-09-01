@@ -1,5 +1,6 @@
 // @ts-check
 
+import { ReadStream } from "fs-capacitor";
 import {
   deepStrictEqual,
   notStrictEqual,
@@ -7,9 +8,8 @@ import {
   rejects,
   strictEqual,
   throws,
-} from "assert";
-import { ReadStream } from "fs-capacitor";
-import { createServer } from "http";
+} from "node:assert";
+import { createServer } from "node:http";
 import fetch, { File, FormData } from "node-fetch";
 
 import processRequest from "./processRequest.mjs";

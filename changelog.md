@@ -5,6 +5,7 @@
 ### Patch
 
 - Updated dev dependencies.
+- Use the `node:` URL scheme for Node.js builtin module imports.
 - Improved JSDoc in the module `GraphQLUpload.mjs`.
 - Revamped the readme:
   - Removed the badges.

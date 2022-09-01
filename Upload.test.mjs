@@ -1,6 +1,6 @@
 // @ts-check
 
-import { ok, rejects, strictEqual } from "assert";
+import { ok, rejects, strictEqual } from "node:assert";
 
 import Upload from "./Upload.mjs";
 

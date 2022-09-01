@@ -1,8 +1,8 @@
 // @ts-check
 
-import { deepStrictEqual, ok, strictEqual } from "assert";
-import { createServer } from "http";
 import Koa from "koa";
+import { deepStrictEqual, ok, strictEqual } from "node:assert";
+import { createServer } from "node:http";
 import fetch, { File, FormData } from "node-fetch";
 
 import graphqlUploadKoa from "./graphqlUploadKoa.mjs";

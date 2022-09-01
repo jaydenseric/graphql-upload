@@ -1,9 +1,9 @@
 // @ts-check
 
-import { deepStrictEqual, ok, strictEqual } from "assert";
 import express from "express";
-import { createServer } from "http";
 import createError from "http-errors";
+import { deepStrictEqual, ok, strictEqual } from "node:assert";
+import { createServer } from "node:http";
 import fetch, { File, FormData } from "node-fetch";
 
 import graphqlUploadExpress from "./graphqlUploadExpress.mjs";

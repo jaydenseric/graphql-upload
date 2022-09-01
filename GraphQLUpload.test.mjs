@@ -1,7 +1,7 @@
 // @ts-check
 
-import { doesNotThrow, throws } from "assert";
 import { parseValue } from "graphql";
+import { doesNotThrow, throws } from "node:assert";
 
 import GraphQLUpload from "./GraphQLUpload.mjs";
 import Upload from "./Upload.mjs";

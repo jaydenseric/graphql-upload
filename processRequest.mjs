@@ -370,7 +370,7 @@ export default function processRequest(
  * all resolvers have resolved, or after an error has interrupted the request.
  * @callback FileUploadCreateReadStream
  * @param {FileUploadCreateReadStreamOptions} [options] Options.
- * @returns {import("stream").Readable}
+ * @returns {import("node:stream").Readable}
  *   [Node.js readable stream](https://nodejs.org/api/stream.html#readable-streams)
  *   of the file’s contents.
  * @see [Node.js `Readable` stream constructor docs](https://nodejs.org/api/stream.html#new-streamreadableoptions).
@@ -399,9 +399,9 @@ export default function processRequest(
  * Processes an incoming
  * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
  * @callback ProcessRequestFunction
- * @param {import("http").IncomingMessage} request
+ * @param {import("node:http").IncomingMessage} request
  *   [Node.js HTTP server request instance](https://nodejs.org/api/http.html#http_class_http_incomingmessage).
- * @param {import("http").ServerResponse} response
+ * @param {import("node:http").ServerResponse} response
  *   [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse).
  * @param {ProcessRequestOptions} [options] Options.
  * @returns {Promise<

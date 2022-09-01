@@ -1,9 +1,9 @@
 // @ts-check
 
 import { FormDataEncoder } from "form-data-encoder";
+import { Readable } from "node:stream";
 import nodeAbortController from "node-abort-controller";
 import fetch, { AbortError } from "node-fetch";
-import { Readable } from "stream";
 
 const AbortController =
   globalThis.AbortController || nodeAbortController.AbortController;
