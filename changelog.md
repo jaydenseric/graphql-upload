@@ -5,6 +5,11 @@
 ### Patch
 
 - Updated dev dependencies.
+- Improved JSDoc in the module `GraphQLUpload.mjs`.
+- Revamped the readme:
+  - Removed the badges.
+  - More detailed installation instructions.
+  - Added information about TypeScript config and [optimal JavaScript module design](https://jaydenseric.com/blog/optimal-javascript-module-design).
 
 ## 16.0.1
 

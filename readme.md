@@ -2,31 +2,33 @@
 
 # graphql-upload
 
-[![npm version](https://badgen.net/npm/v/graphql-upload)](https://npm.im/graphql-upload) [![CI status](https://github.com/jaydenseric/graphql-upload/workflows/CI/badge.svg)](https://github.com/jaydenseric/graphql-upload/actions)
-
 Middleware and an [`Upload`](./GraphQLUpload.mjs) scalar to add support for [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec) (file uploads via queries and mutations) to various Node.js GraphQL servers.
+
+[Clients implementing the GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec#client) upload files as [`Upload`](./GraphQLUpload.mjs) scalar query or mutation variables. Their resolver values are promises that resolve file upload details for processing and storage. Files are typically streamed into cloud storage but may also be stored in the filesystem.
 
 ## Installation
 
-First, check if there are [GraphQL multipart request spec server implementations](https://github.com/jaydenseric/graphql-multipart-request-spec#server) (most for Node.js integrate [`graphql-upload`](https://npm.im/graphql-upload)) that are more suitable for your environment than a manual setup.
+> **Note**
+>
+> First, check if there are [GraphQL multipart request spec server implementations](https://github.com/jaydenseric/graphql-multipart-request-spec#server) (most for Node.js integrate [`graphql-upload`](https://npm.im/graphql-upload)) that are more suitable for your environment than a manual setup.
 
-To install [`graphql-upload`](https://npm.im/graphql-upload) and the [`graphql`](https://npm.im/graphql) peer dependency with [npm](https://npmjs.com/get-npm), run:
+To install [`graphql-upload`](https://npm.im/graphql-upload) and its [`graphql`](https://npm.im/graphql) peer dependency with [npm](https://npmjs.com/get-npm), run:
 
 ```sh
 npm install graphql-upload graphql
 ```
 
-Use the [`graphqlUploadKoa`](./graphqlUploadKoa.mjs) or [`graphqlUploadExpress`](./graphqlUploadExpress.mjs) middleware just before GraphQL middleware. Alternatively, use [`processRequest`](./processRequest.mjs) to create custom middleware.
+Use the middleware [`graphqlUploadKoa`](./graphqlUploadKoa.mjs) or [`graphqlUploadExpress`](./graphqlUploadExpress.mjs) just before GraphQL middleware. Alternatively, use the function [`processRequest`](./processRequest.mjs) to create custom middleware.
 
-A schema built with separate SDL and resolvers (e.g. using [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema_src#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)) requires the [`Upload`](./GraphQLUpload.mjs) scalar to be setup.
+A schema built with separate SDL and resolvers (e.g. using the function [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema_src#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)) requires the [`Upload`](./GraphQLUpload.mjs) scalar to be setup.
 
-## Usage
+Then, the [`Upload`](./GraphQLUpload.mjs) scalar can be used for query or mutation arguments. For how to use the scalar value in resolvers, see the documentation in the module [`GraphQLUpload.mjs`](./GraphQLUpload.mjs).
 
-[Clients implementing the GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec#client) upload files as [`Upload`](./GraphQLUpload.mjs) scalar query or mutation variables. Their resolver values are promises that resolve file upload details for processing and storage. Files are typically streamed into cloud storage but may also be stored in the filesystem.
+## Examples
 
-See the [example API and client](https://github.com/jaydenseric/apollo-upload-examples).
+- [Apollo upload examples repo](https://github.com/jaydenseric/apollo-upload-examples); a full stack demo of file uploads via GraphQL mutations using [`apollo-server-koa`](https://npm.im/apollo-server-koa) and [`@apollo/client`](https://npm.im/@apollo/client).
 
-### Tips
+## Tips
 
 - The process must have both read and write access to the directory identified by [`os.tmpdir()`](https://nodejs.org/api/os.html#ostmpdir).
 - The device requires sufficient disk space to buffer the expected number of concurrent upload requests.
@@ -46,11 +48,19 @@ The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-mult
 
 ## Requirements
 
-- [Node.js](https://nodejs.org): `^14.17.0 || ^16.0.0 || >= 18.0.0`
+Supported runtime environments:
+
+- [Node.js](https://nodejs.org) versions `^14.17.0 || ^16.0.0 || >= 18.0.0`.
+
+Projects must configure [TypeScript](https://typescriptlang.org) to use types from the ECMAScript modules that have a `// @ts-check` comment:
+
+- [`compilerOptions.allowJs`](https://typescriptlang.org/tsconfig#allowJs) should be `true`.
+- [`compilerOptions.maxNodeModuleJsDepth`](https://typescriptlang.org/tsconfig#maxNodeModuleJsDepth) should be reasonably large, e.g. `10`.
+- [`compilerOptions.module`](https://typescriptlang.org/tsconfig#module) should be `"node16"` or `"nodenext"`.
 
 ## Exports
 
-These ECMAScript modules are published to [npm](https://npmjs.com) and exported via the [`package.json`](./package.json) `exports` field:
+The [npm](https://npmjs.com) package [`graphql-upload`](https://npm.im/graphql-upload) features [optimal JavaScript module design](https://jaydenseric.com/blog/optimal-javascript-module-design). It doesn’t have a main index module, so use deep imports from the ECMAScript modules that are exported via the [`package.json`](./package.json) field [`exports`](https://nodejs.org/api/packages.html#exports):
 
 - [`GraphQLUpload.mjs`](./GraphQLUpload.mjs)
 - [`graphqlUploadExpress.mjs`](./graphqlUploadExpress.mjs)

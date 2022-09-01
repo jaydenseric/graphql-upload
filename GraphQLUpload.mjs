@@ -12,7 +12,7 @@ import Upload from "./Upload.mjs";
  * value in resolvers is a promise that resolves
  * {@link FileUpload file upload details} for processing and storage.
  * @example
- * A schema built using
+ * A schema built using the function
  * [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema_src#makeexecutableschema)
  * from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema):
  *
@@ -59,6 +59,14 @@ import Upload from "./Upload.mjs";
  *     },
  *   }),
  * });
+ * ```
+ * @example
+ * In a [TypeScript](https://typescriptlang.org) module, how to import the type
+ * for the {@link FileUpload file upload details} that the
+ * {@linkcode GraphQLUpload} scalar resolver value promise resolves:
+ *
+ * ```ts
+ * import type { FileUpload } from "graphql-upload/processRequest.mjs";
  * ```
  */
 const GraphQLUpload = new GraphQLScalarType({
