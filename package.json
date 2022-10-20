@@ -35,10 +35,9 @@
   },
   "dependencies": {
     "@types/express": "*",
-    "@types/fs-capacitor": "*",
     "@types/koa": "*",
     "busboy": "^0.3.1",
-    "fs-capacitor": "^2.0.4",
+    "fs-capacitor": "^8.0.0",
     "http-errors": "^1.7.3",
     "object-path": "^0.11.4"
   },
