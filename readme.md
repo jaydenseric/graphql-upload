@@ -24,6 +24,10 @@ A schema built with separate SDL and resolvers (e.g. using the function [`makeEx
 
 Then, the [`Upload`](./GraphQLUpload.mjs) scalar can be used for query or mutation arguments. For how to use the scalar value in resolvers, see the documentation in the module [`GraphQLUpload.mjs`](./GraphQLUpload.mjs).
 
+Note: If you're using TypeScript, you'll need to import the `FileUpload` interface from `'graphql-upload/Upload.mjs'` in order to use it in your code. You can do this with the following import statement:
+
+`import { FileUpload } from 'graphql-upload/Upload.mjs';`
+
 ## Examples
 
 - [Apollo upload examples repo](https://github.com/jaydenseric/apollo-upload-examples); a full stack demo of file uploads via GraphQL mutations using [`apollo-server-koa`](https://npm.im/apollo-server-koa) and [`@apollo/client`](https://npm.im/@apollo/client).

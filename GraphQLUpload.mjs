@@ -66,7 +66,7 @@ import Upload from "./Upload.mjs";
  * {@linkcode GraphQLUpload} scalar resolver value promise resolves:
  *
  * ```ts
- * import type { FileUpload } from "graphql-upload/processRequest.mjs";
+ * import { FileUpload } from 'graphql-upload/Upload.mjs';
  * ```
  */
 const GraphQLUpload = new GraphQLScalarType({
