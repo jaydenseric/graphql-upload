@@ -29,6 +29,7 @@ export default function processRequest(
     maxFieldSize = 1000000, // 1 MB
     maxFileSize = Infinity,
     maxFiles = Infinity,
+    disabledFileMimeTypes =  /** @type {string[]} */[],
   } = {}
 ) {
   return new Promise((resolve, reject) => {
@@ -96,7 +97,7 @@ export default function processRequest(
       reject(exitError);
     }
 
-    parser.on("field", (fieldName, value, { valueTruncated }) => {
+    parser.on("field", (fieldName, value, { valueTruncated, mimeType }) => {
       if (valueTruncated)
         return exit(
           createError(
@@ -208,7 +209,9 @@ export default function processRequest(
             }
           }
 
-          resolve(operations);
+          if (disabledFileMimeTypes.length === 0) {
+            resolve(operations);
+          }
         }
       }
     });
@@ -216,6 +219,12 @@ export default function processRequest(
     parser.on(
       "file",
       (fieldName, stream, { filename, encoding, mimeType: mimetype }) => {
+        if (disabledFileMimeTypes.includes(mimetype) === true) {
+          ignoreStream(stream);
+
+          return exit(createError(400, `mimetype ${mimetype} is not allowed.`));
+        }
+
         if (!map) {
           ignoreStream(stream);
           return exit(
@@ -308,9 +317,15 @@ export default function processRequest(
           )
         );
 
-      for (const upload of map.values())
-        if (!upload.file)
+      for (const upload of map.values()) {
+        if (!upload.file) {
           upload.reject(createError(400, "File missing in the request."));
+        }
+      }
+
+      if (disabledFileMimeTypes.length !== 0) {
+        resolve(operations);
+      }
     });
 
     // Use the `on` method instead of `once` as in edge cases the same parser
@@ -420,4 +435,6 @@ export default function processRequest(
  *   `Infinity`.
  * @prop {number} [maxFiles] Maximum allowed number of files. Defaults to
  *   `Infinity`.
+ * @prop {string[]} [disabledFileMimeTypes] Disabled mime file types. Defaults to
+ *  `[]`.
  */
