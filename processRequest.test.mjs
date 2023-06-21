@@ -439,6 +439,45 @@ export default (tests) => {
   });
 
   tests.add(
+    "`processRequest` with option `disabledFileMimeTypes`.",
+    async () => {
+      let serverError;
+      const disabledMimeType = "text/plain";
+
+      const server = createServer(async (request, response) => {
+        try {
+          await rejects(processRequest(request, response, { disabledFileMimeTypes: [disabledMimeType] }), {
+            name: "BadRequestError",
+            message: `mimetype ${disabledMimeType} is not allowed.`,
+            status: 400,
+            expose: true,
+          });
+        } catch (error) {
+          serverError = error;
+        } finally {
+          response.end();
+        }
+      });
+
+      const { port, close } = await listen(server);
+
+      try {
+        const body = new FormData();
+
+        body.append("operations", JSON.stringify({ variables: { file: null } }));
+        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+        body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
+
+        await fetch(`http://localhost:${port}`, { method: "POST", body });
+
+        if (serverError) throw serverError;
+      } finally {
+        close();
+      }
+    }
+  );
+
+  tests.add(
     "`processRequest` with an extraneous multipart form field file.",
     async () => {
       let serverError;
