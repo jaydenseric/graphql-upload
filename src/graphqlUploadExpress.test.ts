@@ -17,6 +17,7 @@ describe("graphqlUploadExpress", () => {
 
       const app = express().use(
         graphqlUploadExpress({
+          // @ts-expect-error origonal author is this package is wild
           async processRequest() {
             processRequestRan = true;
           },

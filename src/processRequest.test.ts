@@ -56,14 +56,11 @@ describe("processRequest", () => {
       const server = createServer(async (request, response) => {
         try {
           const operation =
-            /**
-             * @type {{
-             *   variables: {
-             *     file: Upload,
-             *   },
-             * }}
-             */
-            (await processRequest(request, response));
+            (await processRequest(request, response)) as {
+              variables: {
+                file: Upload,
+              },
+            };
 
           ok(operation.variables.file instanceof Upload);
 
@@ -117,14 +114,11 @@ describe("processRequest", () => {
       const server = createServer(async (request, response) => {
         try {
           const operation =
-            /**
-             * @type {{
-             *   variables: {
-             *     file: Upload,
-             *   },
-             * }}
-             */
-            (await processRequest(request, response));
+            (await processRequest(request, response)) as {
+                variables: {
+                  file: Upload,
+                },
+              };
 
           ok(operation.variables.file instanceof Upload);
 
@@ -176,14 +170,11 @@ describe("processRequest", () => {
       const server = createServer(async (request, response) => {
         try {
           const operation =
-            /**
-             * @type {{
-             *   variables: {
-             *     file: Upload,
-             *   },
-             * }}
-             */
-            (await processRequest(request, response));
+            (await processRequest(request, response)) as {
+              variables: {
+                file: Upload,
+              },
+            };
 
           ok(operation.variables.file instanceof Upload);
 
@@ -195,6 +186,7 @@ describe("processRequest", () => {
 
           const encoding = "base64";
           const highWaterMark = 100;
+          // @ts-expect-error asshole
           const stream = upload.createReadStream({ encoding, highWaterMark });
 
           ok(stream instanceof ReadStream);
@@ -238,14 +230,11 @@ describe("processRequest", () => {
     const server = createServer(async (request, response) => {
       try {
         const operations =
-          /**
-           * @type {Array<{
-           *   variables: {
-           *     file: Upload,
-           *   },
-           * }>}
-           */
-          (await processRequest(request, response));
+          (await processRequest(request, response)) as Array<{
+              variables: {
+                file: Upload,
+              },
+            }>;
 
         ok(operations[0].variables.file instanceof Upload);
 
@@ -311,15 +300,7 @@ describe("processRequest", () => {
 
     const server = createServer(async (request, response) => {
       try {
-        const operation =
-          /**
-           * @type {{
-           *   variables: {
-           *     files: Array<Upload>,
-           *   },
-           * }}
-           */
-          (await processRequest(request, response));
+        const operation = (await processRequest(request, response)) as { variables: { files: Array<Upload>} };
 
         ok(operation.variables.files[0] instanceof Upload);
         ok(operation.variables.files[1] instanceof Upload);
@@ -385,15 +366,12 @@ describe("processRequest", () => {
     const server = createServer(async (request, response) => {
       try {
         const operation =
-          /**
-           * @type {{
-           *   variables: {
-           *     fileA: Upload,
-           *     fileB: Upload,
-           *   },
-           * }}
-           */
-          (await processRequest(request, response));
+          (await processRequest(request, response)) as {
+            variables: {
+              fileA: Upload,
+              fileB: Upload,
+            },
+          };
 
         ok(operation.variables.fileB instanceof Upload);
 
@@ -440,14 +418,11 @@ describe("processRequest", () => {
       const server = createServer(async (request, response) => {
         try {
           const operation =
-            /**
-             * @type {{
-             *   variables: {
-             *     file: Upload,
-             *   },
-             * }}
-             */
-            (await processRequest(request, response));
+            (await processRequest(request, response)) as {
+              variables: {
+                file: Upload,
+              },
+            };
 
           ok(operation.variables.file instanceof Upload);
 
@@ -498,14 +473,11 @@ describe("processRequest", () => {
       const server = createServer(async (request, response) => {
         try {
           const operation =
-            /**
-             * @type {{
-             *   variables: {
-             *     file: Upload,
-             *   },
-             * }}
-             */
-            (await processRequest(request, response));
+            (await processRequest(request, response)) as {
+              variables: {
+                file: Upload,
+              },
+            };
 
           ok(operation.variables.file instanceof Upload);
           await rejects(operation.variables.file.promise, {
@@ -594,14 +566,11 @@ describe("processRequest", () => {
       const server = createServer(async (request, response) => {
         try {
           const operation =
-            /**
-             * @type {{
-             *   variables: {
-             *     files: Array<Upload>,
-             *   },
-             * }}
-             */
-            (await processRequest(request, response, { maxFiles: 2 }));
+            (await processRequest(request, response, { maxFiles: 2 })) as {
+              variables: {
+                files: Array<Upload>,
+              },
+            };
 
           ok(operation.variables.files[0] instanceof Upload);
 
@@ -667,20 +636,17 @@ describe("processRequest", () => {
     const server = createServer(async (request, response) => {
       try {
         const operation =
-          /**
-           * @type {{
-           *   variables: {
-           *     files: Array<Upload>,
-           *   },
-           * }}
-           */
           (
             await processRequest(request, response, {
               // Todo: Change this back to 1 once this `busboy` bug is fixed:
               // https://github.com/mscdex/busboy/issues/297
               maxFileSize: 2,
             })
-          );
+          ) as {
+              variables: {
+                files: Array<Upload>,
+              },
+            };
 
         ok(operation.variables.files[0] instanceof Upload);
 
@@ -798,19 +764,16 @@ describe("processRequest", () => {
 
       const server = createServer(async (request, response) => {
         try {
-          requestReceived.resolve();
+          requestReceived.resolve?.("idk");
 
           const operation =
-            /**
-             * @type {{
-             *   variables: {
-             *     fileA: Upload,
-             *     fileB: Upload,
-             *     fileC: Upload,
-             *   },
-             * }}
-             */
-            (await processRequest(request, response));
+            (await processRequest(request, response)) as {
+              variables: {
+                fileA: Upload,
+                fileB: Upload,
+                fileC: Upload,
+              },
+            };
 
           const testUploadA = async () => {
             ok(operation.variables.fileA instanceof Upload);
@@ -869,7 +832,7 @@ describe("processRequest", () => {
           serverError = error;
         } finally {
           response.end();
-          done.resolve();
+          done.resolve?.("idk");
         }
       });
 
@@ -943,16 +906,16 @@ describe("processRequest", () => {
 
       const server = createServer(async (request, response) => {
         try {
-          requestReceived.resolve();
+          requestReceived.resolve?.("idk");
 
-          const operation: {
+          const operation =
+            (await processRequest(request, response)) as {
             variables: {
               fileA: Upload,
               fileB: Upload,
               fileC: Upload,
             },
-          } =
-            (await processRequest(request, response));
+          };
 
           // Wait for the request parsing to finish.
           await new Promise((resolve) => {
@@ -1010,7 +973,7 @@ describe("processRequest", () => {
           serverError = error;
         } finally {
           response.end();
-          done.resolve();
+          done.resolve?.("test");
         }
       });
 
