@@ -1,12 +1,11 @@
 import express, { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
-import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
 import fetch, { File, FormData } from "node-fetch";
 import { graphqlUploadExpress } from "./graphqlUploadExpress";
 import { processRequest } from "./processRequest";
 import { listen } from "./test/listen";
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { Upload } from "./Upload";
 
 describe("graphqlUploadExpress", () => {
@@ -28,7 +27,7 @@ describe("graphqlUploadExpress", () => {
 
       try {
         await fetch(`http://localhost:${port}`, { method: "POST" });
-        strictEqual(processRequestRan, false);
+        expect(processRequestRan).toBe(false);
       } finally {
         close();
       }
@@ -60,9 +59,9 @@ describe("graphqlUploadExpress", () => {
 
       await fetch(`http://localhost:${port}`, { method: "POST", body });
 
-      ok(requestBody);
-      ok(requestBody.variables);
-      ok(requestBody.variables.file);
+      expect(requestBody).toBeTruthy();
+      expect(requestBody?.variables).toBeTruthy();
+      expect(requestBody?.variables.file).toBeTruthy();
     } finally {
       close();
     }
@@ -107,10 +106,10 @@ describe("graphqlUploadExpress", () => {
 
         await fetch(`http://localhost:${port}`, { method: "POST", body });
 
-        strictEqual(processRequestRan, true);
-        ok(requestBody);
-        ok(requestBody.variables);
-        ok(requestBody.variables.file);
+        expect(processRequestRan).toBe(true);
+        expect(requestBody).toBeTruthy();
+        expect(requestBody?.variables).toBeTruthy();
+        expect(requestBody?.variables.file).toBeTruthy();
       } finally {
         close();
       }
@@ -147,12 +146,6 @@ describe("graphqlUploadExpress", () => {
           })
         )
         .use(
-          /**
-           * @param {Error} error
-           * @param {import("express").Request} request
-           * @param {import("express").Response} response
-           * @param {import("express").NextFunction} next
-           */
           (error: Error, request: Request, response: Response, next: NextFunction) => {
             expressError = error;
             responseStatusCode = response.statusCode;
@@ -179,12 +172,9 @@ describe("graphqlUploadExpress", () => {
 
         await fetch(`http://localhost:${port}`, { method: "POST", body });
 
-        deepStrictEqual(expressError, error);
-        ok(
-          requestCompleted,
-          "Response wasn’t delayed until the request completed."
-        );
-        strictEqual(responseStatusCode, error.status);
+        expect(expressError).toStrictEqual(error);
+        expect(requestCompleted).toBeTruthy();
+        expect(responseStatusCode).toStrictEqual(error.status);
       } finally {
         close();
       }
@@ -247,11 +237,8 @@ describe("graphqlUploadExpress", () => {
 
         await fetch(`http://localhost:${port}`, { method: "POST", body });
 
-        deepStrictEqual(expressError, error);
-        ok(
-          requestCompleted,
-          "Response wasn’t delayed until the request completed."
-        );
+        expect(expressError).toStrictEqual(error);
+        expect(requestCompleted).toBeTruthy();
       } finally {
         close();
       }
