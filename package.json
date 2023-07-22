@@ -1,6 +1,6 @@
 {
   "name": "graphql-upload",
-  "version": "16.0.2",
+  "version": "17.0.0",
   "description": "Middleware and an Upload scalar to add support for GraphQL multipart requests (file uploads via queries and mutations) to various Node.js GraphQL servers.",
   "license": "MIT",
   "author": {
@@ -48,29 +48,24 @@
     }
   },
   "dependencies": {
-    "@types/busboy": "^1.5.0",
-    "@types/object-path": "^0.11.1",
     "busboy": "^1.6.0",
     "fs-capacitor": "^8.0.0",
     "http-errors": "^2.0.0",
     "object-path": "^0.11.8"
   },
   "devDependencies": {
+    "@types/busboy": "^1.5.0",
+    "@types/object-path": "^0.11.1",
     "@types/express": "^4.17.13",
     "@types/http-errors": "^2.0.1",
     "@types/koa": "^2.13.5",
     "@types/node": "^20.4.4",
-    "coverage-node": "^8.0.0",
-    "eslint": "^8.23.0",
-    "eslint-plugin-simple-import-sort": "^7.0.0",
     "express": "^4.18.1",
     "form-data-encoder": "^2.1.0",
     "graphql": "^16.6.0",
     "koa": "^2.13.4",
     "node-abort-controller": "^3.0.1",
     "node-fetch": "^3.2.10",
-    "prettier": "^2.6.2",
-    "test-director": "^10.0.0",
     "tsup": "^7.1.0",
     "typescript": "^4.8.2",
     "vitest": "^0.33.0",
