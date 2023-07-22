@@ -5,25 +5,16 @@ import { describe, expect, it } from 'vitest'
 
 
 describe("GraphQLUpload", () => {
-  it.only("`GraphQLUpload` scalar `parseValue` with a valid value.", () => {
-    expect(GraphQLUpload.parseValue(new Upload())).not.toThrowError();
+  it("`GraphQLUpload` scalar `parseValue` with a valid value.", () => {
+    expect(() => GraphQLUpload.parseValue(new Upload())).not.toThrowError();
   });
   it("`GraphQLUpload` scalar `parseValue` with an invalid value.", () => {
-    expect(GraphQLUpload.parseValue(true)).toThrow({
-      name: "GraphQLError",
-      message: "Upload value invalid.",
-    });
+    expect(() => GraphQLUpload.parseValue(true)).toThrow("Upload value invalid.");
   });
   it("`GraphQLUpload` scalar `parseLiteral`.", () => {
-    expect(GraphQLUpload.parseLiteral(parseValue('""'))).toThrow({
-      name: "GraphQLError",
-      message: "Upload literal unsupported.",
-    });
+    expect(() => GraphQLUpload.parseLiteral(parseValue('""'))).toThrowError("Upload literal unsupported.");
   });
   it("`GraphQLUpload` scalar `serialize`.", () => {
-    expect(GraphQLUpload.serialize("")).toThrow({
-      name: "GraphQLError",
-      message: "Upload serialization unsupported.",
-    });
+    expect(() => GraphQLUpload.serialize("")).toThrowError("Upload serialization unsupported.");
   });
 });

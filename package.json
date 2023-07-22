@@ -77,7 +77,7 @@
   },
   "scripts": {
     "typecheck": "tsc",
-    "test": "vitest",
+    "test": "vitest run",
     "build": "tsup",
     "dev": "tsup --watch"
   }

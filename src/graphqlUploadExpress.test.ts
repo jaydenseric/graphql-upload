@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
 import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
@@ -6,13 +6,11 @@ import fetch, { File, FormData } from "node-fetch";
 import { graphqlUploadExpress } from "./graphqlUploadExpress";
 import { processRequest } from "./processRequest";
 import { listen } from "./test/listen";
+import { describe, it } from "vitest";
+import { Upload } from "./Upload";
 
-/**
- * Adds `graphqlUploadExpress` tests.
- * @param {import("test-director").default} tests Test director.
- */
-export default (tests) => {
-  tests.add(
+describe("graphqlUploadExpress", () => {
+  it(
     "`graphqlUploadExpress` with a non multipart request.",
     async () => {
       let processRequestRan = false;
@@ -36,15 +34,12 @@ export default (tests) => {
     }
   );
 
-  tests.add("`graphqlUploadExpress` with a multipart request.", async () => {
-    /**
-     * @type {{
-     *   variables: {
-     *     file: import("./Upload.js").default,
-     *   },
-     * } | undefined}
-     */
-    let requestBody;
+  it("`graphqlUploadExpress` with a multipart request.", async () => {
+    let requestBody: {
+      variables: {
+        file: Upload,
+      },
+    } | undefined;
 
     const app = express()
       .use(graphqlUploadExpress())
@@ -72,19 +67,16 @@ export default (tests) => {
     }
   });
 
-  tests.add(
+  it(
     "`graphqlUploadExpress` with a multipart request and option `processRequest`.",
     async () => {
       let processRequestRan = false;
 
-      /**
-       * @type {{
-       *   variables: {
-       *     file: import("./Upload.js").default,
-       *   },
-       * } | undefined}
-       */
-      let requestBody;
+      let requestBody: {
+        variables: {
+          file: Upload,
+        },
+      } | undefined;
 
       const app = express()
         .use(
@@ -124,7 +116,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`graphqlUploadExpress` with a multipart request and option `processRequest` throwing an exposed HTTP error.",
     async () => {
       let expressError;
@@ -160,7 +152,7 @@ export default (tests) => {
            * @param {import("express").Response} response
            * @param {import("express").NextFunction} next
            */
-          (error, request, response, next) => {
+          (error: Error, request: Request, response: Response, next: NextFunction) => {
             expressError = error;
             responseStatusCode = response.statusCode;
 
@@ -198,7 +190,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`graphqlUploadExpress` with a multipart request following middleware throwing an error.",
     async () => {
       let expressError;
@@ -229,7 +221,7 @@ export default (tests) => {
            * @param {import("express").Response} response
            * @param {import("express").NextFunction} next
            */
-          (error, request, response, next) => {
+          (error: Error, request: Request, response: Response, next: NextFunction) => {
             expressError = error;
 
             // Sending a response here prevents the default Express error handler
@@ -264,4 +256,4 @@ export default (tests) => {
       }
     }
   );
-};
+});

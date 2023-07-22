@@ -1,5 +1,15 @@
 # graphql-upload changelog
 
+## 17.0.0
+
+### Major
+
+- Fix Node.JS Support
+- Convert Repo to Typescript
+- Use Vitest for testing
+- Use pnpm for package management
+- Publish both esm and cjs
+
 ## 16.0.2
 
 ### Patch

@@ -1,55 +1,51 @@
-import { ok, rejects, strictEqual } from "assert";
 import { Upload } from "./Upload";
+import { describe, expect, it } from 'vitest';
 
-/**
- * Adds `Upload` tests.
- * @param {import("test-director").default} tests Test director.
- */
-export default (tests) => {
-  tests.add("`Upload` class resolving a file.", async () => {
+describe("Upload", () => {
+  it("`Upload` class resolving a file.", async () => {
     const upload = new Upload();
 
-    ok(upload.promise instanceof Promise);
-    strictEqual(typeof upload.resolve, "function");
+    expect(upload.promise).toBeInstanceOf(Promise);
+
+    expect(upload.resolve).toBeTypeOf('function');
 
     const file: any = {};
 
-    upload.resolve(file);
+    upload.resolve?.(file);
 
     const resolved = await upload.promise;
 
-    strictEqual(resolved, file);
-    strictEqual(upload.file, file);
+    expect(resolved).toStrictEqual(file);
+    expect(upload.file).toStrictEqual(file);
   });
-
-  tests.add("`Upload` class with a handled rejection.", async () => {
+  it("`Upload` class with a handled rejection.", () => {
     const upload = new Upload();
 
-    ok(upload.promise instanceof Promise);
-    strictEqual(typeof upload.reject, "function");
+    expect(upload.promise).toBeInstanceOf(Promise);
+    expect(upload.reject).toBeTypeOf('function');
 
     const error = new Error("Message.");
 
-    upload.reject(error);
+    upload.reject?.(error);
 
     // This is the safe way to check the promise status, see:
     // https://github.com/nodejs/node/issues/31392#issuecomment-575451230
-    await rejects(Promise.race([upload.promise, Promise.resolve()]), error);
+    // await rejects(Promise.race([upload.promise, Promise.resolve()]), error);
+    expect(upload.promise).rejects.toBe(error);
   });
+  it("`Upload` class with an unhandled rejection.", () => {
+     const upload = new Upload();
 
-  tests.add("`Upload` class with an unhandled rejection.", async () => {
-    const upload = new Upload();
-
-    ok(upload.promise instanceof Promise);
-    strictEqual(typeof upload.reject, "function");
+    expect(upload.promise).toBeInstanceOf(Promise);
+    expect(upload.reject).toBeTypeOf("function");
 
     const error = new Error("Message.");
 
-    upload.reject(error);
+    upload.reject?.(error);
 
     // Node.js CLI flag `--unhandled-rejections=throw` must be used when these
     // tests are run with Node.js v14 (it’s unnecessary for Node.js v15+) or the
     // process won’t exit with an error if the unhandled rejection is’t silenced
     // as intended.
   });
-};
+});

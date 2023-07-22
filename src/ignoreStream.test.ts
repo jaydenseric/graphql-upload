@@ -1,24 +1,19 @@
-import { doesNotThrow, strictEqual } from "assert";
 import { ignoreStream } from "./ignoreStream";
 import { CountReadableStream } from "./test/CountReadableStream";
+import { describe, expect, it } from 'vitest';
 
-/**
- * Adds `ignoreStream` tests.
- * @param {import("test-director").default} tests Test director.
- */
-export default (tests) => {
-  tests.add("`ignoreStream` ignores errors.", () => {
-    doesNotThrow(() => {
+describe("GraphQLUpload", () => {
+  it("`ignoreStream` ignores errors.", () => {
+    expect(() => {
       const stream = new CountReadableStream({});
       ignoreStream(stream);
       stream.emit("error", new Error("Message."));
-    });
+    }).not.toThrow();
   });
-
-  tests.add("`ignoreStream` resumes a paused stream.", () => {
-    const stream = new CountReadableStream({});
-    stream.pause();
-    ignoreStream(stream);
-    strictEqual(stream.isPaused(), false);
-  });
-};
+ it("`ignoreStream` resumes a paused stream.", () => {
+   const stream = new CountReadableStream({});
+   stream.pause();
+   ignoreStream(stream);
+   expect(stream.isPaused()).toBe(false);
+ });
+});

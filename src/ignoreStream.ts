@@ -6,4 +6,7 @@ import { Stream } from "stream";
 export function ignoreStream(stream: Stream) {
   // Prevent an unhandled error from crashing the process.
   stream.on("error", () => {});
+
+  // @ts-expect-error WRONG!
+  stream.resume();
 }

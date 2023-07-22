@@ -15,13 +15,10 @@ import { Deferred } from "./test/Deferred";
 import { listen } from "./test/listen";
 import { streamToString } from "./test/streamToString";
 import { Upload } from "./Upload";
+import { describe, it } from "vitest";
 
-/**
- * Adds `processRequest` tests.
- * @param {import("test-director").default} tests Test director.
- */
-export default (tests) => {
-  tests.add("`processRequest` with no files.", async () => {
+describe("processRequest", () => {
+  it("`processRequest` with no files.", async () => {
     let serverError;
 
     const operation = { variables: { a: true } };
@@ -51,7 +48,7 @@ export default (tests) => {
     }
   });
 
-  tests.add(
+  it(
     "`processRequest` with a single file, default `createReadStream` options, file name chars `latin1`.",
     async () => {
       let serverError;
@@ -110,7 +107,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with a single file, default `createReadStream` options, file name chars non `latin1`.",
     async () => {
       const fileName = "你好.txt";
@@ -171,7 +168,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with a single file and custom `createReadStream` options.",
     async () => {
       let serverError;
@@ -235,7 +232,7 @@ export default (tests) => {
     }
   );
 
-  tests.add("`processRequest` with a single file, batched.", async () => {
+  it("`processRequest` with a single file, batched.", async () => {
     let serverError;
 
     const server = createServer(async (request, response) => {
@@ -309,7 +306,7 @@ export default (tests) => {
     }
   });
 
-  tests.add("`processRequest` with deduped files.", async () => {
+  it("`processRequest` with deduped files.", async () => {
     let serverError;
 
     const server = createServer(async (request, response) => {
@@ -382,7 +379,7 @@ export default (tests) => {
     }
   });
 
-  tests.add("`processRequest` with unconsumed uploads.", async () => {
+  it("`processRequest` with unconsumed uploads.", async () => {
     let serverError;
 
     const server = createServer(async (request, response) => {
@@ -435,7 +432,7 @@ export default (tests) => {
     }
   });
 
-  tests.add(
+  it(
     "`processRequest` with an extraneous multipart form field file.",
     async () => {
       let serverError;
@@ -493,7 +490,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with a missing multipart form field file.",
     async () => {
       let serverError;
@@ -544,7 +541,7 @@ export default (tests) => {
     }
   );
 
-  tests.add("`processRequest` with option `maxFiles`.", async () => {
+  it("`processRequest` with option `maxFiles`.", async () => {
     let serverError;
 
     const server = createServer(async (request, response) => {
@@ -589,7 +586,7 @@ export default (tests) => {
     }
   });
 
-  tests.add(
+  it(
     "`processRequest` with option `maxFiles` and an interspersed extraneous file.",
     async () => {
       let serverError;
@@ -664,7 +661,7 @@ export default (tests) => {
     }
   );
 
-  tests.add("`processRequest` with option `maxFileSize`.", async () => {
+  it("`processRequest` with option `maxFileSize`.", async () => {
     let serverError;
 
     const server = createServer(async (request, response) => {
@@ -747,7 +744,7 @@ export default (tests) => {
     }
   });
 
-  tests.add("`processRequest` with option `maxFieldSize`.", async () => {
+  it("`processRequest` with option `maxFieldSize`.", async () => {
     let serverError;
 
     const server = createServer(async (request, response) => {
@@ -783,7 +780,7 @@ export default (tests) => {
     }
   });
 
-  tests.add(
+  it(
     "`processRequest` with an aborted request and immediate stream creation.",
     async () => {
       let serverError;
@@ -928,7 +925,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with an aborted request and delayed stream creation.",
     async () => {
       let serverError;
@@ -1069,7 +1066,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with multipart form field `map` misordered before `operations`.",
     async () => {
       let serverError;
@@ -1111,7 +1108,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with multipart form field file misordered before `map`.",
     async () => {
       let serverError;
@@ -1153,7 +1150,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with multipart form fields `map` and file missing.",
     async () => {
       let serverError;
@@ -1193,7 +1190,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with multipart form fields `operations`, `map` and file missing.",
     async () => {
       let serverError;
@@ -1229,7 +1226,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with invalid multipart form field `operations` JSON and a small file.",
     async () => {
       let serverError;
@@ -1268,7 +1265,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with invalid multipart form field `operations` JSON and a large file.",
     async () => {
       let serverError;
@@ -1324,7 +1321,7 @@ export default (tests) => {
     ["boolean", true],
     ["string", ""],
   ])
-    tests.add(
+    it(
       `\`processRequest\` with invalid multipart form field \`operations\` type, ${type}.`,
       async () => {
         let serverError;
@@ -1363,7 +1360,7 @@ export default (tests) => {
       }
     );
 
-  tests.add(
+  it(
     "`processRequest` with invalid multipart form field `map` JSON.",
     async () => {
       let serverError;
@@ -1411,7 +1408,7 @@ export default (tests) => {
     ["boolean", true],
     ["string", ""],
   ])
-    tests.add(
+    it(
       `\`processRequest\` with invalid multipart form field \`map\` type, ${type}.`,
       async () => {
         let serverError;
@@ -1453,7 +1450,7 @@ export default (tests) => {
       }
     );
 
-  tests.add(
+  it(
     "`processRequest` with invalid multipart form field `map` entry type.",
     async () => {
       let serverError;
@@ -1495,7 +1492,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with invalid multipart form field `map` entry array item type.",
     async () => {
       let serverError;
@@ -1537,7 +1534,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with invalid multipart form field `map` entry array item object path.",
     async () => {
       let serverError;
@@ -1576,7 +1573,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with an unparsable multipart request.",
     async () => {
       let serverError;
@@ -1614,7 +1611,7 @@ export default (tests) => {
     }
   );
 
-  tests.add(
+  it(
     "`processRequest` with a maliciously malformed multipart request.",
     async () => {
       let serverError;
@@ -1654,4 +1651,4 @@ export default (tests) => {
       }
     }
   );
-};
+});
