@@ -1,14 +1,11 @@
-// @ts-check
-
 import express from "express";
 import createError from "http-errors";
 import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
 import fetch, { File, FormData } from "node-fetch";
-
-import graphqlUploadExpress from "./graphqlUploadExpress.mjs";
-import processRequest from "./processRequest.mjs";
-import listen from "./test/listen.mjs";
+import { graphqlUploadExpress } from "./graphqlUploadExpress";
+import { processRequest } from "./processRequest";
+import { listen } from "./test/listen";
 
 /**
  * Adds `graphqlUploadExpress` tests.
@@ -22,7 +19,6 @@ export default (tests) => {
 
       const app = express().use(
         graphqlUploadExpress({
-          /** @type {any} */
           async processRequest() {
             processRequestRan = true;
           },
@@ -44,7 +40,7 @@ export default (tests) => {
     /**
      * @type {{
      *   variables: {
-     *     file: import("./Upload.mjs").default,
+     *     file: import("./Upload.js").default,
      *   },
      * } | undefined}
      */
@@ -84,7 +80,7 @@ export default (tests) => {
       /**
        * @type {{
        *   variables: {
-       *     file: import("./Upload.mjs").default,
+       *     file: import("./Upload.js").default,
        *   },
        * } | undefined}
        */

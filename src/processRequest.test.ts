@@ -1,5 +1,3 @@
-// @ts-check
-
 import { ReadStream } from "fs-capacitor";
 import {
   deepStrictEqual,
@@ -11,13 +9,12 @@ import {
 } from "node:assert";
 import { createServer } from "node:http";
 import fetch, { File, FormData } from "node-fetch";
-
-import processRequest from "./processRequest.mjs";
-import abortingMultipartRequest from "./test/abortingMultipartRequest.mjs";
-import Deferred from "./test/Deferred.mjs";
-import listen from "./test/listen.mjs";
-import streamToString from "./test/streamToString.mjs";
-import Upload from "./Upload.mjs";
+import { processRequest } from "./processRequest";
+import { abortingMultipartRequest } from "./test/abortingMultipartRequest";
+import { Deferred } from "./test/Deferred";
+import { listen } from "./test/listen";
+import { streamToString } from "./test/streamToString";
+import { Upload } from "./Upload";
 
 /**
  * Adds `processRequest` tests.
@@ -951,16 +948,13 @@ export default (tests) => {
         try {
           requestReceived.resolve();
 
-          const operation =
-            /**
-             * @type {{
-             *   variables: {
-             *     fileA: Upload,
-             *     fileB: Upload,
-             *     fileC: Upload,
-             *   },
-             * }}
-             */
+          const operation: {
+            variables: {
+              fileA: Upload,
+              fileB: Upload,
+              fileC: Upload,
+            },
+          } =
             (await processRequest(request, response));
 
           // Wait for the request parsing to finish.

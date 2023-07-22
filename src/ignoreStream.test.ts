@@ -1,9 +1,6 @@
-// @ts-check
-
-import { doesNotThrow, strictEqual } from "node:assert";
-
-import ignoreStream from "./ignoreStream.mjs";
-import CountReadableStream from "./test/CountReadableStream.mjs";
+import { doesNotThrow, strictEqual } from "assert";
+import { ignoreStream } from "./ignoreStream";
+import { CountReadableStream } from "./test/CountReadableStream";
 
 /**
  * Adds `ignoreStream` tests.
@@ -12,14 +9,14 @@ import CountReadableStream from "./test/CountReadableStream.mjs";
 export default (tests) => {
   tests.add("`ignoreStream` ignores errors.", () => {
     doesNotThrow(() => {
-      const stream = new CountReadableStream();
+      const stream = new CountReadableStream({});
       ignoreStream(stream);
       stream.emit("error", new Error("Message."));
     });
   });
 
   tests.add("`ignoreStream` resumes a paused stream.", () => {
-    const stream = new CountReadableStream();
+    const stream = new CountReadableStream({});
     stream.pause();
     ignoreStream(stream);
     strictEqual(stream.isPaused(), false);

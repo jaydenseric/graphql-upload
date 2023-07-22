@@ -22,28 +22,15 @@
     "middleware",
     "koa",
     "express",
-    "apollo",
-    "esm",
-    "mjs"
+    "apollo"
   ],
   "files": [
-    "GRAPHQL_MULTIPART_REQUEST_SPEC_URL.mjs",
-    "GraphQLUpload.mjs",
-    "graphqlUploadExpress.mjs",
-    "graphqlUploadKoa.mjs",
-    "ignoreStream.mjs",
-    "processRequest.mjs",
-    "Upload.mjs"
+    "dist"
   ],
   "sideEffects": false,
-  "exports": {
-    "./GraphQLUpload.mjs": "./GraphQLUpload.mjs",
-    "./graphqlUploadExpress.mjs": "./graphqlUploadExpress.mjs",
-    "./graphqlUploadKoa.mjs": "./graphqlUploadKoa.mjs",
-    "./package.json": "./package.json",
-    "./processRequest.mjs": "./processRequest.mjs",
-    "./Upload.mjs": "./Upload.mjs"
-  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "engines": {
     "node": "^14.17.0 || ^16.0.0 || >= 18.0.0"
   },
@@ -62,7 +49,6 @@
   },
   "dependencies": {
     "@types/busboy": "^1.5.0",
-    "@types/node": "*",
     "@types/object-path": "^0.11.1",
     "busboy": "^1.6.0",
     "fs-capacitor": "^8.0.0",
@@ -71,7 +57,9 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
+    "@types/http-errors": "^2.0.1",
     "@types/koa": "^2.13.5",
+    "@types/node": "^20.4.4",
     "coverage-node": "^8.0.0",
     "eslint": "^8.23.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
@@ -83,14 +71,14 @@
     "node-fetch": "^3.2.10",
     "prettier": "^2.6.2",
     "test-director": "^10.0.0",
-    "typescript": "^4.8.2"
+    "tsup": "^7.1.0",
+    "typescript": "^4.8.2",
+    "vitest": "^0.33.0"
   },
   "scripts": {
-    "eslint": "eslint .",
-    "prettier": "prettier -c .",
-    "types": "tsc -p jsconfig.json",
-    "tests": "coverage-node --unhandled-rejections=throw test.mjs",
-    "test": "npm run eslint && npm run prettier && npm run types && npm run tests",
-    "prepublishOnly": "npm test"
+    "typecheck": "tsc",
+    "test": "vitest",
+    "build": "tsup",
+    "dev": "tsup --watch"
   }
 }

@@ -1,15 +1,13 @@
-// @ts-check
-
 import busboy from "busboy";
-import { WriteStream } from "fs-capacitor";
+import { ReadStreamOptions, WriteStream } from "fs-capacitor";
 import createError from "http-errors";
-import objectPath from "object-path";
-
-import GRAPHQL_MULTIPART_REQUEST_SPEC_URL from "./GRAPHQL_MULTIPART_REQUEST_SPEC_URL.mjs";
-import ignoreStream from "./ignoreStream.mjs";
-import Upload from "./Upload.mjs";
-
-/** @typedef {import("./GraphQLUpload.mjs").default} GraphQLUpload */
+import objectPath, { ObjectPathBound } from "object-path";
+import { GRAPHQL_MULTIPART_REQUEST_SPEC_URL } from "./GRAPHQL_MULTIPART_REQUEST_SPEC_URL";
+import { ignoreStream } from "./ignoreStream";
+import { Upload } from "./Upload";
+import { GraphQLUpload } from './GraphQLUpload'
+import { IncomingMessage, ServerResponse } from "http";
+import { Readable } from "stream";
 
 /**
  * Processes an incoming
@@ -22,38 +20,25 @@ import Upload from "./Upload.mjs";
  * with appropriate HTTP status codes. Used to create custom middleware.
  * @type {ProcessRequestFunction}
  */
-export default function processRequest(
-  request,
-  response,
+export const processRequest: ProcessRequestFunction = (
+  request: IncomingMessage,
+  response: ServerResponse,
   {
     maxFieldSize = 1000000, // 1 MB
     maxFileSize = Infinity,
     maxFiles = Infinity,
-  } = {}
-) {
+  }: ProcessRequestOptions = {}
+) => {
   return new Promise((resolve, reject) => {
-    /** @type {boolean} */
-    let released;
+    let released: boolean;
 
-    /** @type {Error} */
-    let exitError;
+    let exitError: Error;
 
-    /**
-     * @type {{ [key: string]: unknown } | Array<
-     *   { [key: string]: unknown }
-     * >}
-     */
-    let operations;
+    let operations: { [key: string]: unknown } | Array<{ [key: string]: unknown }>;
 
-    /**
-     * @type {import("object-path").ObjectPathBound<
-     *   { [key: string]: unknown } | Array<{ [key: string]: unknown }>
-     * >}
-     */
-    let operationsPath;
+    let operationsPath: ObjectPathBound< { [key: string]: unknown } | Array<{ [key: string]: unknown }> >;
 
-    /** @type {Map<string, Upload>} */
-    let map;
+    let map: Map<string, Upload>;
 
     const parser = busboy({
       headers: request.headers,
@@ -71,14 +56,14 @@ export default function processRequest(
      * @param {Error} error Error instance.
      * @param {boolean} [isParserError] Is the error from the parser.
      */
-    function exit(error, isParserError = false) {
+    function exit(error: Error, isParserError = false) {
       if (exitError) return;
 
       exitError = error;
 
       if (map)
         for (const upload of map.values())
-          if (!upload.file) upload.reject(exitError);
+          if (!upload.file) upload.reject?.(exitError);
 
       // If the error came from the parser, don’t cause it to be emitted again.
       isParserError ? parser.destroy() : parser.destroy(exitError);
@@ -235,8 +220,7 @@ export default function processRequest(
           return;
         }
 
-        /** @type {Error} */
-        let fileError;
+        let fileError: Error;
 
         const capacitor = new WriteStream();
 
@@ -260,14 +244,14 @@ export default function processRequest(
           capacitor.destroy(fileError);
         });
 
-        /** @type {FileUpload} */
-        const file = {
+        const file: FileUpload = {
           filename,
           mimetype,
           encoding,
           createReadStream(options) {
             const error = fileError || (released ? exitError : null);
             if (error) throw error;
+            // @ts-expect-error what are you doing
             return capacitor.createReadStream(options);
           },
           capacitor,
@@ -280,7 +264,7 @@ export default function processRequest(
         });
 
         stream.pipe(capacitor);
-        upload.resolve(file);
+        upload.resolve?.(file);
       }
     );
 
@@ -310,14 +294,14 @@ export default function processRequest(
 
       for (const upload of map.values())
         if (!upload.file)
-          upload.reject(createError(400, "File missing in the request."));
+          upload.reject?.(createError(400, "File missing in the request."));
     });
 
     // Use the `on` method instead of `once` as in edge cases the same parser
     // could have multiple `error` events and all must be handled to prevent the
     // Node.js process exiting with an error. One edge case is if there is a
     // malformed part header as well as an unexpected end of the form.
-    parser.on("error", (/** @type {Error} */ error) => {
+    parser.on("error", (error: Error) => {
       exit(error, true);
     });
 
@@ -349,75 +333,38 @@ export default function processRequest(
  * File upload details that are only available after the file’s field in the
  * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec)
  * has begun streaming in.
- * @typedef {object} FileUpload
- * @prop {string} filename File name.
- * @prop {string} mimetype File MIME type. Provided by the client and can’t be
- *   trusted.
- * @prop {string} encoding File stream transfer encoding.
- * @prop {import("fs-capacitor").WriteStream} capacitor A private implementation
- *   detail that shouldn’t be used outside
- *   [`graphql-upload`](https://npm.im/graphql-upload).
- * @prop {FileUploadCreateReadStream} createReadStream Creates a
- *   [Node.js readable stream](https://nodejs.org/api/stream.html#readable-streams)
- *   of the file’s contents, for processing and storage.
  */
+export type FileUpload = {
+  filename: string;                                     // File name.
+  mimetype: string;                                     // File MIME type. Provided by the client and can’t be trusted.
+  encoding: string;                                     // File stream transfer encoding.
+  capacitor: WriteStream;                              // A private implementation detail that shouldn’t be used outside `graphql-upload`.
+  createReadStream: FileUploadCreateReadStream;        // Creates a Node.js readable stream of the file’s contents, for processing and storage.
+};
+
+export type FileUploadCreateReadStream = (
+  options?: FileUploadCreateReadStreamOptions // Options (optional)
+) => Readable; // Returns a Node.js readable stream of the file’s contents.
+
+export type FileUploadCreateReadStreamOptions = {
+  options?: {
+    encoding?: ReadStreamOptions["encoding"];          // Specify an encoding for the `data` chunks to be strings (without splitting multi-byte characters across chunks) instead of Node.js `Buffer` instances.
+                                                       // Supported values depend on the `Buffer` implementation and include `utf8`, `ucs2`, `utf16le`, `latin1`, `ascii`, `base64`, `base64url`, or `hex`. Defaults to `utf8`.
+    highWaterMark?: ReadStreamOptions["highWaterMark"];// Maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource. Defaults to `16384`.
+  };
+};
 
 /**
- * Creates a
- * [Node.js readable stream](https://nodejs.org/api/stream.html#readable-streams)
- * of an {@link FileUpload uploading file’s} contents, for processing and
- * storage. Multiple calls create independent streams. Throws if called after
- * all resolvers have resolved, or after an error has interrupted the request.
- * @callback FileUploadCreateReadStream
- * @param {FileUploadCreateReadStreamOptions} [options] Options.
- * @returns {import("node:stream").Readable}
- *   [Node.js readable stream](https://nodejs.org/api/stream.html#readable-streams)
- *   of the file’s contents.
- * @see [Node.js `Readable` stream constructor docs](https://nodejs.org/api/stream.html#new-streamreadableoptions).
- * @see [Node.js stream backpressure guide](https://nodejs.org/en/docs/guides/backpressuring-in-streams).
+ * Processes an incoming [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
  */
+export type ProcessRequestFunction = (
+  request: IncomingMessage,              // Node.js HTTP server request instance
+  response: ServerResponse,              // Node.js HTTP server response instance
+  options?: ProcessRequestOptions        // Options (optional)
+) => Promise<{ [key: string]: unknown } | Array<{ [key: string]: unknown }>>;
 
-/**
- * {@linkcode FileUploadCreateReadStream} options.
- * @typedef {object} FileUploadCreateReadStreamOptions
- * @prop {import("fs-capacitor")
- *   .ReadStreamOptions["encoding"]} [options.encoding] Specify an encoding for
- *   the [`data`](https://nodejs.org/api/stream.html#event-data) chunks to be
- *   strings (without splitting multi-byte characters across chunks) instead of
- *   Node.js [`Buffer`](https://nodejs.org/api/buffer.html#buffer) instances.
- *   Supported values depend on the
- *   [`Buffer` implementation](https://github.com/nodejs/node/blob/v18.1.0/lib/buffer.js#L590-L680)
- *   and include `utf8`, `ucs2`, `utf16le`, `latin1`, `ascii`, `base64`,
- *   `base64url`, or `hex`. Defaults to `utf8`.
- * @prop {import("fs-capacitor")
- *   .ReadStreamOptions["highWaterMark"]} [options.highWaterMark] Maximum number
- *   of bytes to store in the internal buffer before ceasing to read from the
- *   underlying resource. Defaults to `16384`.
- */
-
-/**
- * Processes an incoming
- * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
- * @callback ProcessRequestFunction
- * @param {import("node:http").IncomingMessage} request
- *   [Node.js HTTP server request instance](https://nodejs.org/api/http.html#http_class_http_incomingmessage).
- * @param {import("node:http").ServerResponse} response
- *   [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse).
- * @param {ProcessRequestOptions} [options] Options.
- * @returns {Promise<
- *   { [key: string]: unknown } | Array<{ [key: string]: unknown }>
- * >} GraphQL operation or batch of operations for a GraphQL server to consume
- *   (usually as the request body). A GraphQL operation typically has the
- *   properties `query` and `variables`.
- */
-
-/**
- * {@linkcode ProcessRequestFunction} options.
- * @typedef {object} ProcessRequestOptions
- * @prop {number} [maxFieldSize] Maximum allowed non file multipart form field
- *   size in bytes; enough for your queries. Defaults to `1000000` (1 MB).
- * @prop {number} [maxFileSize] Maximum allowed file size in bytes. Defaults to
- *   `Infinity`.
- * @prop {number} [maxFiles] Maximum allowed number of files. Defaults to
- *   `Infinity`.
- */
+export type ProcessRequestOptions = {
+  maxFieldSize?: number;   // Maximum allowed non-file multipart form field size in bytes; enough for your queries. Defaults to `1000000` (1 MB).
+  maxFileSize?: number;    // Maximum allowed file size in bytes. Defaults to `Infinity`.
+  maxFiles?: number;       // Maximum allowed number of files. Defaults to `Infinity`.
+};

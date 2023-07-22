@@ -1,10 +1,6 @@
-// @ts-check
-
 import { GraphQLError, GraphQLScalarType } from "graphql";
-
-import Upload from "./Upload.mjs";
-
-/** @typedef {import("./processRequest.mjs").FileUpload} FileUpload */
+import { Upload } from "./Upload";
+import { FileUpload } from './processRequest';
 
 /**
  * A GraphQL `Upload` scalar that can be used in a
@@ -69,7 +65,7 @@ import Upload from "./Upload.mjs";
  * import type { FileUpload } from "graphql-upload/processRequest.mjs";
  * ```
  */
-const GraphQLUpload = new GraphQLScalarType({
+export const GraphQLUpload = new GraphQLScalarType({
   name: "Upload",
   description: "The `Upload` scalar type represents a file upload.",
   parseValue(value) {
@@ -83,5 +79,3 @@ const GraphQLUpload = new GraphQLScalarType({
     throw new GraphQLError("Upload serialization unsupported.");
   },
 });
-
-export default GraphQLUpload;

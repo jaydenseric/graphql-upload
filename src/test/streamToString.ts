@@ -1,11 +1,11 @@
-// @ts-check
+import { Readable } from "stream";
 
 /**
  * Converts a Node.js readable stream to a string.
- * @param {import("node:stream").Readable} stream Node.js readable stream.
+ * @param {Readable} stream Node.js readable stream.
  * @returns {Promise<string>} Resolves the final string.
  */
-export default function streamToString(stream) {
+export function streamToString(stream: Readable) {
   return new Promise((resolve, reject) => {
     let data = "";
     stream
