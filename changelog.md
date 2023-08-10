@@ -1,5 +1,16 @@
 # graphql-upload changelog
 
+## Next
+
+### Major
+
+- Updated Node.js support to `^18.15.0 || >=20.4.0`.
+
+### Patch
+
+- Updated GitHub Actions CI config:
+  - Updated the tested Node.js versions to v18, v20.
+
 ## 16.0.2
 
 ### Patch
