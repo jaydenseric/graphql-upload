@@ -55,7 +55,7 @@ export default function graphqlUploadKoa({
       ctx.request.body = await processRequest(
         ctx.req,
         ctx.res,
-        processRequestOptions
+        processRequestOptions,
       );
       await next();
     } finally {

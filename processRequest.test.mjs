@@ -1,6 +1,5 @@
 // @ts-check
 
-import { ReadStream } from "fs-capacitor";
 import {
   deepStrictEqual,
   notStrictEqual,
@@ -10,6 +9,8 @@ import {
   throws,
 } from "node:assert";
 import { createServer } from "node:http";
+
+import { ReadStream } from "fs-capacitor";
 import fetch, { File, FormData } from "node-fetch";
 
 import processRequest from "./processRequest.mjs";
@@ -99,7 +100,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
@@ -110,7 +111,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -160,7 +161,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], fileName, { type: "text/plain" }));
@@ -171,7 +172,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -208,7 +209,7 @@ export default (tests) => {
           strictEqual(stream.readableHighWaterMark, highWaterMark);
           strictEqual(
             await streamToString(stream),
-            Buffer.from("a").toString(encoding)
+            Buffer.from("a").toString(encoding),
           );
         } catch (error) {
           serverError = error;
@@ -224,7 +225,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
@@ -235,7 +236,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add("`processRequest` with a single file, batched.", async () => {
@@ -295,11 +296,11 @@ export default (tests) => {
         JSON.stringify([
           { variables: { file: null } },
           { variables: { file: null } },
-        ])
+        ]),
       );
       body.append(
         "map",
-        JSON.stringify({ 1: ["0.variables.file"], 2: ["1.variables.file"] })
+        JSON.stringify({ 1: ["0.variables.file"], 2: ["1.variables.file"] }),
       );
       body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
       body.append("2", new File(["b"], "b.txt", { type: "text/plain" }));
@@ -369,11 +370,11 @@ export default (tests) => {
 
       body.append(
         "operations",
-        JSON.stringify({ variables: { files: [null, null] } })
+        JSON.stringify({ variables: { files: [null, null] } }),
       );
       body.append(
         "map",
-        JSON.stringify({ 1: ["variables.files.0", "variables.files.1"] })
+        JSON.stringify({ 1: ["variables.files.0", "variables.files.1"] }),
       );
       body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
@@ -421,11 +422,11 @@ export default (tests) => {
 
       body.append(
         "operations",
-        JSON.stringify({ variables: { fileA: null, fileB: null } })
+        JSON.stringify({ variables: { fileA: null, fileB: null } }),
       );
       body.append(
         "map",
-        JSON.stringify({ 1: ["variables.fileA"], 2: ["variables.fileB"] })
+        JSON.stringify({ 1: ["variables.fileA"], 2: ["variables.fileB"] }),
       );
       body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
       body.append("2", new File(["b"], "b.txt", { type: "text/plain" }));
@@ -481,7 +482,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
@@ -493,7 +494,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -534,7 +535,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
 
@@ -544,7 +545,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add("`processRequest` with option `maxFiles`.", async () => {
@@ -572,14 +573,14 @@ export default (tests) => {
 
       body.append(
         "operations",
-        JSON.stringify({ variables: { files: [null, null] } })
+        JSON.stringify({ variables: { files: [null, null] } }),
       );
       body.append(
         "map",
         JSON.stringify({
           1: ["variables.files.0"],
           2: ["variables.files.1"],
-        })
+        }),
       );
       body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
       body.append("2", new File(["b"], "b.txt", { type: "text/plain" }));
@@ -642,19 +643,19 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { files: [null, null] } })
+          JSON.stringify({ variables: { files: [null, null] } }),
         );
         body.append(
           "map",
           JSON.stringify({
             1: ["variables.files.0"],
             2: ["variables.files.1"],
-          })
+          }),
         );
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
         body.append(
           "extraneous",
-          new File(["c"], "c.txt", { type: "text/plain" })
+          new File(["c"], "c.txt", { type: "text/plain" }),
         );
         body.append("2", new File(["b"], "b.txt", { type: "text/plain" }));
 
@@ -664,7 +665,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add("`processRequest` with option `maxFileSize`.", async () => {
@@ -701,7 +702,7 @@ export default (tests) => {
             message: "File truncated as it exceeds the 2 byte size limit.",
             status: 413,
             expose: true,
-          }
+          },
         );
 
         ok(operation.variables.files[0] instanceof Upload);
@@ -730,14 +731,14 @@ export default (tests) => {
 
       body.append(
         "operations",
-        JSON.stringify({ variables: { files: [null, null] } })
+        JSON.stringify({ variables: { files: [null, null] } }),
       );
       body.append(
         "map",
         JSON.stringify({
           1: ["variables.files.0"],
           2: ["variables.files.1"],
-        })
+        }),
       );
       body.append("1", new File(["aa"], "a.txt", { type: "text/plain" }));
       body.append("2", new File(["b"], "b.txt", { type: "text/plain" }));
@@ -855,7 +856,7 @@ export default (tests) => {
                   "Request disconnected during file upload stream parsing.",
                 status: 499,
                 expose: true,
-              }
+              },
             );
           };
 
@@ -889,7 +890,7 @@ export default (tests) => {
           "operations",
           JSON.stringify({
             variables: { fileA: null, fileB: null, fileC: null },
-          })
+          }),
         );
         formData.append(
           "map",
@@ -897,7 +898,7 @@ export default (tests) => {
             1: ["variables.fileA"],
             2: ["variables.fileB"],
             3: ["variables.fileC"],
-          })
+          }),
         );
         formData.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
         formData.append(
@@ -910,8 +911,8 @@ export default (tests) => {
               `${"b".repeat(70000)}${abortMarker}${"b".repeat(10)}`,
             ],
             "b.txt",
-            { type: "text/plain" }
-          )
+            { type: "text/plain" },
+          ),
         );
         formData.append("3", new File(["c"], "c.txt", { type: "text/plain" }));
 
@@ -919,7 +920,7 @@ export default (tests) => {
           `http://localhost:${port}`,
           formData,
           abortMarker,
-          requestReceived.promise
+          requestReceived.promise,
         );
 
         await done.promise;
@@ -928,7 +929,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -1033,7 +1034,7 @@ export default (tests) => {
           "operations",
           JSON.stringify({
             variables: { fileA: null, fileB: null, fileC: null },
-          })
+          }),
         );
         formData.append(
           "map",
@@ -1041,7 +1042,7 @@ export default (tests) => {
             1: ["variables.fileA"],
             2: ["variables.fileB"],
             3: ["variables.fileC"],
-          })
+          }),
         );
         formData.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
         formData.append(
@@ -1054,8 +1055,8 @@ export default (tests) => {
               `${"b".repeat(70000)}${abortMarker}${"b".repeat(10)}`,
             ],
             "b.txt",
-            { type: "text/plain" }
-          )
+            { type: "text/plain" },
+          ),
         );
         formData.append("3", new File(["c"], "c.txt", { type: "text/plain" }));
 
@@ -1063,7 +1064,7 @@ export default (tests) => {
           `http://localhost:${port}`,
           formData,
           abortMarker,
-          requestReceived.promise
+          requestReceived.promise,
         );
 
         await done.promise;
@@ -1072,7 +1073,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -1104,7 +1105,7 @@ export default (tests) => {
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
@@ -1114,7 +1115,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -1145,7 +1146,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
@@ -1156,7 +1157,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -1187,7 +1188,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
 
         await fetch(`http://localhost:${port}`, { method: "POST", body });
@@ -1196,7 +1197,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -1232,7 +1233,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -1271,7 +1272,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -1312,8 +1313,8 @@ export default (tests) => {
               "a".repeat(70000),
             ],
             "a.txt",
-            { type: "text/plain" }
-          )
+            { type: "text/plain" },
+          ),
         );
 
         await fetch(`http://localhost:${port}`, { method: "POST", body });
@@ -1322,7 +1323,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   for (const [type, value] of [
@@ -1366,7 +1367,7 @@ export default (tests) => {
         } finally {
           close();
         }
-      }
+      },
     );
 
   tests.add(
@@ -1397,7 +1398,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", "{ x }");
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
@@ -1408,7 +1409,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   for (const [type, value] of [
@@ -1445,7 +1446,7 @@ export default (tests) => {
 
           body.append(
             "operations",
-            JSON.stringify({ variables: { file: null } })
+            JSON.stringify({ variables: { file: null } }),
           );
           body.append("map", JSON.stringify(value));
           body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
@@ -1456,7 +1457,7 @@ export default (tests) => {
         } finally {
           close();
         }
-      }
+      },
     );
 
   tests.add(
@@ -1487,7 +1488,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", JSON.stringify({ 1: null }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
@@ -1498,7 +1499,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -1529,7 +1530,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", JSON.stringify({ 1: [null] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
@@ -1540,7 +1541,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -1579,7 +1580,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -1617,7 +1618,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -1658,6 +1659,6 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 };

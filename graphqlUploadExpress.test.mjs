@@ -1,9 +1,10 @@
 // @ts-check
 
-import express from "express";
-import createError from "http-errors";
 import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
+
+import express from "express";
+import createError from "http-errors";
 import fetch, { File, FormData } from "node-fetch";
 
 import graphqlUploadExpress from "./graphqlUploadExpress.mjs";
@@ -26,7 +27,7 @@ export default (tests) => {
           async processRequest() {
             processRequestRan = true;
           },
-        })
+        }),
       );
 
       const { port, close } = await listen(createServer(app));
@@ -37,7 +38,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add("`graphqlUploadExpress` with a multipart request.", async () => {
@@ -97,7 +98,7 @@ export default (tests) => {
               processRequestRan = true;
               return processRequest(...args);
             },
-          })
+          }),
         )
         .use((request, response, next) => {
           requestBody = request.body;
@@ -111,7 +112,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
@@ -125,7 +126,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -155,7 +156,7 @@ export default (tests) => {
               request.resume();
               throw error;
             },
-          })
+          }),
         )
         .use(
           /**
@@ -173,7 +174,7 @@ export default (tests) => {
             // error in the console.
             if (response.headersSent) next(error);
             else response.send();
-          }
+          },
         );
 
       const { port, close } = await listen(createServer(app));
@@ -183,7 +184,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
@@ -193,13 +194,13 @@ export default (tests) => {
         deepStrictEqual(expressError, error);
         ok(
           requestCompleted,
-          "Response wasn’t delayed until the request completed."
+          "Response wasn’t delayed until the request completed.",
         );
         strictEqual(responseStatusCode, error.status);
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -241,7 +242,7 @@ export default (tests) => {
             // error in the console.
             if (response.headersSent) next(error);
             else response.send();
-          }
+          },
         );
 
       const { port, close } = await listen(createServer(app));
@@ -251,7 +252,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
@@ -261,11 +262,11 @@ export default (tests) => {
         deepStrictEqual(expressError, error);
         ok(
           requestCompleted,
-          "Response wasn’t delayed until the request completed."
+          "Response wasn’t delayed until the request completed.",
         );
       } finally {
         close();
       }
-    }
+    },
   );
 };

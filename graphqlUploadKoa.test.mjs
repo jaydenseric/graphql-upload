@@ -1,8 +1,9 @@
 // @ts-check
 
-import Koa from "koa";
 import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
+
+import Koa from "koa";
 import fetch, { File, FormData } from "node-fetch";
 
 import graphqlUploadKoa from "./graphqlUploadKoa.mjs";
@@ -23,7 +24,7 @@ export default (tests) => {
         async processRequest() {
           processRequestRan = true;
         },
-      })
+      }),
     );
 
     const { port, close } = await listen(createServer(app.callback()));
@@ -93,7 +94,7 @@ export default (tests) => {
               processRequestRan = true;
               return processRequest(...args);
             },
-          })
+          }),
         )
         .use(async (ctx, next) => {
           ctxRequestBody =
@@ -109,7 +110,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
@@ -123,7 +124,7 @@ export default (tests) => {
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -150,7 +151,7 @@ export default (tests) => {
               request.resume();
               throw error;
             },
-          })
+          }),
         );
 
       const { port, close } = await listen(createServer(app.callback()));
@@ -160,7 +161,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
@@ -170,12 +171,12 @@ export default (tests) => {
         deepStrictEqual(koaError, error);
         ok(
           requestCompleted,
-          "Response wasn’t delayed until the request completed."
+          "Response wasn’t delayed until the request completed.",
         );
       } finally {
         close();
       }
-    }
+    },
   );
 
   tests.add(
@@ -208,7 +209,7 @@ export default (tests) => {
 
         body.append(
           "operations",
-          JSON.stringify({ variables: { file: null } })
+          JSON.stringify({ variables: { file: null } }),
         );
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
@@ -218,11 +219,11 @@ export default (tests) => {
         deepStrictEqual(koaError, error);
         ok(
           requestCompleted,
-          "Response wasn’t delayed until the request completed."
+          "Response wasn’t delayed until the request completed.",
         );
       } finally {
         close();
       }
-    }
+    },
   );
 };

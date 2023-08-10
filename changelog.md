@@ -5,6 +5,7 @@
 ### Major
 
 - Updated Node.js support to `^18.15.0 || >=20.4.0`.
+- Updated dev dependencies, some of which require newer Node.js versions than previously supported.
 
 ### Patch
 

@@ -29,7 +29,7 @@ export default function processRequest(
     maxFieldSize = 1000000, // 1 MB
     maxFileSize = Infinity,
     maxFiles = Infinity,
-  } = {}
+  } = {},
 ) {
   return new Promise((resolve, reject) => {
     /** @type {boolean} */
@@ -101,8 +101,8 @@ export default function processRequest(
         return exit(
           createError(
             413,
-            `The ‘${fieldName}’ multipart field value exceeds the ${maxFieldSize} byte size limit.`
-          )
+            `The ‘${fieldName}’ multipart field value exceeds the ${maxFieldSize} byte size limit.`,
+          ),
         );
 
       switch (fieldName) {
@@ -113,8 +113,8 @@ export default function processRequest(
             return exit(
               createError(
                 400,
-                `Invalid JSON in the ‘operations’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-              )
+                `Invalid JSON in the ‘operations’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`,
+              ),
             );
           }
 
@@ -124,8 +124,8 @@ export default function processRequest(
             return exit(
               createError(
                 400,
-                `Invalid type for the ‘operations’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-              )
+                `Invalid type for the ‘operations’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`,
+              ),
             );
 
           operationsPath = objectPath(operations);
@@ -136,8 +136,8 @@ export default function processRequest(
             return exit(
               createError(
                 400,
-                `Misordered multipart fields; ‘map’ should follow ‘operations’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-              )
+                `Misordered multipart fields; ‘map’ should follow ‘operations’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`,
+              ),
             );
 
           let parsedMap;
@@ -147,8 +147,8 @@ export default function processRequest(
             return exit(
               createError(
                 400,
-                `Invalid JSON in the ‘map’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-              )
+                `Invalid JSON in the ‘map’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`,
+              ),
             );
           }
 
@@ -161,8 +161,8 @@ export default function processRequest(
             return exit(
               createError(
                 400,
-                `Invalid type for the ‘map’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-              )
+                `Invalid type for the ‘map’ multipart field (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`,
+              ),
             );
 
           const mapEntries = Object.entries(parsedMap);
@@ -171,7 +171,7 @@ export default function processRequest(
           // to parse might not match the map provided by the client.
           if (mapEntries.length > maxFiles)
             return exit(
-              createError(413, `${maxFiles} max file uploads exceeded.`)
+              createError(413, `${maxFiles} max file uploads exceeded.`),
             );
 
           map = new Map();
@@ -180,8 +180,8 @@ export default function processRequest(
               return exit(
                 createError(
                   400,
-                  `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-                )
+                  `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`,
+                ),
               );
 
             map.set(fieldName, new Upload());
@@ -191,8 +191,8 @@ export default function processRequest(
                 return exit(
                   createError(
                     400,
-                    `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-                  )
+                    `Invalid type for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`,
+                  ),
                 );
 
               try {
@@ -201,8 +201,8 @@ export default function processRequest(
                 return exit(
                   createError(
                     400,
-                    `Invalid object path for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value ‘${path}’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-                  )
+                    `Invalid object path for the ‘map’ multipart field entry key ‘${fieldName}’ array index ‘${index}’ value ‘${path}’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`,
+                  ),
                 );
               }
             }
@@ -221,8 +221,8 @@ export default function processRequest(
           return exit(
             createError(
               400,
-              `Misordered multipart fields; files should follow ‘map’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-            )
+              `Misordered multipart fields; files should follow ‘map’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`,
+            ),
           );
         }
 
@@ -248,7 +248,7 @@ export default function processRequest(
         stream.on("limit", () => {
           fileError = createError(
             413,
-            `File truncated as it exceeds the ${maxFileSize} byte size limit.`
+            `File truncated as it exceeds the ${maxFileSize} byte size limit.`,
           );
           stream.unpipe();
           capacitor.destroy(fileError);
@@ -281,11 +281,11 @@ export default function processRequest(
 
         stream.pipe(capacitor);
         upload.resolve(file);
-      }
+      },
     );
 
     parser.once("filesLimit", () =>
-      exit(createError(413, `${maxFiles} max file uploads exceeded.`))
+      exit(createError(413, `${maxFiles} max file uploads exceeded.`)),
     );
 
     parser.once("finish", () => {
@@ -296,16 +296,16 @@ export default function processRequest(
         return exit(
           createError(
             400,
-            `Missing multipart field ‘operations’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-          )
+            `Missing multipart field ‘operations’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`,
+          ),
         );
 
       if (!map)
         return exit(
           createError(
             400,
-            `Missing multipart field ‘map’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`
-          )
+            `Missing multipart field ‘map’ (${GRAPHQL_MULTIPART_REQUEST_SPEC_URL}).`,
+          ),
         );
 
       for (const upload of map.values())
@@ -336,8 +336,8 @@ export default function processRequest(
         exit(
           createError(
             499,
-            "Request disconnected during file upload stream parsing."
-          )
+            "Request disconnected during file upload stream parsing.",
+          ),
         );
     });
 

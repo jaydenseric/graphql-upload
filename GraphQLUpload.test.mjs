@@ -1,7 +1,8 @@
 // @ts-check
 
-import { parseValue } from "graphql";
 import { doesNotThrow, throws } from "node:assert";
+
+import { parseValue } from "graphql";
 
 import GraphQLUpload from "./GraphQLUpload.mjs";
 import Upload from "./Upload.mjs";
@@ -27,9 +28,9 @@ export default (tests) => {
         {
           name: "GraphQLError",
           message: "Upload value invalid.",
-        }
+        },
       );
-    }
+    },
   );
 
   tests.add("`GraphQLUpload` scalar `parseLiteral`.", () => {
@@ -42,7 +43,7 @@ export default (tests) => {
         name: "GraphQLError",
         message: "Upload literal unsupported.",
         locations: [{ line: 1, column: 1 }],
-      }
+      },
     );
   });
 
@@ -55,7 +56,7 @@ export default (tests) => {
       {
         name: "GraphQLError",
         message: "Upload serialization unsupported.",
-      }
+      },
     );
   });
 };
