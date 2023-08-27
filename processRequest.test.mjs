@@ -11,6 +11,7 @@ import {
   throws,
 } from "node:assert";
 import { createServer } from "node:http";
+import { text } from "node:stream/consumers";
 
 import { ReadStream } from "fs-capacitor";
 
@@ -18,7 +19,6 @@ import processRequest from "./processRequest.mjs";
 import abortingMultipartRequest from "./test/abortingMultipartRequest.mjs";
 import Deferred from "./test/Deferred.mjs";
 import listen from "./test/listen.mjs";
-import streamToString from "./test/streamToString.mjs";
 import Upload from "./Upload.mjs";
 
 /**
@@ -86,7 +86,7 @@ export default (tests) => {
           ok(stream instanceof ReadStream);
           strictEqual(stream.readableEncoding, null);
           strictEqual(stream.readableHighWaterMark, 16384);
-          strictEqual(await streamToString(stream), "a");
+          strictEqual(await text(stream), "a");
         } catch (error) {
           serverError = error;
         } finally {
@@ -147,7 +147,7 @@ export default (tests) => {
           ok(stream instanceof ReadStream);
           strictEqual(stream.readableEncoding, null);
           strictEqual(stream.readableHighWaterMark, 16384);
-          strictEqual(await streamToString(stream), "a");
+          strictEqual(await text(stream), "a");
         } catch (error) {
           serverError = error;
         } finally {
@@ -208,10 +208,7 @@ export default (tests) => {
           ok(stream instanceof ReadStream);
           strictEqual(stream.readableEncoding, encoding);
           strictEqual(stream.readableHighWaterMark, highWaterMark);
-          strictEqual(
-            await streamToString(stream),
-            Buffer.from("a").toString(encoding),
-          );
+          strictEqual(await text(stream), Buffer.from("a").toString(encoding));
         } catch (error) {
           serverError = error;
         } finally {
@@ -266,7 +263,7 @@ export default (tests) => {
         const streamA = uploadA.createReadStream();
 
         ok(streamA instanceof ReadStream);
-        strictEqual(await streamToString(streamA), "a");
+        strictEqual(await text(streamA), "a");
 
         ok(operations[1].variables.file instanceof Upload);
 
@@ -279,7 +276,7 @@ export default (tests) => {
         const streamB = uploadB.createReadStream();
 
         ok(streamB instanceof ReadStream);
-        strictEqual(await streamToString(streamB), "b");
+        strictEqual(await text(streamB), "b");
       } catch (error) {
         serverError = error;
       } finally {
@@ -351,8 +348,8 @@ export default (tests) => {
         ok(stream2 instanceof ReadStream);
 
         const [content1, content2] = await Promise.all([
-          streamToString(stream1),
-          streamToString(stream2),
+          text(stream1),
+          text(stream2),
         ]);
 
         strictEqual(content1, "a");
@@ -408,7 +405,7 @@ export default (tests) => {
         const uploadB = await operation.variables.fileB.promise;
         const streamB = uploadB.createReadStream();
 
-        await streamToString(streamB);
+        await text(streamB);
       } catch (error) {
         serverError = error;
       } finally {
@@ -468,7 +465,7 @@ export default (tests) => {
           const stream = upload.createReadStream();
 
           ok(stream instanceof ReadStream);
-          strictEqual(await streamToString(stream), "a");
+          strictEqual(await text(stream), "a");
         } catch (error) {
           serverError = error;
         } finally {
@@ -622,7 +619,7 @@ export default (tests) => {
           const streamA = uploadA.createReadStream();
 
           ok(streamA instanceof ReadStream);
-          strictEqual(await streamToString(streamA), "a");
+          strictEqual(await text(streamA), "a");
           ok(operation.variables.files[1] instanceof Upload);
           await rejects(operation.variables.files[1].promise, {
             name: "PayloadTooLargeError",
@@ -717,7 +714,7 @@ export default (tests) => {
         const streamB = uploadB.createReadStream();
 
         ok(streamB instanceof ReadStream);
-        strictEqual(await streamToString(streamB), "b");
+        strictEqual(await text(streamB), "b");
       } catch (error) {
         serverError = error;
       } finally {
@@ -832,7 +829,7 @@ export default (tests) => {
             const stream = upload.createReadStream();
 
             ok(stream instanceof ReadStream);
-            strictEqual(await streamToString(stream), "a");
+            strictEqual(await text(stream), "a");
           };
 
           const testUploadB = async () => {
