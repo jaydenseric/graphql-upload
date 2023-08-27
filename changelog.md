@@ -8,6 +8,7 @@
 - Updated dev dependencies, some of which require newer Node.js versions than previously supported.
 - Refactored tests to use the standard `AbortController`, `fetch`, `File`, and `FormData` APIs available in modern Node.js and removed the dev dependencies [`node-abort-controller`](https://npm.im/node-abort-controller) and [`node-fetch`](https://npm.im/node-fetch).
 - Replaced the test utility function `streamToString` with the function `text` from `node:stream/consumers` that’s available in modern Node.js.
+- Use the Node.js test runner API and remove the dev dependency [`test-director`](https://npm.im/test-director).
 
 ### Patch
 

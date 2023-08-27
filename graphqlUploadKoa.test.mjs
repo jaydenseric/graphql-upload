@@ -4,6 +4,7 @@ import "./test/polyfillFile.mjs";
 
 import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
+import { describe, it } from "node:test";
 
 import Koa from "koa";
 
@@ -11,72 +12,74 @@ import graphqlUploadKoa from "./graphqlUploadKoa.mjs";
 import processRequest from "./processRequest.mjs";
 import listen from "./test/listen.mjs";
 
-/**
- * Adds `graphqlUploadKoa` tests.
- * @param {import("test-director").default} tests Test director.
- */
-export default (tests) => {
-  tests.add("`graphqlUploadKoa` with a non multipart request.", async () => {
-    let processRequestRan = false;
+describe(
+  "Function `graphqlUploadKoa`.",
+  {
+    concurrency: true,
+  },
+  () => {
+    it("Non multipart request.", async () => {
+      let processRequestRan = false;
 
-    const app = new Koa().use(
-      graphqlUploadKoa({
-        /** @type {any} */
-        async processRequest() {
-          processRequestRan = true;
-        },
-      }),
-    );
+      const app = new Koa().use(
+        graphqlUploadKoa({
+          /** @type {any} */
+          async processRequest() {
+            processRequestRan = true;
+          },
+        }),
+      );
 
-    const { port, close } = await listen(createServer(app.callback()));
+      const { port, close } = await listen(createServer(app.callback()));
 
-    try {
-      await fetch(`http://localhost:${port}`, { method: "POST" });
-      strictEqual(processRequestRan, false);
-    } finally {
-      close();
-    }
-  });
-
-  tests.add("`graphqlUploadKoa` with a multipart request.", async () => {
-    /**
-     * @type {{
-     *   variables: {
-     *     file: import("./Upload.mjs").default,
-     *   },
-     * } | undefined}
-     */
-    let ctxRequestBody;
-
-    const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
-      ctxRequestBody =
-        // @ts-ignore By convention this should be present.
-        ctx.request.body;
-      await next();
+      try {
+        await fetch(`http://localhost:${port}`, { method: "POST" });
+        strictEqual(processRequestRan, false);
+      } finally {
+        close();
+      }
     });
 
-    const { port, close } = await listen(createServer(app.callback()));
+    it("Multipart request.", async () => {
+      /**
+       * @type {{
+       *   variables: {
+       *     file: import("./Upload.mjs").default,
+       *   },
+       * } | undefined}
+       */
+      let ctxRequestBody;
 
-    try {
-      const body = new FormData();
+      const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
+        ctxRequestBody =
+          // @ts-ignore By convention this should be present.
+          ctx.request.body;
+        await next();
+      });
 
-      body.append("operations", JSON.stringify({ variables: { file: null } }));
-      body.append("map", JSON.stringify({ 1: ["variables.file"] }));
-      body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
+      const { port, close } = await listen(createServer(app.callback()));
 
-      await fetch(`http://localhost:${port}`, { method: "POST", body });
+      try {
+        const body = new FormData();
 
-      ok(ctxRequestBody);
-      ok(ctxRequestBody.variables);
-      ok(ctxRequestBody.variables.file);
-    } finally {
-      close();
-    }
-  });
+        body.append(
+          "operations",
+          JSON.stringify({ variables: { file: null } }),
+        );
+        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+        body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-  tests.add(
-    "`graphqlUploadKoa` with a multipart request and option `processRequest`.",
-    async () => {
+        await fetch(`http://localhost:${port}`, { method: "POST", body });
+
+        ok(ctxRequestBody);
+        ok(ctxRequestBody.variables);
+        ok(ctxRequestBody.variables.file);
+      } finally {
+        close();
+      }
+    });
+
+    it("Multipart request and option `processRequest`.", async () => {
       let processRequestRan = false;
 
       /**
@@ -125,12 +128,9 @@ export default (tests) => {
       } finally {
         close();
       }
-    },
-  );
+    });
 
-  tests.add(
-    "`graphqlUploadKoa` with a multipart request and option `processRequest` throwing an error.",
-    async () => {
+    it("Multipart request and option `processRequest` throwing an error.", async () => {
       let koaError;
       let requestCompleted;
 
@@ -177,12 +177,9 @@ export default (tests) => {
       } finally {
         close();
       }
-    },
-  );
+    });
 
-  tests.add(
-    "`graphqlUploadKoa` with a multipart request and following middleware throwing an error.",
-    async () => {
+    it("Multipart request and following middleware throwing an error.", async () => {
       let koaError;
       let requestCompleted;
 
@@ -225,6 +222,6 @@ export default (tests) => {
       } finally {
         close();
       }
-    },
-  );
-};
+    });
+  },
+);

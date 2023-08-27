@@ -80,14 +80,13 @@
     "graphql": "^16.8.0",
     "koa": "^2.14.2",
     "prettier": "^3.0.2",
-    "test-director": "^11.0.0",
     "typescript": "^5.2.2"
   },
   "scripts": {
     "eslint": "eslint .",
     "prettier": "prettier -c .",
     "types": "tsc -p jsconfig.json",
-    "tests": "coverage-node test.mjs",
+    "tests": "coverage-node --test-reporter=spec --test",
     "test": "npm run eslint && npm run prettier && npm run types && npm run tests",
     "prepublishOnly": "npm test"
   }
