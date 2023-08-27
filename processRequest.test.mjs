@@ -1,5 +1,7 @@
 // @ts-check
 
+import "./test/polyfillFile.mjs";
+
 import {
   deepStrictEqual,
   notStrictEqual,
@@ -11,7 +13,6 @@ import {
 import { createServer } from "node:http";
 
 import { ReadStream } from "fs-capacitor";
-import fetch, { File, FormData } from "node-fetch";
 
 import processRequest from "./processRequest.mjs";
 import abortingMultipartRequest from "./test/abortingMultipartRequest.mjs";

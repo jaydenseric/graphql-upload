@@ -1,11 +1,12 @@
 // @ts-check
 
+import "./test/polyfillFile.mjs";
+
 import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
 
 import express from "express";
 import createError from "http-errors";
-import fetch, { File, FormData } from "node-fetch";
 
 import graphqlUploadExpress from "./graphqlUploadExpress.mjs";
 import processRequest from "./processRequest.mjs";

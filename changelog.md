@@ -6,6 +6,7 @@
 
 - Updated Node.js support to `^18.15.0 || >=20.4.0`.
 - Updated dev dependencies, some of which require newer Node.js versions than previously supported.
+- Refactored tests to use the standard `AbortController`, `fetch`, `File`, and `FormData` APIs available in modern Node.js and removed the dev dependencies [`node-abort-controller`](https://npm.im/node-abort-controller) and [`node-fetch`](https://npm.im/node-fetch).
 
 ### Patch
 

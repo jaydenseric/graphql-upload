@@ -1,10 +1,11 @@
 // @ts-check
 
+import "./test/polyfillFile.mjs";
+
 import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
 
 import Koa from "koa";
-import fetch, { File, FormData } from "node-fetch";
 
 import graphqlUploadKoa from "./graphqlUploadKoa.mjs";
 import processRequest from "./processRequest.mjs";
