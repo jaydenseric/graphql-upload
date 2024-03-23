@@ -207,8 +207,6 @@ export default function processRequest(
               }
             }
           }
-
-          resolve(operations);
         }
       }
     });
@@ -311,6 +309,8 @@ export default function processRequest(
       for (const upload of map.values())
         if (!upload.file)
           upload.reject(createError(400, "File missing in the request."));
+
+      resolve(operations);
     });
 
     // Use the `on` method instead of `once` as in edge cases the same parser
