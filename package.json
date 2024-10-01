@@ -8,7 +8,10 @@
     "email": "me@jaydenseric.com",
     "url": "https://jaydenseric.com"
   },
-  "repository": "github:jaydenseric/graphql-upload",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaydenseric/graphql-upload.git"
+  },
   "homepage": "https://github.com/jaydenseric/graphql-upload#readme",
   "bugs": "https://github.com/jaydenseric/graphql-upload/issues",
   "funding": "https://github.com/sponsors/jaydenseric",
