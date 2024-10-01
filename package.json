@@ -76,7 +76,7 @@
     "eslint": "^8.48.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "express": "^4.18.2",
-    "form-data-encoder": "^3.0.0",
+    "form-data-encoder": "^4.0.2",
     "graphql": "^16.8.0",
     "koa": "^2.14.2",
     "prettier": "^3.0.2",

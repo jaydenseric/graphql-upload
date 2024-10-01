@@ -23,10 +23,7 @@ export default async function abortingMultipartRequest(
   requestReceived,
 ) {
   const abortController = new AbortController();
-  const encoder = new FormDataEncoder(
-    // @ts-expect-error https://github.com/octet-stream/form-data-encoder/issues/16
-    formData,
-  );
+  const encoder = new FormDataEncoder(formData);
 
   try {
     await fetch(url, {
