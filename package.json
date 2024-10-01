@@ -71,16 +71,16 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
-    "@types/koa": "^2.13.8",
+    "@types/koa": "^2.15.0",
     "coverage-node": "^8.0.0",
-    "eslint": "^8.48.0",
-    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
     "express": "^5.0.0",
     "form-data-encoder": "^4.0.2",
-    "graphql": "^16.8.0",
-    "koa": "^2.14.2",
-    "prettier": "^3.0.2",
-    "typescript": "^5.2.2"
+    "graphql": "^16.9.0",
+    "koa": "^2.15.3",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.2"
   },
   "scripts": {
     "eslint": "eslint .",
