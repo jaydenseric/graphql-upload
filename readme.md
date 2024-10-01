@@ -50,7 +50,7 @@ The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-mult
 
 Supported runtime environments:
 
-- [Node.js](https://nodejs.org) versions `^18.15.0 || >=20.4.0`.
+- [Node.js](https://nodejs.org) versions `^18.18.0 || ^20.9.0 || >=22.0.0`.
 
 Projects must configure [TypeScript](https://typescriptlang.org) to use types from the ECMAScript modules that have a `// @ts-check` comment:
 

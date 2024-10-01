@@ -4,6 +4,7 @@ import "./test/polyfillFile.mjs";
 
 import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
+import { describe, it } from "node:test";
 
 import express from "express";
 import createError from "http-errors";
@@ -12,14 +13,13 @@ import graphqlUploadExpress from "./graphqlUploadExpress.mjs";
 import processRequest from "./processRequest.mjs";
 import listen from "./test/listen.mjs";
 
-/**
- * Adds `graphqlUploadExpress` tests.
- * @param {import("test-director").default} tests Test director.
- */
-export default (tests) => {
-  tests.add(
-    "`graphqlUploadExpress` with a non multipart request.",
-    async () => {
+describe(
+  "Function `graphqlUploadExpress`.",
+  {
+    concurrency: true,
+  },
+  () => {
+    it("Non multipart request.", async () => {
       let processRequestRan = false;
 
       const app = express().use(
@@ -39,48 +39,48 @@ export default (tests) => {
       } finally {
         close();
       }
-    },
-  );
+    });
 
-  tests.add("`graphqlUploadExpress` with a multipart request.", async () => {
-    /**
-     * @type {{
-     *   variables: {
-     *     file: import("./Upload.mjs").default,
-     *   },
-     * } | undefined}
-     */
-    let requestBody;
+    it("Multipart request.", async () => {
+      /**
+       * @type {{
+       *   variables: {
+       *     file: import("./Upload.mjs").default,
+       *   },
+       * } | undefined}
+       */
+      let requestBody;
 
-    const app = express()
-      .use(graphqlUploadExpress())
-      .use((request, response, next) => {
-        requestBody = request.body;
-        next();
-      });
+      const app = express()
+        .use(graphqlUploadExpress())
+        .use((request, response, next) => {
+          requestBody = request.body;
+          next();
+        });
 
-    const { port, close } = await listen(createServer(app));
+      const { port, close } = await listen(createServer(app));
 
-    try {
-      const body = new FormData();
+      try {
+        const body = new FormData();
 
-      body.append("operations", JSON.stringify({ variables: { file: null } }));
-      body.append("map", JSON.stringify({ 1: ["variables.file"] }));
-      body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
+        body.append(
+          "operations",
+          JSON.stringify({ variables: { file: null } }),
+        );
+        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+        body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-      await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(`http://localhost:${port}`, { method: "POST", body });
 
-      ok(requestBody);
-      ok(requestBody.variables);
-      ok(requestBody.variables.file);
-    } finally {
-      close();
-    }
-  });
+        ok(requestBody);
+        ok(requestBody.variables);
+        ok(requestBody.variables.file);
+      } finally {
+        close();
+      }
+    });
 
-  tests.add(
-    "`graphqlUploadExpress` with a multipart request and option `processRequest`.",
-    async () => {
+    it("Multipart request and option `processRequest`.", async () => {
       let processRequestRan = false;
 
       /**
@@ -127,12 +127,9 @@ export default (tests) => {
       } finally {
         close();
       }
-    },
-  );
+    });
 
-  tests.add(
-    "`graphqlUploadExpress` with a multipart request and option `processRequest` throwing an exposed HTTP error.",
-    async () => {
+    it("Multipart request and option `processRequest` throwing an exposed HTTP error.", async () => {
       let expressError;
       let requestCompleted;
       let responseStatusCode;
@@ -201,12 +198,9 @@ export default (tests) => {
       } finally {
         close();
       }
-    },
-  );
+    });
 
-  tests.add(
-    "`graphqlUploadExpress` with a multipart request following middleware throwing an error.",
-    async () => {
+    it("Multipart request following middleware throwing an error.", async () => {
       let expressError;
       let requestCompleted;
 
@@ -268,6 +262,6 @@ export default (tests) => {
       } finally {
         close();
       }
-    },
-  );
-};
+    });
+  },
+);
