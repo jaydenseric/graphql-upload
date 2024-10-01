@@ -10,6 +10,10 @@
 - Replaced the test utility function `streamToString` with the function `text` from `node:stream/consumers` that’s available in modern Node.js.
 - Use the Node.js test runner API and remove the dev dependency [`test-director`](https://npm.im/test-director).
 
+### Minor
+
+- Support Express v5 by updating the optional peer dependency [`@types/express`](https://npm.im/@types/express) to `4.0.29 - 5` and the dev dependency [`express`](https://npm.im/express) to v5, via [#389](https://github.com/jaydenseric/graphql-upload/pull/389).
+
 ### Patch
 
 - Updated GitHub Actions CI config:
