@@ -26,7 +26,7 @@ const globsJs = [...globsEsm, ...globsCjs];
 
 /**
  * ESLint configuration.
- * @satisfies {Array<Linter.FlatConfig>}
+ * @satisfies {Array<Linter.Config>}
  */
 const eslintConfig = [
   {
