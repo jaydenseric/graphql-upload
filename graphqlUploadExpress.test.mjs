@@ -6,12 +6,12 @@ import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
 import { describe, it } from "node:test";
 
+import { listen } from "async-listen";
 import express from "express";
 import createError from "http-errors";
 
 import graphqlUploadExpress from "./graphqlUploadExpress.mjs";
 import processRequest from "./processRequest.mjs";
-import listen from "./test/listen.mjs";
 
 describe(
   "Function `graphqlUploadExpress`.",
@@ -22,22 +22,23 @@ describe(
     it("Non multipart request.", async () => {
       let processRequestRan = false;
 
-      const app = express().use(
-        graphqlUploadExpress({
-          /** @type {any} */
-          async processRequest() {
-            processRequestRan = true;
-          },
-        }),
+      const server = createServer(
+        express().use(
+          graphqlUploadExpress({
+            /** @type {any} */
+            async processRequest() {
+              processRequestRan = true;
+            },
+          }),
+        ),
       );
-
-      const { port, close } = await listen(createServer(app));
+      const url = await listen(server);
 
       try {
-        await fetch(`http://localhost:${port}`, { method: "POST" });
+        await fetch(url, { method: "POST" });
         strictEqual(processRequestRan, false);
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -51,14 +52,15 @@ describe(
        */
       let requestBody;
 
-      const app = express()
-        .use(graphqlUploadExpress())
-        .use((request, response, next) => {
-          requestBody = request.body;
-          next();
-        });
-
-      const { port, close } = await listen(createServer(app));
+      const server = createServer(
+        express()
+          .use(graphqlUploadExpress())
+          .use((request, response, next) => {
+            requestBody = request.body;
+            next();
+          }),
+      );
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -70,13 +72,13 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         ok(requestBody);
         ok(requestBody.variables);
         ok(requestBody.variables.file);
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -92,21 +94,23 @@ describe(
        */
       let requestBody;
 
-      const app = express()
-        .use(
-          graphqlUploadExpress({
-            processRequest(...args) {
-              processRequestRan = true;
-              return processRequest(...args);
-            },
+      const server = createServer(
+        express()
+          .use(
+            graphqlUploadExpress({
+              processRequest(...args) {
+                processRequestRan = true;
+                return processRequest(...args);
+              },
+            }),
+          )
+          .use((request, response, next) => {
+            requestBody = request.body;
+            next();
           }),
-        )
-        .use((request, response, next) => {
-          requestBody = request.body;
-          next();
-        });
+      );
 
-      const { port, close } = await listen(createServer(app));
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -118,14 +122,14 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         strictEqual(processRequestRan, true);
         ok(requestBody);
         ok(requestBody.variables);
         ok(requestBody.variables.file);
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -135,47 +139,49 @@ describe(
       let responseStatusCode;
 
       const error = createError(400, "Message.");
-      const app = express()
-        .use((request, response, next) => {
-          const { send } = response;
+      const server = createServer(
+        express()
+          .use((request, response, next) => {
+            const { send } = response;
 
-          // @ts-ignore Todo: Find a less hacky way.
-          response.send = (...args) => {
-            requestCompleted = request.complete;
-            response.send = send;
-            response.send(...args);
-          };
+            // @ts-ignore Todo: Find a less hacky way.
+            response.send = (...args) => {
+              requestCompleted = request.complete;
+              response.send = send;
+              response.send(...args);
+            };
 
-          next();
-        })
-        .use(
-          graphqlUploadExpress({
-            async processRequest(request) {
-              request.resume();
-              throw error;
+            next();
+          })
+          .use(
+            graphqlUploadExpress({
+              async processRequest(request) {
+                request.resume();
+                throw error;
+              },
+            }),
+          )
+          .use(
+            /**
+             * @param {Error} error
+             * @param {import("express").Request} request
+             * @param {import("express").Response} response
+             * @param {import("express").NextFunction} next
+             */
+            (error, request, response, next) => {
+              expressError = error;
+              responseStatusCode = response.statusCode;
+
+              // Sending a response here prevents the default Express error
+              // handler from running, which would undesirably (in this case)
+              // display the error in the console.
+              if (response.headersSent) next(error);
+              else response.send();
             },
-          }),
-        )
-        .use(
-          /**
-           * @param {Error} error
-           * @param {import("express").Request} request
-           * @param {import("express").Response} response
-           * @param {import("express").NextFunction} next
-           */
-          (error, request, response, next) => {
-            expressError = error;
-            responseStatusCode = response.statusCode;
+          ),
+      );
 
-            // Sending a response here prevents the default Express error handler
-            // from running, which would undesirably (in this case) display the
-            // error in the console.
-            if (response.headersSent) next(error);
-            else response.send();
-          },
-        );
-
-      const { port, close } = await listen(createServer(app));
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -187,7 +193,7 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         deepStrictEqual(expressError, error);
         ok(
@@ -196,7 +202,7 @@ describe(
         );
         strictEqual(responseStatusCode, error.status);
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -205,42 +211,44 @@ describe(
       let requestCompleted;
 
       const error = new Error("Message.");
-      const app = express()
-        .use((request, response, next) => {
-          const { send } = response;
+      const server = createServer(
+        express()
+          .use((request, response, next) => {
+            const { send } = response;
 
-          // @ts-ignore Todo: Find a less hacky way.
-          response.send = (...args) => {
-            requestCompleted = request.complete;
-            response.send = send;
-            response.send(...args);
-          };
+            // @ts-ignore Todo: Find a less hacky way.
+            response.send = (...args) => {
+              requestCompleted = request.complete;
+              response.send = send;
+              response.send(...args);
+            };
 
-          next();
-        })
-        .use(graphqlUploadExpress())
-        .use(() => {
-          throw error;
-        })
-        .use(
-          /**
-           * @param {Error} error
-           * @param {import("express").Request} request
-           * @param {import("express").Response} response
-           * @param {import("express").NextFunction} next
-           */
-          (error, request, response, next) => {
-            expressError = error;
+            next();
+          })
+          .use(graphqlUploadExpress())
+          .use(() => {
+            throw error;
+          })
+          .use(
+            /**
+             * @param {Error} error
+             * @param {import("express").Request} request
+             * @param {import("express").Response} response
+             * @param {import("express").NextFunction} next
+             */
+            (error, request, response, next) => {
+              expressError = error;
 
-            // Sending a response here prevents the default Express error handler
-            // from running, which would undesirably (in this case) display the
-            // error in the console.
-            if (response.headersSent) next(error);
-            else response.send();
-          },
-        );
+              // Sending a response here prevents the default Express error
+              // handler from running, which would undesirably (in this case)
+              // display the error in the console.
+              if (response.headersSent) next(error);
+              else response.send();
+            },
+          ),
+      );
 
-      const { port, close } = await listen(createServer(app));
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -252,7 +260,7 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         deepStrictEqual(expressError, error);
         ok(
@@ -260,7 +268,7 @@ describe(
           "Response wasn’t delayed until the request completed.",
         );
       } finally {
-        close();
+        server.close();
       }
     });
   },

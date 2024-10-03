@@ -6,11 +6,11 @@ import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
 import { describe, it } from "node:test";
 
+import { listen } from "async-listen";
 import Koa from "koa";
 
 import graphqlUploadKoa from "./graphqlUploadKoa.mjs";
 import processRequest from "./processRequest.mjs";
-import listen from "./test/listen.mjs";
 
 describe(
   "Function `graphqlUploadKoa`.",
@@ -21,22 +21,26 @@ describe(
     it("Non multipart request.", async () => {
       let processRequestRan = false;
 
-      const app = new Koa().use(
-        graphqlUploadKoa({
-          /** @type {any} */
-          async processRequest() {
-            processRequestRan = true;
-          },
-        }),
+      const server = createServer(
+        new Koa()
+          .use(
+            graphqlUploadKoa({
+              /** @type {any} */
+              async processRequest() {
+                processRequestRan = true;
+              },
+            }),
+          )
+          .callback(),
       );
 
-      const { port, close } = await listen(createServer(app.callback()));
+      const url = await listen(server);
 
       try {
-        await fetch(`http://localhost:${port}`, { method: "POST" });
+        await fetch(url, { method: "POST" });
         strictEqual(processRequestRan, false);
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -50,14 +54,19 @@ describe(
        */
       let ctxRequestBody;
 
-      const app = new Koa().use(graphqlUploadKoa()).use(async (ctx, next) => {
-        ctxRequestBody =
-          // @ts-ignore By convention this should be present.
-          ctx.request.body;
-        await next();
-      });
+      const server = createServer(
+        new Koa()
+          .use(graphqlUploadKoa())
+          .use(async (ctx, next) => {
+            ctxRequestBody =
+              // @ts-ignore By convention this should be present.
+              ctx.request.body;
+            await next();
+          })
+          .callback(),
+      );
 
-      const { port, close } = await listen(createServer(app.callback()));
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -69,13 +78,13 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         ok(ctxRequestBody);
         ok(ctxRequestBody.variables);
         ok(ctxRequestBody.variables.file);
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -91,23 +100,26 @@ describe(
        */
       let ctxRequestBody;
 
-      const app = new Koa()
-        .use(
-          graphqlUploadKoa({
-            processRequest(...args) {
-              processRequestRan = true;
-              return processRequest(...args);
-            },
-          }),
-        )
-        .use(async (ctx, next) => {
-          ctxRequestBody =
-            // @ts-ignore By convention this should be present.
-            ctx.request.body;
-          await next();
-        });
+      const server = createServer(
+        new Koa()
+          .use(
+            graphqlUploadKoa({
+              processRequest(...args) {
+                processRequestRan = true;
+                return processRequest(...args);
+              },
+            }),
+          )
+          .use(async (ctx, next) => {
+            ctxRequestBody =
+              // @ts-ignore By convention this should be present.
+              ctx.request.body;
+            await next();
+          })
+          .callback(),
+      );
 
-      const { port, close } = await listen(createServer(app.callback()));
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -119,14 +131,14 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         strictEqual(processRequestRan, true);
         ok(ctxRequestBody);
         ok(ctxRequestBody.variables);
         ok(ctxRequestBody.variables.file);
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -135,27 +147,30 @@ describe(
       let requestCompleted;
 
       const error = new Error("Message.");
-      const app = new Koa()
-        .on("error", (error) => {
-          koaError = error;
-        })
-        .use(async (ctx, next) => {
-          try {
-            await next();
-          } finally {
-            requestCompleted = ctx.req.complete;
-          }
-        })
-        .use(
-          graphqlUploadKoa({
-            async processRequest(request) {
-              request.resume();
-              throw error;
-            },
-          }),
-        );
+      const server = createServer(
+        new Koa()
+          .on("error", (error) => {
+            koaError = error;
+          })
+          .use(async (ctx, next) => {
+            try {
+              await next();
+            } finally {
+              requestCompleted = ctx.req.complete;
+            }
+          })
+          .use(
+            graphqlUploadKoa({
+              async processRequest(request) {
+                request.resume();
+                throw error;
+              },
+            }),
+          )
+          .callback(),
+      );
 
-      const { port, close } = await listen(createServer(app.callback()));
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -167,7 +182,7 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         deepStrictEqual(koaError, error);
         ok(
@@ -175,7 +190,7 @@ describe(
           "Response wasn’t delayed until the request completed.",
         );
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -184,23 +199,26 @@ describe(
       let requestCompleted;
 
       const error = new Error("Message.");
-      const app = new Koa()
-        .on("error", (error) => {
-          koaError = error;
-        })
-        .use(async (ctx, next) => {
-          try {
-            await next();
-          } finally {
-            requestCompleted = ctx.req.complete;
-          }
-        })
-        .use(graphqlUploadKoa())
-        .use(async () => {
-          throw error;
-        });
+      const server = createServer(
+        new Koa()
+          .on("error", (error) => {
+            koaError = error;
+          })
+          .use(async (ctx, next) => {
+            try {
+              await next();
+            } finally {
+              requestCompleted = ctx.req.complete;
+            }
+          })
+          .use(graphqlUploadKoa())
+          .use(async () => {
+            throw error;
+          })
+          .callback(),
+      );
 
-      const { port, close } = await listen(createServer(app.callback()));
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -212,7 +230,7 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         deepStrictEqual(koaError, error);
         ok(
@@ -220,7 +238,7 @@ describe(
           "Response wasn’t delayed until the request completed.",
         );
       } finally {
-        close();
+        server.close();
       }
     });
   },

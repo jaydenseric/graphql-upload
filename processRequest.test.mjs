@@ -14,12 +14,12 @@ import { createServer } from "node:http";
 import { text } from "node:stream/consumers";
 import { describe, it } from "node:test";
 
+import { listen } from "async-listen";
 import { ReadStream } from "fs-capacitor";
 
 import processRequest from "./processRequest.mjs";
 import abortingMultipartRequest from "./test/abortingMultipartRequest.mjs";
 import Deferred from "./test/Deferred.mjs";
-import listen from "./test/listen.mjs";
 import Upload from "./Upload.mjs";
 
 describe(
@@ -42,7 +42,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -50,11 +50,11 @@ describe(
         body.append("operations", JSON.stringify(operation));
         body.append("map", "{}");
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -94,7 +94,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -106,11 +106,11 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -152,7 +152,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -164,11 +164,11 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], fileName, { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -210,7 +210,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -222,11 +222,11 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -277,7 +277,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -296,11 +296,11 @@ describe(
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
         body.append("2", new File(["b"], "b.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -357,7 +357,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -372,11 +372,11 @@ describe(
         );
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -409,7 +409,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -425,11 +425,11 @@ describe(
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
         body.append("2", new File(["b"], "b.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -467,7 +467,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -480,11 +480,11 @@ describe(
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
         body.append("2", new File(["b"], "b.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -517,7 +517,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -528,11 +528,11 @@ describe(
         );
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -554,7 +554,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -573,11 +573,11 @@ describe(
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
         body.append("2", new File(["b"], "b.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -622,7 +622,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -645,11 +645,11 @@ describe(
         );
         body.append("2", new File(["b"], "b.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -710,7 +710,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -729,11 +729,11 @@ describe(
         body.append("1", new File(["aa"], "a.txt", { type: "text/plain" }));
         body.append("2", new File(["b"], "b.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -759,7 +759,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -771,11 +771,11 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -870,7 +870,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const abortMarker = "⛔";
@@ -907,7 +907,7 @@ describe(
         formData.append("3", new File(["c"], "c.txt", { type: "text/plain" }));
 
         await abortingMultipartRequest(
-          `http://localhost:${port}`,
+          url,
           formData,
           abortMarker,
           requestReceived.promise,
@@ -917,7 +917,7 @@ describe(
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -1011,7 +1011,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const abortMarker = "⛔";
@@ -1048,7 +1048,7 @@ describe(
         formData.append("3", new File(["c"], "c.txt", { type: "text/plain" }));
 
         await abortingMultipartRequest(
-          `http://localhost:${port}`,
+          url,
           formData,
           abortMarker,
           requestReceived.promise,
@@ -1058,7 +1058,7 @@ describe(
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -1081,7 +1081,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -1093,11 +1093,11 @@ describe(
         );
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -1120,7 +1120,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -1132,11 +1132,11 @@ describe(
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -1159,7 +1159,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -1169,11 +1169,11 @@ describe(
           JSON.stringify({ variables: { file: null } }),
         );
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -1196,17 +1196,17 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
-        await fetch(`http://localhost:${port}`, {
+        await fetch(url, {
           method: "POST",
           body: new FormData(),
         });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -1229,7 +1229,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -1238,11 +1238,11 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -1265,7 +1265,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -1286,11 +1286,11 @@ describe(
           ),
         );
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -1318,7 +1318,7 @@ describe(
           }
         });
 
-        const { port, close } = await listen(server);
+        const url = await listen(server);
 
         try {
           const body = new FormData();
@@ -1327,11 +1327,11 @@ describe(
           body.append("map", JSON.stringify({ 1: ["variables.file"] }));
           body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-          await fetch(`http://localhost:${port}`, { method: "POST", body });
+          await fetch(url, { method: "POST", body });
 
           if (serverError) throw serverError;
         } finally {
-          close();
+          server.close();
         }
       });
 
@@ -1354,7 +1354,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -1366,11 +1366,11 @@ describe(
         body.append("map", "{ x }");
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -1399,7 +1399,7 @@ describe(
           }
         });
 
-        const { port, close } = await listen(server);
+        const url = await listen(server);
 
         try {
           const body = new FormData();
@@ -1411,11 +1411,11 @@ describe(
           body.append("map", JSON.stringify(value));
           body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-          await fetch(`http://localhost:${port}`, { method: "POST", body });
+          await fetch(url, { method: "POST", body });
 
           if (serverError) throw serverError;
         } finally {
-          close();
+          server.close();
         }
       });
 
@@ -1438,7 +1438,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -1450,11 +1450,11 @@ describe(
         body.append("map", JSON.stringify({ 1: null }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -1477,7 +1477,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -1489,11 +1489,11 @@ describe(
         body.append("map", JSON.stringify({ 1: [null] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -1516,7 +1516,7 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const body = new FormData();
@@ -1525,11 +1525,11 @@ describe(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        await fetch(`http://localhost:${port}`, { method: "POST", body });
+        await fetch(url, { method: "POST", body });
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -1549,12 +1549,12 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const boundary = "abcde";
 
-        await fetch(`http://localhost:${port}`, {
+        await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": `multipart/form-data; boundary=${boundary}`,
@@ -1564,7 +1564,7 @@ describe(
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
 
@@ -1584,12 +1584,12 @@ describe(
         }
       });
 
-      const { port, close } = await listen(server);
+      const url = await listen(server);
 
       try {
         const boundary = "abcde";
 
-        await fetch(`http://localhost:${port}`, {
+        await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": `multipart/form-data; boundary=${boundary}`,
@@ -1602,7 +1602,7 @@ describe(
 
         if (serverError) throw serverError;
       } finally {
-        close();
+        server.close();
       }
     });
   },
