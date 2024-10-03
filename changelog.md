@@ -20,6 +20,7 @@
 - Updated GitHub Actions CI config:
   - Updated the tested Node.js versions to v18, v20.
 - Removed the Node.js CLI option `--unhandled-rejections=throw` in the package script `tests` as it’s now the default for all supported Node.js versions.
+- Omit unused catch bindings in the function `processRequest`.
 
 ## 16.0.2
 

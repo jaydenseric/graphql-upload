@@ -109,7 +109,7 @@ export default function processRequest(
         case "operations":
           try {
             operations = JSON.parse(value);
-          } catch (error) {
+          } catch {
             return exit(
               createError(
                 400,
@@ -143,7 +143,7 @@ export default function processRequest(
           let parsedMap;
           try {
             parsedMap = JSON.parse(value);
-          } catch (error) {
+          } catch {
             return exit(
               createError(
                 400,
@@ -197,7 +197,7 @@ export default function processRequest(
 
               try {
                 operationsPath.set(path, map.get(fieldName));
-              } catch (error) {
+              } catch {
                 return exit(
                   createError(
                     400,
