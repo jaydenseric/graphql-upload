@@ -1,5 +1,13 @@
 // @ts-check
 
+/**
+ * @import { NextFunction, Request, Response } from "express"
+ * @import {
+ *   ProcessRequestFunction,
+ *   ProcessRequestOptions,
+ * } from "./processRequest.mjs"
+ */
+
 import defaultProcessRequest from "./processRequest.mjs";
 
 /**
@@ -8,8 +16,8 @@ import defaultProcessRequest from "./processRequest.mjs";
  * using {@linkcode processRequest}, ignoring non multipart requests. It sets
  * the request `body` to be similar to a conventional GraphQL POST request for
  * following GraphQL middleware to consume.
- * @param {import("./processRequest.mjs").ProcessRequestOptions & {
- *   processRequest?: import("./processRequest.mjs").ProcessRequestFunction
+ * @param {ProcessRequestOptions & {
+ *   processRequest?: ProcessRequestFunction,
  * }} options Options.
  * @returns Express middleware.
  * @example
@@ -41,9 +49,9 @@ export default function graphqlUploadExpress({
    * using {@linkcode processRequest}, ignoring non multipart requests. It sets
    * the request `body` to be similar to a conventional GraphQL POST request for
    * following GraphQL middleware to consume.
-   * @param {import("express").Request} request
-   * @param {import("express").Response} response
-   * @param {import("express").NextFunction} next
+   * @param {Request} request
+   * @param {Response} response
+   * @param {NextFunction} next
    */
   function graphqlUploadExpressMiddleware(request, response, next) {
     if (!request.is("multipart/form-data")) return next();

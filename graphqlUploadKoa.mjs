@@ -1,5 +1,13 @@
 // @ts-check
 
+/**
+ * @import { ParameterizedContext } from "koa"
+ * @import {
+ *   ProcessRequestFunction,
+ *   ProcessRequestOptions,
+ * } from "./processRequest.mjs"
+ */
+
 import defaultProcessRequest from "./processRequest.mjs";
 
 /**
@@ -8,8 +16,8 @@ import defaultProcessRequest from "./processRequest.mjs";
  * using {@linkcode processRequest}, ignoring non multipart requests. It sets
  * the request `body` to be similar to a conventional GraphQL POST request for
  * following GraphQL middleware to consume.
- * @param {import("./processRequest.mjs").ProcessRequestOptions & {
- *   processRequest?: import("./processRequest.mjs").ProcessRequestFunction
+ * @param {ProcessRequestOptions & {
+ *   processRequest?: ProcessRequestFunction,
  * }} options Options.
  * @returns Koa middleware.
  * @example
@@ -42,7 +50,7 @@ export default function graphqlUploadKoa({
    * using {@linkcode processRequest}, ignoring non multipart requests. It sets
    * the request `body` to be similar to a conventional GraphQL POST request for
    * following GraphQL middleware to consume.
-   * @param {import("koa").ParameterizedContext} ctx
+   * @param {ParameterizedContext} ctx
    * @param {() => Promise<unknown>} next
    */
   async function graphqlUploadKoaMiddleware(ctx, next) {

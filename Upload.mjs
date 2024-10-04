@@ -1,7 +1,9 @@
 // @ts-check
 
-/** @typedef {import("./GraphQLUpload.mjs").default} GraphQLUpload */
-/** @typedef {import("./processRequest.mjs").default} processRequest */
+/**
+ * @import GraphQLUpload from "./GraphQLUpload.mjs"
+ * @import processRequest, { FileUpload } from "./processRequest.mjs"
+ */
 
 /**
  * A file expected to be uploaded as it was declared in the `map` field of a
@@ -15,21 +17,20 @@ export default class Upload {
     /**
      * Promise that resolves file upload details. This should only be utilized
      * by {@linkcode GraphQLUpload}.
-     * @type {Promise<import("./processRequest.mjs").FileUpload>}
+     * @type {Promise<FileUpload>}
      */
     this.promise = new Promise((resolve, reject) => {
       /**
        * Resolves the upload promise with the file upload details. This should
        * only be utilized by {@linkcode processRequest}.
-       * @param {import("./processRequest.mjs").FileUpload} file File upload
-       *   details.
+       * @param {FileUpload} file File upload details.
        */
       this.resolve = (file) => {
         /**
          * The file upload details, available when the
          * {@linkcode Upload.promise} resolves. This should only be utilized by
          * {@linkcode processRequest}.
-         * @type {import("./processRequest.mjs").FileUpload | undefined}
+         * @type {FileUpload | undefined}
          */
         this.file = file;
 

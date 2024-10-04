@@ -1,5 +1,7 @@
 // @ts-check
 
+/** @import Upload from "./Upload.mjs" */
+
 import "./test/polyfillFile.mjs";
 
 import { deepStrictEqual, ok, strictEqual } from "node:assert";
@@ -48,7 +50,7 @@ describe(
       /**
        * @type {{
        *   variables: {
-       *     file: import("./Upload.mjs").default,
+       *     file: Upload,
        *   },
        * } | undefined}
        */
@@ -94,7 +96,7 @@ describe(
       /**
        * @type {{
        *   variables: {
-       *     file: import("./Upload.mjs").default,
+       *     file: Upload,
        *   },
        * } | undefined}
        */

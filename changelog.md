@@ -6,6 +6,24 @@
 
 - Updated Node.js support to `^18.18.0 || ^20.9.0 || >=22.0.0`.
 - Updated dev dependencies, some of which require newer Node.js versions than previously supported.
+- Use the TypeScript v5.5+ JSDoc tag `@import` to import types in modules.
+- Removed JSDoc tag `@typedef` that were unintentionally re-exporting types; to migrate import TypeScript types from the correct module:
+
+  ```diff
+  - import type { GraphQLUpload } from "graphql-upload/Upload.mjs";
+  + import type GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
+  ```
+
+  ```diff
+  - import type { processRequest } from "graphql-upload/Upload.mjs";
+  + import type processRequest from "graphql-upload/processRequest.mjs";
+  ```
+
+  ```diff
+  - import type { GraphQLUpload } from "graphql-upload/processRequest.mjs";
+  + import type GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
+  ```
+
 - Refactored tests to use the standard `AbortController`, `fetch`, `File`, and `FormData` APIs available in modern Node.js and removed the dev dependencies [`node-abort-controller`](https://npm.im/node-abort-controller) and [`node-fetch`](https://npm.im/node-fetch).
 - Replaced the test utility function `streamToString` with the function `text` from `node:stream/consumers` that’s available in modern Node.js.
 - Use the Node.js test runner API and remove the dev dependency [`test-director`](https://npm.im/test-director).

@@ -1,5 +1,10 @@
 // @ts-check
 
+/**
+ * @import { NextFunction, Request, Response } from "express"
+ * @import Upload from "./Upload.mjs"
+ */
+
 import "./test/polyfillFile.mjs";
 
 import { deepStrictEqual, ok, strictEqual } from "node:assert";
@@ -46,7 +51,7 @@ describe(
       /**
        * @type {{
        *   variables: {
-       *     file: import("./Upload.mjs").default,
+       *     file: Upload,
        *   },
        * } | undefined}
        */
@@ -88,7 +93,7 @@ describe(
       /**
        * @type {{
        *   variables: {
-       *     file: import("./Upload.mjs").default,
+       *     file: Upload,
        *   },
        * } | undefined}
        */
@@ -164,9 +169,9 @@ describe(
           .use(
             /**
              * @param {Error} error
-             * @param {import("express").Request} request
-             * @param {import("express").Response} response
-             * @param {import("express").NextFunction} next
+             * @param {Request} request
+             * @param {Response} response
+             * @param {NextFunction} next
              */
             (error, request, response, next) => {
               expressError = error;
@@ -232,9 +237,9 @@ describe(
           .use(
             /**
              * @param {Error} error
-             * @param {import("express").Request} request
-             * @param {import("express").Response} response
-             * @param {import("express").NextFunction} next
+             * @param {Request} request
+             * @param {Response} response
+             * @param {NextFunction} next
              */
             (error, request, response, next) => {
               expressError = error;

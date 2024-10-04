@@ -1,5 +1,7 @@
 // @ts-check
 
+/** @import { ReadableOptions } from "node:stream" */
+
 import { Readable } from "node:stream";
 
 /**
@@ -7,7 +9,7 @@ import { Readable } from "node:stream";
  * @see [Example counting stream in the Node.js docs](https://nodejs.org/api/stream.html#an-example-counting-stream).
  */
 export default class CountReadableStream extends Readable {
-  /** @param {import("node:stream").ReadableOptions} [options] */
+  /** @param {ReadableOptions} [options] */
   constructor(options) {
     super(options);
     this._max = 1000000;

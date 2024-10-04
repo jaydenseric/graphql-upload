@@ -1,5 +1,13 @@
 // @ts-check
 
+/**
+ * @import { IncomingMessage, ServerResponse } from "node:http"
+ * @import { Readable } from "node:stream"
+ * @import { ReadStreamOptions } from "fs-capacitor"
+ * @import { ObjectPathBound } from "object-path"
+ * @import GraphQLUpload from "./GraphQLUpload.mjs"
+ */
+
 import busboy from "busboy";
 import { WriteStream } from "fs-capacitor";
 import createError from "http-errors";
@@ -8,8 +16,6 @@ import objectPath from "object-path";
 import GRAPHQL_MULTIPART_REQUEST_SPEC_URL from "./GRAPHQL_MULTIPART_REQUEST_SPEC_URL.mjs";
 import ignoreStream from "./ignoreStream.mjs";
 import Upload from "./Upload.mjs";
-
-/** @typedef {import("./GraphQLUpload.mjs").default} GraphQLUpload */
 
 /**
  * Processes an incoming
@@ -46,7 +52,7 @@ export default function processRequest(
     let operations;
 
     /**
-     * @type {import("object-path").ObjectPathBound<
+     * @type {ObjectPathBound<
      *   { [key: string]: unknown } | Array<{ [key: string]: unknown }>
      * >}
      */
@@ -354,9 +360,8 @@ export default function processRequest(
  * @prop {string} mimetype File MIME type. Provided by the client and can’t be
  *   trusted.
  * @prop {string} encoding File stream transfer encoding.
- * @prop {import("fs-capacitor").WriteStream} capacitor A private implementation
- *   detail that shouldn’t be used outside
- *   [`graphql-upload`](https://npm.im/graphql-upload).
+ * @prop {WriteStream} capacitor A private implementation detail that shouldn’t
+ *   be used outside [`graphql-upload`](https://npm.im/graphql-upload).
  * @prop {FileUploadCreateReadStream} createReadStream Creates a
  *   [Node.js readable stream](https://nodejs.org/api/stream.html#readable-streams)
  *   of the file’s contents, for processing and storage.
@@ -370,7 +375,7 @@ export default function processRequest(
  * all resolvers have resolved, or after an error has interrupted the request.
  * @callback FileUploadCreateReadStream
  * @param {FileUploadCreateReadStreamOptions} [options] Options.
- * @returns {import("node:stream").Readable}
+ * @returns {Readable}
  *   [Node.js readable stream](https://nodejs.org/api/stream.html#readable-streams)
  *   of the file’s contents.
  * @see [Node.js `Readable` stream constructor docs](https://nodejs.org/api/stream.html#new-streamreadableoptions).
@@ -380,28 +385,26 @@ export default function processRequest(
 /**
  * {@linkcode FileUploadCreateReadStream} options.
  * @typedef {object} FileUploadCreateReadStreamOptions
- * @prop {import("fs-capacitor")
- *   .ReadStreamOptions["encoding"]} [options.encoding] Specify an encoding for
- *   the [`data`](https://nodejs.org/api/stream.html#event-data) chunks to be
- *   strings (without splitting multi-byte characters across chunks) instead of
- *   Node.js [`Buffer`](https://nodejs.org/api/buffer.html#buffer) instances.
+ * @prop {ReadStreamOptions["encoding"]} [options.encoding] Specify an encoding
+ *   for the [`data`](https://nodejs.org/api/stream.html#event-data) chunks to
+ *   be strings (without splitting multi-byte characters across chunks) instead
+ *   of Node.js [`Buffer`](https://nodejs.org/api/buffer.html#buffer) instances.
  *   Supported values depend on the
  *   [`Buffer` implementation](https://github.com/nodejs/node/blob/v18.1.0/lib/buffer.js#L590-L680)
  *   and include `utf8`, `ucs2`, `utf16le`, `latin1`, `ascii`, `base64`,
  *   `base64url`, or `hex`. Defaults to `utf8`.
- * @prop {import("fs-capacitor")
- *   .ReadStreamOptions["highWaterMark"]} [options.highWaterMark] Maximum number
- *   of bytes to store in the internal buffer before ceasing to read from the
- *   underlying resource. Defaults to `16384`.
+ * @prop {ReadStreamOptions["highWaterMark"]} [options.highWaterMark] Maximum
+ *   number of bytes to store in the internal buffer before ceasing to read from
+ *   the underlying resource. Defaults to `16384`.
  */
 
 /**
  * Processes an incoming
  * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
  * @callback ProcessRequestFunction
- * @param {import("node:http").IncomingMessage} request
+ * @param {IncomingMessage} request
  *   [Node.js HTTP server request instance](https://nodejs.org/api/http.html#http_class_http_incomingmessage).
- * @param {import("node:http").ServerResponse} response
+ * @param {ServerResponse} response
  *   [Node.js HTTP server response instance](https://nodejs.org/api/http.html#http_class_http_serverresponse).
  * @param {ProcessRequestOptions} [options] Options.
  * @returns {Promise<
