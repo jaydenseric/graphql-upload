@@ -396,7 +396,8 @@ export default function processRequest(
  *   `base64url`, or `hex`. Defaults to `utf8`.
  * @property {ReadStreamOptions["highWaterMark"]} [highWaterMark] Maximum number
  *   of bytes to store in the internal buffer before ceasing to read from the
- *   underlying resource. Defaults to `16384`.
+ *   underlying resource. Defaults to the Node.js default high water mark for
+ *   non object mode streams.
  */
 
 /**

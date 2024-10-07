@@ -11,6 +11,7 @@ import {
   throws,
 } from "node:assert";
 import { createServer } from "node:http";
+import { getDefaultHighWaterMark } from "node:stream";
 import { text } from "node:stream/consumers";
 import { describe, it } from "node:test";
 
@@ -85,7 +86,10 @@ describe(
 
           ok(stream instanceof ReadStream);
           strictEqual(stream.readableEncoding, null);
-          strictEqual(stream.readableHighWaterMark, 16384);
+          strictEqual(
+            stream.readableHighWaterMark,
+            getDefaultHighWaterMark(false),
+          );
           strictEqual(await text(stream), "a");
         } catch (error) {
           serverError = error;
@@ -143,7 +147,10 @@ describe(
 
           ok(stream instanceof ReadStream);
           strictEqual(stream.readableEncoding, null);
-          strictEqual(stream.readableHighWaterMark, 16384);
+          strictEqual(
+            stream.readableHighWaterMark,
+            getDefaultHighWaterMark(false),
+          );
           strictEqual(await text(stream), "a");
         } catch (error) {
           serverError = error;
