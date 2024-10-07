@@ -686,7 +686,7 @@ describe(
           const { createReadStream } =
             await operation.variables.files[0].promise;
 
-          await throws(
+          throws(
             () => {
               createReadStream();
             },
