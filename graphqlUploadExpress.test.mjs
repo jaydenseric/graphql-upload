@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @import { NextFunction, Request, Response } from "express"
+ * @import { ErrorRequestHandler } from "express"
  * @import Upload from "./Upload.mjs"
  */
 
@@ -167,12 +167,7 @@ describe(
             }),
           )
           .use(
-            /**
-             * @param {Error} error
-             * @param {Request} _request
-             * @param {Response} response
-             * @param {NextFunction} next
-             */
+            /** @type {ErrorRequestHandler} */
             (error, _request, response, next) => {
               expressError = error;
               responseStatusCode = response.statusCode;
@@ -235,12 +230,7 @@ describe(
             throw error;
           })
           .use(
-            /**
-             * @param {Error} error
-             * @param {Request} _request
-             * @param {Response} response
-             * @param {NextFunction} next
-             */
+            /** @type {ErrorRequestHandler} */
             (error, _request, response, next) => {
               expressError = error;
 

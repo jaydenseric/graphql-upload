@@ -49,9 +49,9 @@ export default function graphqlUploadExpress({
    * using {@linkcode processRequest}, ignoring non multipart requests. It sets
    * the request `body` to be similar to a conventional GraphQL POST request for
    * following GraphQL middleware to consume.
-   * @param {Request} request
-   * @param {Response} response
-   * @param {NextFunction} next
+   * @param {Request} request Express request.
+   * @param {Response} response Express response.
+   * @param {NextFunction} next Invokes the next middleware.
    */
   function graphqlUploadExpressMiddleware(request, response, next) {
     if (request.is("multipart/form-data")) {
@@ -60,14 +60,12 @@ export default function graphqlUploadExpress({
 
       // @ts-ignore Todo: Find a less hacky way to prevent sending a response
       // before the request has ended.
-      response.send =
-        /** @param {Array<unknown>} args */
-        (...args) => {
-          requestEnd.then(() => {
-            response.send = send;
-            response.send(...args);
-          });
-        };
+      response.send = (...args) => {
+        requestEnd.then(() => {
+          response.send = send;
+          response.send(...args);
+        });
+      };
 
       processRequest(request, response, processRequestOptions)
         .then((body) => {

@@ -3,6 +3,7 @@
 /** @import { Linter } from "eslint" */
 
 import eslintJs from "@eslint/js";
+import eslintPluginJsdoc from "eslint-plugin-jsdoc";
 import eslintPluginSimpleImportSort from "eslint-plugin-simple-import-sort";
 import globals from "globals";
 
@@ -35,10 +36,17 @@ const eslintConfig = [
   },
   {
     files: globsJs,
+    ...eslintPluginJsdoc.configs["flat/recommended-typescript-flavor-error"],
+  },
+  {
+    files: globsJs,
     rules: {
       "arrow-body-style": "error",
       "object-shorthand": "error",
       strict: "error",
+
+      // Sometimes it’s better for TypeScript to infer the return type.
+      "jsdoc/require-returns-type": "off",
     },
   },
   {

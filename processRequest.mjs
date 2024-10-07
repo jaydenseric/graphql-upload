@@ -356,13 +356,14 @@ export default function processRequest(
  * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec)
  * has begun streaming in.
  * @typedef {object} FileUpload
- * @prop {string} filename File name.
- * @prop {string} mimetype File MIME type. Provided by the client and can’t be
- *   trusted.
- * @prop {string} encoding File stream transfer encoding.
- * @prop {WriteStream} capacitor A private implementation detail that shouldn’t
- *   be used outside [`graphql-upload`](https://npm.im/graphql-upload).
- * @prop {FileUploadCreateReadStream} createReadStream Creates a
+ * @property {string} filename File name.
+ * @property {string} mimetype File MIME type. Provided by the client and can’t
+ *   be trusted.
+ * @property {string} encoding File stream transfer encoding.
+ * @property {WriteStream} capacitor A private implementation detail that
+ *   shouldn’t be used outside
+ *   [`graphql-upload`](https://npm.im/graphql-upload).
+ * @property {FileUploadCreateReadStream} createReadStream Creates a
  *   [Node.js readable stream](https://nodejs.org/api/stream.html#readable-streams)
  *   of the file’s contents, for processing and storage.
  */
@@ -385,16 +386,16 @@ export default function processRequest(
 /**
  * {@linkcode FileUploadCreateReadStream} options.
  * @typedef {object} FileUploadCreateReadStreamOptions
- * @prop {ReadStreamOptions["encoding"]} [encoding] Specify an encoding for the
- *   [`data`](https://nodejs.org/api/stream.html#event-data) chunks to be
+ * @property {ReadStreamOptions["encoding"]} [encoding] Specify an encoding for
+ *   the [`data`](https://nodejs.org/api/stream.html#event-data) chunks to be
  *   strings (without splitting multi-byte characters across chunks) instead of
  *   Node.js [`Buffer`](https://nodejs.org/api/buffer.html#buffer) instances.
  *   Supported values depend on the
  *   [`Buffer` implementation](https://github.com/nodejs/node/blob/v18.1.0/lib/buffer.js#L590-L680)
  *   and include `utf8`, `ucs2`, `utf16le`, `latin1`, `ascii`, `base64`,
  *   `base64url`, or `hex`. Defaults to `utf8`.
- * @prop {ReadStreamOptions["highWaterMark"]} [highWaterMark] Maximum number of
- *   bytes to store in the internal buffer before ceasing to read from the
+ * @property {ReadStreamOptions["highWaterMark"]} [highWaterMark] Maximum number
+ *   of bytes to store in the internal buffer before ceasing to read from the
  *   underlying resource. Defaults to `16384`.
  */
 
@@ -417,10 +418,10 @@ export default function processRequest(
 /**
  * {@linkcode ProcessRequestFunction} options.
  * @typedef {object} ProcessRequestOptions
- * @prop {number} [maxFieldSize] Maximum allowed non file multipart form field
- *   size in bytes; enough for your queries. Defaults to `1000000` (1 MB).
- * @prop {number} [maxFileSize] Maximum allowed file size in bytes. Defaults to
- *   `Infinity`.
- * @prop {number} [maxFiles] Maximum allowed number of files. Defaults to
+ * @property {number} [maxFieldSize] Maximum allowed non file multipart form
+ *   field size in bytes; enough for your queries. Defaults to `1000000` (1 MB).
+ * @property {number} [maxFileSize] Maximum allowed file size in bytes. Defaults
+ *   to `Infinity`.
+ * @property {number} [maxFiles] Maximum allowed number of files. Defaults to
  *   `Infinity`.
  */
