@@ -60,7 +60,7 @@ describe(
       const server = createServer(
         express()
           .use(graphqlUploadExpress())
-          .use((request, response, next) => {
+          .use((request, _response, next) => {
             requestBody = request.body;
             next();
           }),
@@ -109,7 +109,7 @@ describe(
               },
             }),
           )
-          .use((request, response, next) => {
+          .use((request, _response, next) => {
             requestBody = request.body;
             next();
           }),
@@ -169,11 +169,11 @@ describe(
           .use(
             /**
              * @param {Error} error
-             * @param {Request} request
+             * @param {Request} _request
              * @param {Response} response
              * @param {NextFunction} next
              */
-            (error, request, response, next) => {
+            (error, _request, response, next) => {
               expressError = error;
               responseStatusCode = response.statusCode;
 
@@ -237,11 +237,11 @@ describe(
           .use(
             /**
              * @param {Error} error
-             * @param {Request} request
+             * @param {Request} _request
              * @param {Response} response
              * @param {NextFunction} next
              */
-            (error, request, response, next) => {
+            (error, _request, response, next) => {
               expressError = error;
 
               // Sending a response here prevents the default Express error

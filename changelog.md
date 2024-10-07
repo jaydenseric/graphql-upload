@@ -42,6 +42,7 @@
 - Omit unused catch bindings in the function `processRequest`.
 - Corrected the JSDoc type `FileUploadCreateReadStreamOptions` in the module `processRequest.mjs`.
 - Added a new dev dependency [`async-listen`](https://npm.im/async-listen) to replace the test utility function `listen`.
+- Enabled the TypeScript compiler options `noUnusedLocals` and `noUnusedParameters` and used the prefix `_` for purposefully unused function parameters in tests.
 
 ## 16.0.2
 
