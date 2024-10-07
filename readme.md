@@ -8,7 +8,7 @@ Middleware and an [`Upload`](./GraphQLUpload.mjs) scalar to add support for [Gra
 
 ## Installation
 
-> **Note**
+> [!TIP]
 >
 > First, check if there are [GraphQL multipart request spec server implementations](https://github.com/jaydenseric/graphql-multipart-request-spec#server) (most for Node.js integrate [`graphql-upload`](https://npm.im/graphql-upload)) that are more suitable for your environment than a manual setup.
 

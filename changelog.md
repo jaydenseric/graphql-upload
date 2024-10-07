@@ -48,6 +48,7 @@
 - Avoid using `return` in the middleware.
 - Added a new dev dependency [`async-listen`](https://npm.im/async-listen) to replace the test utility function `listen`.
 - Enabled the TypeScript compiler options `noUnusedLocals` and `noUnusedParameters` and used the prefix `_` for purposefully unused function parameters in tests.
+- Updated the GitHub Markdown syntax for alerts in the readme.
 
 ## 16.0.2
 
