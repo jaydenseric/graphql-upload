@@ -1,10 +1,10 @@
 // @ts-check
 
+/** @import { Linter } from "eslint" */
+
 import eslintJs from "@eslint/js";
 import eslintPluginSimpleImportSort from "eslint-plugin-simple-import-sort";
 import globals from "globals";
-
-/** @import { Linter } from "eslint" */
 
 /**
  * Globs for ESM files.
