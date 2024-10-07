@@ -41,6 +41,7 @@
 - Integrated a new dev dependency [`eslint-plugin-jsdoc`](https://npm.im/eslint-plugin-jsdoc) and revised types.
 - Removed the Node.js CLI option `--unhandled-rejections=throw` in the package script `tests` as it’s now the default for all supported Node.js versions.
 - Avoid hardcoding a default value in the type `FileUploadCreateReadStreamOptions` property `highWaterMark` description and use the function `getDefaultHighWaterMark` from `node:stream` in tests.
+- Replaced the test helper class `Deferred` with polyfilled `Promise.withResolvers`.
 - Omit unused catch bindings in the function `processRequest`.
 - Corrected the JSDoc type `FileUploadCreateReadStreamOptions` in the module `processRequest.mjs`.
 - Avoid using `return` in the middleware.

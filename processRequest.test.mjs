@@ -1,6 +1,7 @@
 // @ts-check
 
 import "./test/polyfillFile.mjs";
+import "./test/polyfillPromiseWithResolvers.mjs";
 
 import {
   deepStrictEqual,
@@ -20,7 +21,6 @@ import { ReadStream } from "fs-capacitor";
 
 import processRequest from "./processRequest.mjs";
 import abortingMultipartRequest from "./test/abortingMultipartRequest.mjs";
-import Deferred from "./test/Deferred.mjs";
 import Upload from "./Upload.mjs";
 
 describe(
@@ -794,11 +794,15 @@ describe(
       // request part way through, the server request handler must be manually
       // awaited or else the test will resolve and the process will exit before
       // it’s done.
-      const done = new Deferred();
+
+      /** @type {PromiseWithResolvers<void>} */
+      const done = Promise.withResolvers();
 
       // The request must be aborted after it has been received by the server
       // request handler, or else Node.js won’t run the handler.
-      const requestReceived = new Deferred();
+
+      /** @type {PromiseWithResolvers<void>} */
+      const requestReceived = Promise.withResolvers();
 
       const server = createServer(async (request, response) => {
         try {
@@ -936,11 +940,15 @@ describe(
       // request part way through, the server request handler must be manually
       // awaited or else the test will resolve and the process will exit before
       // it’s done.
-      const done = new Deferred();
+
+      /** @type {PromiseWithResolvers<void>} */
+      const done = Promise.withResolvers();
 
       // The request must be aborted after it has been received by the server
       // request handler, or else Node.js won’t run the handler.
-      const requestReceived = new Deferred();
+
+      /** @type {PromiseWithResolvers<void>} */
+      const requestReceived = Promise.withResolvers();
 
       const server = createServer(async (request, response) => {
         try {
