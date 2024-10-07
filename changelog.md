@@ -40,6 +40,7 @@
 - Migrated to the ESLint v9 CLI and “flat” config.
 - Removed the Node.js CLI option `--unhandled-rejections=throw` in the package script `tests` as it’s now the default for all supported Node.js versions.
 - Omit unused catch bindings in the function `processRequest`.
+- Corrected the JSDoc type `FileUploadCreateReadStreamOptions` in the module `processRequest.mjs`.
 - Added a new dev dependency [`async-listen`](https://npm.im/async-listen) to replace the test utility function `listen`.
 
 ## 16.0.2

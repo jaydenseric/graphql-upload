@@ -385,17 +385,17 @@ export default function processRequest(
 /**
  * {@linkcode FileUploadCreateReadStream} options.
  * @typedef {object} FileUploadCreateReadStreamOptions
- * @prop {ReadStreamOptions["encoding"]} [options.encoding] Specify an encoding
- *   for the [`data`](https://nodejs.org/api/stream.html#event-data) chunks to
- *   be strings (without splitting multi-byte characters across chunks) instead
- *   of Node.js [`Buffer`](https://nodejs.org/api/buffer.html#buffer) instances.
+ * @prop {ReadStreamOptions["encoding"]} [encoding] Specify an encoding for the
+ *   [`data`](https://nodejs.org/api/stream.html#event-data) chunks to be
+ *   strings (without splitting multi-byte characters across chunks) instead of
+ *   Node.js [`Buffer`](https://nodejs.org/api/buffer.html#buffer) instances.
  *   Supported values depend on the
  *   [`Buffer` implementation](https://github.com/nodejs/node/blob/v18.1.0/lib/buffer.js#L590-L680)
  *   and include `utf8`, `ucs2`, `utf16le`, `latin1`, `ascii`, `base64`,
  *   `base64url`, or `hex`. Defaults to `utf8`.
- * @prop {ReadStreamOptions["highWaterMark"]} [options.highWaterMark] Maximum
- *   number of bytes to store in the internal buffer before ceasing to read from
- *   the underlying resource. Defaults to `16384`.
+ * @prop {ReadStreamOptions["highWaterMark"]} [highWaterMark] Maximum number of
+ *   bytes to store in the internal buffer before ceasing to read from the
+ *   underlying resource. Defaults to `16384`.
  */
 
 /**
