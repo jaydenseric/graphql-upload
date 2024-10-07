@@ -54,21 +54,21 @@ export default function graphqlUploadKoa({
    * @param {() => Promise<unknown>} next
    */
   async function graphqlUploadKoaMiddleware(ctx, next) {
-    if (!ctx.request.is("multipart/form-data")) return next();
+    if (ctx.request.is("multipart/form-data")) {
+      const requestEnd = new Promise((resolve) => ctx.req.on("end", resolve));
 
-    const requestEnd = new Promise((resolve) => ctx.req.on("end", resolve));
-
-    try {
-      // @ts-ignore This is conventional.
-      ctx.request.body = await processRequest(
-        ctx.req,
-        ctx.res,
-        processRequestOptions,
-      );
-      await next();
-    } finally {
-      await requestEnd;
-    }
+      try {
+        // @ts-ignore This is conventional.
+        ctx.request.body = await processRequest(
+          ctx.req,
+          ctx.res,
+          processRequestOptions,
+        );
+        await next();
+      } finally {
+        await requestEnd;
+      }
+    } else await next();
   }
 
   return graphqlUploadKoaMiddleware;
