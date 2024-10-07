@@ -73,12 +73,12 @@
     "object-path": "^0.11.8"
   },
   "devDependencies": {
-    "@eslint/js": "^9.11.1",
+    "@eslint/js": "^9.12.0",
     "@types/express": "^5.0.0",
     "@types/koa": "^2.15.0",
     "async-listen": "^3.0.1",
     "coverage-node": "^8.0.0",
-    "eslint": "^9.11.1",
+    "eslint": "^9.12.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "express": "^5.0.0",
     "form-data-encoder": "^4.0.2",
