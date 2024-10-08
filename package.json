@@ -90,11 +90,11 @@
     "typescript": "^5.6.2"
   },
   "scripts": {
-    "eslint": "eslint",
     "prettier": "prettier -c .",
+    "eslint": "eslint",
     "types": "tsc -p jsconfig.json",
     "tests": "coverage-node --test-reporter=spec --test *.test.mjs",
-    "test": "npm run eslint && npm run prettier && npm run types && npm run tests",
+    "test": "npm run prettier && npm run eslint && npm run types && npm run tests",
     "prepublishOnly": "npm test"
   }
 }

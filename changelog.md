@@ -36,6 +36,7 @@
 
 - Tweaked the package description.
 - Updated the `package.json` field `repository` to conform to new npm requirements.
+- Reordered the package scripts.
 - Updated GitHub Actions CI config:
   - No longer run the workflow on pull request.
   - Enable manual workflow dispatching.
