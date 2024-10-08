@@ -42,6 +42,9 @@
 - Updated GitHub Actions CI config:
   - No longer run the workflow on pull request.
   - Enable manual workflow dispatching.
+  - Run checks in seperate jobs.
+  - Removed custom step names.
+  - Replaced `npm run` with `node --run`.
   - Updated the tested Node.js versions to v18, v20, v22.
   - Updated `actions/checkout` to v4.
   - Updated `actions/setup-node` to v4.
