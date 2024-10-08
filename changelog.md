@@ -34,6 +34,7 @@
 
 ### Patch
 
+- Tweaked the package description.
 - Updated the `package.json` field `repository` to conform to new npm requirements.
 - Updated GitHub Actions CI config:
   - Updated the tested Node.js versions to v18, v20, v22.
@@ -49,6 +50,7 @@
 - Added a new dev dependency [`async-listen`](https://npm.im/async-listen) to replace the test utility function `listen`.
 - Enabled the TypeScript compiler options `noUnusedLocals` and `noUnusedParameters` and used the prefix `_` for purposefully unused function parameters in tests.
 - Updated the GitHub Markdown syntax for alerts in the readme.
+- Tweaked wording in the readme and JSDoc descriptions.
 
 ## 16.0.2
 

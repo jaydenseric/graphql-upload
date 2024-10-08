@@ -2,7 +2,7 @@
 
 # graphql-upload
 
-Middleware and an [`Upload`](./GraphQLUpload.mjs) scalar to add support for [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec) (file uploads via queries and mutations) to various Node.js GraphQL servers.
+Middleware and a scalar [`Upload`](./GraphQLUpload.mjs) to add support for [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec) (file uploads via queries and mutations) to various Node.js GraphQL servers.
 
 [Clients implementing the GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec#client) upload files as [`Upload`](./GraphQLUpload.mjs) scalar query or mutation variables. Their resolver values are promises that resolve file upload details for processing and storage. Files are typically streamed into cloud storage but may also be stored in the filesystem.
 
@@ -12,7 +12,7 @@ Middleware and an [`Upload`](./GraphQLUpload.mjs) scalar to add support for [Gra
 >
 > First, check if there are [GraphQL multipart request spec server implementations](https://github.com/jaydenseric/graphql-multipart-request-spec#server) (most for Node.js integrate [`graphql-upload`](https://npm.im/graphql-upload)) that are more suitable for your environment than a manual setup.
 
-To install [`graphql-upload`](https://npm.im/graphql-upload) and its [`graphql`](https://npm.im/graphql) peer dependency with [npm](https://npmjs.com/get-npm), run:
+To install [`graphql-upload`](https://npm.im/graphql-upload) and its peer dependency [`graphql`](https://npm.im/graphql) with [npm](https://npmjs.com/get-npm), run:
 
 ```sh
 npm install graphql-upload graphql
@@ -20,9 +20,9 @@ npm install graphql-upload graphql
 
 Use the middleware [`graphqlUploadKoa`](./graphqlUploadKoa.mjs) or [`graphqlUploadExpress`](./graphqlUploadExpress.mjs) just before GraphQL middleware. Alternatively, use the function [`processRequest`](./processRequest.mjs) to create custom middleware.
 
-A schema built with separate SDL and resolvers (e.g. using the function [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema_src#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)) requires the [`Upload`](./GraphQLUpload.mjs) scalar to be setup.
+A schema built with separate SDL and resolvers (e.g. using the function [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema_src#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)) requires the scalar [`Upload`](./GraphQLUpload.mjs) to be setup.
 
-Then, the [`Upload`](./GraphQLUpload.mjs) scalar can be used for query or mutation arguments. For how to use the scalar value in resolvers, see the documentation in the module [`GraphQLUpload.mjs`](./GraphQLUpload.mjs).
+Then, the scalar [`Upload`](./GraphQLUpload.mjs) can be used for query or mutation arguments. For how to use the scalar value in resolvers, see the documentation in the module [`GraphQLUpload.mjs`](./GraphQLUpload.mjs).
 
 ## Examples
 
@@ -42,7 +42,7 @@ Then, the [`Upload`](./GraphQLUpload.mjs) scalar can be used for query or mutati
 
 The [GraphQL multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec) allows a file to be used for multiple query or mutation variables (file deduplication), and for variables to be used in multiple places. GraphQL resolvers need to be able to manage independent file streams. As resolvers are executed asynchronously, it’s possible they will try to process files in a different order than received in the multipart request.
 
-[`busboy`](https://npm.im/busboy) parses multipart request streams. Once the `operations` and `map` fields have been parsed, [`Upload`](./GraphQLUpload.mjs) scalar values in the GraphQL operations are populated with promises, and the operations are passed down the middleware chain to GraphQL resolvers.
+[`busboy`](https://npm.im/busboy) parses multipart request streams. Once the `operations` and `map` fields have been parsed, scalar [`Upload`](./GraphQLUpload.mjs) values in the GraphQL operations are populated with promises, and the operations are passed down the middleware chain to GraphQL resolvers.
 
 [`fs-capacitor`](https://npm.im/fs-capacitor) is used to buffer file uploads to the filesystem and coordinate simultaneous reading and writing. As soon as a file upload’s contents begins streaming, its data begins buffering to the filesystem and its associated promise resolves. GraphQL resolvers can then create new streams from the buffer by calling the function `createReadStream`. The buffer is destroyed once all streams have ended or closed and the server has responded to the request. Any remaining buffer files will be cleaned when the process exits.
 

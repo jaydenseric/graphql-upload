@@ -7,7 +7,7 @@ import Upload from "./Upload.mjs";
 /** @typedef {import("./processRequest.mjs").FileUpload} FileUpload */
 
 /**
- * A GraphQL `Upload` scalar that can be used in a
+ * A GraphQL scalar `Upload` that can be used in a
  * [`GraphQLSchema`](https://graphql.org/graphql-js/type/#graphqlschema). It’s
  * value in resolvers is a promise that resolves
  * {@link FileUpload file upload details} for processing and storage.
