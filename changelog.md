@@ -1,6 +1,6 @@
 # graphql-upload changelog
 
-## Next
+## 17.0.0
 
 ### Major
 
