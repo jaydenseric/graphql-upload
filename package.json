@@ -94,7 +94,7 @@
     "eslint": "eslint",
     "types": "tsc -p jsconfig.json",
     "tests": "coverage-node --test-reporter=spec --test *.test.mjs",
-    "test": "npm run prettier && npm run eslint && npm run types && npm run tests",
-    "prepublishOnly": "npm test"
+    "test": "node --run prettier && node --run eslint && node --run types && node --run tests",
+    "prepublishOnly": "node --run test"
   }
 }
