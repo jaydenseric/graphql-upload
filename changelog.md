@@ -14,6 +14,7 @@
   - Removed conditionality for Node.js < v22 support.
   - Updated `actions/checkout` to v7.
   - Updated `actions/setup-node` to v6.
+- Migrated config for TypeScript v6.
 - Removed no longer necessary polyfills for global `File` and `Promise.withResolvers` in tests.
 
 ## 17.0.0
