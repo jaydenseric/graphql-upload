@@ -1,8 +1,5 @@
 // @ts-check
 
-import "./test/polyfillFile.mjs";
-import "./test/polyfillPromiseWithResolvers.mjs";
-
 import {
   deepStrictEqual,
   notStrictEqual,

@@ -1,5 +1,20 @@
 # graphql-upload changelog
 
+## Next
+
+### Major
+
+- Updated Node.js support to `^22.13.0 || ^24.0.0 || >=26.0.0`.
+
+### Patch
+
+- Updated GitHub Actions CI config:
+  - Run tests with Node.js v22, v24, v26.
+  - Removed conditionality for Node.js < v22 support.
+  - Updated `actions/checkout` to v7.
+  - Updated `actions/setup-node` to v6.
+- Removed no longer necessary polyfills for global `File` and `Promise.withResolvers` in tests.
+
 ## 17.0.0
 
 ### Major

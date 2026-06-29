@@ -5,8 +5,6 @@
  * @import Upload from "./Upload.mjs"
  */
 
-import "./test/polyfillFile.mjs";
-
 import { deepStrictEqual, ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
 import { describe, it } from "node:test";
