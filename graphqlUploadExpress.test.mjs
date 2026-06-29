@@ -166,17 +166,18 @@ describe(
             }),
           )
           .use(
-            /** @type {ErrorRequestHandler} */
-            (error, _request, response, next) => {
-              expressError = error;
-              responseStatusCode = response.statusCode;
+            /** @type {ErrorRequestHandler} */ (
+              (error, _request, response, next) => {
+                expressError = error;
+                responseStatusCode = response.statusCode;
 
-              // Sending a response here prevents the default Express error
-              // handler from running, which would undesirably (in this case)
-              // display the error in the console.
-              if (response.headersSent) next(error);
-              else response.send();
-            },
+                // Sending a response here prevents the default Express error
+                // handler from running, which would undesirably (in this case)
+                // display the error in the console.
+                if (response.headersSent) next(error);
+                else response.send();
+              }
+            ),
           ),
       );
 
@@ -229,16 +230,17 @@ describe(
             throw error;
           })
           .use(
-            /** @type {ErrorRequestHandler} */
-            (error, _request, response, next) => {
-              expressError = error;
+            /** @type {ErrorRequestHandler} */ (
+              (error, _request, response, next) => {
+                expressError = error;
 
-              // Sending a response here prevents the default Express error
-              // handler from running, which would undesirably (in this case)
-              // display the error in the console.
-              if (response.headersSent) next(error);
-              else response.send();
-            },
+                // Sending a response here prevents the default Express error
+                // handler from running, which would undesirably (in this case)
+                // display the error in the console.
+                if (response.headersSent) next(error);
+                else response.send();
+              }
+            ),
           ),
       );
 

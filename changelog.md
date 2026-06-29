@@ -20,6 +20,7 @@
   - Updated `actions/setup-node` to v6.
 - Migrated config for TypeScript v6.
 - Removed no longer necessary polyfills for global `File` and `Promise.withResolvers` in tests.
+- Fixed TypeScript errors in tests caused by updating TypeScript.
 
 ## 17.0.0
 
