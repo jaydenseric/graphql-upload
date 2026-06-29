@@ -17,6 +17,7 @@ describe(
       ok(upload.promise instanceof Promise);
       strictEqual(typeof upload.resolve, "function");
 
+      // eslint-disable-next-line jsdoc/reject-any-type
       /** @type {any} */
       const file = {};
 

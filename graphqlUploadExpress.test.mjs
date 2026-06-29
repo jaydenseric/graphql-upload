@@ -28,6 +28,7 @@ describe(
       const server = createServer(
         express().use(
           graphqlUploadExpress({
+            // eslint-disable-next-line jsdoc/reject-any-type
             /** @type {any} */
             async processRequest() {
               processRequestRan = true;
