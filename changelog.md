@@ -7,6 +7,10 @@
 - Updated Node.js support to `^22.13.0 || ^24.0.0 || >=26.0.0`.
 - Updated dev dependencies, some of which require newer Node.js versions than previously supported.
 
+### Minor
+
+- Updated the optional peer dependency [`@types/koa`](https://npm.im/@types/koa) to `^2.11.4 - 3`. Koa v3 is now supported.
+
 ### Patch
 
 - Updated GitHub Actions CI config:
