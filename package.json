@@ -77,7 +77,6 @@
     "@types/express": "^5.0.6",
     "@types/koa": "^3.0.3",
     "async-listen": "^3.1.0",
-    "coverage-node": "^8.0.0",
     "eslint": "^10.6.0",
     "eslint-plugin-jsdoc": "^63.0.10",
     "eslint-plugin-simple-import-sort": "^13.0.0",
@@ -93,7 +92,7 @@
     "prettier": "prettier -c .",
     "eslint": "eslint",
     "types": "tsc -p jsconfig.json",
-    "tests": "coverage-node --test-reporter=spec --test",
+    "tests": "node --test --experimental-test-coverage --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 --test-coverage-exclude='**/*.test.*' --test-coverage-exclude='test-helpers/**' --test-reporter=spec",
     "test": "node --run prettier && node --run eslint && node --run types && node --run tests",
     "prepublishOnly": "node --run test"
   }

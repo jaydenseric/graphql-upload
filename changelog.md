@@ -22,6 +22,9 @@
 - Removed no longer necessary polyfills for global `File` and `Promise.withResolvers` in tests.
 - Fixed TypeScript errors in tests caused by updating TypeScript.
 - Renamed the test helper directory from `test` to `test-helpers` and removed the custom glob from the package script `tests`.
+- Use the Node.js test runner to enforce code coverage:
+  - Removed the dev dependency [`coverage-node`](https://npm.im/coverage-node).
+  - Updated the package script `test`.
 
 ## 17.0.0
 
