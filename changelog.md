@@ -21,6 +21,7 @@
 - Migrated config for TypeScript v6.
 - Removed no longer necessary polyfills for global `File` and `Promise.withResolvers` in tests.
 - Fixed TypeScript errors in tests caused by updating TypeScript.
+- Renamed the test helper directory from `test` to `test-helpers` and removed the custom glob from the package script `tests`.
 
 ## 17.0.0
 

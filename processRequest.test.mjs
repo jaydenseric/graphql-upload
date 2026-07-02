@@ -17,7 +17,7 @@ import { listen } from "async-listen";
 import { ReadStream } from "fs-capacitor";
 
 import processRequest from "./processRequest.mjs";
-import abortingMultipartRequest from "./test/abortingMultipartRequest.mjs";
+import abortingMultipartRequest from "./test-helpers/abortingMultipartRequest.mjs";
 import Upload from "./Upload.mjs";
 
 describe(

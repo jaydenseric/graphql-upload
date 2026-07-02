@@ -4,7 +4,7 @@ import { doesNotThrow, strictEqual } from "node:assert";
 import { describe, it } from "node:test";
 
 import ignoreStream from "./ignoreStream.mjs";
-import CountReadableStream from "./test/CountReadableStream.mjs";
+import CountReadableStream from "./test-helpers/CountReadableStream.mjs";
 
 describe(
   "Function `ignoreStream`.",
