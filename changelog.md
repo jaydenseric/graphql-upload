@@ -30,6 +30,7 @@
   - It now works with more than just text files.
   - Changed the parameter `abortMarker` type from `string` text to a `Uint8Array` byte sequence.
   - Added tests.
+- Removed the test helper class `CountReadableStream` and refactored the function `ignoreStream` tests.
 
 ## 17.0.0
 
