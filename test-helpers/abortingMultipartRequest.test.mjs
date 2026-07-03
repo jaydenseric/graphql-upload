@@ -9,7 +9,7 @@ import { listen } from "async-listen";
 
 import abortingMultipartRequest from "./abortingMultipartRequest.mjs";
 
-const readableChunkSize = getDefaultHighWaterMark(false);
+const defaultHighWaterMark = getDefaultHighWaterMark(false);
 const textEncoder = new TextEncoder();
 
 describe(
@@ -122,7 +122,8 @@ describe(
           "1",
           new File(
             [
-              `${"a".repeat(readableChunkSize * 2)}${preAbortMarkerString}${abortMarkerString}`,
+              // Try to abort within a chunk after the first.
+              `${"a".repeat(defaultHighWaterMark * 2)}${preAbortMarkerString}${abortMarkerString}${"a".repeat(10)}`,
             ],
             "a.txt",
             {

@@ -20,6 +20,7 @@ import processRequest from "./processRequest.mjs";
 import abortingMultipartRequest from "./test-helpers/abortingMultipartRequest.mjs";
 import Upload from "./Upload.mjs";
 
+const defaultHighWaterMark = getDefaultHighWaterMark(false);
 const textEncoder = new TextEncoder();
 
 describe(
@@ -905,10 +906,8 @@ describe(
           "2",
           new File(
             [
-              // Will arrive in multiple chunks as the TCP max packet size is
-              // 64000 bytes and the default Node.js fs stream buffer is 65536
-              // bytes.
-              `${"b".repeat(70000)}${abortMarker}${"b".repeat(10)}`,
+              // Try to abort within a chunk after the first.
+              `${"b".repeat(defaultHighWaterMark * 2)}${abortMarker}${"b".repeat(10)}`,
             ],
             "b.txt",
             { type: "text/plain" },
@@ -1050,10 +1049,8 @@ describe(
           "2",
           new File(
             [
-              // Will arrive in multiple chunks as the TCP max packet size is
-              // 64000 bytes and the default Node.js fs stream buffer is 65536
-              // bytes.
-              `${"b".repeat(70000)}${abortMarker}${"b".repeat(10)}`,
+              // Try to abort within a chunk after the first.
+              `${"b".repeat(defaultHighWaterMark * 2)}${abortMarker}${"b".repeat(10)}`,
             ],
             "b.txt",
             { type: "text/plain" },
@@ -1290,10 +1287,8 @@ describe(
           "1",
           new File(
             [
-              // Will arrive in multiple chunks as the TCP max packet size is
-              // 64000 bytes and the default Node.js fs stream buffer is 65536
-              // bytes.
-              "a".repeat(70000),
+              // Try to cause multiple chunks.
+              "a".repeat(defaultHighWaterMark * 2),
             ],
             "a.txt",
             { type: "text/plain" },
