@@ -81,7 +81,6 @@
     "eslint-plugin-jsdoc": "^63.0.10",
     "eslint-plugin-simple-import-sort": "^13.0.0",
     "express": "^5.2.1",
-    "form-data-encoder": "^4.1.0",
     "globals": "^17.7.0",
     "graphql": "^16.14.2",
     "koa": "^3.2.1",
@@ -92,7 +91,7 @@
     "prettier": "prettier -c .",
     "eslint": "eslint",
     "types": "tsc -p jsconfig.json",
-    "tests": "node --test --experimental-test-coverage --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 --test-coverage-exclude='**/*.test.*' --test-coverage-exclude='test-helpers/**' --test-reporter=spec",
+    "tests": "node --test --experimental-test-coverage --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 --test-coverage-exclude='**/*.test.*' --test-reporter=spec",
     "test": "node --run prettier && node --run eslint && node --run types && node --run tests",
     "prepublishOnly": "node --run test"
   }

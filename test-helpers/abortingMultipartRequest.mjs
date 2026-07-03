@@ -1,17 +1,14 @@
 // @ts-check
 
-import { FormDataEncoder } from "form-data-encoder";
-
-const textEncoder = new TextEncoder();
-const textDecoder = new TextDecoder();
+import { Buffer } from "node:buffer";
 
 /**
- * Sends a multipart request that deliberately aborts after a certain amount of
- * data has been uploaded to the server, for testing purposes.
+ * Fetches a multipart request that deliberately aborts after a certain amount
+ * of data has been uploaded to the server, for testing purposes.
  * @param {URL} url The request URL.
- * @param {FormData} formData A `FormData` instance for the request body.
- * @param {string} abortMarker A unique character in the request body that marks
- *   where to abort the request.
+ * @param {FormData} formData Request form data.
+ * @param {Uint8Array} abortMarker Byte sequence marking where to abort the
+ *   request, before the first occurrence in the request body.
  * @param {Promise<void>} requestReceived Resolves once the request has been
  *   received by the server request handler.
  * @returns {Promise<void>} Resolves once the request aborts.
@@ -22,46 +19,55 @@ export default async function abortingMultipartRequest(
   abortMarker,
   requestReceived,
 ) {
+  if (!abortMarker.length)
+    throw new TypeError("Abort marker mustn’t be empty.");
+
+  const request = new Request(url, {
+    method: "POST",
+    body: formData,
+  });
+  const requestBodyBytes = await request.bytes();
+  const abortMarkerIndex = Buffer.prototype.indexOf.call(
+    requestBodyBytes,
+    abortMarker,
+  );
+
+  if (abortMarkerIndex === -1)
+    throw new TypeError("Multipart request abort marker missing.");
+
   const abortController = new AbortController();
-  const encoder = new FormDataEncoder(formData);
 
+  /** @satisfies {RequestInit} */
+  const fetchOptions = {
+    method: "POST",
+    headers: request.headers,
+    body: new Blob([requestBodyBytes.subarray(0, abortMarkerIndex)])
+      .stream()
+      .pipeThrough(
+        new TransformStream({
+          async flush() {
+            // Abort the request after it has been received by the server request
+            // handler, or else Node.js won’t run the handler.
+            await requestReceived;
+
+            abortController.abort();
+          },
+        }),
+      ),
+    // @ts-expect-error https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/1483
+    duplex: "half",
+    signal: abortController.signal,
+  };
+
+  // This can’t be tested with 100% branch coverage because an error is always
+  // caught. Coverage is disabled for the entire try/catch because:
+  // 1. https://github.com/nodejs/node/issues/61586
+  // 2. It’s too hard to test a non `Error` instance.
+  /* node:coverage disable */
   try {
-    await fetch(url, {
-      method: "POST",
-      headers: encoder.headers,
-      body: new ReadableStream({
-        async start(controller) {
-          for await (const chunk of encoder) {
-            const chunkString = textDecoder.decode(chunk);
-            const chunkAbortIndex = chunkString.indexOf(abortMarker);
-
-            // Check if the chunk has the abort marker character in it.
-            if (chunkAbortIndex !== -1) {
-              if (chunkAbortIndex !== 0)
-                // Yield the final truncated chunk before aborting.
-                controller.enqueue(
-                  textEncoder.encode(chunkString.substring(0, chunkAbortIndex)),
-                );
-
-              // Abort the request after it has been received by the server
-              // request handler, or else Node.js won’t run the handler.
-              await requestReceived;
-
-              abortController.abort();
-
-              // Don’t iterate chunks after the abort marker.
-              break;
-            } else controller.enqueue(chunk);
-          }
-
-          controller.close();
-        },
-      }),
-      // @ts-expect-error https://github.com/microsoft/TypeScript-DOM-lib-generator/issues/1483
-      duplex: "half",
-      signal: abortController.signal,
-    });
+    await fetch(url, fetchOptions);
   } catch (error) {
     if (!(error instanceof Error && error.name === "AbortError")) throw error;
   }
+  /* node:coverage enable */
 }

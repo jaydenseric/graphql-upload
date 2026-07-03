@@ -25,6 +25,11 @@
 - Use the Node.js test runner to enforce code coverage:
   - Removed the dev dependency [`coverage-node`](https://npm.im/coverage-node).
   - Updated the package script `test`.
+- Improved the test helper function `abortingMultipartRequest`:
+  - Removed the dev dependency [`form-data-encoder`](https://npm.im/form-data-encoder).
+  - It now works with more than just text files.
+  - Changed the parameter `abortMarker` type from `string` text to a `Uint8Array` byte sequence.
+  - Added tests.
 
 ## 17.0.0
 

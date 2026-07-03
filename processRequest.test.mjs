@@ -20,6 +20,8 @@ import processRequest from "./processRequest.mjs";
 import abortingMultipartRequest from "./test-helpers/abortingMultipartRequest.mjs";
 import Upload from "./Upload.mjs";
 
+const textEncoder = new TextEncoder();
+
 describe(
   "Function `processRequest`.",
   {
@@ -917,7 +919,7 @@ describe(
         await abortingMultipartRequest(
           url,
           formData,
-          abortMarker,
+          textEncoder.encode(abortMarker),
           requestReceived.promise,
         );
 
@@ -1062,7 +1064,7 @@ describe(
         await abortingMultipartRequest(
           url,
           formData,
-          abortMarker,
+          textEncoder.encode(abortMarker),
           requestReceived.promise,
         );
 
