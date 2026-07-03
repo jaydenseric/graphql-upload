@@ -32,6 +32,7 @@
   - Added tests.
 - Removed the test helper class `CountReadableStream` and refactored the function `ignoreStream` tests.
 - Test that `GraphQLUpload` is a GraphQL scalar.
+- Fixed changelog entry typos for v4.0.0-alpha.2, 6.0.0-alpha.1, and v17.0.0.
 
 ## 17.0.0
 
@@ -75,7 +76,7 @@
 - Updated GitHub Actions CI config:
   - No longer run the workflow on pull request.
   - Enable manual workflow dispatching.
-  - Run checks in seperate jobs.
+  - Run checks in separate jobs.
   - Removed custom step names.
   - Replaced `npm run` with `node --run`.
   - Updated the tested Node.js versions to v18, v20, v22.
@@ -619,7 +620,7 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 - Readme badge changes to deal with [shields.io](https://shields.io) unreliability:
   - Use the official Travis build status badge.
   - Use [Badgen](https://badgen.net) for the npm version badge.
-  - Removed the licence badge. The licence can be found in `package.json` and rarely changes.
+  - Removed the license badge. The license can be found in `package.json` and rarely changes.
   - Removed the Github issues and stars badges. The readme is most viewed on Github anyway.
 - Changelog version entries now have “Major”, “Minor” and “Patch” subheadings.
 
@@ -686,7 +687,7 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
   - Custom errors are thrown or emitted with meaningful messages that are exported so consumers can use `instanceof` with them.
   - Where it makes sense, errors cause relevant HTTP status codes to be set in middleware.
   - [Misordered multipart fields](https://github.com/jaydenseric/graphql-multipart-request-spec) cause `processRequest` to throw `MapBeforeOperationsUploadError` and `FilesBeforeMapUploadError` errors in middleware.
-  - The `map` field provided by the client is used to naively check the `maxFiles` option is not exceeded for a speedy `MaxFilesUploadError` error in middleware. The real number of files parsed is checked too, incase the request is malformed.
+  - The `map` field provided by the client is used to naively check the `maxFiles` option is not exceeded for a speedy `MaxFilesUploadError` error in middleware. The real number of files parsed is checked too, in case the request is malformed.
   - If files are missing from the request the `scalar Upload` promises reject with a `FileMissingUploadError` error.
   - Already if a file exceeds the `maxFileSize` option the file is truncated, the stream emits a `limit` event and `stream.truncated === true`. Now an `error` event is also emitted with a `MaxFileSizeUploadError`.
   - Aborting requests from the client causes `scalar Upload` promises to reject with a `UploadPromiseDisconnectUploadError` error for file upload streams that have not yet been parsed. For streams being parsed an `error` event is emitted with an `FileStreamDisconnectUploadError` error and `stream.truncated === true`. It is up to consumers to cleanup aborted streams in their resolvers.
