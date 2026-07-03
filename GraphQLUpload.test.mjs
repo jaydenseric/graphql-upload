@@ -1,9 +1,9 @@
 // @ts-check
 
-import { doesNotThrow, throws } from "node:assert";
+import { doesNotThrow, ok, strictEqual, throws } from "node:assert";
 import { describe, it } from "node:test";
 
-import { parseValue } from "graphql";
+import { GraphQLScalarType, parseValue } from "graphql";
 
 import GraphQLUpload from "./GraphQLUpload.mjs";
 import Upload from "./Upload.mjs";
@@ -14,6 +14,11 @@ describe(
     concurrency: true,
   },
   () => {
+    it("Is a GraphQL scalar.", () => {
+      ok(GraphQLUpload instanceof GraphQLScalarType);
+      strictEqual(GraphQLUpload.name, "Upload");
+    });
+
     it("Method `parseValue`, value valid.", () => {
       doesNotThrow(() => {
         GraphQLUpload.parseValue(new Upload());

@@ -31,6 +31,7 @@
   - Changed the parameter `abortMarker` type from `string` text to a `Uint8Array` byte sequence.
   - Added tests.
 - Removed the test helper class `CountReadableStream` and refactored the function `ignoreStream` tests.
+- Test that `GraphQLUpload` is a GraphQL scalar.
 
 ## 17.0.0
 
