@@ -25,6 +25,20 @@
 - Use the Node.js test runner to enforce code coverage:
   - Removed the dev dependency [`coverage-node`](https://npm.im/coverage-node).
   - Updated the package script `test`.
+- Improved the function `graphqlUploadExpress`:
+  - Fixed the middleware hanging if a multipart request disconnects before finishing, and added related tests.
+    > [!IMPORTANT]
+    >
+    > This is a critical bugfix. After updating, test that aborted [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec) are handled appropriately in your Express app. See how the Express middleware in [this repo](https://github.com/jaydenseric/graphql-upload) is tested.
+  - Fixed monkey patching of the Express response method `send`; it now correctly returns the Express response instead of void.
+  - More detailed JSDoc description.
+- Improved the function `graphqlUploadKoa`:
+  - Fixed the middleware hanging if a multipart request disconnects before finishing, and added related tests.
+    > [!IMPORTANT]
+    >
+    > This is a critical bugfix. After updating, test that aborted [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec) are handled appropriately in your Koa app. See how the Koa middleware in [this repo](https://github.com/jaydenseric/graphql-upload) is tested.
+  - More detailed JSDoc description.
+- Added an internal helper function `requestFinished` for waiting for a request to finish (either because it disconnects early, or it finishes uploading), with tests, replacing separate (and in some places buggy) code in middleware and tests.
 - Improved the test helper function `abortingMultipartRequest`:
   - Removed the dev dependency [`form-data-encoder`](https://npm.im/form-data-encoder).
   - It now works with more than just text files.

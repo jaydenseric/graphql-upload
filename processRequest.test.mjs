@@ -17,6 +17,7 @@ import { listen } from "async-listen";
 import { ReadStream } from "fs-capacitor";
 
 import processRequest from "./processRequest.mjs";
+import requestFinished from "./requestFinished.mjs";
 import abortingMultipartRequest from "./test-helpers/abortingMultipartRequest.mjs";
 import Upload from "./Upload.mjs";
 
@@ -964,10 +965,7 @@ describe(
              */
             (await processRequest(request, response));
 
-          // Wait for the request parsing to finish.
-          await new Promise((resolve) => {
-            request.once("close", resolve);
-          });
+          await requestFinished(request);
 
           const testUploadA = async () => {
             ok(operation.variables.fileA instanceof Upload);

@@ -7,6 +7,7 @@ import { describe, it } from "node:test";
 
 import { listen } from "async-listen";
 
+import requestFinished from "../requestFinished.mjs";
 import abortingMultipartRequest from "./abortingMultipartRequest.mjs";
 
 const defaultHighWaterMark = getDefaultHighWaterMark(false);
@@ -96,9 +97,7 @@ describe(
             })
             .resume();
 
-          await new Promise((resolve) => {
-            request.once("close", resolve);
-          });
+          await requestFinished(request);
 
           strictEqual(request.complete, false);
         } catch (error) {

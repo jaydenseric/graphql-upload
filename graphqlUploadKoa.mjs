@@ -9,13 +9,19 @@
  */
 
 import defaultProcessRequest from "./processRequest.mjs";
+import requestFinished from "./requestFinished.mjs";
 
 /**
  * Creates [Koa](https://koajs.com) middleware that processes incoming
  * [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec)
  * using {@linkcode processRequest}, ignoring non multipart requests. It sets
- * the request `body` to be similar to a conventional GraphQL POST request for
- * following GraphQL middleware to consume.
+ * the Koa context `request` property `body` to be similar to a conventional
+ * GraphQL POST request for following GraphQL middleware to consume. Also, after
+ * awaiting the next middleware it waits for the request to finish (either
+ * because it disconnects early, or it finishes uploading and the response can
+ * be sent), because sending a response before the request has finished
+ * uploading typically causes the HTTP client to error without processing the
+ * response.
  * @param {ProcessRequestOptions & {
  *   processRequest?: ProcessRequestFunction,
  * }} options Options.
@@ -45,18 +51,11 @@ export default function graphqlUploadKoa({
   ...processRequestOptions
 } = {}) {
   /**
-   * [Koa](https://koajs.com) middleware that processes incoming
-   * [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec)
-   * using {@linkcode processRequest}, ignoring non multipart requests. It sets
-   * the request `body` to be similar to a conventional GraphQL POST request for
-   * following GraphQL middleware to consume.
    * @param {ParameterizedContext} ctx Koa context.
    * @param {Next} next Invokes the next middleware.
    */
   async function graphqlUploadKoaMiddleware(ctx, next) {
     if (ctx.request.is("multipart/form-data")) {
-      const requestEnd = new Promise((resolve) => ctx.req.on("end", resolve));
-
       try {
         // @ts-ignore This is conventional.
         ctx.request.body = await processRequest(
@@ -66,7 +65,7 @@ export default function graphqlUploadKoa({
         );
         await next();
       } finally {
-        await requestEnd;
+        await requestFinished(ctx.req);
       }
     } else await next();
   }

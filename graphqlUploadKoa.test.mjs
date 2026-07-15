@@ -2,8 +2,9 @@
 
 /** @import Upload from "./Upload.mjs" */
 
-import { deepStrictEqual, ok, strictEqual } from "node:assert";
+import { deepStrictEqual, ok, rejects, strictEqual } from "node:assert";
 import { createServer } from "node:http";
+import { getDefaultHighWaterMark } from "node:stream";
 import { describe, it } from "node:test";
 
 import { listen } from "async-listen";
@@ -11,6 +12,10 @@ import Koa from "koa";
 
 import graphqlUploadKoa from "./graphqlUploadKoa.mjs";
 import processRequest from "./processRequest.mjs";
+import abortingMultipartRequest from "./test-helpers/abortingMultipartRequest.mjs";
+
+const defaultHighWaterMark = getDefaultHighWaterMark(false);
+const textEncoder = new TextEncoder();
 
 describe(
   "Function `graphqlUploadKoa`.",
@@ -213,7 +218,7 @@ describe(
             }
           })
           .use(graphqlUploadKoa())
-          .use(async () => {
+          .use(() => {
             throw error;
           })
           .callback(),
@@ -238,6 +243,105 @@ describe(
           requestCompleted,
           "Response wasn’t delayed until the request completed.",
         );
+      } finally {
+        server.close();
+      }
+    });
+
+    it("An aborted multipart request.", async () => {
+      let serverError;
+
+      /** @type {unknown} */
+      let koaError;
+
+      /** @type {PromiseWithResolvers<void>} */
+      const done = Promise.withResolvers();
+
+      /** @type {PromiseWithResolvers<void>} */
+      const requestReceived = Promise.withResolvers();
+
+      const server = createServer(
+        new Koa()
+          .on("error", (error) => {
+            koaError = error;
+          })
+          .use(async (_ctx, next) => {
+            requestReceived.resolve();
+
+            try {
+              await next();
+            } catch (error) {
+              serverError = error;
+            } finally {
+              done.resolve();
+            }
+          })
+          .use(graphqlUploadKoa())
+          .use(async (ctx) => {
+            const operation = /** @type {{ variables: { file: Upload } }} */ (
+              // @ts-ignore By convention this should be present.
+              ctx.request.body
+            );
+
+            const upload = await operation.variables.file.promise;
+
+            await rejects(
+              new Promise((resolve, reject) => {
+                upload
+                  .createReadStream()
+                  .once("error", reject)
+                  .once("end", resolve)
+                  .resume();
+              }),
+              {
+                name: "BadRequestError",
+                message:
+                  "Request disconnected during file upload stream parsing.",
+                status: 499,
+                expose: true,
+              },
+            );
+          })
+          .callback(),
+      );
+
+      const url = await listen(server);
+
+      try {
+        const abortMarkerString = "⛔";
+        const body = new FormData();
+
+        body.append(
+          "operations",
+          JSON.stringify({ variables: { file: null } }),
+        );
+        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+        body.append(
+          "1",
+          new File(
+            [
+              // Try to abort within a chunk after the first.
+              `${"a".repeat(defaultHighWaterMark * 2)}${abortMarkerString}${"a".repeat(10)}`,
+            ],
+            "a.txt",
+            { type: "text/plain" },
+          ),
+        );
+
+        await abortingMultipartRequest(
+          url,
+          body,
+          textEncoder.encode(abortMarkerString),
+          requestReceived.promise,
+        );
+
+        await done.promise;
+
+        if (serverError) throw serverError;
+
+        ok(koaError instanceof Error);
+        strictEqual(koaError.name, "Error");
+        strictEqual(koaError.message, "Parse Error");
       } finally {
         server.close();
       }

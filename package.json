@@ -36,6 +36,7 @@
     "graphqlUploadKoa.mjs",
     "ignoreStream.mjs",
     "processRequest.mjs",
+    "requestFinished.mjs",
     "Upload.mjs"
   ],
   "sideEffects": false,

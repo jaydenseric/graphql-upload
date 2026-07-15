@@ -5,8 +5,9 @@
  * @import Upload from "./Upload.mjs"
  */
 
-import { deepStrictEqual, ok, strictEqual } from "node:assert";
+import { deepStrictEqual, ok, rejects, strictEqual } from "node:assert";
 import { createServer } from "node:http";
+import { getDefaultHighWaterMark } from "node:stream";
 import { describe, it } from "node:test";
 
 import { listen } from "async-listen";
@@ -15,6 +16,10 @@ import createError from "http-errors";
 
 import graphqlUploadExpress from "./graphqlUploadExpress.mjs";
 import processRequest from "./processRequest.mjs";
+import abortingMultipartRequest from "./test-helpers/abortingMultipartRequest.mjs";
+
+const defaultHighWaterMark = getDefaultHighWaterMark(false);
+const textEncoder = new TextEncoder();
 
 describe(
   "Function `graphqlUploadExpress`.",
@@ -36,6 +41,7 @@ describe(
           }),
         ),
       );
+
       const url = await listen(server);
 
       try {
@@ -64,6 +70,7 @@ describe(
             next();
           }),
       );
+
       const url = await listen(server);
 
       try {
@@ -263,6 +270,93 @@ describe(
           requestCompleted,
           "Response wasn’t delayed until the request completed.",
         );
+      } finally {
+        server.close();
+      }
+    });
+
+    it("An aborted multipart request.", async () => {
+      let serverError;
+
+      /** @type {PromiseWithResolvers<void>} */
+      const done = Promise.withResolvers();
+
+      /** @type {PromiseWithResolvers<void>} */
+      const requestReceived = Promise.withResolvers();
+
+      const server = createServer(
+        express()
+          .use((_request, _response, next) => {
+            requestReceived.resolve();
+            next();
+          })
+          .use(graphqlUploadExpress())
+          .use(async (request, response) => {
+            try {
+              const operation = /** @type {{ variables: { file: Upload } }} */ (
+                request.body
+              );
+
+              const upload = await operation.variables.file.promise;
+
+              await rejects(
+                new Promise((resolve, reject) => {
+                  upload
+                    .createReadStream()
+                    .once("error", reject)
+                    .once("end", resolve)
+                    .resume();
+                }),
+                {
+                  name: "BadRequestError",
+                  message:
+                    "Request disconnected during file upload stream parsing.",
+                  status: 499,
+                  expose: true,
+                },
+              );
+            } catch (error) {
+              serverError = error;
+            } finally {
+              response.send();
+              done.resolve();
+            }
+          }),
+      );
+
+      const url = await listen(server);
+
+      try {
+        const abortMarkerString = "⛔";
+        const body = new FormData();
+
+        body.append(
+          "operations",
+          JSON.stringify({ variables: { file: null } }),
+        );
+        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+        body.append(
+          "1",
+          new File(
+            [
+              // Try to abort within a chunk after the first.
+              `${"a".repeat(defaultHighWaterMark * 2)}${abortMarkerString}${"a".repeat(10)}`,
+            ],
+            "a.txt",
+            { type: "text/plain" },
+          ),
+        );
+
+        await abortingMultipartRequest(
+          url,
+          body,
+          textEncoder.encode(abortMarkerString),
+          requestReceived.promise,
+        );
+
+        await done.promise;
+
+        if (serverError) throw serverError;
       } finally {
         server.close();
       }
