@@ -30,10 +30,9 @@ describe(
         new Koa()
           .use(
             graphqlUploadKoa({
-              // eslint-disable-next-line jsdoc/reject-any-type
-              /** @type {any} */
               async processRequest() {
                 processRequestRan = true;
+                return {};
               },
             }),
           )

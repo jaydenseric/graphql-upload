@@ -18,9 +18,9 @@
   - Removed conditionality for Node.js < v22 support.
   - Updated `actions/checkout` to v7.
   - Updated `actions/setup-node` to v6.
-- Migrated config for TypeScript v6.
+- Migrated config for TypeScript v7 and fixed new TypeScript errors in tests.
+- Updated VS Code workspace settings.
 - Removed no longer necessary polyfills for global `File` and `Promise.withResolvers` in tests.
-- Fixed TypeScript errors in tests caused by updating TypeScript.
 - Renamed the test helper directory from `test` to `test-helpers` and removed the custom glob from the package script `tests`.
 - Use the Node.js test runner to enforce code coverage:
   - Removed the dev dependency [`coverage-node`](https://npm.im/coverage-node).
