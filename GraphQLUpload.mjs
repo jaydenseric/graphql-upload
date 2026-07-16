@@ -8,12 +8,12 @@ import Upload from "./Upload.mjs";
 
 /**
  * A GraphQL scalar `Upload` that can be used in a
- * [`GraphQLSchema`](https://graphql.org/graphql-js/type/#graphqlschema). It’s
- * value in resolvers is a promise that resolves
+ * [`GraphQLSchema`](https://www.graphql-js.org/api-v16/type/#graphqlschema).
+ * It’s value in resolvers is a promise that resolves
  * {@link FileUpload file upload details} for processing and storage.
  * @example
  * A schema built using the function
- * [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema_src#makeexecutableschema)
+ * [`makeExecutableSchema`](https://the-guild.dev/graphql/tools/docs/generate-schema#makeexecutableschema)
  * from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema):
  *
  * ```js

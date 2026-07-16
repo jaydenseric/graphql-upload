@@ -12,7 +12,7 @@ Middleware and a scalar [`Upload`](./GraphQLUpload.mjs) to add support for [Grap
 >
 > First, check if there are [GraphQL multipart request spec server implementations](https://github.com/jaydenseric/graphql-multipart-request-spec#server) (most for Node.js integrate [`graphql-upload`](https://npm.im/graphql-upload)) that are more suitable for your environment than a manual setup.
 
-To install [`graphql-upload`](https://npm.im/graphql-upload) and its peer dependency [`graphql`](https://npm.im/graphql) with [npm](https://npmjs.com/get-npm), run:
+To install [`graphql-upload`](https://npm.im/graphql-upload) and its peer dependency [`graphql`](https://npm.im/graphql) with [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm), run:
 
 ```sh
 npm install graphql-upload graphql
@@ -20,7 +20,7 @@ npm install graphql-upload graphql
 
 Use the middleware [`graphqlUploadKoa`](./graphqlUploadKoa.mjs) or [`graphqlUploadExpress`](./graphqlUploadExpress.mjs) just before GraphQL middleware. Alternatively, use the function [`processRequest`](./processRequest.mjs) to create custom middleware.
 
-A schema built with separate SDL and resolvers (e.g. using the function [`makeExecutableSchema`](https://www.graphql-tools.com/docs/api/modules/schema_src#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)) requires the scalar [`Upload`](./GraphQLUpload.mjs) to be setup.
+A schema built with separate SDL and resolvers (e.g. using the function [`makeExecutableSchema`](https://the-guild.dev/graphql/tools/docs/generate-schema#makeexecutableschema) from [`@graphql-tools/schema`](https://npm.im/@graphql-tools/schema)) requires the scalar [`Upload`](./GraphQLUpload.mjs) to be setup.
 
 Then, the scalar [`Upload`](./GraphQLUpload.mjs) can be used for query or mutation arguments. For how to use the scalar value in resolvers, see the documentation in the module [`GraphQLUpload.mjs`](./GraphQLUpload.mjs).
 

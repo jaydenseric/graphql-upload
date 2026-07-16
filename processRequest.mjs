@@ -380,7 +380,7 @@ export default function processRequest(
  *   [Node.js readable stream](https://nodejs.org/api/stream.html#readable-streams)
  *   of the file’s contents.
  * @see [Node.js `Readable` stream constructor docs](https://nodejs.org/api/stream.html#new-streamreadableoptions).
- * @see [Node.js stream backpressure guide](https://nodejs.org/en/docs/guides/backpressuring-in-streams).
+ * @see [Node.js stream backpressure guide](https://nodejs.org/learn/modules/backpressuring-in-streams).
  */
 
 /**
@@ -391,7 +391,7 @@ export default function processRequest(
  *   strings (without splitting multi-byte characters across chunks) instead of
  *   Node.js [`Buffer`](https://nodejs.org/api/buffer.html#buffer) instances.
  *   Supported values depend on the
- *   [`Buffer` implementation](https://github.com/nodejs/node/blob/v18.1.0/lib/buffer.js#L590-L680)
+ *   [`Buffer` implementation](https://github.com/nodejs/node/blob/v26.5.0/lib/buffer.js#L695-L788)
  *   and include `utf8`, `ucs2`, `utf16le`, `latin1`, `ascii`, `base64`,
  *   `base64url`, or `hex`. Defaults to `utf8`.
  * @property {ReadStreamOptions["highWaterMark"]} [highWaterMark] Maximum number
