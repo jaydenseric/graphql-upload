@@ -1,6 +1,6 @@
 // @ts-check
 
-import { strictEqual } from "node:assert";
+import { ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
 import { getDefaultHighWaterMark } from "node:stream";
 import { describe, it } from "node:test";
@@ -30,7 +30,7 @@ describe(
 
           await requestFinished(request);
 
-          strictEqual(request.complete, true);
+          ok(request.complete);
 
           // Test awaiting an already finished request doesn’t hang.
 
@@ -78,7 +78,7 @@ describe(
 
           await requestFinished(request);
 
-          strictEqual(request.closed, true);
+          ok(request.closed);
           strictEqual(request.complete, false);
         } catch (error) {
           serverError = error;

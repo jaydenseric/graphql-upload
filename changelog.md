@@ -48,6 +48,7 @@
 - Removed the test helper class `CountReadableStream` and refactored the function `ignoreStream` tests.
 - Test that `GraphQLUpload` is a GraphQL scalar.
 - In tests, use `getDefaultHighWaterMark` from `node:stream` to avoid hardcoded assumptions about chunk sizes.
+- In tests, replaced `strictEqual` assertions of `true` with `ok`.
 - Fixed changelog entry typos for v4.0.0-alpha.2, 6.0.0-alpha.1, and v17.0.0.
 
 ## 17.0.0

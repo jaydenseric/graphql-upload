@@ -134,7 +134,7 @@ describe(
 
         await fetch(url, { method: "POST", body });
 
-        strictEqual(processRequestRan, true);
+        ok(processRequestRan);
         ok(requestBody);
         ok(requestBody.variables);
         ok(requestBody.variables.file);
