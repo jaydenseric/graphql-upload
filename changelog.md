@@ -17,7 +17,7 @@
   - Run tests with Node.js v22, v24, v26.
   - Removed conditionality for Node.js < v22 support.
   - Updated `actions/checkout` to v7.
-  - Updated `actions/setup-node` to v6.
+  - Updated `actions/setup-node` to v7.
 - Migrated config for TypeScript v7 and fixed new TypeScript errors in tests.
 - Updated VS Code workspace settings.
 - Removed no longer necessary polyfills for global `File` and `Promise.withResolvers` in tests.
