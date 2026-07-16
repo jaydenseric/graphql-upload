@@ -19,6 +19,7 @@
   - Updated `actions/checkout` to v7.
   - Updated `actions/setup-node` to v7.
 - Migrated config for TypeScript v7 and fixed new TypeScript errors in tests.
+- Avoid using the TypeScript type `any` in tests.
 - Updated VS Code workspace settings.
 - Removed no longer necessary polyfills for global `File` and `Promise.withResolvers` in tests.
 - Renamed the test helper directory from `test` to `test-helpers` and removed the custom glob from the package script `tests`.

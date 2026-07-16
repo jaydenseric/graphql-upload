@@ -1,5 +1,7 @@
 // @ts-check
 
+/** @import { FileUpload } from "./processRequest.mjs" */
+
 import { ok, rejects, strictEqual } from "node:assert";
 import { describe, it } from "node:test";
 
@@ -17,9 +19,7 @@ describe(
       ok(upload.promise instanceof Promise);
       strictEqual(typeof upload.resolve, "function");
 
-      // eslint-disable-next-line jsdoc/reject-any-type
-      /** @type {any} */
-      const file = {};
+      const file = /** @type {FileUpload} */ ({});
 
       upload.resolve(file);
 
