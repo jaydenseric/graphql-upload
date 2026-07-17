@@ -64,7 +64,7 @@ describe(
           .use(graphqlUploadKoa())
           .use(async (ctx, next) => {
             ctxRequestBody =
-              // @ts-ignore By convention this should be present.
+              // @ts-expect-error By convention this should be present.
               ctx.request.body;
             await next();
           })
@@ -117,7 +117,7 @@ describe(
           )
           .use(async (ctx, next) => {
             ctxRequestBody =
-              // @ts-ignore By convention this should be present.
+              // @ts-expect-error By convention this should be present.
               ctx.request.body;
             await next();
           })
@@ -278,7 +278,7 @@ describe(
           .use(graphqlUploadKoa())
           .use(async (ctx) => {
             const operation = /** @type {{ variables: { file: Upload } }} */ (
-              // @ts-ignore By convention this should be present.
+              // @ts-expect-error By convention this should be present.
               ctx.request.body
             );
 

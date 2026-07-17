@@ -154,11 +154,14 @@ describe(
           .use((request, response, next) => {
             const { send } = response;
 
-            // @ts-ignore Todo: Find a less hacky way.
+            // Todo: Find a less hacky way.
             response.send = (...args) => {
               requestCompleted = request.complete;
+
               response.send = send;
               response.send(...args);
+
+              return response;
             };
 
             next();
@@ -222,11 +225,14 @@ describe(
           .use((request, response, next) => {
             const { send } = response;
 
-            // @ts-ignore Todo: Find a less hacky way.
+            // Todo: Find a less hacky way.
             response.send = (...args) => {
               requestCompleted = request.complete;
+
               response.send = send;
               response.send(...args);
+
+              return response;
             };
 
             next();
