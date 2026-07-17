@@ -44,6 +44,7 @@
   - Removed the dev dependency [`form-data-encoder`](https://npm.im/form-data-encoder).
   - It now works with more than just text files.
   - Changed the parameter `abortMarker` type from `string` text to a `Uint8Array` byte sequence.
+  - Use a new test helper function `isAbortError`, with tests.
   - Added tests.
 - Removed the test helper class `CountReadableStream` and refactored the function `ignoreStream` tests.
 - Test that `GraphQLUpload` is a GraphQL scalar.

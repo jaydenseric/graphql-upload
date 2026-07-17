@@ -2,6 +2,8 @@
 
 import { Buffer } from "node:buffer";
 
+import isAbortError from "./isAbortError.mjs";
+
 /**
  * Fetches a multipart request that deliberately aborts after a certain amount
  * of data has been uploaded to the server, for testing purposes.
@@ -59,15 +61,7 @@ export default async function abortingMultipartRequest(
     signal: abortController.signal,
   };
 
-  // This can’t be tested with 100% branch coverage because an error is always
-  // caught. Coverage is disabled for the entire try/catch because:
-  // 1. https://github.com/nodejs/node/issues/61586
-  // 2. It’s too hard to test a non `Error` instance.
-  /* node:coverage disable */
-  try {
-    await fetch(url, fetchOptions);
-  } catch (error) {
-    if (!(error instanceof Error && error.name === "AbortError")) throw error;
-  }
-  /* node:coverage enable */
+  await fetch(url, fetchOptions).catch((error) => {
+    if (!isAbortError(error)) throw error;
+  });
 }
