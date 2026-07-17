@@ -48,8 +48,8 @@ export default async function abortingMultipartRequest(
       .pipeThrough(
         new TransformStream({
           async flush() {
-            // Abort the request after it has been received by the server request
-            // handler, or else Node.js won’t run the handler.
+            // Abort the request after it has been received by the server
+            // request handler, or else Node.js won’t run the handler.
             await requestReceived;
 
             abortController.abort();

@@ -54,10 +54,9 @@ describe(
 
       upload.reject(error);
 
-      // Node.js CLI flag `--unhandled-rejections=throw` must be used when these
-      // tests are run with Node.js v14 (it’s unnecessary for Node.js v15+) or
-      // the process won’t exit with an error if the unhandled rejection is’t
-      // silenced as intended.
+      // Rely on the Node.js v15+ CLI option default
+      // `--unhandled-rejections=throw` exiting the process with an error if the
+      // unhandled rejection isn’t silenced as intended.
     });
   },
 );
