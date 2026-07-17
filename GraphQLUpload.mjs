@@ -9,7 +9,7 @@ import Upload from "./Upload.mjs";
 /**
  * A GraphQL scalar `Upload` that can be used in a
  * [`GraphQLSchema`](https://www.graphql-js.org/api-v17/type/#graphqlschema).
- * It’s value in resolvers is a promise that resolves
+ * Its value in resolvers is a promise that resolves
  * {@link FileUpload file upload details} for processing and storage.
  * @example
  * A schema built using the function

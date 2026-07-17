@@ -10,7 +10,7 @@
  * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec).
  * The {@linkcode processRequest} function places references to an instance of
  * this class wherever the file is expected in the GraphQL operation. The scalar
- * {@linkcode GraphQLUpload} derives it’s value from {@linkcode Upload.promise}.
+ * {@linkcode GraphQLUpload} derives its value from {@linkcode Upload.promise}.
  */
 export default class Upload {
   constructor() {

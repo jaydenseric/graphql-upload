@@ -23,7 +23,7 @@ import Upload from "./Upload.mjs";
  * It parses the `operations` and `map` fields to create an {@linkcode Upload}
  * instance for each expected file upload, placing references wherever the file
  * is expected in the GraphQL operation for the {@linkcode GraphQLUpload} scalar
- * to derive it’s value. Errors are created with
+ * to derive its value. Errors are created with
  * [`http-errors`](https://npm.im/http-errors) to assist in sending responses
  * with appropriate HTTP status codes. Used to create custom middleware.
  * @type {ProcessRequestFunction}
