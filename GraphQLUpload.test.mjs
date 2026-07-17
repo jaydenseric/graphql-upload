@@ -41,7 +41,7 @@ describe(
       throws(
         () => {
           // The dummy value is irrelevant.
-          GraphQLUpload.parseLiteral(parseValue('""'));
+          GraphQLUpload.parseLiteral(parseValue('""'), {});
         },
         {
           name: "GraphQLError",

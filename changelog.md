@@ -9,6 +9,7 @@
 
 ### Minor
 
+- Updated the [`graphql`](https://npm.im/graphql) peer dependency to `^16.3.0 || ^17.0.0`, fixing [#394](https://github.com/jaydenseric/graphql-upload/issues/394).
 - Updated the optional peer dependency [`@types/koa`](https://npm.im/@types/koa) to `^2.11.4 - 3`. Koa v3 is now supported.
 
 ### Patch
