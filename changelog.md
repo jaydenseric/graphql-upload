@@ -56,7 +56,7 @@
   - Improved comments.
 - Updated various documentation links.
 - Fixed various JSDoc description typos.
-- Fixed changelog entry typos for v4.0.0-alpha.2, 6.0.0-alpha.1, and v17.0.0.
+- Fixed changelog entry typos for v4.0.0-alpha.2, v6.0.0-alpha.1, v12.0.0, and v17.0.0.
 
 ## 17.0.0
 
@@ -326,7 +326,7 @@
 - Updated Node.js support to `^12.20 || >= 14.13`.
 - Updated dev dependencies, some of which require newer Node.js versions than previously supported.
 - The tests are now ESM in `.mjs` files instead of CJS in `.js` files.
-- Replaced the the `package.json` `exports` field public [subpath folder mapping](https://nodejs.org/api/packages.html#packages_subpath_folder_mappings) (deprecated by Node.js) with a [subpath pattern](https://nodejs.org/api/packages.html#packages_subpath_patterns). Deep `require` paths must now include the `.js` file extension.
+- Replaced the `package.json` `exports` field public [subpath folder mapping](https://nodejs.org/api/packages.html#packages_subpath_folder_mappings) (deprecated by Node.js) with a [subpath pattern](https://nodejs.org/api/packages.html#packages_subpath_patterns). Deep `require` paths must now include the `.js` file extension.
 
 ### Minor
 
