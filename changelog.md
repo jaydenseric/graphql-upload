@@ -14,6 +14,7 @@
 
 ### Patch
 
+- Changed the optional peer dependency [`@types/express`](https://npm.im/@types/express) from `4.0.29 - 5` to the equivalent `^4.0.29 || ^5.0.0`.
 - Updated GitHub Actions CI config:
   - Run tests with Node.js v22, v24, v26.
   - Removed conditionality for Node.js < v22 support.
