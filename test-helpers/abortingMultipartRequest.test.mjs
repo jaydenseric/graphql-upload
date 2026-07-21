@@ -141,7 +141,7 @@ describe(
         await done.promise;
 
         // Todo: Remove this conditionality after dropping support for Node.js
-        // v18.
+        // < v22.
         if (Number(process.versions.node.split(".", 1)[0]) >= 22)
           ok(receivedBodyChunks.length > 1);
 
