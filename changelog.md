@@ -2,11 +2,6 @@
 
 ## Next
 
-### Major
-
-- Updated Node.js support to `^22.13.0 || ^24.0.0 || >=26.0.0`.
-- Updated dev dependencies, some of which require newer Node.js versions than previously supported.
-
 ### Minor
 
 - Updated the [`graphql`](https://npm.im/graphql) peer dependency to `^16.3.0 || ^17.0.0`, fixing [#394](https://github.com/jaydenseric/graphql-upload/issues/394).
@@ -14,16 +9,17 @@
 
 ### Patch
 
+- Added the package field `devEngines`; the supported Node.js versions for developing this package are now `^22.13.0 || ^24.0.0 || >=26.0.0`.
 - Changed the optional peer dependency [`@types/express`](https://npm.im/@types/express) from `4.0.29 - 5` to the equivalent `^4.0.29 || ^5.0.0`.
+- Updated dev dependencies.
 - Updated GitHub Actions CI config:
-  - Run tests with Node.js v22, v24, v26.
-  - Removed conditionality for Node.js < v22 support.
+  - Run tests with Node.js v18, v20, v22, v24, v26.
+  - Test Node.js versions prior to v22 with GraphQL v16 and polyfills.
   - Updated `actions/checkout` to v7.
   - Updated `actions/setup-node` to v7.
 - Migrated config for TypeScript v7 and fixed new TypeScript errors in tests.
 - Avoid using the TypeScript type `any` in tests.
 - Updated VS Code workspace settings.
-- Removed no longer necessary polyfills for global `File` and `Promise.withResolvers` in tests.
 - Renamed the test helper directory from `test` to `test-helpers` and removed the custom glob from the package script `tests`.
 - Use the Node.js test runner to enforce code coverage:
   - Removed the dev dependency [`coverage-node`](https://npm.im/coverage-node).
@@ -51,6 +47,7 @@
 - Removed the test helper class `CountReadableStream` and refactored the function `ignoreStream` tests.
 - Test that `GraphQLUpload` is a GraphQL scalar.
 - Improved tests:
+  - Polyfills to support old Node.js versions are now loaded using the Node.js CLI option `--import`, instead of side effect imports in test modules.
   - Use `getDefaultHighWaterMark` from `node:stream` to avoid hardcoded assumptions about chunk sizes.
   - Replaced `strictEqual` assertions of `true` with `ok`.
   - Replaced `@ts-ignore` comments with better code or `@ts-expect-error` comments.

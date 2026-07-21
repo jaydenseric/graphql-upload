@@ -140,7 +140,10 @@ describe(
 
         await done.promise;
 
-        ok(receivedBodyChunks.length > 1);
+        // Todo: Remove this conditionality after dropping support for Node.js
+        // v18.
+        if (Number(process.versions.node.split(".", 1)[0]) >= 22)
+          ok(receivedBodyChunks.length > 1);
 
         const receivedBody = Buffer.concat(receivedBodyChunks);
 
