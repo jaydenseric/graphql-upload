@@ -3,7 +3,7 @@
 import { ok, rejects, strictEqual } from "node:assert";
 import { createServer } from "node:http";
 import { getDefaultHighWaterMark } from "node:stream";
-import { describe, it } from "node:test";
+import { suite, test } from "node:test";
 
 import { listen } from "async-listen";
 
@@ -13,13 +13,13 @@ import abortingMultipartRequest from "./abortingMultipartRequest.mjs";
 const defaultHighWaterMark = getDefaultHighWaterMark(false);
 const textEncoder = new TextEncoder();
 
-describe(
+suite(
   "Function `abortingMultipartRequest`.",
   {
     concurrency: true,
   },
   () => {
-    it("Errors for an empty abort marker.", async () => {
+    test("Errors for an empty abort marker.", async () => {
       await rejects(
         abortingMultipartRequest(
           new URL("https://test.test"),
@@ -34,7 +34,7 @@ describe(
       );
     });
 
-    it("Errors when the abort marker is missing.", async () => {
+    test("Errors when the abort marker is missing.", async () => {
       const formData = new FormData();
 
       formData.append("a", "b");
@@ -53,7 +53,7 @@ describe(
       );
     });
 
-    it("Fetch error.", async () => {
+    test("Fetch error.", async () => {
       const abortMarkerString = "⛔";
       const formData = new FormData();
 
@@ -75,7 +75,7 @@ describe(
       );
     });
 
-    it("Aborts the multipart request.", async () => {
+    test("Aborts the multipart request.", async () => {
       let serverError;
 
       /** @type {PromiseWithResolvers<void>} */

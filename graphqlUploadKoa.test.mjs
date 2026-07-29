@@ -5,7 +5,7 @@
 import { deepStrictEqual, ok, rejects, strictEqual } from "node:assert";
 import { createServer } from "node:http";
 import { getDefaultHighWaterMark } from "node:stream";
-import { describe, it } from "node:test";
+import { suite, test } from "node:test";
 
 import { listen } from "async-listen";
 import Koa from "koa";
@@ -17,13 +17,13 @@ import abortingMultipartRequest from "./test-helpers/abortingMultipartRequest.mj
 const defaultHighWaterMark = getDefaultHighWaterMark(false);
 const textEncoder = new TextEncoder();
 
-describe(
+suite(
   "Function `graphqlUploadKoa`.",
   {
     concurrency: true,
   },
   () => {
-    it("Non multipart request.", async () => {
+    test("Non multipart request.", async () => {
       let processRequestRan = false;
 
       const server = createServer(
@@ -49,7 +49,7 @@ describe(
       }
     });
 
-    it("Multipart request.", async () => {
+    test("Multipart request.", async () => {
       /**
        * @type {{
        *   variables: {
@@ -93,7 +93,7 @@ describe(
       }
     });
 
-    it("Multipart request and option `processRequest`.", async () => {
+    test("Multipart request and option `processRequest`.", async () => {
       let processRequestRan = false;
 
       /**
@@ -147,7 +147,7 @@ describe(
       }
     });
 
-    it("Multipart request and option `processRequest` throwing an error.", async () => {
+    test("Multipart request and option `processRequest` throwing an error.", async () => {
       let koaError;
       let requestCompleted;
 
@@ -199,7 +199,7 @@ describe(
       }
     });
 
-    it("Multipart request and following middleware throwing an error.", async () => {
+    test("Multipart request and following middleware throwing an error.", async () => {
       let koaError;
       let requestCompleted;
 
@@ -247,7 +247,7 @@ describe(
       }
     });
 
-    it("An aborted multipart request.", async () => {
+    test("An aborted multipart request.", async () => {
       let serverError;
 
       /** @type {unknown} */

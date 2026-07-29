@@ -1,31 +1,31 @@
 // @ts-check
 
 import { doesNotThrow, ok, strictEqual, throws } from "node:assert";
-import { describe, it } from "node:test";
+import { suite, test } from "node:test";
 
 import { GraphQLScalarType, parseValue } from "graphql";
 
 import GraphQLUpload from "./GraphQLUpload.mjs";
 import Upload from "./Upload.mjs";
 
-describe(
+suite(
   "GraphQL scalar `GraphQLUpload`.",
   {
     concurrency: true,
   },
   () => {
-    it("Is a GraphQL scalar.", () => {
+    test("Is a GraphQL scalar.", () => {
       ok(GraphQLUpload instanceof GraphQLScalarType);
       strictEqual(GraphQLUpload.name, "Upload");
     });
 
-    it("Method `parseValue`, value valid.", () => {
+    test("Method `parseValue`, value valid.", () => {
       doesNotThrow(() => {
         GraphQLUpload.parseValue(new Upload());
       });
     });
 
-    it("Method `parseValue`, value invalid.", () => {
+    test("Method `parseValue`, value invalid.", () => {
       throws(
         () => {
           GraphQLUpload.parseValue(true);
@@ -37,7 +37,7 @@ describe(
       );
     });
 
-    it("Method `parseLiteral`.", () => {
+    test("Method `parseLiteral`.", () => {
       throws(
         () => {
           // The dummy value is irrelevant.
@@ -51,7 +51,7 @@ describe(
       );
     });
 
-    it("Method `serialize`.", () => {
+    test("Method `serialize`.", () => {
       throws(
         () => {
           // The dummy value is irrelevant.

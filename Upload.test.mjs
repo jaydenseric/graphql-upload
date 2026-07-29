@@ -3,17 +3,17 @@
 /** @import { FileUpload } from "./processRequest.mjs" */
 
 import { ok, rejects, strictEqual } from "node:assert";
-import { describe, it } from "node:test";
+import { suite, test } from "node:test";
 
 import Upload from "./Upload.mjs";
 
-describe(
+suite(
   "Class `Upload`.",
   {
     concurrency: true,
   },
   () => {
-    it("Resolving a file.", async () => {
+    test("Resolving a file.", async () => {
       const upload = new Upload();
 
       ok(upload.promise instanceof Promise);
@@ -29,7 +29,7 @@ describe(
       strictEqual(upload.file, file);
     });
 
-    it("Handled rejection.", async () => {
+    test("Handled rejection.", async () => {
       const upload = new Upload();
 
       ok(upload.promise instanceof Promise);
@@ -44,7 +44,7 @@ describe(
       await rejects(Promise.race([upload.promise, Promise.resolve()]), error);
     });
 
-    it("Unhandled rejection.", async () => {
+    test("Unhandled rejection.", async () => {
       const upload = new Upload();
 
       ok(upload.promise instanceof Promise);

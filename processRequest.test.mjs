@@ -11,7 +11,7 @@ import {
 import { createServer } from "node:http";
 import { getDefaultHighWaterMark } from "node:stream";
 import { text } from "node:stream/consumers";
-import { describe, it } from "node:test";
+import { suite, test } from "node:test";
 
 import { listen } from "async-listen";
 import { ReadStream } from "fs-capacitor";
@@ -24,13 +24,13 @@ import Upload from "./Upload.mjs";
 const defaultHighWaterMark = getDefaultHighWaterMark(false);
 const textEncoder = new TextEncoder();
 
-describe(
+suite(
   "Function `processRequest`.",
   {
     concurrency: true,
   },
   () => {
-    it("No files.", async () => {
+    test("No files.", async () => {
       let serverError;
 
       const operation = { variables: { a: true } };
@@ -60,7 +60,7 @@ describe(
       }
     });
 
-    it("A single file, default `createReadStream` options, file name chars `latin1`.", async () => {
+    test("A single file, default `createReadStream` options, file name chars `latin1`.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -119,7 +119,7 @@ describe(
       }
     });
 
-    it("A single file, default `createReadStream` options, file name chars non `latin1`.", async () => {
+    test("A single file, default `createReadStream` options, file name chars non `latin1`.", async () => {
       const fileName = "你好.txt";
 
       let serverError;
@@ -180,7 +180,7 @@ describe(
       }
     });
 
-    it("A single file and custom `createReadStream` options.", async () => {
+    test("A single file and custom `createReadStream` options.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -238,7 +238,7 @@ describe(
       }
     });
 
-    it("A single file, batched.", async () => {
+    test("A single file, batched.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -312,7 +312,7 @@ describe(
       }
     });
 
-    it("Deduped files.", async () => {
+    test("Deduped files.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -388,7 +388,7 @@ describe(
       }
     });
 
-    it("Unconsumed uploads.", async () => {
+    test("Unconsumed uploads.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -441,7 +441,7 @@ describe(
       }
     });
 
-    it("An extraneous multipart form field file.", async () => {
+    test("An extraneous multipart form field file.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -496,7 +496,7 @@ describe(
       }
     });
 
-    it("A missing multipart form field file.", async () => {
+    test("A missing multipart form field file.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -544,7 +544,7 @@ describe(
       }
     });
 
-    it("Option `maxFiles`.", async () => {
+    test("Option `maxFiles`.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -589,7 +589,7 @@ describe(
       }
     });
 
-    it("Option `maxFiles` and an interspersed extraneous file.", async () => {
+    test("Option `maxFiles` and an interspersed extraneous file.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -661,7 +661,7 @@ describe(
       }
     });
 
-    it("Option `maxFileSize`.", async () => {
+    test("Option `maxFileSize`.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -745,7 +745,7 @@ describe(
       }
     });
 
-    it("Option `maxFieldSize`.", async () => {
+    test("Option `maxFieldSize`.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -787,7 +787,7 @@ describe(
       }
     });
 
-    it("An aborted request and immediate stream creation.", async () => {
+    test("An aborted request and immediate stream creation.", async () => {
       let serverError;
 
       // In other tests a fetch request can be awaited that resolves once the
@@ -931,7 +931,7 @@ describe(
       }
     });
 
-    it("An aborted request and delayed stream creation.", async () => {
+    test("An aborted request and delayed stream creation.", async () => {
       let serverError;
 
       // In other tests a fetch request can be awaited that resolves once the
@@ -1071,7 +1071,7 @@ describe(
       }
     });
 
-    it("Multipart form field `map` misordered before `operations`.", async () => {
+    test("Multipart form field `map` misordered before `operations`.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -1110,7 +1110,7 @@ describe(
       }
     });
 
-    it("Multipart form field file misordered before `map`.", async () => {
+    test("Multipart form field file misordered before `map`.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -1149,7 +1149,7 @@ describe(
       }
     });
 
-    it("Multipart form fields `map` and file missing.", async () => {
+    test("Multipart form fields `map` and file missing.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -1186,7 +1186,7 @@ describe(
       }
     });
 
-    it("Multipart form fields `operations`, `map` and file missing.", async () => {
+    test("Multipart form fields `operations`, `map` and file missing.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -1219,7 +1219,7 @@ describe(
       }
     });
 
-    it("Invalid multipart form field `operations` JSON and a small file.", async () => {
+    test("Invalid multipart form field `operations` JSON and a small file.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -1255,7 +1255,7 @@ describe(
       }
     });
 
-    it("Invalid multipart form field `operations` JSON and a large file.", async () => {
+    test("Invalid multipart form field `operations` JSON and a large file.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -1306,7 +1306,7 @@ describe(
       ["boolean", true],
       ["string", ""],
     ])
-      it(`Invalid multipart form field \`operations\` type, ${type}.`, async () => {
+      test(`Invalid multipart form field \`operations\` type, ${type}.`, async () => {
         let serverError;
 
         const server = createServer(async (request, response) => {
@@ -1342,7 +1342,7 @@ describe(
         }
       });
 
-    it("Invalid multipart form field `map` JSON.", async () => {
+    test("Invalid multipart form field `map` JSON.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -1387,7 +1387,7 @@ describe(
       ["boolean", true],
       ["string", ""],
     ])
-      it(`Invalid multipart form field \`map\` type, ${type}.`, async () => {
+      test(`Invalid multipart form field \`map\` type, ${type}.`, async () => {
         let serverError;
 
         const server = createServer(async (request, response) => {
@@ -1426,7 +1426,7 @@ describe(
         }
       });
 
-    it("Invalid multipart form field `map` entry type.", async () => {
+    test("Invalid multipart form field `map` entry type.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -1465,7 +1465,7 @@ describe(
       }
     });
 
-    it("Invalid multipart form field `map` entry array item type.", async () => {
+    test("Invalid multipart form field `map` entry array item type.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -1504,7 +1504,7 @@ describe(
       }
     });
 
-    it("Invalid multipart form field `map` entry array item object path.", async () => {
+    test("Invalid multipart form field `map` entry array item object path.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -1540,7 +1540,7 @@ describe(
       }
     });
 
-    it("An unparsable multipart request.", async () => {
+    test("An unparsable multipart request.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -1575,7 +1575,7 @@ describe(
       }
     });
 
-    it("A maliciously malformed multipart request.", async () => {
+    test("A maliciously malformed multipart request.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {

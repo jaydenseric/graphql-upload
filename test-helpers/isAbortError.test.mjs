@@ -1,25 +1,25 @@
 // @ts-check
 
 import { strictEqual } from "node:assert";
-import { describe, it } from "node:test";
+import { suite, test } from "node:test";
 
 import isAbortError from "./isAbortError.mjs";
 
-describe(
+suite(
   "Function `isAbortError`.",
   {
     concurrency: true,
   },
   () => {
-    it("Non error.", () => {
+    test("Non error.", () => {
       strictEqual(isAbortError(true), false);
     });
 
-    it("Non abort error.", () => {
+    test("Non abort error.", () => {
       strictEqual(isAbortError(new Error()), false);
     });
 
-    it("Abort error.", () => {
+    test("Abort error.", () => {
       strictEqual(isAbortError(AbortSignal.abort().reason), true);
     });
   },

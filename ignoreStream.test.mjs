@@ -2,17 +2,17 @@
 
 import { doesNotThrow, strictEqual } from "node:assert";
 import { Readable } from "node:stream";
-import { describe, it } from "node:test";
+import { suite, test } from "node:test";
 
 import ignoreStream from "./ignoreStream.mjs";
 
-describe(
+suite(
   "Function `ignoreStream`.",
   {
     concurrency: true,
   },
   () => {
-    it("Ignores errors.", () => {
+    test("Ignores errors.", () => {
       doesNotThrow(() => {
         const stream = new Readable({
           read() {},
@@ -24,7 +24,7 @@ describe(
       });
     });
 
-    it("Resumes a paused stream.", () => {
+    test("Resumes a paused stream.", () => {
       doesNotThrow(() => {
         const stream = new Readable({
           read() {},

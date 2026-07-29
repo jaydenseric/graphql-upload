@@ -3,7 +3,7 @@
 import { ok, strictEqual } from "node:assert";
 import { createServer } from "node:http";
 import { getDefaultHighWaterMark } from "node:stream";
-import { describe, it } from "node:test";
+import { suite, test } from "node:test";
 
 import { listen } from "async-listen";
 
@@ -13,13 +13,13 @@ import abortingMultipartRequest from "./test-helpers/abortingMultipartRequest.mj
 const defaultHighWaterMark = getDefaultHighWaterMark(false);
 const textEncoder = new TextEncoder();
 
-describe(
+suite(
   "Function `requestFinished`.",
   {
     concurrency: true,
   },
   () => {
-    it("Request finishes uploading.", async () => {
+    test("Request finishes uploading.", async () => {
       let serverError;
 
       const server = createServer(async (request, response) => {
@@ -61,7 +61,7 @@ describe(
       }
     });
 
-    it("Request disconnects early.", async () => {
+    test("Request disconnects early.", async () => {
       let serverError;
 
       /** @type {PromiseWithResolvers<void>} */
