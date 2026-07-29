@@ -18,6 +18,7 @@
 - Removed no longer necessary polyfills for global `File`, `Promise.withResolvers`, and `Request.prototype.bytes` in tests.
 - Removed no longer necessary Node.js version conditionality in tests.
 - Added a `.gitattributes` file to enforce LF line endings.
+- Sorted config in `.editorconfig`.
 
 ## 17.1.0
 
