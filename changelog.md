@@ -1,5 +1,23 @@
 # graphql-upload changelog
 
+## Next
+
+### Major
+
+- Updated Node.js support to `^22.13.0 || ^24.0.0 || >=26.0.0`.
+
+### Patch
+
+- Removed the package field `devEngines` as the development and runtime supported Node.js versions are the same again.
+- Updated package scripts.
+- Updated GitHub Actions CI config:
+  - Improved the triggers.
+  - Renamed the job `tests` to `test`.
+  - Run tests with the lower and upper bounds of each supported major Node.js version.
+  - Removed conditionality for Node.js < v22 support.
+- Removed no longer necessary polyfills for global `File`, `Promise.withResolvers`, and `Request.prototype.bytes` in tests.
+- Removed no longer necessary Node.js version conditionality in tests.
+
 ## 17.1.0
 
 ### Minor

@@ -1,5 +1,9 @@
 name: CI
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
 jobs:
   prettier:
     name: Prettier
@@ -31,23 +35,17 @@ jobs:
           node-version: latest
       - run: npm install
       - run: node --run types
-  tests:
-    name: Tests
+  test:
+    name: Test
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        node: [18, 20, 22, 24, 26]
+        node: ["22.13.0", "22", "24.0.0", "24", "26.0.0", "26"]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
-      - run: npm install graphql@^16.3.0 --no-save
-        if: matrix.node < 22
       - run: npm install
-        if: matrix.node >= 22
-      - run: node --import ./test-helpers/polyfillFile.mjs --import ./test-helpers/polyfillPromiseWithResolvers.mjs --import ./test-helpers/polyfillRequestBytes.mjs --test --test-reporter=spec
-        if: matrix.node < 22
-      - run: node --run tests
-        if: matrix.node >= 22
+      - run: node --run test
