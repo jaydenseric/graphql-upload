@@ -19,6 +19,7 @@ import { ReadStream } from "fs-capacitor";
 import processRequest from "./processRequest.mjs";
 import requestFinished from "./requestFinished.mjs";
 import abortingMultipartRequest from "./test-helpers/abortingMultipartRequest.mjs";
+import serverClose from "./test-helpers/serverClose.mjs";
 import Upload from "./Upload.mjs";
 
 const defaultHighWaterMark = getDefaultHighWaterMark(false);
@@ -56,7 +57,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -115,7 +116,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -176,7 +177,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -234,7 +235,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -308,7 +309,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -384,7 +385,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -437,7 +438,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -492,7 +493,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -540,7 +541,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -585,7 +586,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -657,7 +658,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -741,7 +742,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -783,7 +784,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -927,7 +928,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -1067,7 +1068,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -1106,7 +1107,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -1145,7 +1146,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -1182,7 +1183,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -1215,7 +1216,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -1251,7 +1252,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -1297,7 +1298,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -1338,7 +1339,7 @@ suite(
 
           if (serverError) throw serverError;
         } finally {
-          server.close();
+          await serverClose(server);
         }
       });
 
@@ -1377,7 +1378,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -1422,7 +1423,7 @@ suite(
 
           if (serverError) throw serverError;
         } finally {
-          server.close();
+          await serverClose(server);
         }
       });
 
@@ -1461,7 +1462,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -1500,7 +1501,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -1536,7 +1537,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -1571,7 +1572,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -1609,7 +1610,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
   },

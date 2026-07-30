@@ -18,6 +18,7 @@
 - Removed no longer necessary polyfills for global `File`, `Promise.withResolvers`, and `Request.prototype.bytes` in tests.
 - Removed no longer necessary Node.js version conditionality in tests.
 - Refactored tests from `describe` and `it` to `suite` and `test`.
+- Implemented a new test helper function `serverClose` to ensure tests await the proper closing of servers and all connections, speeding up test runs (particularly in older Node.js versions).
 - Added a `.gitattributes` file to enforce LF line endings.
 - Sorted config in `.editorconfig`.
 

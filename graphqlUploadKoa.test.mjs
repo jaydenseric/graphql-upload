@@ -13,6 +13,7 @@ import Koa from "koa";
 import graphqlUploadKoa from "./graphqlUploadKoa.mjs";
 import processRequest from "./processRequest.mjs";
 import abortingMultipartRequest from "./test-helpers/abortingMultipartRequest.mjs";
+import serverClose from "./test-helpers/serverClose.mjs";
 
 const defaultHighWaterMark = getDefaultHighWaterMark(false);
 const textEncoder = new TextEncoder();
@@ -45,7 +46,7 @@ suite(
         await fetch(url, { method: "POST" });
         strictEqual(processRequestRan, false);
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -89,7 +90,7 @@ suite(
         ok(ctxRequestBody.variables);
         ok(ctxRequestBody.variables.file);
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -143,7 +144,7 @@ suite(
         ok(ctxRequestBody.variables);
         ok(ctxRequestBody.variables.file);
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -195,7 +196,7 @@ suite(
           "Response wasn’t delayed until the request completed.",
         );
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -243,7 +244,7 @@ suite(
           "Response wasn’t delayed until the request completed.",
         );
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -342,7 +343,7 @@ suite(
         strictEqual(koaError.name, "Error");
         strictEqual(koaError.message, "Parse Error");
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
   },

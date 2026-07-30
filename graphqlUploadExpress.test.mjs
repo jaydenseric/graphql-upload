@@ -17,6 +17,7 @@ import createError from "http-errors";
 import graphqlUploadExpress from "./graphqlUploadExpress.mjs";
 import processRequest from "./processRequest.mjs";
 import abortingMultipartRequest from "./test-helpers/abortingMultipartRequest.mjs";
+import serverClose from "./test-helpers/serverClose.mjs";
 
 const defaultHighWaterMark = getDefaultHighWaterMark(false);
 const textEncoder = new TextEncoder();
@@ -47,7 +48,7 @@ suite(
         await fetch(url, { method: "POST" });
         strictEqual(processRequestRan, false);
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -88,7 +89,7 @@ suite(
         ok(requestBody.variables);
         ok(requestBody.variables.file);
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -139,7 +140,7 @@ suite(
         ok(requestBody.variables);
         ok(requestBody.variables.file);
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -211,7 +212,7 @@ suite(
         );
         strictEqual(responseStatusCode, error.status);
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -276,7 +277,7 @@ suite(
           "Response wasn’t delayed until the request completed.",
         );
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -363,7 +364,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
   },

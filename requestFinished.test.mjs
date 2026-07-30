@@ -9,6 +9,7 @@ import { listen } from "async-listen";
 
 import requestFinished from "./requestFinished.mjs";
 import abortingMultipartRequest from "./test-helpers/abortingMultipartRequest.mjs";
+import serverClose from "./test-helpers/serverClose.mjs";
 
 const defaultHighWaterMark = getDefaultHighWaterMark(false);
 const textEncoder = new TextEncoder();
@@ -57,7 +58,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
 
@@ -111,7 +112,7 @@ suite(
 
         if (serverError) throw serverError;
       } finally {
-        server.close();
+        await serverClose(server);
       }
     });
   },
