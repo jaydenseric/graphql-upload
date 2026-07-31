@@ -72,14 +72,14 @@ import Upload from "./Upload.mjs";
 const GraphQLUpload = new GraphQLScalarType({
   name: "Upload",
   description: "The `Upload` scalar type represents a file upload.",
-  parseValue(value) {
+  coerceInputValue(value) {
     if (value instanceof Upload) return value.promise;
     throw new GraphQLError("Upload value invalid.");
   },
-  parseLiteral(node) {
+  coerceInputLiteral(node) {
     throw new GraphQLError("Upload literal unsupported.", { nodes: node });
   },
-  serialize() {
+  coerceOutputValue() {
     throw new GraphQLError("Upload serialization unsupported.");
   },
 });

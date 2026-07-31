@@ -5,6 +5,11 @@
 ### Major
 
 - Updated Node.js support to `^22.13.0 || ^24.0.0 || >=26.0.0`.
+- Updated the [`graphql`](https://npm.im/graphql) peer dependency to `^17.0.0`.
+- Migrated the `GraphQLUpload` scalar to the [`graphql`](https://npm.im/graphql) v17 scalar method names:
+  - `parseValue` → `coerceInputValue`.
+  - `parseLiteral` → `coerceInputLiteral`.
+  - `serialize` → `coerceOutputValue`.
 
 ### Patch
 

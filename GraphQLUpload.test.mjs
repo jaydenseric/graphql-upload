@@ -3,7 +3,7 @@
 import { doesNotThrow, ok, strictEqual, throws } from "node:assert";
 import { suite, test } from "node:test";
 
-import { GraphQLScalarType, parseValue } from "graphql";
+import { GraphQLScalarType, parseConstValue } from "graphql";
 
 import GraphQLUpload from "./GraphQLUpload.mjs";
 import Upload from "./Upload.mjs";
@@ -19,16 +19,16 @@ suite(
       strictEqual(GraphQLUpload.name, "Upload");
     });
 
-    test("Method `parseValue`, value valid.", () => {
+    test("Method `coerceInputValue`, value valid.", () => {
       doesNotThrow(() => {
-        GraphQLUpload.parseValue(new Upload());
+        GraphQLUpload.coerceInputValue(new Upload());
       });
     });
 
-    test("Method `parseValue`, value invalid.", () => {
+    test("Method `coerceInputValue`, value invalid.", () => {
       throws(
         () => {
-          GraphQLUpload.parseValue(true);
+          GraphQLUpload.coerceInputValue(true);
         },
         {
           name: "GraphQLError",
@@ -37,11 +37,14 @@ suite(
       );
     });
 
-    test("Method `parseLiteral`.", () => {
+    test("Method `coerceInputLiteral`.", () => {
+      const { coerceInputLiteral } = GraphQLUpload;
+
+      ok(coerceInputLiteral);
       throws(
         () => {
           // The dummy value is irrelevant.
-          GraphQLUpload.parseLiteral(parseValue('""'), {});
+          coerceInputLiteral(parseConstValue('""'));
         },
         {
           name: "GraphQLError",
@@ -51,11 +54,11 @@ suite(
       );
     });
 
-    test("Method `serialize`.", () => {
+    test("Method `coerceOutputValue`.", () => {
       throws(
         () => {
           // The dummy value is irrelevant.
-          GraphQLUpload.serialize("");
+          GraphQLUpload.coerceOutputValue("");
         },
         {
           name: "GraphQLError",
