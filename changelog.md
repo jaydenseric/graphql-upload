@@ -5,6 +5,8 @@
 ### Major
 
 - Updated Node.js support to `^22.13.0 || ^24.0.0 || >=26.0.0`.
+- Updated the optional peer dependency [`@types/express`](https://npm.im/@types/express) to `^5.0.0`.
+- Updated the optional peer dependency [`@types/koa`](https://npm.im/@types/koa) to `^3.0.0`.
 - Updated the [`graphql`](https://npm.im/graphql) peer dependency to `^17.0.0`.
 - Migrated the `GraphQLUpload` scalar to the [`graphql`](https://npm.im/graphql) v17 scalar method names:
   - `parseValue` → `coerceInputValue`.
