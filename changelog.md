@@ -7,8 +7,8 @@
 - Updated Node.js support to `^22.13.0 || ^24.0.0 || >=26.0.0`.
 - Updated the optional peer dependency [`@types/express`](https://npm.im/@types/express) to `^5.0.0`.
 - Updated the optional peer dependency [`@types/koa`](https://npm.im/@types/koa) to `^3.0.0`.
-- Updated the [`graphql`](https://npm.im/graphql) peer dependency to `^17.0.0`.
-- Migrated the `GraphQLUpload` scalar to the [`graphql`](https://npm.im/graphql) v17 scalar method names:
+- Updated the peer dependency [`graphql`](https://npm.im/graphql) to `^17.0.0`.
+- Migrated the scalar `GraphQLUpload` to the [`graphql`](https://npm.im/graphql) v17 scalar method names:
   - `parseValue` → `coerceInputValue`.
   - `parseLiteral` → `coerceInputLiteral`.
   - `serialize` → `coerceOutputValue`.
@@ -30,12 +30,13 @@
 - Added an end-to-end test.
 - Added a `.gitattributes` file to enforce LF line endings.
 - Sorted config in `.editorconfig`.
+- Edited the changelog for consistency.
 
 ## 17.1.0
 
 ### Minor
 
-- Updated the [`graphql`](https://npm.im/graphql) peer dependency to `^16.3.0 || ^17.0.0`, fixing [#394](https://github.com/jaydenseric/graphql-upload/issues/394).
+- Updated the peer dependency [`graphql`](https://npm.im/graphql) to `^16.3.0 || ^17.0.0`, fixing [#394](https://github.com/jaydenseric/graphql-upload/issues/394).
 - Updated the optional peer dependency [`@types/koa`](https://npm.im/@types/koa) to `^2.11.4 || ^3.0.0`. Koa v3 is now supported.
 
 ### Patch
@@ -122,7 +123,7 @@
 ### Patch
 
 - Tweaked the package description.
-- Updated the `package.json` field `repository` to conform to new npm requirements.
+- Updated the package field `repository` to conform to new npm requirements.
 - Updated the package scripts:
   - Reordered the scripts.
   - Replaced `npm run` with `node --run`.
@@ -172,7 +173,7 @@
 
 ### Major
 
-- Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to v8, fixing [#318](https://github.com/jaydenseric/graphql-upload/issues/318).
+- Updated the dependency [`fs-capacitor`](https://npm.im/fs-capacitor) to v8, fixing [#318](https://github.com/jaydenseric/graphql-upload/issues/318).
 - The type `FileUploadCreateReadStreamOptions` from the `processRequest.mjs` module now uses types from [`fs-capacitor`](https://npm.im/fs-capacitor) that are slightly more specific.
 - The API is now ESM in `.mjs` files instead of CJS in `.js` files, [accessible via `import` but not `require`](https://nodejs.org/dist/latest/docs/api/esm.html#require). To migrate imports:
 
@@ -224,7 +225,7 @@
 
 ### Major
 
-- Updated the [`busboy`](https://npm.im/busboy) dependency to v1, fixing [#311](https://github.com/jaydenseric/graphql-upload/issues/311).
+- Updated the dependency [`busboy`](https://npm.im/busboy) to v1, fixing [#311](https://github.com/jaydenseric/graphql-upload/issues/311).
   - This important update addresses the vulnerability [CVE-2022-24434](https://nvd.nist.gov/vuln/detail/CVE-2022-24434) ([GHSA-wm7h-9275-46v2](https://github.com/advisories/GHSA-wm7h-9275-46v2)).
   - Some error messages have changed.
   - Temporarily until [mscdex/busboy#297](https://github.com/mscdex/busboy/issues/297) is fixed upstream, for the function `processRequest` and the middleware `graphqlUploadExpress` and `graphqlUploadKoa` the option `maxFileSize` is actually 1 byte less than the amount specified.
@@ -241,8 +242,8 @@
 ### Major
 
 - Updated Node.js support to `^14.17.0 || ^16.0.0 || >= 18.0.0`.
-- Updated the [`graphql`](https://npm.im/graphql) peer dependency to `^16.3.0`.
-- Updated the [`http-errors`](https://npm.im/http-errors) dependency to v2.
+- Updated the peer dependency [`graphql`](https://npm.im/graphql) to `^16.3.0`.
+- Updated the dependency [`http-errors`](https://npm.im/http-errors) to v2.
 - Public modules are now individually listed in the package `files` and `exports` fields.
 - Removed the package main index module; deep imports must be used. To migrate imports:
 
@@ -299,13 +300,13 @@
   ```
 
 - Implemented TypeScript types via JSDoc comments, closing [#282](https://github.com/jaydenseric/graphql-upload/issues/282).
-- The `GraphQLUpload` scalar no longer uses deprecated `GraphQLError` constructor parameters.
+- The scalar `GraphQLUpload` no longer uses deprecated `GraphQLError` constructor parameters.
 
 ### Patch
 
 - Updated dev dependencies.
 - Simplified dev dependencies and config for ESLint.
-- Check TypeScript types via a new package `types` script.
+- Check TypeScript types via a new package script `types`.
 - Removed the [`jsdoc-md`](https://npm.im/jsdoc-md) dev dependency and the related package scripts, replacing the readme “API” section with a manually written “Exports” section.
 - Removed the [`hard-rejection`](https://npm.im/hard-rejection) dev dependency. Instead, tests are run with the Node.js CLI flag `--unhandled-rejections=throw` to make Node.js v14 behave like newer versions.
 - Removed the [`formdata-node`](https://npm.im/formdata-node) dev dependency. Instead, `File` and `FormData` are imported from [`node-fetch`](https://npm.im/node-fetch).
@@ -327,20 +328,20 @@
 
 - Updated Node.js support to `^12.22.0 || ^14.17.0 || >= 16.0.0`.
 - Updated dev dependencies, some of which require newer Node.js versions than previously supported.
-- Removed `./package` from the package `exports` field; the full `package.json` filename must be used in a `require` path.
+- Removed `./package` from the package field `exports`; the full `package.json` filename must be used in a `require` path.
 
 ### Patch
 
-- Updated the [`graphql`](https://npm.im/graphql) peer dependency to `0.13.1 - 16`.
+- Updated the peer dependency [`graphql`](https://npm.im/graphql) to `0.13.1 - 16`.
 - Updated dependencies.
 - Also run GitHub Actions CI with Node.js v17.
 - Simplified package scripts.
 - Renamed imports in the test index module.
-- Test the `processRequest` function with a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec) that has no files.
-- Test the `processRequest` function with an unparsable multipart request.
+- Test the function `processRequest` with a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec) that has no files.
+- Test the function `processRequest` with an unparsable multipart request.
 - Replaced the [`form-data`](https://npm.im/form-data) dev dependency with [`formdata-node`](https://npm.im/formdata-node), [`formdata-node`](https://npm.im/form-data-encoder), and [`node-abort-controller`](https://npm.im/node-abort-controller) and refactored tests to align with web standards.
-- Refactored the `processRequest` function to remove the [`isobject`](https://npm.im/isobject) dependency.
-- Improved the `processRequest` function, via [#273](https://github.com/jaydenseric/graphql-upload/pull/273):
+- Refactored the function `processRequest` to remove the dependency [`isobject`](https://npm.im/isobject).
+- Improved the function `processRequest`, via [#273](https://github.com/jaydenseric/graphql-upload/pull/273):
   - Fixed ending requests from being handled incorrectly as aborting in edge cases, closing [#272](https://github.com/jaydenseric/graphql-upload/pull/272).
   - Fixed read streams created via the resolved `Upload` scalar value `createReadStream` method:
     - Not emitting the `error` event when the multipart request is aborted certain ways while the file is uploading.
@@ -355,11 +356,11 @@
 - Updated Node.js support to `^12.20 || >= 14.13`.
 - Updated dev dependencies, some of which require newer Node.js versions than previously supported.
 - The tests are now ESM in `.mjs` files instead of CJS in `.js` files.
-- Replaced the `package.json` `exports` field public [subpath folder mapping](https://nodejs.org/api/packages.html#packages_subpath_folder_mappings) (deprecated by Node.js) with a [subpath pattern](https://nodejs.org/api/packages.html#packages_subpath_patterns). Deep `require` paths must now include the `.js` file extension.
+- Replaced the package field `exports` public [subpath folder mapping](https://nodejs.org/api/packages.html#packages_subpath_folder_mappings) (deprecated by Node.js) with a [subpath pattern](https://nodejs.org/api/packages.html#packages_subpath_patterns). Deep `require` paths must now include the `.js` file extension.
 
 ### Minor
 
-- Added a package `sideEffects` field.
+- Added the package field `sideEffects`.
 
 ### Patch
 
@@ -373,10 +374,10 @@
   - Don’t specify the `CI` environment variable as it’s set by default.
 - Removed `npm-debug.log` from the `.gitignore` file as npm [v4.2.0](https://github.com/npm/npm/releases/tag/v4.2.0)+ doesn’t create it in the current working directory.
 - Updated the EditorConfig URL.
-- Updated the package `keywords` field.
-- More specific package `main` field path.
+- Updated the package field `keywords`.
+- More specific package field `main` path.
 - Simplified JSDoc related package scripts now that [`jsdoc-md`](https://npm.im/jsdoc-md) v10 automatically generates a Prettier formatted readme.
-- Added a package `test:jsdoc` script that checks the readme API docs are up to date with the source JSDoc.
+- Added a package script `test:jsdoc` that checks the readme API docs are up to date with the source JSDoc.
 - Refactored private constants from exports of a single module to individual modules.
 - Fixed test name and comment typos.
 - Updated external URLs in docs.
@@ -390,17 +391,17 @@
 ### Major
 
 - Updated Node.js support to `^10.13.0 || ^12.0.0 || >= 13.7.0`.
-- Added a [package `exports` field](https://nodejs.org/api/esm.html#esm_package_entry_points) with [conditional exports](https://nodejs.org/api/esm.html#esm_conditional_exports) to support native ESM in Node.js and keep internal code private, [whilst avoiding the dual package hazard](https://nodejs.org/api/esm.html#esm_approach_1_use_an_es_module_wrapper). Published files have been reorganized, so previously undocumented deep imports will need to be rewritten according to the newly documented paths.
+- Added a [package field `exports`](https://nodejs.org/api/esm.html#esm_package_entry_points) with [conditional exports](https://nodejs.org/api/esm.html#esm_conditional_exports) to support native ESM in Node.js and keep internal code private, [whilst avoiding the dual package hazard](https://nodejs.org/api/esm.html#esm_approach_1_use_an_es_module_wrapper). Published files have been reorganized, so previously undocumented deep imports will need to be rewritten according to the newly documented paths.
 - Updated dev dependencies, some of which require newer Node.js versions than previously supported.
 
 ### Patch
 
-- Updated the [`graphql`](https://npm.im/graphql) peer dependency to `0.13.1 - 15`, fixing [#200](https://github.com/jaydenseric/graphql-upload/issues/200) via [#201](https://github.com/jaydenseric/graphql-upload/pull/201).
+- Updated the peer dependency [`graphql`](https://npm.im/graphql) to `0.13.1 - 15`, fixing [#200](https://github.com/jaydenseric/graphql-upload/issues/200) via [#201](https://github.com/jaydenseric/graphql-upload/pull/201).
 - Updated Prettier related package scripts.
 - Configured Prettier option `semi` to the default, `true`.
 - Ensure GitHub Actions run on pull request.
 - Also run GitHub Actions with Node.js v14.
-- Fixed the `ignoreStream` function tests for Node.js v14 with a new `CountReadableStream` test helper, fixing [#209](https://github.com/jaydenseric/graphql-upload/issues/209).
+- Fixed the function `ignoreStream` tests for Node.js v14 with a new `CountReadableStream` test helper, fixing [#209](https://github.com/jaydenseric/graphql-upload/issues/209).
 - Minor JSDoc wording tweak for consistency.
 - Mention [`Promise.allSettled`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled) in the readme “Tips” section.
 - Updated MDN Web Docs links.
@@ -410,17 +411,17 @@
 ### Major
 
 - Updated Node.js support from v8.10+ to v10+, as earlier versions have reached end-of-life.
-- Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to v6, which now requires Node.js v10+, via [#179](https://github.com/jaydenseric/graphql-upload/pull/179).
+- Updated the dependency [`fs-capacitor`](https://npm.im/fs-capacitor) to v6, which now requires Node.js v10+, via [#179](https://github.com/jaydenseric/graphql-upload/pull/179).
 - Updated dev dependencies, some of which now require Node.js v10+.
 - Replaced the [`tap`](https://npm.im/tap) dev dependency with [`test-director`](https://npm.im/test-director), [`coverage-node`](https://npm.im/coverage-node), and [`hard-rejection`](https://npm.im/hard-rejection) to improve the dev experience and reduce the dev install size by ~75.7 MB. These new dev dependencies require Node.js v10+.
 - Reorganized files. This is only a breaking change for projects using undocumented deep imports.
-- Removed now redundant Node.js version compatibility logic in the `processRequest` function.
-- The `processRequest` function now places references to instances of the now exported and documented `Upload` class in the GraphQL operation for the `GraphQLUpload` scalar to derive its value, and the `GraphQLUpload` scalar now throws a `GraphQLError` when it parses an invalid value, fixing [#175](https://github.com/jaydenseric/graphql-upload/issues/175) via [#181](https://github.com/jaydenseric/graphql-upload/pull/181).
-- The `GraphQLUpload` scalar `parseLiteral` and `serialize` methods now throw `GraphQLError` (instead of `Error`) instances, with tweaked messages.
+- Removed now redundant Node.js version compatibility logic in the function `processRequest`.
+- The function `processRequest` now places references to instances of the now exported and documented class `Upload` in the GraphQL operation for the scalar `GraphQLUpload` to derive its value, and the scalar `GraphQLUpload` now throws a `GraphQLError` when it parses an invalid value, fixing [#175](https://github.com/jaydenseric/graphql-upload/issues/175) via [#181](https://github.com/jaydenseric/graphql-upload/pull/181).
+- The scalar `GraphQLUpload` methods `parseLiteral` and `serialize` now throw `GraphQLError` (instead of `Error`) instances, with tweaked messages.
 
 ### Minor
 
-- The `createReadStream` function in resolved file uploads now accepts options to configure the encoding and high water mark, fixing [#177](https://github.com/jaydenseric/graphql-upload/issues/177) via [#179](https://github.com/jaydenseric/graphql-upload/pull/179).
+- The function `createReadStream` in resolved file uploads now accepts options to configure the encoding and high water mark, fixing [#177](https://github.com/jaydenseric/graphql-upload/issues/177) via [#179](https://github.com/jaydenseric/graphql-upload/pull/179).
 
 ### Patch
 
@@ -428,11 +429,11 @@
 - Stop using [`husky`](https://npm.im/husky) and [`lint-staged`](https://npm.im/lint-staged).
 - Use [`isobject`](https://npm.im/isobject) for checking if values are enumerable, non-array objects.
 - Tests have been massively reorganized, refactored, and improved.
-- Test the `GraphQLUpload` scalar.
-- Test the `ignoreStream` function.
-- Moved the `Upload` class to its own file.
-- Added JSDoc for the `Upload` class instance property `file`.
-- Test the `Upload` class.
+- Test the scalar `GraphQLUpload`.
+- Test the function `ignoreStream`.
+- Moved the class `Upload` to its own file.
+- Added JSDoc for the class `Upload` instance property `file`.
+- Test the class `Upload`.
 - Improved JSDoc `FileUpload` typedef description.
 - Removed now redundant `eslint-disable-next-line` comments.
 - Use strict mode for scripts.
@@ -441,19 +442,19 @@
 
 ### Major
 
-- Updated Node.js support from v8.5+ to v8.10+, to match what the [`eslint`](https://npm.im/eslint) dev dependency now supports. This is unlikely to be a breaking change for the published package.
-- Removed the `Upload` scalar promise resolved `stream` property that has been deprecated since v7, along with associated tests.
+- Updated Node.js support from v8.5+ to v8.10+, to match what the dev dependency [`eslint`](https://npm.im/eslint) now supports. This is unlikely to be a breaking change for the published package.
+- Removed the scalar `Upload` promise resolved `stream` property that has been deprecated since v7, along with associated tests.
 - ESM is no longer published, due to CJS/ESM compatibility issues across recent Node.js versions, via [#169](https://github.com/jaydenseric/graphql-upload/pull/169).
 - The file structure and non-index file exports have changed. This should only affect projects using undocumented deep imports.
 
 ### Minor
 
-- Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to v4 to support Node.js v13, making required changes to the source and tests, via [#166](https://github.com/jaydenseric/graphql-upload/pull/166).
+- Updated the dependency [`fs-capacitor`](https://npm.im/fs-capacitor) to v4 to support Node.js v13, making required changes to the source and tests, via [#166](https://github.com/jaydenseric/graphql-upload/pull/166).
 - JSDoc comments are now included in the published code.
 - Several anonymous functions have been named, for better error stack traces.
 - Setup [GitHub Sponsors funding](https://github.com/sponsors/jaydenseric):
   - Added `.github/funding.yml` to display a sponsor button in GitHub.
-  - Added a `package.json` `funding` field to enable npm CLI funding features.
+  - Added the package field `funding` to enable npm CLI funding features.
 
 ### Patch
 
@@ -461,7 +462,7 @@
 - Removed the `.nycrc.json` file:
   - [`tap`](https://npm.im/tap) now ignores test files by default.
   - The `lib/test-helpers` directory is now ignored using [`tap`](https://npm.im/tap) CLI arguments due to [tapjs/node-tap#612](https://github.com/tapjs/node-tap/issues/612).
-- Removed the `esm` and `mjs` package tags; they will be added back once native ESM is properly supported.
+- Removed the package tags `esm` and `mjs`; they will be added back once native ESM is properly supported.
 - Updated JSDoc code examples to use CJS instead of ESM, as native ESM is not yet properly supported.
 - No longer test [`fs-capacitor`](https://npm.im/fs-capacitor) implementation details such as temp file creation and cleanup.
 - Commented the reasons for several `istanbul ignore next` comments.
@@ -486,12 +487,12 @@
 - Explicitly defined main exports (instead of using `export * from`) to prevent accidental public exposure of internal APIs.
 - Moved JSDoc typedefs into the index main entry file, alphabetically sorted.
 - Nicer Browserslist query syntax.
-- Replaced the `isObject` helper with a smarter and tested `isEnumerableObject`.
-- Removed the `isString` helper.
+- Replaced the helper function `isObject` with a smarter and tested `isEnumerableObject`.
+- Removed the helper function `isString`.
 - Enforced 100% code coverage for tests, and improved `processRequest` internals and tests (including a new test using vanilla Node.js HTTP), fixing [#130](https://github.com/jaydenseric/graphql-upload/issues/130) via [#162](https://github.com/jaydenseric/graphql-upload/pull/162).
-- Removed a workaround from the `startServer` test helper.
-- Added a new `ProcessRequestFunction` JSDoc type, and applied it to `processRequest`.
-- Renamed the `UploadOptions` JSDoc type to `ProcessRequestOptions`.
+- Removed a workaround from the test helper function `startServer`.
+- Added a new JSDoc type `ProcessRequestFunction`, and applied it to `processRequest`.
+- Renamed the JSDoc type `UploadOptions` to `ProcessRequestOptions`.
 - Misc. documentation improvements.
 
 ## 8.0.7
@@ -499,7 +500,7 @@
 ### Patch
 
 - Updated dependencies.
-- Handle invalid object paths in `map` multipart field entries, fixing [#154](https://github.com/jaydenseric/graphql-upload/issues/154).
+- Handle invalid object paths in multipart field `map` entries, fixing [#154](https://github.com/jaydenseric/graphql-upload/issues/154).
 - Import `WriteStream` from [`fs-capacitor`](https://npm.im/fs-capacitor) as a named rather than default import.
 
 ## 8.0.6
@@ -525,16 +526,16 @@
   - Invalid `map` entry array item type.
 - Additionally test current Node.js v8 and v10 versions with Travis.
 - Reduced the size of the published `package.json` by moving dev tool config to files. This also prevents editor extensions such as Prettier and ESLint from detecting config and attempting to operate when opening package files installed in `node_modules`.
-- Removed the [`watch`](https://npm.im/watch) dev dependency and `watch` script.
-- Simplified the `prepublishOnly` script.
-- Change to the `classic` TAP reporter for tests.
+- Removed the dev dependency [`watch`](https://npm.im/watch) and the script `watch`.
+- Simplified the package script `prepublishOnly`.
+- Change to the TAP reporter `classic` for tests.
 - Add [`apollo-server-koa`](https://npm.im/apollo-server-koa) and [`apollo-server-express`](https://npm.im/apollo-server-express) back to the compatible environments list in the readme, now that they use the current version of this package.
 
 ## 8.0.4
 
 ### Patch
 
-- Updated the [`fs-capacitor`](https://npm.im/fs-capacitor) dependency to v2, fixing [#131](https://github.com/jaydenseric/graphql-upload/issues/131) via [#132](https://github.com/jaydenseric/graphql-upload/pull/132).
+- Updated the dependency [`fs-capacitor`](https://npm.im/fs-capacitor) to v2, fixing [#131](https://github.com/jaydenseric/graphql-upload/issues/131) via [#132](https://github.com/jaydenseric/graphql-upload/pull/132).
 
 ## 8.0.3
 
@@ -556,9 +557,9 @@
 ### Patch
 
 - Updated dev dependencies.
-- Removed the package `module` field. Webpack by default resolves extensionless paths the same way Node.js in `--experimental-modules` mode does; `.mjs` files are preferred. Tools misconfigured or unable to resolve `.mjs` can get confused when `module` points to an `.mjs` ESM file and they attempt to resolve named imports from `.js` CJS files.
+- Removed the package field `module`. Webpack by default resolves extensionless paths the same way Node.js in `--experimental-modules` mode does; `.mjs` files are preferred. Tools misconfigured or unable to resolve `.mjs` can get confused when `module` points to an `.mjs` ESM file and they attempt to resolve named imports from `.js` CJS files.
 - Updated package scripts and config for the new [`husky`](https://npm.im/husky) version.
-- Added a package `browserslist` field with the target Node.js version for [`@babel/preset-env`](https://npm.im/@babel/preset-env) and removed related config from `babel.config.js`.
+- Added the package field `browserslist` with the target Node.js version for [`@babel/preset-env`](https://npm.im/@babel/preset-env) and removed related config from `babel.config.js`.
 - Tests now log if the environment is CJS or ESM (`--experimental-modules`) and the `NODE_ENV`.
 - Fixed broken readme API documentation links.
 
@@ -599,20 +600,20 @@
 
 ### Major
 
-- The `processRequest` function now requires a [`http.ServerResponse`](https://nodejs.org/api/http.html#http_class_http_serverresponse) instance as its second argument.
+- The function `processRequest` now requires a [`http.ServerResponse`](https://nodejs.org/api/http.html#http_class_http_serverresponse) instance as its second argument.
 - Replaced the previously exported error classes with [`http-errors`](https://npm.im/http-errors) and snapshot tested error details, via [#105](https://github.com/jaydenseric/apollo-upload-server/pull/105).
-- No longer exporting the `SPEC_URL` constant.
+- No longer exporting the constant `SPEC_URL`.
 
 ### Minor
 
-- `Upload` scalar promises now resolve with a `createReadStream` method instead of a `stream` property, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
-- Accessing an `Upload` scalar promise resolved `stream` property results in a deprecation warning that recommends using `createReadStream` instead. It will be removed in a future release. Via [#107](https://github.com/jaydenseric/apollo-upload-server/pull/107).
-- An `Upload` scalar variable can now be used by multiple resolvers, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
-- Multiple `Upload` scalar variables can now use the same multipart data, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
+- Scalar `Upload` promises now resolve with a `createReadStream` method instead of a `stream` property, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
+- Accessing a scalar `Upload` promise resolved `stream` property results in a deprecation warning that recommends using `createReadStream` instead. It will be removed in a future release. Via [#107](https://github.com/jaydenseric/apollo-upload-server/pull/107).
+- A scalar `Upload` variable can now be used by multiple resolvers, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
+- Multiple scalar `Upload` variables can now use the same multipart data, via [#92](https://github.com/jaydenseric/apollo-upload-server/pull/92).
 - Malformed requests containing invalid JSON for `operations` or `map` multipart fields cause an appropriate error with a `400` status instead of crashing the process, relating to [#81](https://github.com/jaydenseric/apollo-upload-server/pull/81) and [#95](https://github.com/jaydenseric/apollo-upload-server/issues/95).
 - Malformed requests missing `operations`, `map` and files, or just `map` and files, cause an appropriate error with a `400` status instead of hanging, fixing [#96](https://github.com/jaydenseric/apollo-upload-server/issues/96).
-- Tweaked `GraphQLUpload` scalar description to remove details about how it resolves on the server as they are irrelevant to API users.
-- Tweaked `GraphQLUpload` scalar error messages.
+- Tweaked scalar `GraphQLUpload` description to remove details about how it resolves on the server as they are irrelevant to API users.
+- Tweaked scalar `GraphQLUpload` error messages.
 
 ### Patch
 
@@ -630,7 +631,7 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 ### Major
 
 - Updated Node.js support from v6.10+ to v8.5+ for [native ESM](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V8.md#8.5.0), [object rest/spread properties](https://node.green#ES2018-features-object-rest-spread-properties), and [async functions](https://node.green#ES2017-features-async-functions).
-- Removed the [`@babel/runtime`](https://npm.im/@babel/runtime) dependency and config.
+- Removed the dependency [`@babel/runtime`](https://npm.im/@babel/runtime) and related config.
 - Fixed [#45](https://github.com/jaydenseric/apollo-upload-server/issues/45), [#77](https://github.com/jaydenseric/apollo-upload-server/issues/77) and [#83](https://github.com/jaydenseric/apollo-upload-server/issues/83) via [#81](https://github.com/jaydenseric/apollo-upload-server/pull/81):
   - Add `error` event listeners to file streams to prevent server crashes on aborted requests or parser errors.
   - Use [`fs-capacitor`](https://npm.im/fs-capacitor) to ensure the server doesn’t hang if an upload `await` is out of order, or is never consumed.
@@ -668,7 +669,7 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
   - Undo overriding ESLint ignoring dotfiles by default as there are none now.
 - Use `.prettierignore` to leave `package.json` formatting to npm.
 - Tweaked package `description` and `keywords`.
-- Compact package `repository` field.
+- Compact package field `repository`.
 - Improved documentation.
 - Readme badge changes to deal with [shields.io](https://shields.io) unreliability:
   - Use the official Travis build status badge.
@@ -681,7 +682,7 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 
 ### Major
 
-- [`graphql`](https://npm.im/graphql) peer dependency range updated to `^0.13.1` for native ESM support via `.mjs`. It’s a breaking change despite being a semver patch.
+- Updated the peer dependency [`graphql`](https://npm.im/graphql) to `^0.13.1` for native ESM support via `.mjs`. It’s a breaking change despite being a semver patch.
 
 ### Patch
 
@@ -756,13 +757,13 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 ### Major
 
 - New API to support the [GraphQL multipart request spec v2.0.0-alpha.2](https://github.com/jaydenseric/graphql-multipart-request-spec/releases/tag/v2.0.0-alpha.2). Files no longer upload to the filesystem; [readable streams](https://nodejs.org/api/stream.html#stream_readable_streams) are used in resolvers instead. Fixes [#13](https://github.com/jaydenseric/apollo-upload-server/issues/13) via [#22](https://github.com/jaydenseric/apollo-upload-server/pull/22).
-- Export a new `Upload` scalar type to use in place of the old `Upload` input type. It represents a file upload promise that resolves an object containing `stream`, `filename`, `mimetype` and `encoding`.
-- Deprecated the `uploadDir` middleware option.
+- Export a new scalar `Upload` type to use in place of the old `Upload` input type. It represents a file upload promise that resolves an object containing `stream`, `filename`, `mimetype` and `encoding`.
+- Deprecated the middleware option `uploadDir`.
 - `graphql` is now a peer dependency.
 
 ### Minor
 
-- Added new `maxFieldSize`, `maxFileSize` and `maxFiles` middleware options.
+- Added new middleware options `maxFieldSize`, `maxFileSize`, and `maxFiles`.
 
 ### Patch
 
@@ -779,8 +780,8 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 
 - Using Babel directly, dropping Rollup.
 - New directory structure for compiled files.
-- Module files now have `.mjs` extension.
-- No longer publish the `src` directory.
+- Module files now have the extension `.mjs`.
+- No longer publish the directory `src`.
 - No more sourcemaps.
 - Use an arrow function for the Koa middleware, to match the Express middleware.
 - Compiled code is now prettier.
@@ -823,21 +824,21 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 - Set targeted Node version as a string for `babel-preset-env`.
 - New ESLint config. Dropped [Standard Style](https://standardjs.com) and began using [Prettier](https://github.com/prettier/eslint-plugin-prettier).
 - Using [lint-staged](https://github.com/okonet/lint-staged) to ensure contributors don't commit lint errors.
-- Removed `build:watch` script. Use `npm run build -- --watch` directly.
+- Removed the package script `build:watch`. Use `npm run build -- --watch` directly.
 
 ## 2.0.1
 
 ### Patch
 
 - Updated dependencies.
-- Support regular requests from clients other than apollo-upload-client again, fixing [#4](https://github.com/jaydenseric/apollo-upload-server/issues/4).
+- Support regular requests from clients other than [`apollo-upload-client`](https://npm.im/apollo-upload-client) again, fixing [#4](https://github.com/jaydenseric/apollo-upload-server/issues/4).
 - Removed incorrect commas from example GraphQL input type.
 
 ## 2.0.0
 
 ### Major
 
-- Support `apollo-upload-client` v3 and [query batching](https://apollographql.com/docs/apollo-server/requests#batching).
+- Support [`apollo-upload-client`](https://npm.im/apollo-upload-client) v3 and [query batching](https://apollographql.com/docs/apollo-server/requests#batching).
 
 ### Patch
 
@@ -871,7 +872,7 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 ### Patch
 
 - Added missing metadata to `package.json`.
-- Added a link to apollographql/graphql-server in the readme.
+- Added a link to [apollographql/graphql-server](https://github.com/apollographql/graphql-server) in the readme.
 
 ## 1.0.0
 
