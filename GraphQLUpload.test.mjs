@@ -3,7 +3,8 @@
 import { doesNotThrow, ok, strictEqual, throws } from "node:assert";
 import { suite, test } from "node:test";
 
-import { GraphQLScalarType, parseConstValue } from "graphql";
+import { parseConstValue } from "graphql/language";
+import { GraphQLScalarType } from "graphql/type";
 
 import GraphQLUpload from "./GraphQLUpload.mjs";
 import Upload from "./Upload.mjs";

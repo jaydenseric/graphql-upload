@@ -1,6 +1,7 @@
 // @ts-check
 
-import { GraphQLError, GraphQLScalarType } from "graphql";
+import { GraphQLError } from "graphql/error";
+import { GraphQLScalarType } from "graphql/type";
 
 import Upload from "./Upload.mjs";
 
@@ -33,7 +34,7 @@ import Upload from "./Upload.mjs";
  * A manually constructed schema with an image upload mutation:
  *
  * ```js
- * import { GraphQLBoolean, GraphQLObjectType, GraphQLSchema } from "graphql";
+ * import { GraphQLBoolean, GraphQLObjectType, GraphQLSchema } from "graphql/type";
  * import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
  *
  * const schema = new GraphQLSchema({

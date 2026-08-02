@@ -10,6 +10,7 @@
   - `parseValue` → `coerceInputValue`.
   - `parseLiteral` → `coerceInputLiteral`.
   - `serialize` → `coerceOutputValue`.
+- Changed imports from [`graphql`](https://npm.im/graphql) to deep imports, for slightly more [optimal JavaScript module design](https://jaydenseric.com/blog/optimal-javascript-module-design). This can be further improved once [graphql/graphql-js#4442](https://github.com/graphql/graphql-js/issues/4442) is implemented.
 
 ### Patch
 

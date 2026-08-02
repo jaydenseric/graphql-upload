@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @import { GraphQLFieldConfig } from "graphql"
+ * @import { GraphQLFieldConfig } from "graphql/type"
  * @import { FileUpload } from "./processRequest.mjs"
  */
 
@@ -11,13 +11,13 @@ import { text } from "node:stream/consumers";
 import { suite, test } from "node:test";
 
 import { listen } from "async-listen";
+import { graphql } from "graphql";
 import {
-  graphql,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
-} from "graphql";
+} from "graphql/type";
 
 import GraphQLUpload from "./GraphQLUpload.mjs";
 import processRequest from "./processRequest.mjs";
