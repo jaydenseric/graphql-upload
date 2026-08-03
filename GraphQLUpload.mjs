@@ -1,11 +1,11 @@
 // @ts-check
 
+/** @import { FileUpload } from "./processRequest.mjs" */
+
 import { GraphQLError } from "graphql/error";
 import { GraphQLScalarType } from "graphql/type";
 
 import Upload from "./Upload.mjs";
-
-/** @typedef {import("./processRequest.mjs").FileUpload} FileUpload */
 
 /**
  * A GraphQL scalar `Upload` that can be used in a

@@ -13,6 +13,12 @@
   - `parseLiteral` → `coerceInputLiteral`.
   - `serialize` → `coerceOutputValue`.
 - Changed imports from [`graphql`](https://npm.im/graphql) to deep imports, for slightly more [optimal JavaScript module design](https://jaydenseric.com/blog/optimal-javascript-module-design). This can be further improved once [graphql/graphql-js#4442](https://github.com/graphql/graphql-js/issues/4442) is implemented.
+- The type `FileUpload` is no longer re-exported from `graphql-upload/GraphQLUpload.mjs`. To migrate TypeScript type imports:
+
+  ```diff
+  - import type { FileUpload } from "graphql-upload/GraphQLUpload.mjs";
+  + import type { FileUpload } from "graphql-upload/processRequest.mjs";
+  ```
 
 ### Patch
 
