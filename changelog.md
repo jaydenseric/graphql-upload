@@ -401,7 +401,7 @@
 - Configured Prettier option `semi` to the default, `true`.
 - Ensure GitHub Actions run on pull request.
 - Also run GitHub Actions with Node.js v14.
-- Fixed the function `ignoreStream` tests for Node.js v14 with a new `CountReadableStream` test helper, fixing [#209](https://github.com/jaydenseric/graphql-upload/issues/209).
+- Fixed the function `ignoreStream` tests for Node.js v14 with a new test helper class `CountReadableStream`, fixing [#209](https://github.com/jaydenseric/graphql-upload/issues/209).
 - Minor JSDoc wording tweak for consistency.
 - Mention [`Promise.allSettled`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled) in the readme “Tips” section.
 - Updated MDN Web Docs links.
@@ -434,7 +434,7 @@
 - Moved the class `Upload` to its own file.
 - Added JSDoc for the class `Upload` instance property `file`.
 - Test the class `Upload`.
-- Improved JSDoc `FileUpload` typedef description.
+- Improved the JSDoc type `FileUpload` description.
 - Removed now redundant `eslint-disable-next-line` comments.
 - Use strict mode for scripts.
 
@@ -630,7 +630,7 @@ Big thanks to new collaborator [@mike-marcacci](https://github.com/mike-marcacci
 
 ### Major
 
-- Updated Node.js support from v6.10+ to v8.5+ for [native ESM](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V8.md#8.5.0), [object rest/spread properties](https://node.green#ES2018-features-object-rest-spread-properties), and [async functions](https://node.green#ES2017-features-async-functions).
+- Updated Node.js support from v6.10+ to v8.5+ for [native ESM](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V8.md#8.5.0), [object rest/spread properties](https://node.green/#ES2018-features-object-rest-spread-properties), and [async functions](https://node.green/#ES2017-features-async-functions).
 - Removed the dependency [`@babel/runtime`](https://npm.im/@babel/runtime) and related config.
 - Fixed [#45](https://github.com/jaydenseric/apollo-upload-server/issues/45), [#77](https://github.com/jaydenseric/apollo-upload-server/issues/77) and [#83](https://github.com/jaydenseric/apollo-upload-server/issues/83) via [#81](https://github.com/jaydenseric/apollo-upload-server/pull/81):
   - Add `error` event listeners to file streams to prevent server crashes on aborted requests or parser errors.
