@@ -281,6 +281,58 @@ suite(
       }
     });
 
+    test("Multipart request with a deferred response send throwing an error.", async () => {
+      /** @type {unknown} */
+      let expressError;
+      let requestCompleted;
+
+      const server = createServer(
+        express()
+          .use(graphqlUploadExpress())
+          .use((_request, response) => {
+            // JSON serialization of a BigInt throws in Express `send`.
+            response.send({ value: 1n });
+          })
+          .use(
+            /** @type {ErrorRequestHandler} */ (
+              (error, request, response, next) => {
+                expressError = error;
+                requestCompleted = request.complete;
+
+                if (response.headersSent) next(error);
+                else response.status(500).send("Response failed.");
+              }
+            ),
+          ),
+      );
+
+      const url = await listen(server);
+
+      try {
+        const body = new FormData();
+
+        body.append(
+          "operations",
+          JSON.stringify({ variables: { file: null } }),
+        );
+        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+        body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
+
+        const response = await fetch(url, {
+          method: "POST",
+          body,
+          signal: AbortSignal.timeout(5000),
+        });
+
+        strictEqual(response.status, 500);
+        strictEqual(await response.text(), "Response failed.");
+        ok(expressError instanceof TypeError);
+        ok(requestCompleted);
+      } finally {
+        await serverClose(server);
+      }
+    });
+
     test("An aborted multipart request.", async () => {
       let serverError;
 
