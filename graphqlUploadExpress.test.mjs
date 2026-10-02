@@ -281,6 +281,61 @@ suite(
       }
     });
 
+    test("Multipart request and deferred response method `send` throwing an error.", async () => {
+      let expressError;
+      let requestCompleted;
+
+      const error = new Error("Message.");
+      const server = createServer(
+        express()
+          .use(graphqlUploadExpress())
+          .use((_request, response) => {
+            response.send({
+              toJSON() {
+                throw error;
+              },
+            });
+          })
+          .use(
+            /** @type {ErrorRequestHandler} */ (
+              (error, request, response, next) => {
+                expressError = error;
+                requestCompleted = request.complete;
+
+                // Sending a response here prevents the default Express error
+                // handler from running, which would undesirably (in this case)
+                // display the error in the console.
+                if (response.headersSent) next(error);
+                else response.send();
+              }
+            ),
+          ),
+      );
+
+      const url = await listen(server);
+
+      try {
+        const body = new FormData();
+
+        body.append(
+          "operations",
+          JSON.stringify({ variables: { file: null } }),
+        );
+        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+        body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
+
+        await fetch(url, { method: "POST", body });
+
+        strictEqual(expressError, error);
+        ok(
+          requestCompleted,
+          "Response wasn’t delayed until the request completed.",
+        );
+      } finally {
+        await serverClose(server);
+      }
+    });
+
     test("An aborted multipart request.", async () => {
       let serverError;
 

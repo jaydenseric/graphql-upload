@@ -60,10 +60,12 @@ export default function graphqlUploadExpress({
       // Todo: Find a less hacky way that avoids monkey patching.
       const { send } = response;
       response.send = (...args) => {
-        requestFinished(request).then(() => {
-          response.send = send;
-          response.send(...args);
-        });
+        requestFinished(request)
+          .then(() => {
+            response.send = send;
+            response.send(...args);
+          })
+          .catch(next);
 
         return response;
       };
