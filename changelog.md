@@ -6,6 +6,7 @@
 
 - The Express middleware created by the function `graphqlUploadExpress` now passes errors thrown by deferred calls to the Express response method `send` to Express error handling middleware, preventing unhandled promise rejections. Fixes [#397](https://github.com/jaydenseric/graphql-upload/issues/397) via [#398](https://github.com/jaydenseric/graphql-upload/pull/398).
 - Corrected some tests.
+- Set a Node.js test runner enforced test timeout of 10 seconds.
 
 ## 18.0.0
 
