@@ -2,7 +2,7 @@
 
 /** @import Upload from "./Upload.mjs" */
 
-import { deepStrictEqual, ok, rejects, strictEqual } from "node:assert";
+import { ok, rejects, strictEqual } from "node:assert";
 import { createServer } from "node:http";
 import { getDefaultHighWaterMark } from "node:stream";
 import { suite, test } from "node:test";
@@ -190,7 +190,7 @@ suite(
 
         await fetch(url, { method: "POST", body });
 
-        deepStrictEqual(koaError, error);
+        strictEqual(koaError, error);
         ok(
           requestCompleted,
           "Response wasn’t delayed until the request completed.",
@@ -238,7 +238,7 @@ suite(
 
         await fetch(url, { method: "POST", body });
 
-        deepStrictEqual(koaError, error);
+        strictEqual(koaError, error);
         ok(
           requestCompleted,
           "Response wasn’t delayed until the request completed.",
