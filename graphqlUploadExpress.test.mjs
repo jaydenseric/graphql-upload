@@ -281,17 +281,20 @@ suite(
       }
     });
 
-    test("Multipart request with a deferred response send throwing an error.", async () => {
-      /** @type {unknown} */
+    test("Multipart request and deferred response method `send` throwing an error.", async () => {
       let expressError;
       let requestCompleted;
 
+      const error = new Error("Message.");
       const server = createServer(
         express()
           .use(graphqlUploadExpress())
           .use((_request, response) => {
-            // JSON serialization of a BigInt throws in Express `send`.
-            response.send({ value: 1n });
+            response.send({
+              toJSON() {
+                throw error;
+              },
+            });
           })
           .use(
             /** @type {ErrorRequestHandler} */ (
@@ -299,8 +302,11 @@ suite(
                 expressError = error;
                 requestCompleted = request.complete;
 
+                // Sending a response here prevents the default Express error
+                // handler from running, which would undesirably (in this case)
+                // display the error in the console.
                 if (response.headersSent) next(error);
-                else response.status(500).send("Response failed.");
+                else response.send();
               }
             ),
           ),
@@ -318,16 +324,13 @@ suite(
         body.append("map", JSON.stringify({ 1: ["variables.file"] }));
         body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
 
-        const response = await fetch(url, {
-          method: "POST",
-          body,
-          signal: AbortSignal.timeout(5000),
-        });
+        await fetch(url, { method: "POST", body });
 
-        strictEqual(response.status, 500);
-        strictEqual(await response.text(), "Response failed.");
-        ok(expressError instanceof TypeError);
-        ok(requestCompleted);
+        strictEqual(expressError, error);
+        ok(
+          requestCompleted,
+          "Response wasn’t delayed until the request completed.",
+        );
       } finally {
         await serverClose(server);
       }
