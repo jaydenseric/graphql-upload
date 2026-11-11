@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Fixed a denial-of-service vulnerability in the function `processRequest` (used by the middleware created by the functions `graphqlUploadExpress` and `graphqlUploadExpress`) where a maliciously crafted multipart request could cause an uncaught exception and terminate the Node.js process. See [GHSA-5vm7-vc2x-p3w2](https://github.com/jaydenseric/graphql-upload/security/advisories/GHSA-5vm7-vc2x-p3w2).
+
 ## 18.0.1
 
 ### Patch
