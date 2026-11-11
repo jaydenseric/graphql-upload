@@ -1541,20 +1541,11 @@ suite(
       }
     });
 
-    for (const {
-      description,
-      operations,
-      map,
-      fileFieldNames,
-      key,
-      index,
-      path,
-    } of [
+    for (const { description, operations, map, key, index, path } of [
       {
         description: "an upload property `reject`",
         operations: { variables: { file: null } },
         map: { 1: ["variables.file"], 2: ["variables.file.reject"] },
-        fileFieldNames: ["2"],
         key: "2",
         index: 0,
         path: "variables.file.reject",
@@ -1563,7 +1554,6 @@ suite(
         description: "an upload property `file`",
         operations: { variables: { file: null } },
         map: { 1: ["variables.file"], 2: ["variables.file.file"] },
-        fileFieldNames: ["2"],
         key: "2",
         index: 0,
         path: "variables.file.file",
@@ -1572,7 +1562,6 @@ suite(
         description: "an upload property, same entry",
         operations: { variables: { file: null } },
         map: { 1: ["variables.file", "variables.file.reject"] },
-        fileFieldNames: [],
         key: "1",
         index: 1,
         path: "variables.file.reject",
@@ -1581,7 +1570,6 @@ suite(
         description: "a nested upload property",
         operations: { variables: { file: null } },
         map: { 1: ["variables.file"], 2: ["variables.file.promise.then"] },
-        fileFieldNames: ["1", "2"],
         key: "2",
         index: 0,
         path: "variables.file.promise.then",
@@ -1590,7 +1578,6 @@ suite(
         description: "an upload property, upload in an array",
         operations: { variables: { files: [null] } },
         map: { 1: ["variables.files.0"], 2: ["variables.files.0.resolve"] },
-        fileFieldNames: ["1", "2"],
         key: "2",
         index: 0,
         path: "variables.files.0.resolve",
@@ -1599,7 +1586,6 @@ suite(
         description: "an object prototype, forging an upload",
         operations: { variables: { file: { promise: { filename: "a.txt" } } } },
         map: { 1: ["variables.file.__proto__"] },
-        fileFieldNames: ["1"],
         key: "1",
         index: 0,
         path: "variables.file.__proto__",
@@ -1611,7 +1597,6 @@ suite(
           1: ["variables.files.__proto__.0"],
           2: ["variables.files.0.reject"],
         },
-        fileFieldNames: ["2"],
         key: "1",
         index: 0,
         path: "variables.files.__proto__.0",
@@ -1643,9 +1628,9 @@ suite(
           body.append("operations", JSON.stringify(operations));
           body.append("map", JSON.stringify(map));
 
-          for (const fileFieldName of fileFieldNames)
+          for (const fieldName of Object.keys(map))
             body.append(
-              fileFieldName,
+              fieldName,
               new File(["a"], "a.txt", { type: "text/plain" }),
             );
 
