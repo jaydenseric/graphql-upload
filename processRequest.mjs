@@ -202,26 +202,32 @@ export default function processRequest(
                 );
 
               try {
+                // Check the upload’s mapped path in the operations is safe
+                // before setting it.
+
                 const keys = path.split(".");
 
-                // The path must not have a `__proto__` key, as setting an
-                // object’s prototype to an upload would make the object pass
-                // as an upload.
-                if (keys.includes("__proto__"))
-                  throw new TypeError("Object path has a `__proto__` key.");
-
-                // The path must not traverse an upload placed by a previous
-                // path, as that would replace the upload’s properties. Each
-                // step is resolved the same way as `object-path`.
                 /** @type {unknown} */
                 let pathValue = operations;
-                for (const key of keys.slice(0, -1)) {
-                  pathValue = objectPath.get(
-                    /** @type {object} */ (pathValue),
-                    [key],
-                  );
-                  if (pathValue instanceof Upload)
-                    throw new TypeError("Object path traverses an upload.");
+
+                for (const [keyIndex, key] of keys.entries()) {
+                  // Forbid `__proto__` keys to prevent prototype manipulation
+                  // that could make client-supplied objects pass
+                  // `instanceof Upload` checks.
+                  if (key === "__proto__")
+                    throw new TypeError("Object path has a `__proto__` key.");
+
+                  // Forbid setting an upload within an already set upload, but
+                  // allow a total replacement.
+                  if (keyIndex < keys.length - 1) {
+                    pathValue = objectPath.get(
+                      /** @type {object} */ (pathValue),
+                      [key],
+                    );
+
+                    if (pathValue instanceof Upload)
+                      throw new TypeError("Object path traverses an upload.");
+                  }
                 }
 
                 operationsPath.set(path, map.get(fieldName));
