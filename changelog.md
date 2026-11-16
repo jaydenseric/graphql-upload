@@ -4,7 +4,8 @@
 
 ### Patch
 
-- Fixed a denial-of-service vulnerability in the function `processRequest` (used by the middleware created by the functions `graphqlUploadExpress` and `graphqlUploadExpress`) where a maliciously crafted multipart request could cause an uncaught exception and terminate the Node.js process. See [GHSA-5vm7-vc2x-p3w2](https://github.com/jaydenseric/graphql-upload/security/advisories/GHSA-5vm7-vc2x-p3w2).
+- Fixed security vulnerabilities in the function `processRequest` (used by the middleware created by the functions `graphqlUploadExpress` and `graphqlUploadKoa`) when processing [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec):
+  - Requests with upload map operations object paths containing `__proto__` keys or traversing other uploads now result in a HTTP 400 response with a relevant error message, preventing prototype manipulation and upload state corruption that could cause an uncaught exception that terminates the Node.js process. See [GHSA-5vm7-vc2x-p3w2](https://github.com/jaydenseric/graphql-upload/security/advisories/GHSA-5vm7-vc2x-p3w2).
 
 ## 18.0.1
 
