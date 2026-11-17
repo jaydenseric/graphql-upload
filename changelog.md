@@ -1,5 +1,12 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Fixed security vulnerabilities in the function `processRequest` (used by the middleware created by the functions `graphqlUploadExpress` and `graphqlUploadKoa`) when processing [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec):
+  - Duplicate file multipart form fields for the same upload map entry are now ignored after the first, preventing temporary file and file descriptor leaks. See [GHSA-qwwm-252j-9whw](https://github.com/jaydenseric/graphql-upload/security/advisories/GHSA-qwwm-252j-9whw).
+
 ## 18.0.1
 
 ### Patch

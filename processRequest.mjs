@@ -234,9 +234,9 @@ export default function processRequest(
 
         const upload = map.get(fieldName);
 
-        if (!upload) {
-          // The file is extraneous. As the rest can still be processed, just
-          // ignore it and don’t exit with an error.
+        if (!upload || upload.file) {
+          // The file is extraneous or a duplicate. As the rest can still be
+          // processed, just ignore it and don’t exit with an error.
           ignoreStream(stream);
           return;
         }
