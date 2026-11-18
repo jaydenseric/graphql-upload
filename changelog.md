@@ -6,6 +6,7 @@
 
 - Fixed security vulnerabilities in the function `processRequest` (used by the middleware created by the functions `graphqlUploadExpress` and `graphqlUploadKoa`) when processing [GraphQL multipart requests](https://github.com/jaydenseric/graphql-multipart-request-spec):
   - Requests with upload map operations object paths containing `__proto__` keys or traversing other uploads now result in a HTTP 400 response with a relevant error message, preventing prototype manipulation and upload state corruption that could cause an uncaught exception that terminates the Node.js process. See [GHSA-5vm7-vc2x-p3w2](https://github.com/jaydenseric/graphql-upload/security/advisories/GHSA-5vm7-vc2x-p3w2).
+  - Duplicate file multipart form fields for the same upload map entry are now ignored after the first, preventing temporary file and file descriptor leaks. See [GHSA-qwwm-252j-9whw](https://github.com/jaydenseric/graphql-upload/security/advisories/GHSA-qwwm-252j-9whw).
 
 ## 18.0.1
 

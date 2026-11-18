@@ -497,6 +497,66 @@ suite(
       }
     });
 
+    test("A duplicate multipart form field file.", async () => {
+      let serverError;
+
+      const server = createServer(async (request, response) => {
+        try {
+          const operation =
+            /**
+             * @type {{
+             *   variables: {
+             *     file: Upload,
+             *   },
+             * }}
+             */
+            (await processRequest(request, response));
+
+          ok(operation.variables.file instanceof Upload);
+
+          const upload = await operation.variables.file.promise;
+
+          strictEqual(upload.filename, "a.txt");
+          strictEqual(upload.mimetype, "text/plain");
+          strictEqual(upload.encoding, "7bit");
+
+          const stream = upload.createReadStream();
+
+          ok(stream instanceof ReadStream);
+          strictEqual(await text(stream), "a");
+
+          await requestFinished(request);
+
+          // Check that the original upload wasn’t replaced by the duplicate.
+          strictEqual(operation.variables.file.file, upload);
+        } catch (error) {
+          serverError = error;
+        } finally {
+          response.end();
+        }
+      });
+
+      const url = await listen(server);
+
+      try {
+        const body = new FormData();
+
+        body.append(
+          "operations",
+          JSON.stringify({ variables: { file: null } }),
+        );
+        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+        body.append("1", new File(["a"], "a.txt", { type: "text/plain" }));
+        body.append("1", new File(["b"], "b.txt", { type: "text/plain" }));
+
+        await fetch(url, { method: "POST", body });
+
+        if (serverError) throw serverError;
+      } finally {
+        await serverClose(server);
+      }
+    });
+
     test("A missing multipart form field file.", async () => {
       let serverError;
 
