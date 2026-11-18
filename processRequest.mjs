@@ -202,6 +202,34 @@ export default function processRequest(
                 );
 
               try {
+                // Check the upload’s mapped path in the operations is safe
+                // before setting it.
+
+                const keys = path.split(".");
+
+                /** @type {unknown} */
+                let pathValue = operations;
+
+                for (const [keyIndex, key] of keys.entries()) {
+                  // Forbid `__proto__` keys to prevent prototype manipulation
+                  // that could make client-supplied objects pass
+                  // `instanceof Upload` checks.
+                  if (key === "__proto__")
+                    throw new TypeError("Object path has a `__proto__` key.");
+
+                  // Forbid setting an upload within an already set upload, but
+                  // allow a total replacement.
+                  if (keyIndex < keys.length - 1) {
+                    pathValue = objectPath.get(
+                      /** @type {object} */ (pathValue),
+                      [key],
+                    );
+
+                    if (pathValue instanceof Upload)
+                      throw new TypeError("Object path traverses an upload.");
+                  }
+                }
+
                 operationsPath.set(path, map.get(fieldName));
               } catch {
                 return exit(

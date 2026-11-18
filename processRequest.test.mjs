@@ -1541,6 +1541,107 @@ suite(
       }
     });
 
+    for (const { description, operations, map, key, index, path } of [
+      {
+        description: "an upload property `reject`",
+        operations: { variables: { file: null } },
+        map: { 1: ["variables.file"], 2: ["variables.file.reject"] },
+        key: "2",
+        index: 0,
+        path: "variables.file.reject",
+      },
+      {
+        description: "an upload property `file`",
+        operations: { variables: { file: null } },
+        map: { 1: ["variables.file"], 2: ["variables.file.file"] },
+        key: "2",
+        index: 0,
+        path: "variables.file.file",
+      },
+      {
+        description: "an upload property, same entry",
+        operations: { variables: { file: null } },
+        map: { 1: ["variables.file", "variables.file.reject"] },
+        key: "1",
+        index: 1,
+        path: "variables.file.reject",
+      },
+      {
+        description: "a nested upload property",
+        operations: { variables: { file: null } },
+        map: { 1: ["variables.file"], 2: ["variables.file.promise.then"] },
+        key: "2",
+        index: 0,
+        path: "variables.file.promise.then",
+      },
+      {
+        description: "an upload property, upload in an array",
+        operations: { variables: { files: [null] } },
+        map: { 1: ["variables.files.0"], 2: ["variables.files.0.resolve"] },
+        key: "2",
+        index: 0,
+        path: "variables.files.0.resolve",
+      },
+      {
+        description: "an object prototype, forging an upload",
+        operations: { variables: { file: { promise: { filename: "a.txt" } } } },
+        map: { 1: ["variables.file.__proto__"] },
+        key: "1",
+        index: 0,
+        path: "variables.file.__proto__",
+      },
+      {
+        description: "an array prototype index",
+        operations: { variables: { files: [] } },
+        map: {
+          1: ["variables.files.__proto__.0"],
+          2: ["variables.files.0.reject"],
+        },
+        key: "1",
+        index: 0,
+        path: "variables.files.__proto__.0",
+      },
+    ])
+      test(`Invalid multipart form field \`map\` entry array item object path to ${description}.`, async () => {
+        let serverError;
+
+        const server = createServer(async (request, response) => {
+          try {
+            await rejects(processRequest(request, response), {
+              name: "BadRequestError",
+              message: `Invalid object path for the ‘map’ multipart field entry key ‘${key}’ array index ‘${index}’ value ‘${path}’ (https://github.com/jaydenseric/graphql-multipart-request-spec).`,
+              status: 400,
+              expose: true,
+            });
+          } catch (error) {
+            serverError = error;
+          } finally {
+            response.end();
+          }
+        });
+
+        const url = await listen(server);
+
+        try {
+          const body = new FormData();
+
+          body.append("operations", JSON.stringify(operations));
+          body.append("map", JSON.stringify(map));
+
+          for (const fieldName of Object.keys(map))
+            body.append(
+              fieldName,
+              new File(["a"], "a.txt", { type: "text/plain" }),
+            );
+
+          await fetch(url, { method: "POST", body });
+
+          if (serverError) throw serverError;
+        } finally {
+          await serverClose(server);
+        }
+      });
+
     test("An unparsable multipart request.", async () => {
       let serverError;
 
