@@ -384,7 +384,7 @@ export default function processRequest(
  * [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec)
  * has begun streaming in.
  * @typedef {object} FileUpload
- * @property {string} filename File name.
+ * @property {string | undefined} filename File name, if provided by the client.
  * @property {string} mimetype File MIME type. Provided by the client and can’t
  *   be trusted.
  * @property {string} encoding File stream transfer encoding.

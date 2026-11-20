@@ -61,6 +61,74 @@ suite(
       }
     });
 
+    test("A file without a name.", async () => {
+      let serverError;
+
+      const server = createServer(async (request, response) => {
+        try {
+          const operation =
+            /**
+             * @type {{
+             *   variables: {
+             *     file: Upload,
+             *   },
+             * }}
+             */
+            (await processRequest(request, response));
+
+          ok(operation.variables.file instanceof Upload);
+
+          const upload = await operation.variables.file.promise;
+
+          strictEqual(upload.filename, undefined);
+          strictEqual(upload.mimetype, "application/octet-stream");
+          strictEqual(upload.encoding, "7bit");
+          strictEqual(await text(upload.createReadStream()), "a");
+        } catch (error) {
+          serverError = error;
+        } finally {
+          response.end();
+        }
+      });
+
+      const url = await listen(server);
+
+      try {
+        const body = new FormData();
+
+        body.append(
+          "operations",
+          JSON.stringify({ variables: { file: null } }),
+        );
+        body.append("map", JSON.stringify({ 1: ["variables.file"] }));
+        body.append(
+          "1",
+          new File(["a"], "", {
+            // Busboy and some other multipart parsers heuristically treat a
+            // part without a filename parameter as a file only with this type.
+            type: "application/octet-stream",
+          }),
+        );
+
+        const request = new Request(url, {
+          method: "POST",
+          body,
+        });
+
+        // RFC 7578 permits omitting a filename when unavailable or meaningless.
+        // The HTML multipart encoding algorithm doesn't specify whether an
+        // empty File name produces `filename=""` or no parameter. Runtimes
+        // serialize it differently; ensure this request omits the parameter.
+        strictEqual((await request.clone().text()).includes("filename"), false);
+
+        await fetch(request);
+
+        if (serverError) throw serverError;
+      } finally {
+        await serverClose(server);
+      }
+    });
+
     suite("A file with a name.", () => {
       for (const [description, fileName] of [
         ["Characters all `latin1`.", "a.txt"],

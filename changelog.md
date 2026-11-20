@@ -4,6 +4,13 @@
 
 ### Patch
 
+- Updated the dependency [@types/busboy](https://npm.im/@types/busboy).
+- Corrected the type `FileUpload` property `filename` from `string` to `string | undefined` to reflect existing runtime behavior when the client uploads without a filename using the MIME type `application/octet-stream` in a [GraphQL multipart request](https://github.com/jaydenseric/graphql-multipart-request-spec) file field; an unusual scenario that’s now supported by tests.
+
+  This is in response to [a similar correction](https://github.com/DefinitelyTyped/DefinitelyTyped/pull/75653) published upstream in the dependency [@types/busboy](https://npm.im/@types/busboy) in the recent SemVer patch release v1.5.5.
+
+  This change is likely to introduce useful TypeScript errors in projects that, due to the previously incorrect types, unsafely assumed all file uploads have a filename. While a SemVer patch release breaking builds is undesirable, it’s the least bad option out of the considered alternatives.
+
 - Refactored tests in nested suites with more focused test names.
 
 ## 18.0.2
