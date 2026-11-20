@@ -1,5 +1,11 @@
 # graphql-upload changelog
 
+## Next
+
+### Patch
+
+- Refactored tests in nested suites with more focused test names.
+
 ## 18.0.2
 
 ### Patch

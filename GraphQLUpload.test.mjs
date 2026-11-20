@@ -20,22 +20,24 @@ suite(
       strictEqual(GraphQLUpload.name, "Upload");
     });
 
-    test("Method `coerceInputValue`, value valid.", () => {
-      doesNotThrow(() => {
-        GraphQLUpload.coerceInputValue(new Upload());
+    suite("Method `coerceInputValue`.", () => {
+      test("Value valid.", () => {
+        doesNotThrow(() => {
+          GraphQLUpload.coerceInputValue(new Upload());
+        });
       });
-    });
 
-    test("Method `coerceInputValue`, value invalid.", () => {
-      throws(
-        () => {
-          GraphQLUpload.coerceInputValue(true);
-        },
-        {
-          name: "GraphQLError",
-          message: "Upload value invalid.",
-        },
-      );
+      test("Value invalid.", () => {
+        throws(
+          () => {
+            GraphQLUpload.coerceInputValue(true);
+          },
+          {
+            name: "GraphQLError",
+            message: "Upload value invalid.",
+          },
+        );
+      });
     });
 
     test("Method `coerceInputLiteral`.", () => {
